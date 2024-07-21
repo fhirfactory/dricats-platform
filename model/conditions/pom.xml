@@ -5,24 +5,18 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>net.fhirfactory.dricats</groupId>
-        <artifactId>dricats-platform</artifactId>
+        <artifactId>dricats-platform-model</artifactId>
         <version>1.0.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>dricats-platform-middleware</artifactId>
-    <name>DRICaTS-Platform :: Middleware</name>
-    <packaging>pom</packaging>
-
-    <modules>
-        <module>collaboration</module>
-        <module>databus</module>
-        <module>messagebus</module>
-        <module>rules</module>
-        <module>workflow</module>
-    </modules>
+    <artifactId>dricats-platform-model-conditions</artifactId>
+    <name>DRICaTS-Platform :: Data Models :: Conditions (Rules) and Outcomes</name>
+    <packaging>jar</packaging>
 
     <properties>
-
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
 </project>

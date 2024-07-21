@@ -33,10 +33,7 @@
 
     <modules>
         <module>middleware</module>
-        <module>middleware/workflow</module>
-        <module>middleware/rules</module>
-        <module>middleware/databus</module>
-        <module>middleware/messagebus</module>
+        <module>model</module>
     </modules>
 
     <scm>
@@ -49,13 +46,11 @@
         <version-ca.uhn.hapi-hl7structures>2.3</version-ca.uhn.hapi-hl7structures>
 
         <version-ch.qos.logback>0.5</version-ch.qos.logback>
-        <version-ch.qos.logback-classic>1.2.3</version-ch.qos.logback-classic>
+        <version-ch.qos.logback-classic>1.5.6</version-ch.qos.logback-classic>
 
-        <version-com.fasterxml.jackson.core-jackson-databind>2.12.6.1
-        </version-com.fasterxml.jackson.core-jackson-databind>
-        <version-com.fasterxml.jackson.core-jackson-core>2.12.3</version-com.fasterxml.jackson.core-jackson-core>
-        <version-com.fasterxml.jackson.datatype-jackson-datatype-jsr310>2.12.3
-        </version-com.fasterxml.jackson.datatype-jackson-datatype-jsr310>
+        <version-com.fasterxml.jackson.core-jackson-databind>2.12.6.1</version-com.fasterxml.jackson.core-jackson-databind>
+        <version-com.fasterxml.jackson.core-jackson-core>2.17.2</version-com.fasterxml.jackson.core-jackson-core>
+        <version-com.fasterxml.jackson.datatype-jackson-datatype-jsr310>2.17.2</version-com.fasterxml.jackson.datatype-jackson-datatype-jsr310>
 
         <version-com.github.ben-manes.caffeine>2.8.6</version-com.github.ben-manes.caffeine>
 
@@ -129,7 +124,7 @@
         </version-org.jboss.shrinkwrap.resolver-shrinkwrap-resolver>
         <version-org.jolokia>1.6.0</version-org.jolokia>
 
-        <version-org.json>20200518</version-org.json>
+        <version-org.json>20240303</version-org.json>
 
         <version-org.junit5>5.7.0</version-org.junit5>
         <version-junit>4.13</version-junit>
