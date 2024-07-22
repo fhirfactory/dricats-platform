@@ -21,7 +21,10 @@
  */
 package net.fhirfactory.dricats.internals.model.base;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.apache.commons.lang3.SerializationUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -29,8 +32,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class DistributableObject implements Serializable {
+    //
+    // Housekeeping
+    //
+
     @Serial
     private static final long serialVersionUID = -12345678900002L;
+    private static final Logger LOG = LoggerFactory.getLogger(DistributableObject.class);
+
+    //
+    // Attributes
+    //
 
     private DistributableObjectId id;
     private List<DistributableObjectIdentifier> identifiers;
@@ -91,10 +103,19 @@ public class DistributableObject implements Serializable {
         this.identifiers = identifiers;
     }
 
+    @JsonIgnore
     public void addIdentifier(DistributableObjectIdentifier identifier) {
         if(getIdentifiers() == null) {
             setIdentifiers(new ArrayList<DistributableObjectIdentifier>());
         }
         getIdentifiers().add(identifier);
+    }
+
+    //
+    // Utility Methods
+    //
+
+    protected Logger getLogger(){
+        return(LOG);
     }
 }

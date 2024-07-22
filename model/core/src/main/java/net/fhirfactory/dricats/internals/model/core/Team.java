@@ -33,11 +33,21 @@ import java.io.Serial;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class Team extends DistributableObject {
+    //
+    // Housekeeping
+    //
+
     @Serial
     private static final long serialVersionUID = -12345678900019L;
     private static final Logger LOG = LoggerFactory.getLogger(Team.class);
+
+    //
+    // Attributes
+    //
+
     private String teamId;
     private String teamName;
     private List<TeamMember> members;
@@ -135,5 +145,36 @@ public class Team extends DistributableObject {
 
     protected Logger getLogger(){
         return LOG;
+    }
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("Team{");
+        sb.append("teamId='").append(getTeamId()).append('\'');
+        sb.append(", teamName='").append(getTeamName()).append('\'');
+        sb.append(", members=").append(getMembers());
+        sb.append(", creationDate=").append(getCreationDate());
+        sb.append(", modificationDate=").append(getModificationDate());
+        sb.append(", teamFunction=").append(getTeamFunction());
+        sb.append(", teamType=").append(getTeamType());
+        sb.append(", metadata=").append(getMetadata());
+        sb.append(", id=").append(getId());
+        sb.append(", identifiers=").append(getIdentifiers());
+        sb.append('}');
+        return sb.toString();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        Team team = (Team) o;
+        return Objects.equals(getTeamId(), team.getTeamId()) && Objects.equals(getTeamName(), team.getTeamName()) && Objects.equals(getMembers(), team.getMembers()) && Objects.equals(getCreationDate(), team.getCreationDate()) && Objects.equals(getModificationDate(), team.getModificationDate()) && Objects.equals(getTeamFunction(), team.getTeamFunction()) && Objects.equals(getTeamType(), team.getTeamType());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), getTeamId(), getTeamName(), getMembers(), getCreationDate(), getModificationDate(), getTeamFunction(), getTeamType());
     }
 }

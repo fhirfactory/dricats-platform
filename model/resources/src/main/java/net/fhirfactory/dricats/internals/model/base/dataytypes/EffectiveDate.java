@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Mark A. Hunter
+ * Copyright (c) 2024 Mark A. Hunter
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -19,62 +19,48 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.fhirfactory.dricats.internals.model.core.entity;
+package net.fhirfactory.dricats.internals.model.base.dataytypes;
 
-import net.fhirfactory.dricats.internals.model.core.entity.datatypes.TradingName;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 import java.io.Serial;
-import java.util.Objects;
+import java.io.Serializable;
+import java.time.LocalDateTime;
 
-public class Organisation extends LegalEntity{
+public class EffectiveDate implements Serializable {
     //
     // Housekeeping
     //
 
     @Serial
-    private static final long serialVersionUID = -12345678900017L;
-    private static final Logger LOG = LoggerFactory.getLogger(Organisation.class);
+    private static final long serialVersionUID = -12345678900006L;
 
     //
     // Attributes
     //
 
-    private TradingName tradingName;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss.SSSXXX")
+    private LocalDateTime effectiveStartDate;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss.SSSXXX")
+    private LocalDateTime effectiveEndDate;
 
     //
     // Bean Methods
     //
 
-    public TradingName getTradingName() {
-        return tradingName;
+    public LocalDateTime getEffectiveStartDate() {
+        return effectiveStartDate;
     }
 
-    public void setTradingName(TradingName tradingName) {
-        this.tradingName = tradingName;
+    public void setEffectiveStartDate(LocalDateTime effectiveStartDate) {
+        this.effectiveStartDate = effectiveStartDate;
     }
 
-    //
-    // Utility Methods
-    //
-
-    @Override
-    protected Logger getLogger() {
-        return LOG;
+    public LocalDateTime getEffectiveEndDate() {
+        return effectiveEndDate;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        if (!super.equals(o)) return false;
-        Organisation that = (Organisation) o;
-        return Objects.equals(getTradingName(), that.getTradingName());
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(super.hashCode(), getTradingName());
+    public void setEffectiveEndDate(LocalDateTime effectiveEndDate) {
+        this.effectiveEndDate = effectiveEndDate;
     }
 }

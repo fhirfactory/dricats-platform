@@ -21,66 +21,62 @@
  */
 package net.fhirfactory.dricats.internals.model.base;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-import net.fhirfactory.dricats.internals.model.base.dataytypes.EffectiveDate;
+import net.fhirfactory.dricats.internals.model.base.dataytypes.InternalTaskProvenance;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.Serial;
-import java.io.Serializable;
-import java.net.URI;
-import java.time.LocalDateTime;
+import java.util.List;
 
-public class DistributableObjectMetadata implements Serializable {
-    //
+public class InternalTask extends DistributableObject {    //
     // Housekeeping
     //
 
     @Serial
-    private static final long serialVersionUID = -12345678900001L;
+    private static final long serialVersionUID = -12345678900070L;
+    private static final Logger LOG = LoggerFactory.getLogger(InternalTask.class);
 
     //
     // Attributes
     //
 
-    private URI sourceSystem;
-    private EffectiveDate effectiveDate;
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss.SSSXXX")
-    private LocalDateTime creationDate;
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss.SSSXXX")
-    private LocalDateTime lastUpdateDate;
+    private List<InternalTaskPayload> taskInputPayload;
+    private List<InternalTaskPayload> taskOutputPayload;
+    private InternalTaskProvenance taskProvenance;
 
     //
     // Bean Methods
     //
 
-    public URI getSourceSystem() {
-        return sourceSystem;
+    public List<InternalTaskPayload> getTaskInputPayload() {
+        return taskInputPayload;
     }
 
-    public void setSourceSystem(URI sourceSystem) {
-        this.sourceSystem = sourceSystem;
+    public void setTaskInputPayload(List<InternalTaskPayload> taskInputPayload) {
+        this.taskInputPayload = taskInputPayload;
     }
 
-    public EffectiveDate getEffectiveDate() {
-        return effectiveDate;
+    public List<InternalTaskPayload> getTaskOutputPayload() {
+        return taskOutputPayload;
     }
 
-    public void setEffectiveDate(EffectiveDate effectiveDate) {
-        this.effectiveDate = effectiveDate;
+    public void setTaskOutputPayload(List<InternalTaskPayload> taskOutputPayload) {
+        this.taskOutputPayload = taskOutputPayload;
     }
 
-    public LocalDateTime getCreationDate() {
-        return creationDate;
+    public InternalTaskProvenance getTaskProvenance() {
+        return taskProvenance;
     }
 
-    public void setCreationDate(LocalDateTime creationDate) {
-        this.creationDate = creationDate;
+    public void setTaskProvenance(InternalTaskProvenance taskProvenance) {
+        this.taskProvenance = taskProvenance;
     }
 
-    public LocalDateTime getLastUpdateDate() {
-        return lastUpdateDate;
-    }
+    //
+    // Utility Methods
+    //
 
-    public void setLastUpdateDate(LocalDateTime lastUpdateDate) {
-        this.lastUpdateDate = lastUpdateDate;
+    protected Logger getLogger(){
+        return(LOG);
     }
 }

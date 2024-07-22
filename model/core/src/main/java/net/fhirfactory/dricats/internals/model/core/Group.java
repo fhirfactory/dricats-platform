@@ -32,11 +32,21 @@ import java.io.Serial;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class Group extends DistributableObject {
+    //
+    // Housekeeping
+    //
+
     @Serial
     private static final long serialVersionUID = -12345678900038L;
     private static final Logger LOG = LoggerFactory.getLogger(Group.class);
+
+    //
+    // Attributes
+    //
+
     private String groupId;
     private String groupName;
     private List<GroupMember> groupMembers;
@@ -125,5 +135,35 @@ public class Group extends DistributableObject {
 
     protected Logger getLogger(){
         return LOG;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if(!super.equals(o)) return false;
+        Group group = (Group) o;
+        return Objects.equals(getGroupId(), group.getGroupId()) && Objects.equals(getGroupName(), group.getGroupName()) && Objects.equals(getGroupMembers(), group.getGroupMembers()) && Objects.equals(getCreationDate(), group.getCreationDate()) && Objects.equals(getModificationDate(), group.getModificationDate()) && Objects.equals(getGroupType(), group.getGroupType());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), getGroupId(), getGroupName(), getGroupMembers(), getCreationDate(), getModificationDate(), getGroupType());
+    }
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("Group{");
+        sb.append("groupId='").append(getGroupId()).append('\'');
+        sb.append(", groupName='").append(getGroupName()).append('\'');
+        sb.append(", groupMembers=").append(getGroupMembers());
+        sb.append(", creationDate=").append(getCreationDate());
+        sb.append(", modificationDate=").append(getModificationDate());
+        sb.append(", groupType=").append(getGroupType());
+        sb.append(", metadata=").append(getMetadata());
+        sb.append(", id=").append(getId());
+        sb.append(", identifiers=").append(getIdentifiers());
+        sb.append('}');
+        return sb.toString();
     }
 }

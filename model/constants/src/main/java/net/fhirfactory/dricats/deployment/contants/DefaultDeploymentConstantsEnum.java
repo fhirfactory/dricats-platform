@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Mark A. Hunter
+ * Copyright (c) 2024 Mark A. Hunter
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -19,45 +19,46 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.fhirfactory.dricats.internals.model.base;
+package net.fhirfactory.dricats.deployment.contants;
 
-import net.fhirfactory.dricats.internals.model.base.dataytypes.EffectiveDate;
+import org.apache.commons.lang3.StringUtils;
 
-import java.io.Serial;
-import java.io.Serializable;
+/**
+ * @author Mark A. Hunter
+ */
 
-public class DistributableObjectId implements Serializable {
-    //
-    // Housekeeping
-    //
+public enum DefaultDeploymentConstantsEnum {
+    DEPLOYMENT_TIMEZONE("DEPLOYMENT_TIMEZONE", "Australia/Sydney");
 
-    @Serial
-    private static final long serialVersionUID = -12345678900003L;
+    private final String name;
+    private final String value;
 
-    //
-    // Attributes
-    //
-
-    private String idValue;
-    private EffectiveDate effectiveDate;
-
-    //
-    // Bean Methods
-    //
-
-    public String getIdValue() {
-        return idValue;
+    DefaultDeploymentConstantsEnum(String name, String value) {
+        this.name = name;
+        this.value = value;
     }
 
-    public void setIdValue(String idValue) {
-        this.idValue = idValue;
+    public String getName() {
+        return name;
     }
 
-    public EffectiveDate getEffectiveDate() {
-        return effectiveDate;
+    public String getValue() {
+        return value;
     }
 
-    public void setEffectiveDate(EffectiveDate effectiveDate) {
-        this.effectiveDate = effectiveDate;
+    public static String getPropertyValue(String propertyName) {
+        if(StringUtils.isEmpty(propertyName)) {
+            return(null);
+        }
+        for(DefaultDeploymentConstantsEnum constant : DefaultDeploymentConstantsEnum.values()) {
+            if(StringUtils.equalsIgnoreCase(propertyName, constant.getName())) {
+                return(constant.value);
+            }
+        }
+        return(null);
     }
+
+
+
+
 }

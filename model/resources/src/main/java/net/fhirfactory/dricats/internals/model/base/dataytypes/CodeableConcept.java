@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Mark A. Hunter
+ * Copyright (c) 2024 Mark A. Hunter
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -19,62 +19,62 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.fhirfactory.dricats.internals.model.core.entity;
-
-import net.fhirfactory.dricats.internals.model.core.entity.datatypes.TradingName;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+package net.fhirfactory.dricats.internals.model.base.dataytypes;
 
 import java.io.Serial;
-import java.util.Objects;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
-public class Organisation extends LegalEntity{
+public class CodeableConcept implements Serializable {
     //
     // Housekeeping
     //
 
     @Serial
-    private static final long serialVersionUID = -12345678900017L;
-    private static final Logger LOG = LoggerFactory.getLogger(Organisation.class);
+    private static final long serialVersionUID = -12345678900080L;
 
     //
     // Attributes
     //
 
-    private TradingName tradingName;
+    private List<CodeableConceptCode> code;
+    private String display;
+    private String system;
+
+    //
+    // Constructor(s)
+    //
+
+    public CodeableConcept() {
+        setCode(new ArrayList<CodeableConceptCode>());
+    }
 
     //
     // Bean Methods
     //
 
-    public TradingName getTradingName() {
-        return tradingName;
+    public List<CodeableConceptCode> getCode() {
+        return code;
     }
 
-    public void setTradingName(TradingName tradingName) {
-        this.tradingName = tradingName;
+    public void setCode(List<CodeableConceptCode> code) {
+        this.code = code;
     }
 
-    //
-    // Utility Methods
-    //
-
-    @Override
-    protected Logger getLogger() {
-        return LOG;
+    public String getDisplay() {
+        return display;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        if (!super.equals(o)) return false;
-        Organisation that = (Organisation) o;
-        return Objects.equals(getTradingName(), that.getTradingName());
+    public void setDisplay(String display) {
+        this.display = display;
     }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(super.hashCode(), getTradingName());
+    public String getSystem() {
+        return system;
+    }
+
+    public void setSystem(String system) {
+        this.system = system;
     }
 }

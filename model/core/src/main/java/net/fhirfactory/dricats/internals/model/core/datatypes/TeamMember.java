@@ -21,7 +21,7 @@
  */
 package net.fhirfactory.dricats.internals.model.core.datatypes;
 
-import net.fhirfactory.dricats.internals.model.base.DistributedObjectReference;
+import net.fhirfactory.dricats.internals.model.base.DistributableObjectReference;
 import net.fhirfactory.dricats.internals.model.core.valuesets.TeamMemberTypeEnum;
 
 import java.io.Serial;
@@ -33,7 +33,7 @@ public class TeamMember implements Serializable {
     private static final long serialVersionUID = -12345678900020L;
 
     private TeamMemberTypeEnum memberType;
-    private DistributedObjectReference memberReference;
+    private DistributableObjectReference memberReference;
     private LocalDateTime memberJoinDate;
     private LocalDateTime memberLeaveDate;
 
@@ -73,11 +73,11 @@ public class TeamMember implements Serializable {
         this.memberType = memberType;
     }
 
-    public DistributedObjectReference getMemberReference() {
+    public DistributableObjectReference getMemberReference() {
         return memberReference;
     }
 
-    public void setMemberReference(DistributedObjectReference memberReference) {
+    public void setMemberReference(DistributableObjectReference memberReference) {
         this.memberReference = memberReference;
     }
 }

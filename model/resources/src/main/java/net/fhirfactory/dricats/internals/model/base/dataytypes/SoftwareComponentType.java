@@ -19,57 +19,53 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.fhirfactory.dricats.internals.model.core;
+package net.fhirfactory.dricats.internals.model.base.dataytypes;
 
-import net.fhirfactory.dricats.internals.model.base.DistributableObject;
-import net.fhirfactory.dricats.internals.model.core.datatypes.Address;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.Serial;
+import java.io.Serializable;
 import java.util.Objects;
 
-public class Location extends DistributableObject {
+public class SoftwareComponentType implements Serializable {
     //
     // Housekeeping
     //
 
     @Serial
-    private static final long serialVersionUID = -12345678900040L;
-    private static final Logger LOG = LoggerFactory.getLogger(Location.class);
+    private static final long serialVersionUID = -12345678900094L;
+    private static final Logger LOG = LoggerFactory.getLogger(SoftwareComponentType.class);
 
     //
     // Attributes
     //
 
-    private Address address;
-    private String locationName;
+    private CodeableConcept componentTypeDefinition;
+    private String componentTypeVersion;
 
     //
     // Constructor(s)
     //
-    public Location() {
-
-    }
 
     //
     // Bean Methods
     //
 
-    public Address getAddress() {
-        return address;
+    public CodeableConcept getComponentTypeDefinition() {
+        return componentTypeDefinition;
     }
 
-    public void setAddress(Address address) {
-        this.address = address;
+    public void setComponentTypeDefinition(CodeableConcept componentTypeDefinition) {
+        this.componentTypeDefinition = componentTypeDefinition;
     }
 
-    public String getLocationName() {
-        return locationName;
+    public String getComponentTypeVersion() {
+        return componentTypeVersion;
     }
 
-    public void setLocationName(String locationName) {
-        this.locationName = locationName;
+    public void setComponentTypeVersion(String componentTypeVersion) {
+        this.componentTypeVersion = componentTypeVersion;
     }
 
     //
@@ -77,32 +73,28 @@ public class Location extends DistributableObject {
     //
 
     protected Logger getLogger(){
-        return(LOG);
-    }
-
-    @Override
-    public String toString() {
-        final StringBuilder sb = new StringBuilder("Location{");
-        sb.append("address=").append(getAddress());
-        sb.append(", locationName='").append(getLocationName()).append('\'');
-        sb.append(", metadata=").append(getMetadata());
-        sb.append(", id=").append(getId());
-        sb.append(", identifiers=").append(getIdentifiers());
-        sb.append('}');
-        return sb.toString();
+        return LOG;
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        if(!super.equals(o)) return false;
-        Location location = (Location) o;
-        return Objects.equals(getAddress(), location.getAddress()) && Objects.equals(getLocationName(), location.getLocationName());
+        SoftwareComponentType that = (SoftwareComponentType) o;
+        return Objects.equals(getComponentTypeDefinition(), that.getComponentTypeDefinition()) && Objects.equals(getComponentTypeVersion(), that.getComponentTypeVersion());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), getAddress(), getLocationName());
+        return Objects.hash(getComponentTypeDefinition(), getComponentTypeVersion());
+    }
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("SoftwareComponentType{");
+        sb.append("componentTypeDefinition=").append(getComponentTypeDefinition());
+        sb.append(", componentTypeVersion='").append(getComponentTypeVersion()).append('\'');
+        sb.append('}');
+        return sb.toString();
     }
 }

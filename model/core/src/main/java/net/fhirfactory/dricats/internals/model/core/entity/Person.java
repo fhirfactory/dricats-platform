@@ -21,16 +21,30 @@
  */
 package net.fhirfactory.dricats.internals.model.core.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import net.fhirfactory.dricats.internals.model.core.entity.datatypes.HumanName;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.Serial;
 import java.time.LocalDate;
+import java.util.Objects;
 
 public class Person extends LegalEntity{
+    //
+    // Housekeeping
+    //
+
     @Serial
     private static final long serialVersionUID = -12345678900013L;
+    private static final Logger LOG = LoggerFactory.getLogger(Person.class);
+
+    //
+    // Attributes
+    //
 
     private HumanName name;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss.SSSXXX")
     private LocalDate birthDate;
 
     //
@@ -51,5 +65,28 @@ public class Person extends LegalEntity{
 
     public void setBirthDate(LocalDate birthDate) {
         this.birthDate = birthDate;
+    }
+
+    //
+    // Utility Methods
+    //
+
+    @Override
+    protected Logger getLogger(){
+        return(LOG);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        Person person = (Person) o;
+        return Objects.equals(getName(), person.getName()) && Objects.equals(getBirthDate(), person.getBirthDate());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), getName(), getBirthDate());
     }
 }

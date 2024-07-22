@@ -21,12 +21,22 @@
  */
 package net.fhirfactory.dricats.internals.model.base;
 
+import net.fhirfactory.dricats.internals.model.base.dataytypes.EffectiveDate;
+
 import java.io.Serial;
 import java.io.Serializable;
 
 public class DistributableObjectIdentifier implements Serializable {
+    //
+    // Housekeeping
+    //
+
     @Serial
     private static final long serialVersionUID = -12345678900001L;
+
+    //
+    // Attributes
+    //
 
     private String identifierValue;
     private DistributableObjectIdentifierType identifierType;

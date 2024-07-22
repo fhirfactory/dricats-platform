@@ -19,28 +19,41 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.fhirfactory.dricats.internals.model.base;
+package net.fhirfactory.dricats.internals.model.base.dataytypes;
 
 import java.io.Serial;
 import java.io.Serializable;
 
-public class DistributedObjectReference implements Serializable {
-    @Serial
-    private static final long serialVersionUID = -12345678900008L;
+public class CodeableConceptCode implements Serializable {
+    //
+    // Housekeeping
+    //
 
-    private DistributableObjectIdentifier identifier;
+    @Serial
+    private static final long serialVersionUID = -12345678900081L;
+
+    //
+    // Attributes
+    //
+
+    private String code;
     private String display;
+    private String system;
+
+    //
+    // Constructor(s)
+    //
 
     //
     // Bean Methods
     //
 
-    public DistributableObjectIdentifier getIdentifier() {
-        return identifier;
+    public String getCode() {
+        return code;
     }
 
-    public void setIdentifier(DistributableObjectIdentifier identifier) {
-        this.identifier = identifier;
+    public void setCode(String code) {
+        this.code = code;
     }
 
     public String getDisplay() {
@@ -49,5 +62,13 @@ public class DistributedObjectReference implements Serializable {
 
     public void setDisplay(String display) {
         this.display = display;
+    }
+
+    public String getSystem() {
+        return system;
+    }
+
+    public void setSystem(String system) {
+        this.system = system;
     }
 }

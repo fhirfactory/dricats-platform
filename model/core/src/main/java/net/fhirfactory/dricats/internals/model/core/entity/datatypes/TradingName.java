@@ -21,7 +21,7 @@
  */
 package net.fhirfactory.dricats.internals.model.core.entity.datatypes;
 
-import net.fhirfactory.dricats.internals.model.base.EffectiveDate;
+import net.fhirfactory.dricats.internals.model.base.dataytypes.EffectiveDate;
 
 import java.io.Serial;
 import java.io.Serializable;

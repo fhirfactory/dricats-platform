@@ -19,36 +19,11 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.fhirfactory.dricats.internals.model.base;
+package net.fhirfactory.dricats.internals.model.base.valuesets;
 
-import java.io.Serial;
-import java.io.Serializable;
-import java.time.LocalDateTime;
-
-public class EffectiveDate implements Serializable {
-    @Serial
-    private static final long serialVersionUID = -12345678900006L;
-
-    private LocalDateTime effectiveStartDate;
-    private LocalDateTime effectiveEndDate;
-
-    //
-    // Bean Methods
-    //
-
-    public LocalDateTime getEffectiveStartDate() {
-        return effectiveStartDate;
-    }
-
-    public void setEffectiveStartDate(LocalDateTime effectiveStartDate) {
-        this.effectiveStartDate = effectiveStartDate;
-    }
-
-    public LocalDateTime getEffectiveEndDate() {
-        return effectiveEndDate;
-    }
-
-    public void setEffectiveEndDate(LocalDateTime effectiveEndDate) {
-        this.effectiveEndDate = effectiveEndDate;
-    }
+public enum InternalTaskTypeEnum {
+    INTERNAL_TASK_TYPE_ARCHETYPE,
+    INTERNAL_TASK_TYPE_ACTIONABLE,
+    INTERNAL_TASK_TYPE_FULFILLMENT,
+    INTERNAL_TASK_TYPE_AGGREGATE
 }

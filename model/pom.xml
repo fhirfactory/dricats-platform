@@ -18,6 +18,7 @@
         <module>messaging</module>
         <module>tasking</module>
         <module>core</module>
+        <module>constants</module>
     </modules>
     <packaging>pom</packaging>
 

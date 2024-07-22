@@ -22,17 +22,29 @@
 package net.fhirfactory.dricats.internals.model.core.entity;
 
 import net.fhirfactory.dricats.internals.model.base.DistributableObject;
-import net.fhirfactory.dricats.internals.model.base.DistributedObjectReference;
+import net.fhirfactory.dricats.internals.model.base.DistributableObjectReference;
 import net.fhirfactory.dricats.internals.model.core.entity.valuesets.EntityRelationshipTypeEnum;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.Serial;
+import java.util.Objects;
 
 public class EntityRelationship extends DistributableObject {
+    //
+    // Housekeeping
+    //
+
     @Serial
     private static final long serialVersionUID = -12345678900011L;
+    private static final Logger LOG = LoggerFactory.getLogger(EntityRelationship.class);
 
-    private DistributedObjectReference relationshipSource;
-    private DistributedObjectReference relationshipTarget;
+    //
+    // Attributes
+    //
+
+    private DistributableObjectReference relationshipSource;
+    private DistributableObjectReference relationshipTarget;
     private EntityRelationshipTypeEnum relationshipType;
 
     //
@@ -47,19 +59,53 @@ public class EntityRelationship extends DistributableObject {
         this.relationshipType = relationshipType;
     }
 
-    public DistributedObjectReference getRelationshipSource() {
+    public DistributableObjectReference getRelationshipSource() {
         return relationshipSource;
     }
 
-    public void setRelationshipSource(DistributedObjectReference relationshipSource) {
+    public void setRelationshipSource(DistributableObjectReference relationshipSource) {
         this.relationshipSource = relationshipSource;
     }
 
-    public DistributedObjectReference getRelationshipTarget() {
+    public DistributableObjectReference getRelationshipTarget() {
         return relationshipTarget;
     }
 
-    public void setRelationshipTarget(DistributedObjectReference relationshipTarget) {
+    public void setRelationshipTarget(DistributableObjectReference relationshipTarget) {
         this.relationshipTarget = relationshipTarget;
+    }
+
+    //
+    // Utility Methods
+    //
+
+    protected Logger getLogger(){
+        return(LOG);
+    }
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("EntityRelationship{");
+        sb.append("relationshipSource=").append(getRelationshipSource());
+        sb.append(", relationshipTarget=").append(getRelationshipTarget());
+        sb.append(", relationshipType=").append(getRelationshipType());
+        sb.append(", metadata=").append(getMetadata());
+        sb.append(", id=").append(getId());
+        sb.append(", identifiers=").append(getIdentifiers());
+        sb.append('}');
+        return sb.toString();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        EntityRelationship that = (EntityRelationship) o;
+        return Objects.equals(getRelationshipSource(), that.getRelationshipSource()) && Objects.equals(getRelationshipTarget(), that.getRelationshipTarget()) && getRelationshipType() == that.getRelationshipType();
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getRelationshipSource(), getRelationshipTarget(), getRelationshipType());
     }
 }

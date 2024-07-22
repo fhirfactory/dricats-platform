@@ -26,8 +26,16 @@ import java.io.Serializable;
 import java.net.URI;
 
 public class DistributableObjectIdentifierType implements Serializable {
+    //
+    // Housekeeping
+    //
+
     @Serial
     private static final long serialVersionUID = -12345678900005L;
+
+    //
+    // Attributes
+    //
 
     private String code;
     private String value;

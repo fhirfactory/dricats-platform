@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Mark A. Hunter
+ * Copyright (c) 2024 Mark A. Hunter
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -19,45 +19,11 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.fhirfactory.dricats.internals.model.base;
+package net.fhirfactory.dricats.internals.model.base.valuesets;
 
-import net.fhirfactory.dricats.internals.model.base.dataytypes.EffectiveDate;
-
-import java.io.Serial;
-import java.io.Serializable;
-
-public class DistributableObjectId implements Serializable {
-    //
-    // Housekeeping
-    //
-
-    @Serial
-    private static final long serialVersionUID = -12345678900003L;
-
-    //
-    // Attributes
-    //
-
-    private String idValue;
-    private EffectiveDate effectiveDate;
-
-    //
-    // Bean Methods
-    //
-
-    public String getIdValue() {
-        return idValue;
-    }
-
-    public void setIdValue(String idValue) {
-        this.idValue = idValue;
-    }
-
-    public EffectiveDate getEffectiveDate() {
-        return effectiveDate;
-    }
-
-    public void setEffectiveDate(EffectiveDate effectiveDate) {
-        this.effectiveDate = effectiveDate;
-    }
+public enum NotificationTypeEnum {
+    OBJECT_CREATION,
+    OBJECT_MODIFICATION,
+    OBJECT_DELETION,
+    INFORMATIVE_TEXT
 }

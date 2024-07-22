@@ -22,25 +22,71 @@
 package net.fhirfactory.dricats.internals.model.core.entity;
 
 import net.fhirfactory.dricats.internals.model.base.DistributableObject;
-import net.fhirfactory.dricats.internals.model.base.DistributedObjectReference;
+import net.fhirfactory.dricats.internals.model.base.DistributableObjectReference;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.Serial;
+import java.util.Objects;
 
 public class LegalEntity extends DistributableObject {
+    //
+    // Housekeeping
+    //
+
     @Serial
     private static final long serialVersionUID = -12345678900012L;
+    private static final Logger LOG = LoggerFactory.getLogger(LegalEntity.class);
 
-    private DistributedObjectReference serviceProviderRole;
+    //
+    // Attributes
+    //
+
+    private DistributableObjectReference serviceProviderRole;
 
     //
     // Bean Methods
     //
 
-    public DistributedObjectReference getServiceProviderRole() {
+    public DistributableObjectReference getServiceProviderRole() {
         return serviceProviderRole;
     }
 
-    public void setServiceProviderRole(DistributedObjectReference serviceProviderRole) {
+    public void setServiceProviderRole(DistributableObjectReference serviceProviderRole) {
         this.serviceProviderRole = serviceProviderRole;
+    }
+
+    //
+    // Utility Methods
+    //
+
+    @Override
+    protected Logger getLogger(){
+        return LOG;
+    }
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("LegalEntity{");
+        sb.append("serviceProviderRole=").append(getServiceProviderRole());
+        sb.append(", metadata=").append(getMetadata());
+        sb.append(", id=").append(getId());
+        sb.append(", identifiers=").append(getIdentifiers());
+        sb.append('}');
+        return sb.toString();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        LegalEntity that = (LegalEntity) o;
+        return Objects.equals(getServiceProviderRole(), that.getServiceProviderRole());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getServiceProviderRole(), super.hashCode());
     }
 }
