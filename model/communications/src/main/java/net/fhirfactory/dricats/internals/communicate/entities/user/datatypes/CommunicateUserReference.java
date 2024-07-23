@@ -21,12 +21,15 @@
  */
 package net.fhirfactory.dricats.internals.communicate.entities.user.datatypes;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import net.fhirfactory.dricats.internals.communicate.entities.user.valuesets.CommunicateUserTypeEnum;
-import net.fhirfactory.dricats.core.model.ui.resources.simple.datatypes.ReferenceESDT;
+import net.fhirfactory.dricats.internals.model.base.DistributableObjectReference;
 
-public class CommunicateUserReference extends ReferenceESDT {
+public class CommunicateUserReference extends DistributableObjectReference {
     private CommunicateUserTypeEnum userType;
+
+    //
+    // Bean Methods
+    //
 
     public CommunicateUserTypeEnum getUserType() {
         return userType;
@@ -36,24 +39,5 @@ public class CommunicateUserReference extends ReferenceESDT {
         this.userType = userType;
     }
 
-    @JsonIgnore
-    public CommunicateUserID getUserID() {
-        CommunicateUserID id = new CommunicateUserID(getSimplifiedID());
-        return (id);
-    }
 
-    @JsonIgnore
-    public void setUserID(CommunicateUserID userID) {
-        this.setSimplifiedID(userID.getValue());
-    }
-
-    @Override
-    public String toString() {
-        return "CommunicateUserReference{" +
-                "userType=" + userType +
-                ", userID=" + getUserID() +
-                ", identifier=" + getIdentifier() +
-                ", resourceType=" + getResourceType() +
-                '}';
-    }
 }

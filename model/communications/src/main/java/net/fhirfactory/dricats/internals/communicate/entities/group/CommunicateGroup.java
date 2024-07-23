@@ -23,17 +23,26 @@ package net.fhirfactory.dricats.internals.communicate.entities.group;
 
 import net.fhirfactory.dricats.internals.communicate.entities.rooms.datatypes.CommunicateRoomReference;
 import net.fhirfactory.dricats.internals.communicate.entities.user.CommunicateUser;
-import net.fhirfactory.dricats.internals.model.core.Group;
+import net.fhirfactory.dricats.internals.model.core.individuals.Group;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.Serial;
+import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class CommunicateGroup extends Group {
+    //
+    // Housekeeping
+    //
+
     @Serial
     private static final long serialVersionUID = -12345678900045L;
     private static final Logger LOG = LoggerFactory.getLogger(CommunicateGroup.class);
+
+    //
+    // Attributes
+    //
 
     private ConcurrentHashMap<String, CommunicateRoomReference> allRooms;
     private CommunicateUser surrogateCommunicateUser;
@@ -72,9 +81,40 @@ public class CommunicateGroup extends Group {
     // Utility Methods
     //
 
-
     @Override
     protected Logger getLogger() {
         return (LOG);
+    }
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("CommunicateGroup{");
+        sb.append("allRooms=").append(getAllRooms());
+        sb.append(", surrogateCommunicateUser=").append(getSurrogateCommunicateUser());
+        sb.append(", groupId='").append(getGroupId()).append('\'');
+        sb.append(", groupName='").append(getGroupName()).append('\'');
+        sb.append(", groupMembers=").append(getGroupMembers());
+        sb.append(", creationDate=").append(getCreationDate());
+        sb.append(", modificationDate=").append(getModificationDate());
+        sb.append(", groupType=").append(getGroupType());
+        sb.append(", metadata=").append(getMetadata());
+        sb.append(", id=").append(getId());
+        sb.append(", identifiers=").append(getIdentifiers());
+        sb.append('}');
+        return sb.toString();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        CommunicateGroup that = (CommunicateGroup) o;
+        return Objects.equals(getAllRooms(), that.getAllRooms()) && Objects.equals(getSurrogateCommunicateUser(), that.getSurrogateCommunicateUser());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), getAllRooms(), getSurrogateCommunicateUser());
     }
 }

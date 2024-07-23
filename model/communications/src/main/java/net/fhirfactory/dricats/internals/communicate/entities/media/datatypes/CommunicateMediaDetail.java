@@ -21,14 +21,32 @@
  */
 package net.fhirfactory.dricats.internals.communicate.entities.media.datatypes;
 
+import net.fhirfactory.dricats.internals.communicate.entities.location.CommunicateLocation;
 import net.fhirfactory.dricats.internals.communicate.entities.media.valuesets.CommunicateMediaTypeEnum;
 import net.fhirfactory.dricats.internals.communicate.entities.rooms.datatypes.CommunicateRoomReference;
 import net.fhirfactory.dricats.internals.communicate.entities.user.datatypes.CommunicateUserReference;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.io.Serial;
+import java.io.Serializable;
 import java.net.URL;
 import java.util.HashMap;
+import java.util.Objects;
 
-public class CommunicateMediaDetail {
+public class CommunicateMediaDetail implements Serializable {
+    //
+    // Housekeeping
+    //
+
+    @Serial
+    private static final long serialVersionUID = -12345678900142L;
+    private static final Logger LOG = LoggerFactory.getLogger(CommunicateLocation.class);
+
+    //
+    // Attributes
+    //
+
     private URL mediaURL;
     private String friendlyName;
     private HashMap<String, String> mediaMetadata;
@@ -36,9 +54,17 @@ public class CommunicateMediaDetail {
     private CommunicateUserReference sourceUser;
     private CommunicateMediaTypeEnum mediaType;
 
+    //
+    // Constructor(s)
+    //
+
     public CommunicateMediaDetail() {
         mediaMetadata = new HashMap<String, String>();
     }
+
+    //
+    // Bean Methods
+    //
 
     public URL getMediaURL() {
         return mediaURL;
@@ -86,5 +112,39 @@ public class CommunicateMediaDetail {
 
     public void setMediaMetadata(HashMap<String, String> mediaMetadata) {
         this.mediaMetadata = mediaMetadata;
+    }
+
+    //
+    // Utility methods
+    //
+
+    protected Logger getLogger() {
+        return LOG;
+    }
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("CommunicateMediaDetail{");
+        sb.append("mediaURL=").append(getMediaURL());
+        sb.append(", friendlyName='").append(getFriendlyName()).append('\'');
+        sb.append(", mediaMetadata=").append(getMediaMetadata());
+        sb.append(", sourceRoom=").append(getSourceRoom());
+        sb.append(", sourceUser=").append(getSourceUser());
+        sb.append(", mediaType=").append(getMediaType());
+        sb.append('}');
+        return sb.toString();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        CommunicateMediaDetail that = (CommunicateMediaDetail) o;
+        return Objects.equals(getMediaURL(), that.getMediaURL()) && Objects.equals(getFriendlyName(), that.getFriendlyName()) && Objects.equals(getMediaMetadata(), that.getMediaMetadata()) && Objects.equals(getSourceRoom(), that.getSourceRoom()) && Objects.equals(getSourceUser(), that.getSourceUser()) && getMediaType() == that.getMediaType();
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getMediaURL(), getFriendlyName(), getMediaMetadata(), getSourceRoom(), getSourceUser(), getMediaType());
     }
 }

@@ -21,12 +21,10 @@
  */
 package net.fhirfactory.dricats.internals.communicate.entities.team;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import net.fhirfactory.dricats.internals.communicate.entities.team.valuesets.CommunicateCareTeamTypeEnum;
 import net.fhirfactory.dricats.internals.communicate.entities.rooms.datatypes.CommunicateRoomReference;
 import net.fhirfactory.dricats.internals.communicate.entities.session.CommunicateSession;
 import net.fhirfactory.dricats.internals.communicate.entities.user.datatypes.CommunicateUserReference;
-import net.fhirfactory.dricats.internals.model.core.Team;
+import net.fhirfactory.dricats.internals.model.core.entity.Team;
 import org.apache.commons.lang3.SerializationUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -21,14 +21,29 @@
  */
 package net.fhirfactory.dricats.internals.communicate.entities.message;
 
-import net.fhirfactory.dricats.core.model.ui.resources.simple.CommunicateMessageESR;
 import net.fhirfactory.dricats.internals.communicate.entities.message.valuesets.CommunicateSMSStatusEnum;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.io.Serial;
 import java.time.Instant;
+import java.util.Objects;
 
 //TODO work out where the split for general SMS in Pegacorn and Modica specific
 //     stuff is
-public class CommunicateSMSMessage extends CommunicateMessageESR {
+public class CommunicateSMSMessage extends CommunicateMessage {
+    //
+    // Housekeeping
+    //
+
+    @Serial
+    private static final long serialVersionUID = -12345678900163L;
+    private static final Logger LOG = LoggerFactory.getLogger(CommunicateSMSMessage.class);
+
+    //
+    // Attributes
+    //
+
     private String messageId;
     private String phoneNumber;
     private String message;
@@ -97,22 +112,45 @@ public class CommunicateSMSMessage extends CommunicateMessageESR {
     //
 
     @Override
+    protected Logger getLogger(){
+        return LOG;
+    }
+
+    @Override
     public String toString() {
-        return "CommunicateSMSMessage{" +
-                "messageId='" + messageId + '\'' +
-                ", phoneNumber='" + phoneNumber + '\'' +
-                ", message='" + message + '\'' +
-                ", sendDate=" + sendDate +
-                ", status=" + status +
-                ", resourceType=" + getResourceType() +
-                ", systemManaged=" + isSystemManaged() +
-                ", simplifiedID='" + getSimplifiedID() + '\'' +
-                ", otherID='" + getOtherID() + '\'' +
-                ", identifiers=" + getIdentifiers() +
-                ", displayName='" + getDisplayName() + '\'' +
-                ", simplifiedIDMetadata=" + getSimplifiedIDMetadata() +
-                ", description='" + getDescription() + '\'' +
-                ", resourceESRType=" + getResourceESRType() +
-                '}';
+        final StringBuilder sb = new StringBuilder("CommunicateSMSMessage{");
+        sb.append("messageId='").append(getMessageId()).append('\'');
+        sb.append(", phoneNumber='").append(getPhoneNumber()).append('\'');
+        sb.append(", message='").append(getMessage()).append('\'');
+        sb.append(", sendDate=").append(getSendDate());
+        sb.append(", status=").append(getStatus());
+        sb.append(", messageIdentifier=").append(getMessageIdentifier());
+        sb.append(", sourceRoom=").append(getSourceRoom());
+        sb.append(", sourceUser=").append(getSourceUser());
+        sb.append(", messageType=").append(getMessageType());
+        sb.append(", messageContent=").append(getMessageContent());
+        sb.append(", inResponseTo=").append(getInResponseTo());
+        sb.append(", messageSource=").append(getMessageSource());
+        sb.append(", messageTarget=").append(getMessageTarget());
+        sb.append(", messageSendDate=").append(getMessageSendDate());
+        sb.append(", messageReceiveDate=").append(getMessageReceiveDate());
+        sb.append(", messageSequenceNumber=").append(getMessageSequenceNumber());
+        sb.append(", messagePayload=").append(getMessagePayload());
+        sb.append('}');
+        return sb.toString();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        CommunicateSMSMessage that = (CommunicateSMSMessage) o;
+        return Objects.equals(getMessageId(), that.getMessageId()) && Objects.equals(getPhoneNumber(), that.getPhoneNumber()) && Objects.equals(getMessage(), that.getMessage()) && Objects.equals(getSendDate(), that.getSendDate()) && getStatus() == that.getStatus();
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), getMessageId(), getPhoneNumber(), getMessage(), getSendDate(), getStatus());
     }
 }

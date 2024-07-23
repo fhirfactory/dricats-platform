@@ -23,6 +23,7 @@ package net.fhirfactory.dricats.internals.model.core.entity;
 
 import net.fhirfactory.dricats.internals.model.base.DistributableObject;
 import net.fhirfactory.dricats.internals.model.base.DistributableObjectReference;
+import net.fhirfactory.dricats.internals.model.base.dataytypes.EffectiveDate;
 import net.fhirfactory.dricats.internals.model.core.entity.valuesets.EntityRelationshipTypeEnum;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,10 +47,19 @@ public class EntityRelationship extends DistributableObject {
     private DistributableObjectReference relationshipSource;
     private DistributableObjectReference relationshipTarget;
     private EntityRelationshipTypeEnum relationshipType;
+    private EffectiveDate relationshipEffectiveDate;
 
     //
     // Bean Methods
     //
+
+    public EffectiveDate getRelationshipEffectiveDate() {
+        return relationshipEffectiveDate;
+    }
+
+    public void setRelationshipEffectiveDate(EffectiveDate relationshipEffectiveDate) {
+        this.relationshipEffectiveDate = relationshipEffectiveDate;
+    }
 
     public EntityRelationshipTypeEnum getRelationshipType() {
         return relationshipType;
@@ -92,6 +102,7 @@ public class EntityRelationship extends DistributableObject {
         sb.append(", metadata=").append(getMetadata());
         sb.append(", id=").append(getId());
         sb.append(", identifiers=").append(getIdentifiers());
+        sb.append(", relationshipEffectiveDate=").append(getRelationshipEffectiveDate());
         sb.append('}');
         return sb.toString();
     }
@@ -100,12 +111,13 @@ public class EntityRelationship extends DistributableObject {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
         EntityRelationship that = (EntityRelationship) o;
-        return Objects.equals(getRelationshipSource(), that.getRelationshipSource()) && Objects.equals(getRelationshipTarget(), that.getRelationshipTarget()) && getRelationshipType() == that.getRelationshipType();
+        return Objects.equals(getRelationshipSource(), that.getRelationshipSource()) && Objects.equals(getRelationshipTarget(), that.getRelationshipTarget()) && getRelationshipType() == that.getRelationshipType() && Objects.equals(getRelationshipEffectiveDate(), that.getRelationshipEffectiveDate());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getRelationshipSource(), getRelationshipTarget(), getRelationshipType());
+        return Objects.hash(super.hashCode(), getRelationshipEffectiveDate(), getRelationshipSource(), getRelationshipTarget(), getRelationshipType());
     }
 }

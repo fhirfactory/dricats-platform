@@ -25,10 +25,19 @@ import net.fhirfactory.dricats.internals.model.base.dataytypes.EffectiveDate;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.util.Objects;
 
 public class TradingName implements Serializable {
+    //
+    // Housekeeping
+    //
+
     @Serial
     private static final long serialVersionUID = -12345678900018L;
+
+    //
+    // Attributes
+    //
 
     private String name;
     private EffectiveDate effectiveDate;
@@ -51,5 +60,31 @@ public class TradingName implements Serializable {
 
     public void setEffectiveDate(EffectiveDate effectiveDate) {
         this.effectiveDate = effectiveDate;
+    }
+
+    //
+    // Utility Methods
+    //
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("TradingName{");
+        sb.append("name='").append(getName()).append('\'');
+        sb.append(", effectiveDate=").append(getEffectiveDate());
+        sb.append('}');
+        return sb.toString();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        TradingName that = (TradingName) o;
+        return Objects.equals(getName(), that.getName()) && Objects.equals(getEffectiveDate(), that.getEffectiveDate());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getName(), getEffectiveDate());
     }
 }

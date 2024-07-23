@@ -21,13 +21,36 @@
  */
 package net.fhirfactory.dricats.internals.communicate.entities.media;
 
-import net.fhirfactory.dricats.internals.communicate.entities.media.datatypes.CommunicateMediaContent;
 import net.fhirfactory.dricats.internals.communicate.entities.media.datatypes.CommunicateMediaDetail;
-import net.fhirfactory.dricats.core.model.ui.resources.simple.MediaESR;
+import net.fhirfactory.dricats.internals.model.base.MediaObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-public class CommunicateMedia extends MediaESR {
+import java.io.Serial;
+import java.util.Objects;
+
+public class CommunicateMedia extends MediaObject {
+    //
+    // Housekeeping
+    //
+
+    @Serial
+    private static final long serialVersionUID = -12345678900147L;
+    private static final Logger LOG = LoggerFactory.getLogger(CommunicateMedia.class);
+
+    //
+    // Attributes
+    //
+
     private CommunicateMediaDetail mediaDetails;
-    private CommunicateMediaContent mediaContent;
+
+    //
+    // Constructor(s)
+    //
+
+    //
+    // Bean Methods
+    //
 
     public CommunicateMediaDetail getMediaDetails() {
         return mediaDetails;
@@ -37,11 +60,41 @@ public class CommunicateMedia extends MediaESR {
         this.mediaDetails = mediaDetails;
     }
 
-    public CommunicateMediaContent getMediaContent() {
-        return mediaContent;
+    //
+    // Utility Methods
+    //
+
+    protected Logger getLogger() {
+        return LOG;
     }
 
-    public void setMediaContent(CommunicateMediaContent mediaContent) {
-        this.mediaContent = mediaContent;
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("CommunicateMedia{");
+        sb.append("mediaDetails=").append(getMediaDetails());
+        sb.append(", mediaContent=").append(getMediaContent());
+        sb.append(", mediaReference='").append(getMediaReference()).append('\'');
+        sb.append(", mediaSize=").append(getMediaSize());
+        sb.append(", mediaCreationDate=").append(getMediaCreationDate());
+        sb.append(", mediaUpdateDate=").append(getMediaUpdateDate());
+        sb.append(", metadata=").append(getMetadata());
+        sb.append(", id=").append(getId());
+        sb.append(", identifiers=").append(getIdentifiers());
+        sb.append('}');
+        return sb.toString();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        CommunicateMedia that = (CommunicateMedia) o;
+        return Objects.equals(getMediaDetails(), that.getMediaDetails());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), getMediaDetails());
     }
 }

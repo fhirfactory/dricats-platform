@@ -22,17 +22,31 @@
 package net.fhirfactory.dricats.internals.communicate.entities.location;
 
 import net.fhirfactory.dricats.internals.communicate.entities.user.datatypes.CommunicateUserReference;
-import net.fhirfactory.dricats.internals.model.core.Location;
+import net.fhirfactory.dricats.internals.model.core.entity.Location;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.Serial;
+import java.util.Objects;
 
 public class CommunicateLocation extends Location {
+    //
+    // Housekeeping
+    //
+
     @Serial
     private static final long serialVersionUID = -12345678900042L;
     private static final Logger LOG = LoggerFactory.getLogger(CommunicateLocation.class);
+
+    //
+    // Attributes
+    //
+
     private CommunicateUserReference surrogateCommunicateUser;
+
+    //
+    // Constructor(s)
+    //
 
     public CommunicateLocation() {
         super();
@@ -58,5 +72,32 @@ public class CommunicateLocation extends Location {
     @Override
     protected Logger getLogger() {
         return (LOG);
+    }
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("CommunicateLocation{");
+        sb.append("surrogateCommunicateUser=").append(getSurrogateCommunicateUser());
+        sb.append(", address=").append(getAddress());
+        sb.append(", locationName='").append(getLocationName()).append('\'');
+        sb.append(", metadata=").append(getMetadata());
+        sb.append(", id=").append(getId());
+        sb.append(", identifiers=").append(getIdentifiers());
+        sb.append('}');
+        return sb.toString();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        CommunicateLocation that = (CommunicateLocation) o;
+        return Objects.equals(getSurrogateCommunicateUser(), that.getSurrogateCommunicateUser());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), getSurrogateCommunicateUser());
     }
 }

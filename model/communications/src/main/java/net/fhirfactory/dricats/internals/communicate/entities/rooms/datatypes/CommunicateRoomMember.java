@@ -21,20 +21,17 @@
  */
 package net.fhirfactory.dricats.internals.communicate.entities.rooms.datatypes;
 
-import net.fhirfactory.dricats.core.model.dates.EffectivePeriod;
 import net.fhirfactory.dricats.internals.communicate.entities.user.CommunicateUser;
-import net.fhirfactory.dricats.internals.fhir.r4.resources.group.valuesets.GroupMemberContextualTypeExtensionEnum;
+import net.fhirfactory.dricats.internals.model.base.dataytypes.EffectiveDate;
 
-public class CommunicateRoomMember {
+public class CommunicateRoomMember{
     private CommunicateUser member;
-    private GroupMemberContextualTypeExtensionEnum memberType;
     private Integer memberPowerLevel;
-    private EffectivePeriod activePeriod;
+    private EffectiveDate activePeriod;
 
     public CommunicateRoomMember() {
         this.member = null;
-        this.memberType = GroupMemberContextualTypeExtensionEnum.CONTEXTUAL_USER_TYPE_GENERAL;
-        this.activePeriod = new EffectivePeriod();
+        this.activePeriod = new EffectiveDate();
         this.memberPowerLevel = null;
     }
 
@@ -46,14 +43,6 @@ public class CommunicateRoomMember {
         this.member = member;
     }
 
-    public GroupMemberContextualTypeExtensionEnum getMemberType() {
-        return memberType;
-    }
-
-    public void setMemberType(GroupMemberContextualTypeExtensionEnum memberType) {
-        this.memberType = memberType;
-    }
-
     public Integer getMemberPowerLevel() {
         return memberPowerLevel;
     }
@@ -62,11 +51,11 @@ public class CommunicateRoomMember {
         this.memberPowerLevel = memberPowerLevel;
     }
 
-    public EffectivePeriod getActivePeriod() {
+    public EffectiveDate getActivePeriod() {
         return activePeriod;
     }
 
-    public void setActivePeriod(EffectivePeriod activePeriod) {
+    public void setActivePeriod(EffectiveDate activePeriod) {
         this.activePeriod = activePeriod;
     }
 

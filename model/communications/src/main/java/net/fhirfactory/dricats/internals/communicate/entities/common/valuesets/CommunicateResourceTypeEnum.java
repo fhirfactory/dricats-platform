@@ -22,25 +22,12 @@
 package net.fhirfactory.dricats.internals.communicate.entities.common.valuesets;
 
 public enum CommunicateResourceTypeEnum {
-    COMMUNICATE_CARETEAM("communicate.resource.careteam", "CommunicateCareTeam"),
-    COMMUNICATE_CODE_RESPONDER_TEAM("communicate.resource.code_responder_team", "CommunicateCodeResponderTeam"),
-    COMMUNICATE_GROUP("communicate.resource.careteam", "CommunicateGroup"),
-    COMMUNICATE_HEALTHCARESERVICE("communicate.resource.healthcare_service", "CommunicateHealthcareService"),
+    COMMUNICATE_TEAM("communicate.resource.team", "CommunicateTeam"),
+    COMMUNICATE_GROUP("communicate.resource.group", "CommunicateGroup"),
     COMMUNICATE_LOCATION("communicate.resource.location", "CommunicateLocation"),
     COMMUNICATE_MEDIA("communicate.resource.media", "CommunicateMedia"),
     COMMUNICATE_MESSAGE("communicate.resource.message", "CommunicateMessage"),
     COMMUNICATE_ORGANIZATION("communicate.resource.organization", "CommunicateOrganization"),
-    COMMUNICATE_PATIENT("communicate.resource.patient", "CommunicatePatient"),
-    COMMUNICATE_PRACTITIONER("communicate.resource.practitioner", "CommunicatePractitioner"),
-    COMMUNICATE_PRACTITIONER_ROLE("communicate.resource.practitioner_role", "CommunicationPractitionerRole"),
-    COMMUNICATE_ROOM_CODE_RESPONDER("communicate.resource.room.code_responder", "CommunicateCodeResponderRoom"),
-    COMMUNICATE_ROOM_HISTORIC("communicate.resource.room.historic", "CommunicateHistoricRoom"),
-    COMMUNICATE_ROOM_PATIENT_CENTRAL("communicate.resource.room.patient_central", "CommunicatePatientCentralRoom"),
-    COMMUNICATE_ROOM_PATIENT_CENTRAL_TASK_FULFILLMENT("communicate.resource.room.patient_central_task_fulfillment", "CommunicatePatientCentricTaskFulfillmentRoom"),
-    COMMUNICATE_ROOM_PRACTITIONER_MY_CALLS("communicate.resource.room.practitioner_my_calls", "CommunicatePractitionerMyCallsRoom"),
-    COMMUNICATE_ROOM_PRACTITIONER_MY_MEDIA("communicate.resource.room.practitioner_my_media", "CommunicatePractitionerMyMediaRoom"),
-    COMMUNICATE_ROOM_PRACTITIONER_ROLE_CENTRAL("communicate.resource.room.practitioner_role_central", "CommunicatePractitionerRoleCentralRoom"),
-    COMMUNICATE_ROOM_PRACTITIONER_ROLE_FULFILLMENT("communicate.resource.room.practitioner_role_fulfillment", "CommunicatePractitionerRoleFulfilmentRoom"),
     COMMUNICATE_ROOM("communicate.resource.room", "CommunicateRoom"),
     COMMUNICATE_SESSION("communicate.resource.session", "CommunicateSession"),
     COMMUNICATE_USER("communicate.resource.room.code_responder", "CommunicateUser");
@@ -76,16 +63,6 @@ public enum CommunicateResourceTypeEnum {
 
     public String getResourceTypeID() {
         return (this.resourceTypeID);
-    }
-
-    public DataParcelTypeDescriptor getDataParcelTypeDescriptor() {
-        DataParcelTypeDescriptor descriptor = new DataParcelTypeDescriptor();
-        descriptor.setDataParcelDefiner("FHIRFactory");
-        descriptor.setDataParcelCategory("Collaboration");
-        descriptor.setDataParcelSubCategory("Communicate");
-        descriptor.setDataParcelResource(resourceName);
-        descriptor.setVersion("1.0.0");
-        return (descriptor);
     }
 
     public String getResourceName() {

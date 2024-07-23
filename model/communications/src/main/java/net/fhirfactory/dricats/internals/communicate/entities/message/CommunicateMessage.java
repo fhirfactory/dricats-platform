@@ -21,20 +21,45 @@
  */
 package net.fhirfactory.dricats.internals.communicate.entities.message;
 
-import net.fhirfactory.dricats.core.model.ui.resources.simple.CommunicateMessageESR;
 import net.fhirfactory.dricats.internals.communicate.entities.message.datatypes.CommunicateMessageContentBase;
 import net.fhirfactory.dricats.internals.communicate.entities.message.datatypes.CommunicateMessageIdentifier;
 import net.fhirfactory.dricats.internals.communicate.entities.message.valuesets.CommunicateMessageTypeEnum;
 import net.fhirfactory.dricats.internals.communicate.entities.rooms.datatypes.CommunicateRoomReference;
 import net.fhirfactory.dricats.internals.communicate.entities.user.datatypes.CommunicateUserReference;
+import net.fhirfactory.dricats.internals.model.base.MessageObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-public class CommunicateMessage extends CommunicateMessageESR {
+import java.io.Serial;
+import java.util.Objects;
+
+public class CommunicateMessage extends MessageObject {
+    //
+    // Housekeeping
+    //
+
+    @Serial
+    private static final long serialVersionUID = -12345678900147L;
+    private static final Logger LOG = LoggerFactory.getLogger(CommunicateMessage.class);
+
+    //
+    // Attributes
+    //
+
     private CommunicateMessageIdentifier messageIdentifier;
     private CommunicateRoomReference sourceRoom;
     private CommunicateUserReference sourceUser;
     private CommunicateMessageTypeEnum messageType;
     private CommunicateMessageContentBase messageContent;
     private CommunicateMessageIdentifier inResponseTo;
+
+    //
+    // Constructor(s)
+    //
+
+    //
+    // Bean Methods
+    //
 
     public CommunicateMessageIdentifier getMessageIdentifier() {
         return messageIdentifier;
@@ -84,15 +109,46 @@ public class CommunicateMessage extends CommunicateMessageESR {
         this.inResponseTo = inResponseTo;
     }
 
+    //
+    // Utility Methods
+    //
+
+    @Override
+    protected Logger getLogger() {
+        return LOG;
+    }
+
     @Override
     public String toString() {
-        return "CommunicateMessage{" +
-                "messageIdentifier=" + messageIdentifier +
-                ", sourceRoom=" + sourceRoom +
-                ", sourceUser=" + sourceUser +
-                ", messageType=" + messageType +
-                ", messageContent=" + messageContent +
-                ", inResponseTo=" + inResponseTo +
-                '}';
+        final StringBuilder sb = new StringBuilder("CommunicateMessage{");
+        sb.append("messageIdentifier=").append(getMessageIdentifier());
+        sb.append(", sourceRoom=").append(getSourceRoom());
+        sb.append(", sourceUser=").append(getSourceUser());
+        sb.append(", messageType=").append(getMessageType());
+        sb.append(", messageContent=").append(getMessageContent());
+        sb.append(", inResponseTo=").append(getInResponseTo());
+        sb.append(", messageSource=").append(getMessageSource());
+        sb.append(", messageTarget=").append(getMessageTarget());
+        sb.append(", messageSendDate=").append(getMessageSendDate());
+        sb.append(", messageReceiveDate=").append(getMessageReceiveDate());
+        sb.append(", messageId='").append(getMessageId()).append('\'');
+        sb.append(", messageSequenceNumber=").append(getMessageSequenceNumber());
+        sb.append(", messagePayload=").append(getMessagePayload());
+        sb.append('}');
+        return sb.toString();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if(!super.equals(o)) return false;
+        CommunicateMessage that = (CommunicateMessage) o;
+        return Objects.equals(getMessageIdentifier(), that.getMessageIdentifier()) && Objects.equals(getSourceRoom(), that.getSourceRoom()) && Objects.equals(getSourceUser(), that.getSourceUser()) && getMessageType() == that.getMessageType() && Objects.equals(getMessageContent(), that.getMessageContent()) && Objects.equals(getInResponseTo(), that.getInResponseTo());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), getMessageIdentifier(), getSourceRoom(), getSourceUser(), getMessageType(), getMessageContent(), getInResponseTo());
     }
 }

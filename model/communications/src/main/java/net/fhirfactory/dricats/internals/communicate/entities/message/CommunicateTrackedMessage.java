@@ -22,16 +22,40 @@
 package net.fhirfactory.dricats.internals.communicate.entities.message;
 
 import net.fhirfactory.dricats.internals.communicate.entities.message.datatypes.CommunicateMessageReadTag;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.io.Serial;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class CommunicateTrackedMessage extends CommunicateMessage {
+    //
+    // Housekeeping
+    //
+
+    @Serial
+    private static final long serialVersionUID = -12345678900165L;
+    private static final Logger LOG = LoggerFactory.getLogger(CommunicateTrackedMessage.class);
+
+    //
+    // Attributes
+    //
+
     private List<CommunicateMessageReadTag> messageReadTags;
+
+    //
+    // Constructor(s)
+    //
 
     public CommunicateTrackedMessage() {
         messageReadTags = new ArrayList<>();
     }
+
+    //
+    // Bean Methods
+    //
 
     public List<CommunicateMessageReadTag> getMessageReadTags() {
         return messageReadTags;
@@ -41,16 +65,47 @@ public class CommunicateTrackedMessage extends CommunicateMessage {
         this.messageReadTags = messageReadTags;
     }
 
+    //
+    // Utility Methods
+    //
+
+    @Override
+    protected Logger getLogger(){
+        return LOG;
+    }
+
     @Override
     public String toString() {
-        return "CommunicateMessage{" +
-                "messageIdentifier=" + getMessageIdentifier() +
-                ", sourceRoom=" + getSourceRoom() +
-                ", sourceUser=" + getSourceUser() +
-                ", messageType=" + getMessageType() +
-                ", messageContent=" + getMessageContent() +
-                ", inResponseTo=" + getInResponseTo() +
-                ", messageReadTags=" + messageReadTags +
-                '}';
+        final StringBuilder sb = new StringBuilder("CommunicateTrackedMessage{");
+        sb.append("messageReadTags=").append(getMessageReadTags());
+        sb.append(", messageIdentifier=").append(getMessageIdentifier());
+        sb.append(", sourceRoom=").append(getSourceRoom());
+        sb.append(", sourceUser=").append(getSourceUser());
+        sb.append(", messageType=").append(getMessageType());
+        sb.append(", messageContent=").append(getMessageContent());
+        sb.append(", inResponseTo=").append(getInResponseTo());
+        sb.append(", messageSource=").append(getMessageSource());
+        sb.append(", messageTarget=").append(getMessageTarget());
+        sb.append(", messageSendDate=").append(getMessageSendDate());
+        sb.append(", messageReceiveDate=").append(getMessageReceiveDate());
+        sb.append(", messageId='").append(getMessageId()).append('\'');
+        sb.append(", messageSequenceNumber=").append(getMessageSequenceNumber());
+        sb.append(", messagePayload=").append(getMessagePayload());
+        sb.append('}');
+        return sb.toString();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        CommunicateTrackedMessage that = (CommunicateTrackedMessage) o;
+        return Objects.equals(getMessageReadTags(), that.getMessageReadTags());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), getMessageReadTags());
     }
 }

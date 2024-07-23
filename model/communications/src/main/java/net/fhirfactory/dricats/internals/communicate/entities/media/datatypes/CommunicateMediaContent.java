@@ -23,23 +23,4 @@ package net.fhirfactory.dricats.internals.communicate.entities.media.datatypes;
 
 import java.util.Base64;
 
-public class CommunicateMediaContent {
-    private Base64 mediaPayload;
-    private Long mediaPayloadChecksum;
 
-    public Base64 getMediaPayload() {
-        return mediaPayload;
-    }
-
-    public void setMediaPayload(Base64 mediaPayload) {
-        this.mediaPayload = mediaPayload;
-    }
-
-    public Long getMediaPayloadChecksum() {
-        return mediaPayloadChecksum;
-    }
-
-    public void setMediaPayloadChecksum(Long mediaPayloadChecksum) {
-        this.mediaPayloadChecksum = mediaPayloadChecksum;
-    }
-}

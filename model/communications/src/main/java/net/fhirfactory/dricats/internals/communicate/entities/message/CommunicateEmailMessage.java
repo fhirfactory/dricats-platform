@@ -21,14 +21,28 @@
  */
 package net.fhirfactory.dricats.internals.communicate.entities.message;
 
-import net.fhirfactory.dricats.core.model.ui.resources.simple.CommunicateMessageESR;
 import net.fhirfactory.dricats.internals.communicate.entities.message.datatypes.CommunicateEmailAttachment;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.io.Serial;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 // A basic class for the components of email that are supported
-public class CommunicateEmailMessage extends CommunicateMessageESR {
+public class CommunicateEmailMessage extends CommunicateMessage{
+    //
+    // Housekeeping
+    //
+
+    @Serial
+    private static final long serialVersionUID = -12345678900161L;
+    private static final Logger LOG = LoggerFactory.getLogger(CommunicateEmailMessage.class);
+
+    //
+    // Attributes
+    //
 
     private String from;
     private List<String> to;
@@ -118,24 +132,48 @@ public class CommunicateEmailMessage extends CommunicateMessageESR {
     //
 
     @Override
+    protected Logger getLogger() {
+        return LOG;
+    }
+
+    @Override
     public String toString() {
-        return "CommunicateEmailMessage{" +
-                "from='" + from + '\'' +
-                ", to=" + to +
-                ", cc=" + cc +
-                ", subject='" + subject + '\'' +
-                ", content='" + content + '\'' +
-                ", contentType='" + contentType + '\'' +
-                ", attachments=" + attachments +
-                ", resourceType=" + getResourceType() +
-                ", systemManaged=" + isSystemManaged() +
-                ", simplifiedID='" + getSimplifiedID() + '\'' +
-                ", otherID='" + getOtherID() + '\'' +
-                ", identifiers=" + getIdentifiers() +
-                ", displayName='" + getDisplayName() + '\'' +
-                ", simplifiedIDMetadata=" + getSimplifiedIDMetadata() +
-                ", description='" + getDescription() + '\'' +
-                ", resourceESRType=" + getResourceESRType() +
-                '}';
+        final StringBuilder sb = new StringBuilder("CommunicateEmailMessage{");
+        sb.append("from='").append(getFrom()).append('\'');
+        sb.append(", to=").append(getTo());
+        sb.append(", cc=").append(getCc());
+        sb.append(", subject='").append(getSubject()).append('\'');
+        sb.append(", content='").append(getContent()).append('\'');
+        sb.append(", contentType='").append(getContentType()).append('\'');
+        sb.append(", attachments=").append(getAttachments());
+        sb.append(", messageIdentifier=").append(getMessageIdentifier());
+        sb.append(", sourceRoom=").append(getSourceRoom());
+        sb.append(", sourceUser=").append(getSourceUser());
+        sb.append(", messageType=").append(getMessageType());
+        sb.append(", messageContent=").append(getMessageContent());
+        sb.append(", inResponseTo=").append(getInResponseTo());
+        sb.append(", messageSource=").append(getMessageSource());
+        sb.append(", messageTarget=").append(getMessageTarget());
+        sb.append(", messageSendDate=").append(getMessageSendDate());
+        sb.append(", messageReceiveDate=").append(getMessageReceiveDate());
+        sb.append(", messageId='").append(getMessageId()).append('\'');
+        sb.append(", messageSequenceNumber=").append(getMessageSequenceNumber());
+        sb.append(", messagePayload=").append(getMessagePayload());
+        sb.append('}');
+        return sb.toString();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        CommunicateEmailMessage that = (CommunicateEmailMessage) o;
+        return Objects.equals(getFrom(), that.getFrom()) && Objects.equals(getTo(), that.getTo()) && Objects.equals(getCc(), that.getCc()) && Objects.equals(getSubject(), that.getSubject()) && Objects.equals(getContent(), that.getContent()) && Objects.equals(getContentType(), that.getContentType()) && Objects.equals(getAttachments(), that.getAttachments());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), getFrom(), getTo(), getCc(), getSubject(), getContent(), getContentType(), getAttachments());
     }
 }

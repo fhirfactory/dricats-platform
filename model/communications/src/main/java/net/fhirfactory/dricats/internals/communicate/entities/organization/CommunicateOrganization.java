@@ -22,24 +22,41 @@
 package net.fhirfactory.dricats.internals.communicate.entities.organization;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import net.fhirfactory.dricats.core.model.ui.resources.simple.OrganizationESR;
 import net.fhirfactory.dricats.internals.communicate.entities.user.datatypes.CommunicateUserReference;
+import net.fhirfactory.dricats.internals.model.core.entity.Organisation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class CommunicateOrganization extends OrganizationESR {
+import java.io.Serial;
+import java.util.Objects;
+
+public class CommunicateOrganization extends Organisation {
+    //
+    // Housekeeping
+    //
+
+    @Serial
+    private static final long serialVersionUID = -12345678900165L;
     private static final Logger LOG = LoggerFactory.getLogger(CommunicateOrganization.class);
+
+    //
+    // Attributes
+    //
+
     private CommunicateUserReference surrogateCommunicateUser;
+
+    //
+    // Constructor(s)
+    //
 
     public CommunicateOrganization() {
         super();
         this.surrogateCommunicateUser = null;
     }
 
-    @Override
-    protected Logger getLogger() {
-        return (LOG);
-    }
+    //
+    // Bean Methods
+    //
 
     public CommunicateUserReference getSurrogateCommunicateUser() {
         return surrogateCommunicateUser;
@@ -49,15 +66,39 @@ public class CommunicateOrganization extends OrganizationESR {
         this.surrogateCommunicateUser = surrogateCommunicateUser;
     }
 
-    @JsonIgnore
-    public OrganizationESR getOrganizationESR() {
-        OrganizationESR organization = new OrganizationESR();
+    //
+    // Utility Methods
+    //
 
-        return (organization);
+    @Override
+    protected Logger getLogger() {
+        return (LOG);
     }
 
-    @JsonIgnore
-    public void setOrganizationESR() {
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("CommunicateOrganization{");
+        sb.append("surrogateCommunicateUser=").append(getSurrogateCommunicateUser());
+        sb.append(", tradingName=").append(getTradingName());
+        sb.append(", serviceProviderRole=").append(getServiceProviderRole());
+        sb.append(", metadata=").append(getMetadata());
+        sb.append(", id=").append(getId());
+        sb.append(", identifiers=").append(getIdentifiers());
+        sb.append('}');
+        return sb.toString();
+    }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        CommunicateOrganization that = (CommunicateOrganization) o;
+        return Objects.equals(getSurrogateCommunicateUser(), that.getSurrogateCommunicateUser());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), getSurrogateCommunicateUser());
     }
 }

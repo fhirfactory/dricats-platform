@@ -21,12 +21,12 @@
  */
 package net.fhirfactory.dricats.internals.communicate.entities.message.datatypes;
 
-import net.fhirfactory.dricats.internals.communicate.entities.media.datatypes.CommunicateMediaContent;
 import net.fhirfactory.dricats.internals.communicate.entities.media.datatypes.CommunicateMediaDetail;
+import net.fhirfactory.dricats.internals.model.base.dataytypes.MediaContent;
 
 public class CommunicateMediaMessageContent {
     private CommunicateMediaDetail mediaDetail;
-    private CommunicateMediaContent mediaContent;
+    private MediaContent mediaContent;
 
     public CommunicateMediaDetail getMediaDetail() {
         return mediaDetail;
@@ -36,11 +36,11 @@ public class CommunicateMediaMessageContent {
         this.mediaDetail = mediaDetail;
     }
 
-    public CommunicateMediaContent getMediaContent() {
+    public MediaContent getMediaContent() {
         return mediaContent;
     }
 
-    public void setMediaContent(CommunicateMediaContent mediaContent) {
+    public void setMediaContent(MediaContent mediaContent) {
         this.mediaContent = mediaContent;
     }
 }

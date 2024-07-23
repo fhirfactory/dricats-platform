@@ -21,18 +21,11 @@
  */
 package net.fhirfactory.dricats.internals.communicate.entities.user;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import net.fhirfactory.dricats.internals.communicate.entities.user.datatypes.CommunicateSurrogateResourceReference;
-import net.fhirfactory.dricats.internals.communicate.entities.user.datatypes.CommunicateUserID;
-import net.fhirfactory.dricats.internals.communicate.entities.user.datatypes.CommunicateUserReference;
 import net.fhirfactory.dricats.internals.communicate.entities.user.valuesets.CommunicateUserTypeEnum;
-import net.fhirfactory.dricats.core.model.ui.resources.simple.CommunicateUserESR;
-import net.fhirfactory.dricats.core.model.ui.resources.simple.valuesets.ExtremelySimplifiedResourceTypeEnum;
-import net.fhirfactory.dricats.core.model.ui.resources.simple.datatypes.IdentifierESDT;
-import net.fhirfactory.dricats.core.model.ui.resources.simple.valuesets.IdentifierESDTUseEnum;
-import net.fhirfactory.dricats.core.model.ui.resources.simple.valuesets.IdentifierESDTTypesEnum;
+import net.fhirfactory.dricats.internals.model.core.individuals.User;
 
-public class CommunicateUser extends CommunicateUserESR {
+public class CommunicateUser extends User {
     private CommunicateSurrogateResourceReference representedResource;
     private boolean surrogate;
     private boolean administrator;
@@ -46,17 +39,6 @@ public class CommunicateUser extends CommunicateUserESR {
         super();
         this.communicateUserType = null;
         this.representedResource = null;
-    }
-
-    @JsonIgnore
-    public CommunicateUserID getUserID() {
-        CommunicateUserID id = new CommunicateUserID(getSimplifiedID());
-        return (id);
-    }
-
-    @JsonIgnore
-    public void setUserID(CommunicateUserID userID) {
-        this.setSimplifiedID(userID.getValue());
     }
 
     public CommunicateUserTypeEnum getCommunicateUserType() {
@@ -73,25 +55,6 @@ public class CommunicateUser extends CommunicateUserESR {
 
     public void setRepresentedResource(CommunicateSurrogateResourceReference representedResource) {
         this.representedResource = representedResource;
-    }
-
-    @JsonIgnore
-    public CommunicateUserReference getCommunicateUserReference() {
-        CommunicateUserReference userReference = new CommunicateUserReference();
-        userReference.setUserType(getCommunicateUserType());
-        userReference.setIdentifier(getIdentifier());
-        userReference.setUserID(getUserID());
-        userReference.setResourceType(ExtremelySimplifiedResourceTypeEnum.ESR_MATRIX_USER);
-        return (userReference);
-    }
-
-    @JsonIgnore
-    public IdentifierESDT getIdentifier() {
-        IdentifierESDT identifier = new IdentifierESDT();
-        identifier.setUse(IdentifierESDTUseEnum.SECONDARY);
-        identifier.setValue(getSimplifiedID());
-        identifier.setType(IdentifierESDTTypesEnum.ESR_IDENTIFIER_TYPE_MATRIX_USER_ID.getIdentifierType());
-        return (identifier);
     }
 
     public String getCommunicateUserToken() {

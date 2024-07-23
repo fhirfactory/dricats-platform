@@ -22,12 +22,12 @@
 package net.fhirfactory.dricats.internals.communicate.entities.rooms;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import net.fhirfactory.dricats.core.model.dates.EffectivePeriod;
-import net.fhirfactory.dricats.internals.communicate.entities.rooms.datatypes.*;
 import net.fhirfactory.dricats.internals.communicate.entities.message.CommunicateMessage;
+import net.fhirfactory.dricats.internals.communicate.entities.rooms.datatypes.*;
 import net.fhirfactory.dricats.internals.communicate.entities.rooms.valuesets.CommunicateRoomJoinRuleEnum;
 import net.fhirfactory.dricats.internals.communicate.entities.rooms.valuesets.CommunicateRoomTypeEnum;
-import net.fhirfactory.dricats.core.model.ui.resources.simple.CommunicateRoomESR;
+import net.fhirfactory.dricats.internals.model.base.dataytypes.EffectiveDate;
+import net.fhirfactory.dricats.internals.model.core.individuals.Group;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,7 +37,7 @@ import java.util.Queue;
 import java.util.Stack;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-public class CommunicateRoom extends CommunicateRoomESR {
+public class CommunicateRoom extends Group {
     private static final Logger LOG = LoggerFactory.getLogger(CommunicateRoom.class);
     private List<CommunicateRoomStatus> roomStatusHistory;
     private CommunicateRoomStatus currentRoomStatus;
@@ -49,7 +49,7 @@ public class CommunicateRoom extends CommunicateRoomESR {
     private ConcurrentLinkedQueue<CommunicateRoomEvent> eventQueue;
     private ConcurrentLinkedQueue<CommunicateMessage> receiveMessageQueue;
     private ConcurrentLinkedQueue<CommunicateMessage> sendMessageQueue;
-    private EffectivePeriod activePeriod;
+    private EffectiveDate activePeriod;
 
     public CommunicateRoom() {
         super();
@@ -64,7 +64,7 @@ public class CommunicateRoom extends CommunicateRoomESR {
         this.joinRuleType = null;
         this.powerLevels = null;
         this.setRoomType(CommunicateRoomTypeEnum.COMMUNICATE_GENERAL_DISCUSSION_ROOM);
-        this.activePeriod = new EffectivePeriod();
+        this.activePeriod = new EffectiveDate();
     }
 
     @Override
@@ -72,22 +72,11 @@ public class CommunicateRoom extends CommunicateRoomESR {
         return (LOG);
     }
 
-    @JsonIgnore
-    public CommunicateRoomID getRoomID() {
-        CommunicateRoomID roomID = new CommunicateRoomID(getMatrixRoomID());
-        return (roomID);
-    }
-
-    @JsonIgnore
-    public void setRoomID(CommunicateRoomID roomID) {
-        this.setMatrixRoomID(roomID.getValue());
-    }
-
-    public EffectivePeriod getActivePeriod() {
+    public EffectiveDate getActivePeriod() {
         return activePeriod;
     }
 
-    public void setActivePeriod(EffectivePeriod activePeriod) {
+    public void setActivePeriod(EffectiveDate activePeriod) {
         this.activePeriod = activePeriod;
     }
 
@@ -208,19 +197,7 @@ public class CommunicateRoom extends CommunicateRoomESR {
     @JsonIgnore
     public CommunicateRoomReference getRoomReference() {
         CommunicateRoomReference reference = new CommunicateRoomReference();
-        reference.setRoomID(getSimplifiedID());
-        reference.setRoomOwner(getRoomOwner());
         return (reference);
-    }
-
-    @JsonIgnore
-    public String getMatrixRoomID() {
-        return (this.getSimplifiedID());
-    }
-
-    @JsonIgnore
-    public void setMatrixRoomID(String matrixID) {
-        this.setSimplifiedID(matrixID);
     }
 
     public CommunicateRoomJoinRuleEnum getJoinRuleType() {
@@ -242,8 +219,7 @@ public class CommunicateRoom extends CommunicateRoomESR {
     @Override
     public String toString() {
         return "CommunicateRoom{" +
-                "roomID=" + getRoomID() +
-                ", roomStatus=" + currentRoomStatus +
+                "roomStatus=" + currentRoomStatus +
                 ", roomType=" + roomType +
                 ", joinRuleType=" + joinRuleType +
                 ", powerLevels=" + powerLevels +

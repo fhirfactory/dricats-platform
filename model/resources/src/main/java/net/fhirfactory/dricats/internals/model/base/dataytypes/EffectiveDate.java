@@ -23,6 +23,9 @@ package net.fhirfactory.dricats.internals.model.base.dataytypes;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
+import net.fhirfactory.dricats.deployment.contants.DefaultDeploymentConstants;
+import net.fhirfactory.dricats.deployment.contants.DeploymentPropertiesAccessor;
+
 import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -39,9 +42,9 @@ public class EffectiveDate implements Serializable {
     // Attributes
     //
 
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss.SSSXXX")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss.SSSXXX", timezone = DefaultDeploymentConstants.DEPLOYMENT_TIMEZONE)
     private LocalDateTime effectiveStartDate;
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss.SSSXXX")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss.SSSXXX", timezone = DefaultDeploymentConstants.DEPLOYMENT_TIMEZONE)
     private LocalDateTime effectiveEndDate;
 
     //

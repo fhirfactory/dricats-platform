@@ -21,35 +21,35 @@
  */
 package net.fhirfactory.dricats.internals.communicate.entities.user.datatypes;
 
-import net.fhirfactory.dricats.core.model.ui.resources.simple.datatypes.ReferenceESDT;
-import net.fhirfactory.dricats.core.model.ui.resources.simple.valuesets.ExtremelySimplifiedResourceTypeEnum;
+import net.fhirfactory.dricats.internals.model.base.DistributableObjectReference;
+import net.fhirfactory.dricats.internals.model.core.individuals.datatypes.UserID;
 
 public class CommunicateSurrogateResourceReference {
-    private ReferenceESDT realResourceID;
-    private ExtremelySimplifiedResourceTypeEnum realResourceType;
-    private CommunicateUserID surrogateUserID;
+    private DistributableObjectReference realResourceID;
+    private String realResourceType;
+    private UserID surrogateUserID;
 
-    public ReferenceESDT getRealResourceID() {
+    public DistributableObjectReference getRealResourceID() {
         return realResourceID;
     }
 
-    public void setRealResourceID(ReferenceESDT realResourceID) {
+    public void setRealResourceID(DistributableObjectReference realResourceID) {
         this.realResourceID = realResourceID;
     }
 
-    public ExtremelySimplifiedResourceTypeEnum getRealResourceType() {
+    public String getRealResourceType() {
         return realResourceType;
     }
 
-    public void setRealResourceType(ExtremelySimplifiedResourceTypeEnum realResourceType) {
+    public void setRealResourceType(String realResourceType) {
         this.realResourceType = realResourceType;
     }
 
-    public CommunicateUserID getSurrogateUserID() {
+    public UserID getSurrogateUserID() {
         return surrogateUserID;
     }
 
-    public void setSurrogateUserID(CommunicateUserID surrogateUserID) {
+    public void setSurrogateUserID(UserID surrogateUserID) {
         this.surrogateUserID = surrogateUserID;
     }
 

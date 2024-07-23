@@ -21,16 +21,16 @@
  */
 package net.fhirfactory.dricats.internals.communicate.entities.session;
 
-import net.fhirfactory.dricats.core.model.ui.resources.simple.CommunicateSessionESR;
 import net.fhirfactory.dricats.internals.communicate.entities.rooms.datatypes.CommunicateRoomReference;
 import net.fhirfactory.dricats.internals.communicate.entities.session.datatypes.CommunicateSessionID;
 import net.fhirfactory.dricats.internals.communicate.entities.session.datatypes.CommunicateSessionParticipant;
 import net.fhirfactory.dricats.internals.communicate.entities.session.valuesets.CommunicateSessionTypeEnum;
+import net.fhirfactory.dricats.internals.model.base.DistributableObject;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class CommunicateSession extends CommunicateSessionESR {
+public class CommunicateSession extends DistributableObject {
     private CommunicateSessionID sessionID;
     private List<CommunicateSessionParticipant> sessionParticipants;
     private CommunicateRoomReference sessionRoom;

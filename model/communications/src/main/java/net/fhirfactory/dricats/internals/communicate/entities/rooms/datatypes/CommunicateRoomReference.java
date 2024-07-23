@@ -23,7 +23,9 @@ package net.fhirfactory.dricats.internals.communicate.entities.rooms.datatypes;
 
 import net.fhirfactory.dricats.internals.communicate.entities.rooms.valuesets.CommunicateRoomTypeEnum;
 
-public class CommunicateRoomReference {
+import java.io.Serializable;
+
+public class CommunicateRoomReference implements Serializable {
     private String roomID;
     private String roomOwner;
     private CommunicateRoomTypeEnum roomType;

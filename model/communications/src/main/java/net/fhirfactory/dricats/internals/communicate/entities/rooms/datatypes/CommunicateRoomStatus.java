@@ -1,11 +1,11 @@
 package net.fhirfactory.dricats.internals.communicate.entities.rooms.datatypes;
 
-import net.fhirfactory.dricats.core.model.dates.EffectivePeriod;
 import net.fhirfactory.dricats.internals.communicate.entities.rooms.valuesets.CommunicateRoomStatusEnum;
+import net.fhirfactory.dricats.internals.model.base.dataytypes.EffectiveDate;
 
 public class CommunicateRoomStatus {
     CommunicateRoomStatusEnum statusValue;
-    EffectivePeriod statusPeriod;
+    EffectiveDate statusPeriod;
 
     public CommunicateRoomStatusEnum getStatusValue() {
         return statusValue;
@@ -15,11 +15,11 @@ public class CommunicateRoomStatus {
         this.statusValue = statusValue;
     }
 
-    public EffectivePeriod getStatusPeriod() {
+    public EffectiveDate getStatusPeriod() {
         return statusPeriod;
     }
 
-    public void setStatusPeriod(EffectivePeriod statusPeriod) {
+    public void setStatusPeriod(EffectiveDate statusPeriod) {
         this.statusPeriod = statusPeriod;
     }
 
