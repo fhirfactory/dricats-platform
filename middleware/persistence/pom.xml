@@ -5,22 +5,13 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>net.fhirfactory.dricats</groupId>
-        <artifactId>dricats-platform</artifactId>
+        <artifactId>dricats-platform-middleware</artifactId>
         <version>1.0.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>dricats-platform-middleware</artifactId>
-    <name>DRICaTS-Platform :: Middleware</name>
-    <packaging>pom</packaging>
-
-    <modules>
-        <module>collaboration</module>
-        <module>databus</module>
-        <module>messagebus</module>
-        <module>rules</module>
-        <module>workflow</module>
-        <module>persistence</module>
-    </modules>
+    <artifactId>dricats-platform-middleware-persistence</artifactId>
+    <name>DRICaTS-Platform :: Middleware :: (Default) Persistence Services</name>
+    <packaging>jar</packaging>
 
     <properties>
 

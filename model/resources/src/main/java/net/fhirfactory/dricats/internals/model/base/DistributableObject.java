@@ -22,6 +22,7 @@
 package net.fhirfactory.dricats.internals.model.base;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import net.fhirfactory.dricats.internals.model.base.dataytypes.SecurityLabels;
 import org.apache.commons.lang3.SerializationUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,6 +48,7 @@ public class DistributableObject implements Serializable {
     private DistributableObjectId id;
     private List<DistributableObjectIdentifier> identifiers;
     private DistributableObjectMetadata metadata;
+    private SecurityLabels securityLabels;
 
     //
     // Constructor(s)
@@ -55,6 +57,7 @@ public class DistributableObject implements Serializable {
     public DistributableObject(){
         this.identifiers = new ArrayList<>();
         this.metadata = new DistributableObjectMetadata();
+        this.securityLabels = new SecurityLabels();
         this.id = null;
     }
 
@@ -73,11 +76,22 @@ public class DistributableObject implements Serializable {
         if(ori.getId() != null) {
             setId(SerializationUtils.clone(ori.getId()));
         }
+        if(ori.getSecurityLabels() != null){
+            setSecurityLabels(SerializationUtils.clone(ori.getSecurityLabels()));
+        }
     }
 
     //
     // Getters and Setters
     //
+
+    public SecurityLabels getSecurityLabels() {
+        return securityLabels;
+    }
+
+    public void setSecurityLabels(SecurityLabels securityLabels) {
+        this.securityLabels = securityLabels;
+    }
 
     public DistributableObjectMetadata getMetadata() {
         return metadata;
