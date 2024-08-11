@@ -28,6 +28,32 @@ import javax.enterprise.context.ApplicationScoped;
 
 @ApplicationScoped
 public class CommunicationSessionFactory {
+	//
+	// Housekeeping
+	//
     private static final Logger LOG = LoggerFactory.getLogger(CommunicationSessionFactory.class);
 
+    //
+    // Attributes
+    //
+    
+    //
+    // Constructor(s)
+    //
+    
+    //
+    // Business Methods
+    //
+    
+    //
+    // Bean Methods
+    //
+    
+    //
+    // Utility Methods
+    //
+    
+    protected Logger getLogger() {
+    	return(LOG);
+    }
 }

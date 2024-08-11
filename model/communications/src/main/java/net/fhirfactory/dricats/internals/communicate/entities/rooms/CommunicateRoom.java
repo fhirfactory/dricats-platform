@@ -31,6 +31,7 @@ import net.fhirfactory.dricats.internals.model.core.individuals.Group;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.Serial;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Queue;
@@ -38,7 +39,18 @@ import java.util.Stack;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class CommunicateRoom extends Group {
-    private static final Logger LOG = LoggerFactory.getLogger(CommunicateRoom.class);
+    //
+    // Housekeeping
+    //
+
+    @Serial
+	private static final long serialVersionUID = 6632114466044011230L;
+	private static final Logger LOG = LoggerFactory.getLogger(CommunicateRoom.class);
+	
+	//
+	// Attributes
+	//
+	
     private List<CommunicateRoomStatus> roomStatusHistory;
     private CommunicateRoomStatus currentRoomStatus;
     private CommunicateRoomTypeEnum roomType;
@@ -50,11 +62,15 @@ public class CommunicateRoom extends Group {
     private ConcurrentLinkedQueue<CommunicateMessage> receiveMessageQueue;
     private ConcurrentLinkedQueue<CommunicateMessage> sendMessageQueue;
     private EffectiveDate activePeriod;
+    
+    //
+    // Constructor(s)
+    //
 
     public CommunicateRoom() {
         super();
         this.currentRoomStatus = null;
-        this.roomStatusHistory = new ArrayList<>();
+        this.setRoomStatusHistory(new ArrayList<>());
         this.roomType = CommunicateRoomTypeEnum.COMMUNICATE_GENERAL_DISCUSSION_ROOM;
         this.members = new ArrayList<>();
         this.receiveMessageQueue = new ConcurrentLinkedQueue<>();
@@ -67,10 +83,14 @@ public class CommunicateRoom extends Group {
         this.activePeriod = new EffectiveDate();
     }
 
-    @Override
-    protected Logger getLogger() {
-        return (LOG);
-    }
+    //
+    // Business Methods
+    //
+    
+    
+    //
+    // Bean Methods
+    //
 
     public EffectiveDate getActivePeriod() {
         return activePeriod;
@@ -214,6 +234,24 @@ public class CommunicateRoom extends Group {
 
     public void setPowerLevels(CommunicateRoomPowerLevels powerLevels) {
         this.powerLevels = powerLevels;
+    }
+    
+    public List<CommunicateRoomStatus> getRoomStatusHistory() {
+		return roomStatusHistory;
+	}
+
+	public void setRoomStatusHistory(List<CommunicateRoomStatus> roomStatusHistory) {
+		this.roomStatusHistory = roomStatusHistory;
+	}
+    
+    
+    //
+    // Utility Methods
+    //
+
+	@Override
+    protected Logger getLogger() {
+        return (LOG);
     }
 
     @Override

@@ -1,10 +1,21 @@
 package net.fhirfactory.dricats.internals.communicate.entities.message.datatypes;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 public class CommunicateEmailAttachment implements Serializable {
+    //
+    // Housekeeping
+    //
 
-    public String url;
+    @Serial
+    private static final long serialVersionUID = 6267189471487375323L;
+    
+    //
+    // Attributes 
+    //
+    
+	public String url;
     private String name;
     private String contentType;
     private String data;

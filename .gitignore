@@ -21,3 +21,33 @@
 
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
+
+.project
+
+.settings/
+
+middleware/collaboration/.classpath
+
+middleware/databus/.classpath
+
+middleware/messagebus/.classpath
+
+middleware/persistence/target/maven-archiver/
+
+middleware/rules/.classpath
+
+middleware/workflow/.classpath
+
+model/communications/.classpath
+
+model/conditions/.classpath
+
+model/constants/.classpath
+
+model/core/.classpath
+
+model/messaging/.classpath
+
+model/resources/.classpath
+
+model/tasking/.classpath

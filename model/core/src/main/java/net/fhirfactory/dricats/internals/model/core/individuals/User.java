@@ -21,17 +21,14 @@
  */
 package net.fhirfactory.dricats.internals.model.core.individuals;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-import net.fhirfactory.dricats.deployment.contants.DefaultDeploymentConstants;
-import net.fhirfactory.dricats.internals.model.core.entity.LegalEntity;
-import net.fhirfactory.dricats.internals.model.core.individuals.datatypes.HumanName;
-import net.fhirfactory.dricats.internals.model.core.individuals.datatypes.UserID;
+import java.io.Serial;
+import java.util.Objects;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.Serial;
-import java.time.LocalDate;
-import java.util.Objects;
+import net.fhirfactory.dricats.internals.model.core.entity.LegalEntity;
+import net.fhirfactory.dricats.internals.model.core.individuals.datatypes.UserID;
 
 public class User extends LegalEntity {
     //

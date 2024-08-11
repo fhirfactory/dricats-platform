@@ -21,14 +21,14 @@
  */
 package net.fhirfactory.dricats.internals.communicate.entities.organization;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import net.fhirfactory.dricats.internals.communicate.entities.user.datatypes.CommunicateUserReference;
-import net.fhirfactory.dricats.internals.model.core.entity.Organisation;
+import java.io.Serial;
+import java.util.Objects;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.Serial;
-import java.util.Objects;
+import net.fhirfactory.dricats.internals.communicate.entities.user.datatypes.CommunicateUserReference;
+import net.fhirfactory.dricats.internals.model.core.entity.Organisation;
 
 public class CommunicateOrganization extends Organisation {
     //

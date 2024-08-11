@@ -23,12 +23,36 @@ package net.fhirfactory.dricats.internals.communicate.entities.rooms.datatypes;
 
 import net.fhirfactory.dricats.internals.communicate.entities.rooms.valuesets.CommunicateRoomTypeEnum;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 public class CommunicateRoomReference implements Serializable {
-    private String roomID;
+	//
+	// Housekeeping
+	//
+	
+	@Serial
+	private static final long serialVersionUID = -759440640186134886L;
+	
+	//
+	// Attributes
+	//
+	
+	private String roomID;
     private String roomOwner;
     private CommunicateRoomTypeEnum roomType;
+    
+    //
+    // Constructor(s)
+    //
+    
+    //
+    // Business Methods
+    //
+    
+    //
+    // Bean Methods
+    //
 
     public String getRoomID() {
         return roomID;
@@ -53,4 +77,9 @@ public class CommunicateRoomReference implements Serializable {
     public void setRoomType(CommunicateRoomTypeEnum roomType) {
         this.roomType = roomType;
     }
+    
+    //
+    // Utility Methods
+    //
+    
 }

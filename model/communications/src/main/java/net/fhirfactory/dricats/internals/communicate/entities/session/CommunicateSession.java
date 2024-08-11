@@ -27,14 +27,33 @@ import net.fhirfactory.dricats.internals.communicate.entities.session.datatypes.
 import net.fhirfactory.dricats.internals.communicate.entities.session.valuesets.CommunicateSessionTypeEnum;
 import net.fhirfactory.dricats.internals.model.base.DistributableObject;
 
+import java.io.Serial;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class CommunicateSession extends DistributableObject {
-    private CommunicateSessionID sessionID;
+	//
+	// Housekeeping
+	//
+	
+	@Serial
+    private static final long serialVersionUID = 4273815477591749463L;
+	private static final Logger LOG = LoggerFactory.getLogger(CommunicateSession.class);
+	
+	//
+	// Attributes
+	//
+	private CommunicateSessionID sessionID;
     private List<CommunicateSessionParticipant> sessionParticipants;
     private CommunicateRoomReference sessionRoom;
     private CommunicateSessionTypeEnum sessionType;
+    
+    //
+    // Constructor(s)
+    //
 
     public CommunicateSession() {
         this.sessionParticipants = new ArrayList<>();
@@ -42,6 +61,15 @@ public class CommunicateSession extends DistributableObject {
         this.sessionRoom = null;
         this.sessionType = null;
     }
+    
+    //
+    // Business Methods
+    //
+    
+    
+    //
+    // Bean Methods
+    //
 
     public CommunicateSessionID getSessionID() {
         return sessionID;
@@ -75,6 +103,16 @@ public class CommunicateSession extends DistributableObject {
         this.sessionType = sessionType;
     }
 
+    
+    //
+    // Utility Methods
+    //
+    
+    @Override
+    protected Logger getLogger() {
+    	return(LOG);
+    }
+    
     @Override
     public String toString() {
         return "CommunicateSession{" +

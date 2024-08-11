@@ -21,12 +21,29 @@
  */
 package net.fhirfactory.dricats.internals.communicate.entities.user;
 
+import java.io.Serial;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import net.fhirfactory.dricats.internals.communicate.entities.user.datatypes.CommunicateSurrogateResourceReference;
 import net.fhirfactory.dricats.internals.communicate.entities.user.valuesets.CommunicateUserTypeEnum;
 import net.fhirfactory.dricats.internals.model.core.individuals.User;
 
 public class CommunicateUser extends User {
-    private CommunicateSurrogateResourceReference representedResource;
+	//
+	// Housekeeping
+	//
+	
+	@Serial
+    private static final long serialVersionUID = -8603393243724832479L;
+	private static final Logger LOG = LoggerFactory.getLogger(CommunicateUser.class);
+	
+	//
+	// Attributes
+	//
+	
+	private CommunicateSurrogateResourceReference representedResource;
     private boolean surrogate;
     private boolean administrator;
     private boolean deactivated;
@@ -35,12 +52,24 @@ public class CommunicateUser extends User {
     private CommunicateUserTypeEnum communicateUserType;
     private String communicateUserToken;
 
+    //
+    // Constructor(s)
+    //
+    
     public CommunicateUser() {
         super();
         this.communicateUserType = null;
         this.representedResource = null;
     }
 
+    //
+    // Business Methods
+    //
+    
+    //
+    // Bean Methods
+    //
+    
     public CommunicateUserTypeEnum getCommunicateUserType() {
         return communicateUserType;
     }
@@ -103,6 +132,15 @@ public class CommunicateUser extends User {
 
     public void setAvatarURL(String avatarURL) {
         this.avatarURL = avatarURL;
+    }
+    
+    //
+    // Utility Methods
+    //
+    
+    @Override
+    protected Logger getLogger() {
+    	return(LOG);
     }
 
     @Override

@@ -21,12 +21,32 @@
  */
 package net.fhirfactory.dricats.internals.communicate.entities.user.datatypes;
 
+import java.io.Serial;
+
 import net.fhirfactory.dricats.internals.communicate.entities.user.valuesets.CommunicateUserTypeEnum;
 import net.fhirfactory.dricats.internals.model.base.DistributableObjectReference;
 
 public class CommunicateUserReference extends DistributableObjectReference {
-    private CommunicateUserTypeEnum userType;
+	//
+	// Housekeeping
+	//
+	
+	@Serial
+    private static final long serialVersionUID = -5339062072034098342L;
+	
+	//
+	// Attributes
+	//
+	private CommunicateUserTypeEnum userType;
 
+	//
+	// Constructor(s)
+	//
+	
+	//
+	// Business Methods
+	//
+	
     //
     // Bean Methods
     //
@@ -39,5 +59,25 @@ public class CommunicateUserReference extends DistributableObjectReference {
         this.userType = userType;
     }
 
+    //
+    // Utility Methods
+    //
+    
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("CommunicateUserReference [userType=");
+		builder.append(userType);
+		builder.append(", getUserType()=");
+		builder.append(getUserType());
+		builder.append(", getTargetObjectIdentifier()=");
+		builder.append(getTargetObjectIdentifier());
+		builder.append(", getReferenceDescription()=");
+		builder.append(getReferenceDescription());
+		builder.append(", getTargetObjectType()=");
+		builder.append(getTargetObjectType());
+		builder.append("]");
+		return builder.toString();
+	}
 
 }

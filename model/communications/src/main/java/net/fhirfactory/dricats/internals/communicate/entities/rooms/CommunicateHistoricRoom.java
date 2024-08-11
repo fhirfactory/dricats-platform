@@ -21,11 +21,39 @@
  */
 package net.fhirfactory.dricats.internals.communicate.entities.rooms;
 
+import java.io.Serial;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class CommunicateHistoricRoom extends CommunicateRoom {
-    private static final Logger LOG = LoggerFactory.getLogger(CommunicateHistoricRoom.class);
+    //
+    // Housekeeping
+    //
+
+    @Serial
+	private static final long serialVersionUID = -1949408501816370412L;
+	private static final Logger LOG = LoggerFactory.getLogger(CommunicateHistoricRoom.class);
+	
+	//
+	// Attributes
+	//
+	
+	//
+	// Constructor(s)
+	//
+	
+	//
+	// Business Methods
+	//
+	
+	//
+	// Bean Methods
+	//
+	
+	//
+	// Utility Methods
+	//
 
     @Override
     protected Logger getLogger() {

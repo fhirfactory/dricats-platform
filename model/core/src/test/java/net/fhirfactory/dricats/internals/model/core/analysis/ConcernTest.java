@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Mark A. Hunter
+ * Copyright (c) 2024 Mark A. Hunter
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -19,40 +19,14 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.fhirfactory.dricats.internals.communicate.entities.media.datatypes;
 
-import java.io.Serial;
+package net.fhirfactory.dricats.internals.model.core.analysis;
 
-import net.fhirfactory.dricats.internals.model.base.DistributableObject;
+/**
+ * 
+ */
+class ConcernTest {
 
-class CommunicateMediaContent extends DistributableObject{
-	//
-	// Housekeeping
-	//
 	
-	@Serial	
-	private static final long serialVersionUID = 251412889658379318L;
-	
-	//
-	// Attributes
-	//
-	
-	//
-	// Constructor(s)
-	//
-	
-	//
-	// Business Methods
-	//
-	
-	//
-	// Bean Methods
-	//
-	
-	
-	//
-	// Utility Methods
-	//
+
 }
-
-

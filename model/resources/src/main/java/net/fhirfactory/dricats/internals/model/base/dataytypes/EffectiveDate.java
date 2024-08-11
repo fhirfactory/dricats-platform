@@ -21,14 +21,13 @@
  */
 package net.fhirfactory.dricats.internals.model.base.dataytypes;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-
-import net.fhirfactory.dricats.deployment.contants.DefaultDeploymentConstants;
-import net.fhirfactory.dricats.deployment.contants.DeploymentPropertiesAccessor;
-
 import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDateTime;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
+
+import net.fhirfactory.dricats.deployment.contants.DefaultDeploymentConstants;
 
 public class EffectiveDate implements Serializable {
     //

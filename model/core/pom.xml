@@ -28,6 +28,7 @@
             <artifactId>dricats-platform-model-constants</artifactId>
             <version>1.0.0-SNAPSHOT</version>
         </dependency>
+        
         <!--*******************************************************************************-->
         <!-- Apache Commons Libraries                                                      -->
         <!--*******************************************************************************-->
@@ -35,7 +36,6 @@
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
-            <version>${version-org.apache.commons-lang3}</version>
         </dependency>
 
         <!--*******************************************************************************-->
@@ -45,14 +45,12 @@
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
-            <version>${version-ch.qos.logback-classic}</version>
             <scope>compile</scope>
         </dependency>
 
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-core</artifactId>
-            <version>${version-ch.qos.logback-classic}</version>
             <scope>compile</scope>
         </dependency>
 

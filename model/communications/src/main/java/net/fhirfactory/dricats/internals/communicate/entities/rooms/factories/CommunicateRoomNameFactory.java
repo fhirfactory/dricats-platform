@@ -31,9 +31,6 @@ public class CommunicateRoomNameFactory {
     private static String PRACTITIONER_ROLE_ONE_ON_ONE_ROOM_SUFFIX = ".PRC";
     private static String PRACTITIONER_ROLE_ONE_ON_ONE_ROOM_QUALIFIER = "ActingAs";
 
-    private static String CARE_TEAM_PRIMARY_ROOM_SUFFIX = ".CareTeam";
-    private static String RESPONDER_TEAM_INSTANCE_SUFFIX = ".Code";
-
     private static String PRACTITIONER_MEDIA_ROOM = "MyMedia";
     private static String PRACTITIONER_CALL_ROOM = "MyCalls";
     private static String PRACTITIONER_RESULTS_NOTIFICATION_ROOM = "MyResultNotifications";
