@@ -21,16 +21,18 @@
  */
 package net.fhirfactory.dricats.internals.model.base;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-import net.fhirfactory.dricats.internals.model.base.dataytypes.CodeableConcept;
+import java.io.Serial;
+import java.time.LocalDateTime;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.Serial;
-import java.io.Serializable;
-import java.time.LocalDateTime;
+import com.fasterxml.jackson.annotation.JsonFormat;
 
-public class InternalTaskPayload implements Serializable {
+import net.fhirfactory.dricats.internals.model.base.dataytypes.CodeableConcept;
+import net.fhirfactory.dricats.internals.model.base.dataytypes.SerialisableObject;
+
+public class InternalTaskPayload extends SerialisableObject {
     //
     // Housekeeping
     //

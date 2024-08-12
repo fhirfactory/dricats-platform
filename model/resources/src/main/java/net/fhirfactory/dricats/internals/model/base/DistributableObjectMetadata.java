@@ -23,13 +23,14 @@ package net.fhirfactory.dricats.internals.model.base;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import net.fhirfactory.dricats.internals.model.base.dataytypes.EffectiveDate;
+import net.fhirfactory.dricats.internals.model.base.dataytypes.SerialisableObject;
 
 import java.io.Serial;
 import java.io.Serializable;
 import java.net.URI;
 import java.time.LocalDateTime;
 
-public class DistributableObjectMetadata implements Serializable {
+public class DistributableObjectMetadata extends SerialisableObject {
     //
     // Housekeeping
     //

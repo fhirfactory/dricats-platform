@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Mark A. Hunter
+ * Copyright (c) 2024 Mark A. Hunter
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -19,45 +19,41 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.fhirfactory.dricats.internals.model.base;
+package net.fhirfactory.dricats.internals.model.base.dataytypes;
 
-import java.io.Serial;
+import java.io.Serializable;
+import java.util.UUID;
 
-import net.fhirfactory.dricats.internals.model.base.dataytypes.EffectiveDate;
-import net.fhirfactory.dricats.internals.model.base.dataytypes.SerialisableObject;
-
-public class DistributableObjectId extends SerialisableObject {
-    //
-    // Housekeeping
-    //
-
-    @Serial
-    private static final long serialVersionUID = -12345678900003L;
-
+public class SerialisableObject implements Serializable {
+	//
+	// Housekeeping
+	//
+	
+    private static final long serialVersionUID = 4428609418582057973L;
+	
     //
     // Attributes
     //
+    
+    private String objectID;
 
-    private String idValue;
-    private EffectiveDate effectiveDate;
+    //
+    // Constructor(s)
+    //
+    
+    public SerialisableObject() {
+        this.objectID = UUID.randomUUID().toString();
+    }
 
     //
     // Bean Methods
     //
-
-    public String getIdValue() {
-        return idValue;
+    
+    public String getObjectID() {
+        return objectID;
     }
 
-    public void setIdValue(String idValue) {
-        this.idValue = idValue;
-    }
-
-    public EffectiveDate getEffectiveDate() {
-        return effectiveDate;
-    }
-
-    public void setEffectiveDate(EffectiveDate effectiveDate) {
-        this.effectiveDate = effectiveDate;
+    public void setObjectID(String objectID) {
+        this.objectID = objectID;
     }
 }

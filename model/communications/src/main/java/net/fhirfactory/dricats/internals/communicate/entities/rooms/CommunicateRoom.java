@@ -21,22 +21,28 @@
  */
 package net.fhirfactory.dricats.internals.communicate.entities.rooms;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import net.fhirfactory.dricats.internals.communicate.entities.message.CommunicateMessage;
-import net.fhirfactory.dricats.internals.communicate.entities.rooms.datatypes.*;
-import net.fhirfactory.dricats.internals.communicate.entities.rooms.valuesets.CommunicateRoomJoinRuleEnum;
-import net.fhirfactory.dricats.internals.communicate.entities.rooms.valuesets.CommunicateRoomTypeEnum;
-import net.fhirfactory.dricats.internals.model.base.dataytypes.EffectiveDate;
-import net.fhirfactory.dricats.internals.model.core.individuals.Group;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.Serial;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Queue;
 import java.util.Stack;
 import java.util.concurrent.ConcurrentLinkedQueue;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import net.fhirfactory.dricats.internals.communicate.entities.message.CommunicateMessage;
+import net.fhirfactory.dricats.internals.communicate.entities.rooms.datatypes.CommunicateRoomEvent;
+import net.fhirfactory.dricats.internals.communicate.entities.rooms.datatypes.CommunicateRoomMember;
+import net.fhirfactory.dricats.internals.communicate.entities.rooms.datatypes.CommunicateRoomPowerLevels;
+import net.fhirfactory.dricats.internals.communicate.entities.rooms.datatypes.CommunicateRoomReference;
+import net.fhirfactory.dricats.internals.communicate.entities.rooms.datatypes.CommunicateRoomStatus;
+import net.fhirfactory.dricats.internals.communicate.entities.rooms.valuesets.CommunicateRoomJoinRuleEnum;
+import net.fhirfactory.dricats.internals.communicate.entities.rooms.valuesets.CommunicateRoomTypeEnum;
+import net.fhirfactory.dricats.internals.model.base.dataytypes.EffectiveDate;
+import net.fhirfactory.dricats.internals.model.core.individuals.Group;
 
 public class CommunicateRoom extends Group {
     //

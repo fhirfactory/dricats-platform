@@ -21,15 +21,16 @@
  */
 package net.fhirfactory.dricats.internals.communicate.entities.group;
 
-import net.fhirfactory.dricats.internals.communicate.entities.rooms.datatypes.CommunicateRoomReference;
-import net.fhirfactory.dricats.internals.communicate.entities.user.CommunicateUser;
-import net.fhirfactory.dricats.internals.model.core.individuals.Group;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.Serial;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import net.fhirfactory.dricats.internals.communicate.entities.rooms.datatypes.CommunicateRoomReference;
+import net.fhirfactory.dricats.internals.communicate.entities.user.CommunicateUser;
+import net.fhirfactory.dricats.internals.model.core.individuals.Group;
 
 public class CommunicateGroup extends Group {
     //

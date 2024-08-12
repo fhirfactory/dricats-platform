@@ -21,12 +21,12 @@
  */
 package net.fhirfactory.dricats.internals.model.base;
 
-import net.fhirfactory.dricats.internals.model.base.dataytypes.EffectiveDate;
-
 import java.io.Serial;
-import java.io.Serializable;
 
-public class DistributableObjectIdentifier implements Serializable {
+import net.fhirfactory.dricats.internals.model.base.dataytypes.EffectiveDate;
+import net.fhirfactory.dricats.internals.model.base.dataytypes.SerialisableObject;
+
+public class DistributableObjectIdentifier extends SerialisableObject {
     //
     // Housekeeping
     //

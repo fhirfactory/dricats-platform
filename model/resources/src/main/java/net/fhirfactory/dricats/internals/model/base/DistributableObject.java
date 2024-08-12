@@ -21,18 +21,20 @@
  */
 package net.fhirfactory.dricats.internals.model.base;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import net.fhirfactory.dricats.internals.model.base.dataytypes.SecurityLabels;
+import java.io.Serial;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.commons.lang3.SerializationUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.Serial;
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
-public class DistributableObject implements Serializable {
+import net.fhirfactory.dricats.internals.model.base.dataytypes.SecurityLabels;
+import net.fhirfactory.dricats.internals.model.base.dataytypes.SerialisableObject;
+
+public class DistributableObject extends SerialisableObject {
     //
     // Housekeeping
     //

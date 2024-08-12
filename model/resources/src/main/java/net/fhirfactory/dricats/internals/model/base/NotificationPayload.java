@@ -21,15 +21,16 @@
  */
 package net.fhirfactory.dricats.internals.model.base;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.Serial;
-import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-public class NotificationPayload implements Serializable {
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import net.fhirfactory.dricats.internals.model.base.dataytypes.SerialisableObject;
+
+public class NotificationPayload extends SerialisableObject {
     //
     // Housekeeping
     //

@@ -19,70 +19,55 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.fhirfactory.dricats.internals.model.base;
-
-import java.io.Serial;
+package net.fhirfactory.dricats.common;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import net.fhirfactory.dricats.internals.model.base.dataytypes.CodeableConcept;
-import net.fhirfactory.dricats.internals.model.base.dataytypes.SerialisableObject;
+import com.fasterxml.jackson.databind.MapperFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
-public class MessagePayload extends SerialisableObject {
-    //
-    // Housekeeping
-    //
-
-    @Serial
-    private static final long serialVersionUID = -12345678900057L;
-    private static final Logger LOG = LoggerFactory.getLogger(MessagePayload.class);
-
-    //
-    // Attributes
-    //
-
-    private CodeableConcept payloadType;
-    private String payloadDescription;
-    private String payload;
-
+public class JSONMapperUtility {
+	//
+	// Housekeeping
+	//
+	private static final Logger LOG = LoggerFactory.getLogger(JSONMapperUtility.class);
+	
+	//
+	// Attributes
+	//
+    ObjectMapper jsonMapper = null;
+    
     //
     // Constructor(s)
     //
-
+    
+    public JSONMapperUtility() {
+	
+	    this.jsonMapper = new ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT);
+	    JavaTimeModule module = new JavaTimeModule();
+	    this.jsonMapper.registerModule(module);
+	    this.jsonMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
+	    this.jsonMapper.configure(MapperFeature.REQUIRE_SETTERS_FOR_GETTERS, true);
+	    this.jsonMapper.configure(MapperFeature.USE_ANNOTATIONS, true);
+    }
+    
     //
     // Bean Methods
     //
-
-    public CodeableConcept getPayloadType() {
-        return payloadType;
+    
+    public ObjectMapper getJSONMapper() {
+    	return(jsonMapper);
     }
-
-    public void setPayloadType(CodeableConcept payloadType) {
-        this.payloadType = payloadType;
-    }
-
-    public String getPayloadDescription() {
-        return payloadDescription;
-    }
-
-    public void setPayloadDescription(String payloadDescription) {
-        this.payloadDescription = payloadDescription;
-    }
-
-    public String getPayload() {
-        return payload;
-    }
-
-    public void setPayload(String payload) {
-        this.payload = payload;
-    }
-
+    
     //
     // Utility Methods
     //
-
-    protected Logger getLogger(){
-        return(LOG);
+    
+    protected Logger getLogger() {
+    	return(LOG);
     }
+    
 }

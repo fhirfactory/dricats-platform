@@ -21,13 +21,14 @@
  */
 package net.fhirfactory.dricats.internals.model.base;
 
+import java.io.Serial;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.Serial;
-import java.io.Serializable;
+import net.fhirfactory.dricats.internals.model.base.dataytypes.SerialisableObject;
 
-public class IntegrationEndpoint implements Serializable {
+public class IntegrationEndpoint extends SerialisableObject {
     //
     // Housekeeping
     //

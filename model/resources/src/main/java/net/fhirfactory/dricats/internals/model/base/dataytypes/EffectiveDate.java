@@ -22,14 +22,14 @@
 package net.fhirfactory.dricats.internals.model.base.dataytypes;
 
 import java.io.Serial;
-import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 import net.fhirfactory.dricats.deployment.contants.DefaultDeploymentConstants;
 
-public class EffectiveDate implements Serializable {
+public class EffectiveDate extends SerialisableObject {
     //
     // Housekeeping
     //
@@ -41,9 +41,9 @@ public class EffectiveDate implements Serializable {
     // Attributes
     //
 
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss.SSSXXX", timezone = DefaultDeploymentConstants.DEPLOYMENT_TIMEZONE)
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss.SSSSSSSSS", timezone = DefaultDeploymentConstants.DEPLOYMENT_TIMEZONE)
     private LocalDateTime effectiveStartDate;
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss.SSSXXX", timezone = DefaultDeploymentConstants.DEPLOYMENT_TIMEZONE)
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss.SSSSSSSSS", timezone = DefaultDeploymentConstants.DEPLOYMENT_TIMEZONE)
     private LocalDateTime effectiveEndDate;
 
     //
@@ -65,4 +65,44 @@ public class EffectiveDate implements Serializable {
     public void setEffectiveEndDate(LocalDateTime effectiveEndDate) {
         this.effectiveEndDate = effectiveEndDate;
     }
+
+    //
+    // Utility Methods
+    //
+    
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(getObjectID(),effectiveEndDate, effectiveStartDate);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (obj == null) {
+			return false;
+		}
+		if (getClass() != obj.getClass()) {
+			return false;
+		}
+		EffectiveDate other = (EffectiveDate) obj;
+		return Objects.equals(effectiveEndDate, other.effectiveEndDate)
+				&& Objects.equals(effectiveStartDate, other.effectiveStartDate);
+	}
+
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("EffectiveDate [effectiveStartDate=");
+		builder.append(effectiveStartDate);
+		builder.append(", effectiveEndDate=");
+		builder.append(effectiveEndDate);
+		builder.append(", objectID=");
+		builder.append(getObjectID());
+		builder.append("]");
+		return builder.toString();
+	}
+    
 }

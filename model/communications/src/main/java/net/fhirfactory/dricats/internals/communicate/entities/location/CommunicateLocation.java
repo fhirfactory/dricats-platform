@@ -21,13 +21,14 @@
  */
 package net.fhirfactory.dricats.internals.communicate.entities.location;
 
-import net.fhirfactory.dricats.internals.communicate.entities.user.datatypes.CommunicateUserReference;
-import net.fhirfactory.dricats.internals.model.core.entity.Location;
+import java.io.Serial;
+import java.util.Objects;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.Serial;
-import java.util.Objects;
+import net.fhirfactory.dricats.internals.communicate.entities.user.datatypes.CommunicateUserReference;
+import net.fhirfactory.dricats.internals.model.core.entity.Location;
 
 public class CommunicateLocation extends Location {
     //

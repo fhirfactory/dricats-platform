@@ -22,11 +22,11 @@
 package net.fhirfactory.dricats.internals.model.base.dataytypes;
 
 import java.io.Serial;
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
-public class CodeableConcept implements Serializable {
+public class CodeableConcept extends SerialisableObject {
     //
     // Housekeeping
     //
@@ -77,4 +77,50 @@ public class CodeableConcept implements Serializable {
     public void setSystem(String system) {
         this.system = system;
     }
+
+
+    
+    //
+    // Utility Methods
+    //
+    
+    
+    
+    
+	@Override
+	public int hashCode() {
+		return Objects.hash(code, display, system);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (obj == null) {
+			return false;
+		}
+		if (getClass() != obj.getClass()) {
+			return false;
+		}
+		CodeableConcept other = (CodeableConcept) obj;
+		return Objects.equals(code, other.code) && Objects.equals(display, other.display)
+				&& Objects.equals(system, other.system);
+	}
+
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("CodeableConcept [code=");
+		builder.append(code);
+		builder.append(", display=");
+		builder.append(display);
+		builder.append(", system=");
+		builder.append(system);
+		builder.append(", objectID=");
+		builder.append(getObjectID());
+		builder.append("]");
+		return builder.toString();
+	}
+    
 }
