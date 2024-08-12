@@ -28,11 +28,9 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.Date;
 
-import javax.enterprise.context.ApplicationScoped;
-
 import org.apache.commons.lang3.StringUtils;
 
-@ApplicationScoped
+
 public class DateUtility {
 	private String DD_MMM_YY = "dd-MMM-yy";
     private String DD_MMM_YYYY = "dd-MMM-yyyy";
@@ -41,7 +39,9 @@ public class DateUtility {
     private String YYYY_MM_DD_T_HH_MM_SS_Z_OUTPUT = "yyyy-MM-dd'T'HH:mm:ssZ";
     private String YYYY_MM_DD_T_HH_MM_SS_ZOFFSET = "yyyy-MM-dd'T'HH:mm:ss[+-]hh:mm";
     private String DD_MM_YYYY = "dd/MM/yyyy";
-    private String DEFAULT_TIME_ZONE = "Australia/Sydney";
+    
+    public static final String DEFAULT_TIME_ZONE = "Australia/Sydney";
+    public static final String DEFAULT_JSON_FORMAT = "yyyy-MM-dd HH:mm:ss.SSSSSSSSS";
 
     private DateTimeFormatter TIMESTAMP_FORMATTER = DateTimeFormatter.ofPattern(YYYY_MM_DD_T_HH_MM_SS_Z_INPUT);
     private DateTimeFormatter TIMESTAMP_OUTPUT_FORMATTER = DateTimeFormatter.ofPattern(YYYY_MM_DD_T_HH_MM_SS_Z_OUTPUT);

@@ -130,7 +130,7 @@
         <version-org.junit5>5.7.0</version-org.junit5>
         <version-junit>4.13</version-junit>
 
-        <version-org.jgroups-jgroups>4.2.15.Final</version-org.jgroups-jgroups>
+        <version-org.jgroups-jgroups>5.3.10.Final</version-org.jgroups-jgroups>
         <version-org.jgroups.kubernetes-jgroups-kubernetes>1.0.16.Final
         </version-org.jgroups.kubernetes-jgroups-kubernetes>
 

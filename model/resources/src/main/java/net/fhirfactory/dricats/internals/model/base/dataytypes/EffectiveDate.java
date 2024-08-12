@@ -27,6 +27,7 @@ import java.util.Objects;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
+import net.fhirfactory.dricats.common.DateUtility;
 import net.fhirfactory.dricats.deployment.contants.DefaultDeploymentConstants;
 
 public class EffectiveDate extends SerialisableObject {
@@ -41,9 +42,9 @@ public class EffectiveDate extends SerialisableObject {
     // Attributes
     //
 
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss.SSSSSSSSS", timezone = DefaultDeploymentConstants.DEPLOYMENT_TIMEZONE)
+    @JsonFormat(pattern = DateUtility.DEFAULT_JSON_FORMAT,  timezone = DefaultDeploymentConstants.DEPLOYMENT_TIMEZONE)
     private LocalDateTime effectiveStartDate;
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss.SSSSSSSSS", timezone = DefaultDeploymentConstants.DEPLOYMENT_TIMEZONE)
+    @JsonFormat(pattern = DateUtility.DEFAULT_JSON_FORMAT,  timezone = DefaultDeploymentConstants.DEPLOYMENT_TIMEZONE)
     private LocalDateTime effectiveEndDate;
 
     //

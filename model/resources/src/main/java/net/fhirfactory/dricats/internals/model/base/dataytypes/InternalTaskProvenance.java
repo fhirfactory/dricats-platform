@@ -21,16 +21,20 @@
  */
 package net.fhirfactory.dricats.internals.model.base.dataytypes;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-import net.fhirfactory.dricats.internals.model.base.DistributableObjectReference;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
+
+import net.fhirfactory.dricats.common.DateUtility;
+import net.fhirfactory.dricats.deployment.contants.DefaultDeploymentConstants;
+import net.fhirfactory.dricats.internals.model.base.DistributableObjectReference;
 
 public class InternalTaskProvenance implements Serializable {
     //
@@ -47,7 +51,7 @@ public class InternalTaskProvenance implements Serializable {
 
     private Map<Integer, DistributableObjectReference> taskHistory;
     private Map<Integer, DistributableObjectReference> softwareComponentHistory;
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss.SSSXXX")
+    @JsonFormat(pattern = DateUtility.DEFAULT_JSON_FORMAT,  timezone = DefaultDeploymentConstants.DEPLOYMENT_TIMEZONE)
     private LocalDateTime taskOriginDate;
 
     //
