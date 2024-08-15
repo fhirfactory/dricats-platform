@@ -38,19 +38,19 @@ public class DistributableObjectId extends SerialisableObject {
     // Attributes
     //
 
-    private String idValue;
+    private String objectName;
     private EffectiveDate effectiveDate;
 
     //
     // Bean Methods
     //
 
-    public String getIdValue() {
-        return idValue;
+    public String getObjectName() {
+        return objectName;
     }
 
-    public void setIdValue(String idValue) {
-        this.idValue = idValue;
+    public void setObjectName(String idValue) {
+        this.objectName = idValue;
     }
 
     public EffectiveDate getEffectiveDate() {

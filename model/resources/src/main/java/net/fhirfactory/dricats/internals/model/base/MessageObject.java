@@ -30,6 +30,7 @@ import org.slf4j.LoggerFactory;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 import net.fhirfactory.dricats.internals.model.base.dataytypes.SerialisableObject;
+import net.fhirfactory.dricats.platform.networks.NetworkEndpoint;
 
 public class MessageObject extends SerialisableObject {
     //
@@ -43,8 +44,8 @@ public class MessageObject extends SerialisableObject {
     // Attributes
     //
 
-    private IntegrationEndpoint messageSource;
-    private IntegrationEndpoint messageTarget;
+    private NetworkEndpoint messageSource;
+    private NetworkEndpoint messageTarget;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss.SSSXXX")
     private LocalDateTime messageSendDate;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss.SSSXXX")
@@ -61,19 +62,19 @@ public class MessageObject extends SerialisableObject {
     // Bean Methods
     //
 
-    public IntegrationEndpoint getMessageSource() {
+    public NetworkEndpoint getMessageSource() {
         return messageSource;
     }
 
-    public void setMessageSource(IntegrationEndpoint messageSource) {
+    public void setMessageSource(NetworkEndpoint messageSource) {
         this.messageSource = messageSource;
     }
 
-    public IntegrationEndpoint getMessageTarget() {
+    public NetworkEndpoint getMessageTarget() {
         return messageTarget;
     }
 
-    public void setMessageTarget(IntegrationEndpoint messageTarget) {
+    public void setMessageTarget(NetworkEndpoint messageTarget) {
         this.messageTarget = messageTarget;
     }
 

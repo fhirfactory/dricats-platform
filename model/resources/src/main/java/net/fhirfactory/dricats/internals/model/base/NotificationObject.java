@@ -30,6 +30,7 @@ import org.slf4j.LoggerFactory;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 import net.fhirfactory.dricats.internals.model.base.dataytypes.SerialisableObject;
+import net.fhirfactory.dricats.platform.networks.NetworkEndpoint;
 
 public class NotificationObject extends SerialisableObject {
     //
@@ -44,8 +45,8 @@ public class NotificationObject extends SerialisableObject {
     // Attributes
     //
 
-    private IntegrationEndpoint notificationSource;
-    private IntegrationEndpoint notificationTarget;
+    private NetworkEndpoint notificationSource;
+    private NetworkEndpoint notificationTarget;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss.SSSXXX")
     private LocalDateTime notificationSendDate;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss.SSSXXX")
@@ -63,19 +64,19 @@ public class NotificationObject extends SerialisableObject {
     // Bean Methods
     //
 
-    public IntegrationEndpoint getNotificationSource() {
+    public NetworkEndpoint getNotificationSource() {
         return notificationSource;
     }
 
-    public void setNotificationSource(IntegrationEndpoint notificationSource) {
+    public void setNotificationSource(NetworkEndpoint notificationSource) {
         this.notificationSource = notificationSource;
     }
 
-    public IntegrationEndpoint getNotificationTarget() {
+    public NetworkEndpoint getNotificationTarget() {
         return notificationTarget;
     }
 
-    public void setNotificationTarget(IntegrationEndpoint notificationTarget) {
+    public void setNotificationTarget(NetworkEndpoint notificationTarget) {
         this.notificationTarget = notificationTarget;
     }
 

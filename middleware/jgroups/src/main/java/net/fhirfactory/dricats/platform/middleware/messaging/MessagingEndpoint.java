@@ -19,45 +19,46 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.fhirfactory.dricats.internals.model.base.dataytypes;
+package net.fhirfactory.dricats.platform.middleware.messaging;
 
-import java.io.Serializable;
-import java.util.UUID;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-public class SerialisableObject implements Serializable {
+import net.fhirfactory.dricats.platform.middleware.jgroups.JGroupsEndpoint;
+import net.fhirfactory.dricats.platform.middleware.jgroups.datatypes.JGroupsNetworkAddress;
+
+public class MessagingEndpoint extends JGroupsEndpoint{
 	//
 	// Housekeeping
 	//
+	private static final Logger LOG = LoggerFactory.getLogger(MessagingEndpoint.class);
 	
-    private static final long serialVersionUID = 4428609418582057973L;
+	//
+	// Attributes
+	//
 	
-    //
-    // Attributes
-    //
-    
-    private String objectID;
+	//
+	// Constructor(s)
+	// 
+	
+	public MessagingEndpoint() {
+		super();
+	}
+	
+	//
+	// Methods
+	//
 
-    //
-    // Constructor(s)
-    //
-    
-    public SerialisableObject() {
-        this.objectID = UUID.randomUUID().toString();
-    }
+	
 
-    //
-    // Bean Methods
-    //
-    
-    public String getObjectID() {
-        return objectID;
-    }
-
-    public void setObjectID(String objectID) {
-        this.objectID = objectID;
-    }
-    
-    public Long getSerialVersionUID() {
-    	return(serialVersionUID);
-    }
+	//
+	// Utility Methods
+	//
+	
+	@Override
+	protected Logger getLogger() {
+		return(LOG);
+	}
+	
+	
 }

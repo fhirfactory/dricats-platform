@@ -15,7 +15,7 @@
         <module>resources</module>
         <module>conditions</module>
         <module>communications</module>
-        <module>messaging</module>
+        <module>jgroups</module>
         <module>tasking</module>
         <module>core</module>
         <module>constants</module>

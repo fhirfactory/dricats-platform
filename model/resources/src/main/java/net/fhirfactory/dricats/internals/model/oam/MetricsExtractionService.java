@@ -19,45 +19,10 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.fhirfactory.dricats.internals.model.base.dataytypes;
+package net.fhirfactory.dricats.internals.model.oam;
 
-import java.io.Serializable;
-import java.util.UUID;
+import net.fhirfactory.dricats.internals.model.oam.common.CommonComponentMetricsData;
 
-public class SerialisableObject implements Serializable {
-	//
-	// Housekeeping
-	//
-	
-    private static final long serialVersionUID = 4428609418582057973L;
-	
-    //
-    // Attributes
-    //
-    
-    private String objectID;
-
-    //
-    // Constructor(s)
-    //
-    
-    public SerialisableObject() {
-        this.objectID = UUID.randomUUID().toString();
-    }
-
-    //
-    // Bean Methods
-    //
-    
-    public String getObjectID() {
-        return objectID;
-    }
-
-    public void setObjectID(String objectID) {
-        this.objectID = objectID;
-    }
-    
-    public Long getSerialVersionUID() {
-    	return(serialVersionUID);
-    }
+public interface MetricsExtractionService {
+	public CommonComponentMetricsData retrieveMetricsData();
 }

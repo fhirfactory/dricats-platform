@@ -16,7 +16,7 @@
     <modules>
         <module>collaboration</module>
         <module>databus</module>
-        <module>messagebus</module>
+        <module>jgroups</module>
         <module>rules</module>
         <module>workflow</module>
         <module>persistence</module>

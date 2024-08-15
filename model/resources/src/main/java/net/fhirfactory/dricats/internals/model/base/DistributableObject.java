@@ -24,6 +24,7 @@ package net.fhirfactory.dricats.internals.model.base;
 import java.io.Serial;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import org.apache.commons.lang3.SerializationUtils;
 import org.slf4j.Logger;
@@ -47,7 +48,6 @@ public class DistributableObject extends SerialisableObject {
     // Attributes
     //
 
-    private DistributableObjectId id;
     private List<DistributableObjectIdentifier> identifiers;
     private DistributableObjectMetadata metadata;
     private SecurityLabels securityLabels;
@@ -57,13 +57,21 @@ public class DistributableObject extends SerialisableObject {
     //
 
     public DistributableObject(){
+    	super();
         this.identifiers = new ArrayList<>();
         this.metadata = new DistributableObjectMetadata();
         this.securityLabels = new SecurityLabels();
-        this.id = null;
+    }
+    
+    public DistributableObject( DistributableObjectIdentifier identifier) {
+        this.identifiers = new ArrayList<>();
+        this.metadata = new DistributableObjectMetadata();
+        this.securityLabels = new SecurityLabels();
+        getIdentifiers().add(identifier);
     }
 
     public DistributableObject(DistributableObject ori) {
+    	super();
         if(getIdentifiers() == null){
             setIdentifiers(new ArrayList<>());
         }
@@ -74,9 +82,6 @@ public class DistributableObject extends SerialisableObject {
             setMetadata(SerializationUtils.clone(ori.getMetadata()));
         } else {
             setMetadata(new DistributableObjectMetadata());
-        }
-        if(ori.getId() != null) {
-            setId(SerializationUtils.clone(ori.getId()));
         }
         if(ori.getSecurityLabels() != null){
             setSecurityLabels(SerializationUtils.clone(ori.getSecurityLabels()));
@@ -101,14 +106,6 @@ public class DistributableObject extends SerialisableObject {
 
     public void setMetadata(DistributableObjectMetadata metadata) {
         this.metadata = metadata;
-    }
-
-    public DistributableObjectId getId() {
-        return id;
-    }
-
-    public void setId(DistributableObjectId id) {
-        this.id = id;
     }
 
     public List<DistributableObjectIdentifier> getIdentifiers() {
