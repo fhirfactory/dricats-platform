@@ -22,6 +22,16 @@
 package net.fhirfactory.dricats.platform.middleware.jgroups.valuesets;
 
 public enum JGroupsEndpointTypeEnum {
-	JGROUPS_ENDPOINT_TYPE_MESSAGING,
-	JGROUPS_ENDPOINT_TYPE_RPC
+	JGROUPS_ENDPOINT_TYPE_MESSAGING("Messaging"),
+	JGROUPS_ENDPOINT_TYPE_RPC("RPC");
+	
+    private String endpointType;
+
+    private JGroupsEndpointTypeEnum(String endpointType){
+        this.endpointType = endpointType;
+    }
+
+    public String getEndpointType() {
+        return endpointType;
+    }
 }

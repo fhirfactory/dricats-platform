@@ -25,6 +25,8 @@ import java.io.Serial;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.jgroups.Address;
@@ -54,6 +56,9 @@ public abstract class JGroupsEndpoint extends JGroupsNetworkEndpoint implements 
 
     private static int INITIALISATION_RETRY_COUNT = 5;
     private static Long INITIALISATION_RETRY_WAIT = 500L;
+    
+    @Inject
+    private JGroupsNamingServices namingServices;
 
     //
     // Constructor(s)
@@ -170,11 +175,10 @@ public abstract class JGroupsEndpoint extends JGroupsNetworkEndpoint implements 
      *
      * @param addedInterface
      */
-    @Override
-    public void processInterfaceAddition(PetasosAdapterAddress addedInterface){
+    public void processInterfaceAddition(JGroupsNetworkAddress addedInterface){
         getLogger().info(".interfaceAdded(): Entry, addedInterface->{}", addedInterface);
-        String endpointSubsystemName = getComponentNameUtilities().getSubsystemNameFromEndpointName(addedInterface.getAddressName());
-        String endpointFunctionName = getComponentNameUtilities().getEndpointFunctionFromChannelName(addedInterface.getAddressName());
+        String endpointSubsystemName = getNamingServices().getApplicationNameFromEndpointName(addedInterface.getAddressName());
+        String endpointFunctionName = getNamingServices().getEndpointFunctionNameFromChannelName(addedInterface.getAddressName());
         if(StringUtils.isNotEmpty(endpointSubsystemName) && StringUtils.isNotEmpty(endpointFunctionName)) {
             boolean itIsAnotherInstanceOfMe = endpointSubsystemName.contentEquals(getSubsystemParticipantName());
             boolean itIsSameType = endpointFunctionName.contentEquals(PetasosEndpointFunctionTypeEnum.PETASOS_TOPOLOGY_ENDPOINT.getDisplayName());
@@ -249,6 +253,9 @@ public abstract class JGroupsEndpoint extends JGroupsNetworkEndpoint implements 
     // Getters and Setters
     //
 
+    public JGroupsNamingServices getNamingServices() {
+    	return(namingServices);
+    }
 
     //
     // JGroups Membership Methods
