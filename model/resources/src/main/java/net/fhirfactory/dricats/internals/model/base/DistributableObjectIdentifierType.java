@@ -24,6 +24,7 @@ package net.fhirfactory.dricats.internals.model.base;
 import java.io.Serial;
 import java.io.Serializable;
 import java.net.URI;
+import java.util.Objects;
 
 public class DistributableObjectIdentifierType implements Serializable {
     //
@@ -76,5 +77,33 @@ public class DistributableObjectIdentifierType implements Serializable {
 
     public void setSystem(URI system) {
         this.system = system;
+    }
+
+    //
+    // Utility Methods
+    //
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("DistributableObjectIdentifierType{");
+        sb.append("code='").append(getCode()).append('\'');
+        sb.append(", value='").append(getValue()).append('\'');
+        sb.append(", display='").append(getDisplay()).append('\'');
+        sb.append(", system=").append(getSystem());
+        sb.append('}');
+        return sb.toString();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        DistributableObjectIdentifierType that = (DistributableObjectIdentifierType) o;
+        return Objects.equals(getCode(), that.getCode()) && Objects.equals(getValue(), that.getValue()) && Objects.equals(getSystem(), that.getSystem());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getCode(), getValue(), getSystem());
     }
 }

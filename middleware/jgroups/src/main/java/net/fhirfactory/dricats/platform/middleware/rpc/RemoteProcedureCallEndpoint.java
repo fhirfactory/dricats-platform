@@ -21,13 +21,12 @@
  */
 package net.fhirfactory.dricats.platform.middleware.rpc;
 
+import net.fhirfactory.dricats.internals.model.networking.NetworkEndpoint;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import net.fhirfactory.dricats.internals.model.base.IntegrationEndpoint;
 import net.fhirfactory.dricats.platform.middleware.jgroups.JGroupsEndpoint;
 import net.fhirfactory.dricats.platform.middleware.messaging.MessagingEndpoint;
-import net.fhirfactory.dricats.platform.networks.datatypes.JGroupsNetworkAddress;
 
 public abstract class RemoteProcedureCallEndpoint extends JGroupsEndpoint{
 	//
@@ -47,62 +46,13 @@ public abstract class RemoteProcedureCallEndpoint extends JGroupsEndpoint{
 			String systemName, 
 			String clusterName, 
 			String stackName,
-			IntegrationEndpoint endpoint){
+			NetworkEndpoint endpoint){
 		super();
-		this.
 	}
 	
 	//
 	// Methods
 	//
-
-	@Override
-	protected String specifySubsystemParticipantName() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	protected String specifyJGroupsClusterName() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	protected String specifyJGroupsChannelName() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	protected String specifyJGroupsStackFileName() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	protected String deriveIntegrationPointSubsystemName(String endpointName) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public void processInterfaceAddition(JGroupsNetworkAddress addedInterface) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void processInterfaceRemoval(JGroupsNetworkAddress removedInterface) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void processInterfaceSuspect(JGroupsNetworkAddress suspectInterface) {
-		// TODO Auto-generated method stub
-		
-	}
 
 	//
 	// Utility Methods

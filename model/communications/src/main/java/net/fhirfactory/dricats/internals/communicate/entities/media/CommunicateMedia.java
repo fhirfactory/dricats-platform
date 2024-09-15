@@ -77,9 +77,10 @@ public class CommunicateMedia extends MediaObject {
         sb.append(", mediaSize=").append(getMediaSize());
         sb.append(", mediaCreationDate=").append(getMediaCreationDate());
         sb.append(", mediaUpdateDate=").append(getMediaUpdateDate());
+        sb.append(", securityLabels=").append(getSecurityLabels());
         sb.append(", metadata=").append(getMetadata());
-        sb.append(", id=").append(getId());
         sb.append(", identifiers=").append(getIdentifiers());
+        sb.append(", objectID='").append(getObjectID()).append('\'');
         sb.append('}');
         return sb.toString();
     }

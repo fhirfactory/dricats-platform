@@ -21,12 +21,8 @@
  */
 package net.fhirfactory.dricats.platform.middleware.jgroups;
 
-import java.io.Serial;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.inject.Inject;
-
+import net.fhirfactory.dricats.platform.middleware.jgroups.datatypes.JGroupsNetworkAddress;
+import net.fhirfactory.dricats.platform.middleware.jgroups.valuesets.JGroupsEndpointStatusEnum;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.jgroups.Address;
@@ -37,8 +33,13 @@ import org.jgroups.blocks.RpcDispatcher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import net.fhirfactory.dricats.platform.middleware.jgroups.datatypes.JGroupsNetworkAddress;
-import net.fhirfactory.dricats.platform.middleware.jgroups.valuesets.JGroupsEndpointStatusEnum;
+import javax.annotation.PostConstruct;
+import javax.inject.Inject;
+import java.io.Serial;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public abstract class JGroupsEndpoint extends JGroupsNetworkEndpoint implements MembershipListener{
 
@@ -56,6 +57,7 @@ public abstract class JGroupsEndpoint extends JGroupsNetworkEndpoint implements 
 
     private static int INITIALISATION_RETRY_COUNT = 5;
     private static Long INITIALISATION_RETRY_WAIT = 500L;
+    private Boolean clusterMembershipProcessingScheduled;
     
     @Inject
     private JGroupsNamingServices namingServices;
@@ -66,6 +68,7 @@ public abstract class JGroupsEndpoint extends JGroupsNetworkEndpoint implements 
 
     public JGroupsEndpoint(){
     	super();
+        this.clusterMembershipProcessingScheduled = false;
     }
     
     //
@@ -78,6 +81,7 @@ public abstract class JGroupsEndpoint extends JGroupsNetworkEndpoint implements 
     // Channel Initialization
     //
 
+    @PostConstruct
     public void initialise() {
         getLogger().debug(".initialise(): Entry");
         if (getEndpointStatus() != JGroupsEndpointStatusEnum.JGROUPS_ENDPOINT_STATUS_UNINITIALISED) {
@@ -135,18 +139,10 @@ public abstract class JGroupsEndpoint extends JGroupsNetworkEndpoint implements 
         }
         //
         // Handle View Change
-        getLogger().debug(".viewAccepted(): Checking PubSub Participants");
-        List<JGroupsNetworkAddress> removals = getMembership().getMembershipRemovals();
-        List<JGroupsNetworkAddress> additions = getMembership().getMembershipAdditions();
-        getLogger().debug(".viewAccepted(): Changes(MembersAdded->{}, MembersRemoved->{}", additions.size(), removals.size());
-        getLogger().debug(".viewAccepted(): Iterating through ActionInterfaces");
-        for(JGroupsNetworkAddress currentAddedElement: additions){
-            processInterfaceAddition(currentAddedElement);
-        }
-        for(JGroupsNetworkAddress currentRemovedElement: removals){
-            processInterfaceRemoval(currentRemovedElement);
-        }
-        getLogger().debug(".viewAccepted(): PubSub Participants check completed");
+        getLogger().debug(".viewAccepted(): [Update Unprocessed Change Lists] Start");
+        getMembership().updateUnprocessedMembershipAdditionsList();
+        getMembership().updateUnprocessedMembershipRemovalsList();
+        getLogger().debug(".viewAccepted(): [Update Unprocessed Change Lists] Finish");
         getLogger().debug(".viewAccepted(): Exit");
     }
 
@@ -164,33 +160,8 @@ public abstract class JGroupsEndpoint extends JGroupsNetworkEndpoint implements 
     public void unblock() {
         MembershipListener.super.unblock();
     }
-    
-    /**
-     * This method parses the list of "interfaces" ADDED (exposed/visible) to a JChannel instance (i.e. visible within the
-     * same JGroups cluster) and works out if a scan of the enpoint is (a) not another instance (different POD) of
-     * this service and is implementing the same "function".
-     *
-     * Note, it has to check the "name" quality/validity/structure - as sometimes JGroups can pass some wacky values
-     * to us...
-     *
-     * @param addedInterface
-     */
+
     public void processInterfaceAddition(JGroupsNetworkAddress addedInterface){
-        getLogger().info(".interfaceAdded(): Entry, addedInterface->{}", addedInterface);
-        String endpointSubsystemName = getNamingServices().getApplicationNameFromEndpointName(addedInterface.getAddressName());
-        String endpointFunctionName = getNamingServices().getEndpointFunctionNameFromChannelName(addedInterface.getAddressName());
-        if(StringUtils.isNotEmpty(endpointSubsystemName) && StringUtils.isNotEmpty(endpointFunctionName)) {
-            boolean itIsAnotherInstanceOfMe = endpointSubsystemName.contentEquals(getSubsystemParticipantName());
-            boolean itIsSameType = endpointFunctionName.contentEquals(PetasosEndpointFunctionTypeEnum.PETASOS_TOPOLOGY_ENDPOINT.getDisplayName());
-            if (!itIsAnotherInstanceOfMe && itIsSameType) {
-                getLogger().debug(".interfaceAdded(): itIsAnotherInstanceOfMe && !itIsSameType");
-                String endpointChannelName = addedInterface.getAddressName();
-                JGroupsIntegrationPointSummary jgroupsIP = buildFromChannelName(endpointChannelName);
-                integrationPointCheckScheduleMap.scheduleJGroupsIntegrationPointCheck(jgroupsIP, false, true);
-                scheduleEndpointValidation();
-            }
-        }
-        getLogger().debug(".interfaceAdded(): Exit");
     }
     
     
@@ -200,6 +171,37 @@ public abstract class JGroupsEndpoint extends JGroupsNetworkEndpoint implements 
     
     public void processInterfaceSuspect(JGroupsNetworkAddress suspectInterface) {
     	
+    }
+
+    public void clusterModificationsProcessing() {
+        getLogger().debug(".clusterModificationsProcessing(): Entry");
+
+        getLogger().debug(".clusterModificationsProcessing(): Exit");
+    }
+
+    public void scheduleEndpointValidation() {
+        getLogger().debug(".scheduleEndpointValidation(): Entry ");
+        if (getClusterMembershipProcessingScheduled()) {
+            // do nothing, it is already scheduled
+        } else {
+            TimerTask endpointValidationTask = new TimerTask() {
+                public void run() {
+                    getLogger().debug(".scheduleEndpointValidation(): Entry");
+                    boolean doAgain = performEndpointValidationCheck();
+                    getLogger().debug(".scheduleEndpointValidation(): doAgain ->{}", doAgain);
+                    if (!doAgain) {
+                        cancel();
+                        endpointCheckScheduled = false;
+                    }
+                    getLogger().debug(".scheduleEndpointValidation(): Exit");
+                }
+            };
+            String timerName = "ClusterModificationProcessingTask";
+            Timer timer = new Timer(timerName);
+            timer.schedule(endpointValidationTask, getJgroupsParticipantInformationService().getEndpointValidationStartDelay(), getJgroupsParticipantInformationService().getEndpointValidationPeriod());
+            endpointCheckScheduled = true;
+        }
+        getLogger().debug(".scheduleEndpointValidation(): Exit");
     }
 
     //
@@ -257,6 +259,10 @@ public abstract class JGroupsEndpoint extends JGroupsNetworkEndpoint implements 
     	return(namingServices);
     }
 
+    public Boolean getClusterMembershipProcessingScheduled(){
+        return(this.clusterMembershipProcessingScheduled);
+    }
+
     //
     // JGroups Membership Methods
     //
@@ -280,100 +286,17 @@ public abstract class JGroupsEndpoint extends JGroupsNetworkEndpoint implements 
         return (new ArrayList<>());
     }
 
-
-    public Address getTargetMemberAddress(String name){
-        getLogger().debug(".getTargetMemberAddress(): Entry, name->{}", name);
-        if(getIPCChannel() == null){
-            getLogger().debug(".getTargetMemberAddress(): IPCChannel is null, exit returning (null)");
-            return(null);
-        }
-        getLogger().trace(".getTargetMemberAddress(): IPCChannel is NOT null, get updated Address set via view");
-        List<Address> addressList = getAllViewMembers();
-        Address foundAddress = null;
-        getLogger().trace(".getTargetMemberAddress(): Got the Address set via view, now iterate through and see if one is suitable");
-        for (Address currentAddress : addressList) {
-            getLogger().trace(".getTargetMemberAddress(): Iterating through Address list, current element->{}", currentAddress);
-            if (currentAddress.toString().contentEquals(name)) {
-                getLogger().trace(".getTargetMemberAddress(): Exit, A match!");
-                foundAddress = currentAddress;
-                break;
-            }
-        }
-        getLogger().debug(".getTargetMemberAddress(): Exit, address->{}", foundAddress);
-        return(foundAddress);
-    }
-
-
-    public Address getCandidateTargetServiceAddress(String targetServiceName){
-        getLogger().debug(".getCandidateTargetServiceAddress(): Entry, targetServiceName->{}", targetServiceName);
-        if(getIPCChannel() == null){
-            getLogger().debug(".getCandidateTargetServiceAddress(): IPCChannel is null, exit returning (null)");
-            return(null);
-        }
-        getLogger().trace(".getCandidateTargetServiceAddress(): IPCChannel is NOT null, get updated Address set via view");
-        List<Address> addressList = getAllViewMembers();
-        Address foundAddress = null;
-        getLogger().debug(".getCandidateTargetServiceAddress(): Got the Address set via view, now iterate through and see if one is suitable");
-        for (Address currentAddress : addressList) {
-            getLogger().debug(".getCandidateTargetServiceAddress(): Iterating through Address list, current element->{}", currentAddress);
-            String currentService = currentAddress.toString();
-            if (currentService.equals(targetServiceName)) {
-                getLogger().debug(".getCandidateTargetServiceAddress(): Exit, A match!");
-                foundAddress = currentAddress;
-                break;
-            }
-        }
-        getLogger().debug(".getCandidateTargetServiceAddress(): Exit, foundAddress->{}",foundAddress );
-        return(foundAddress);
-    }
-
-    protected boolean isTargetAddressActive(String addressName){
-        getLogger().debug(".isTargetAddressActive(): Entry, addressName->{}", addressName);
-        if(getIPCChannel() == null){
-            getLogger().debug(".isTargetAddressActive(): IPCChannel is null, exit returning -false-");
-            return(false);
-        }
-        if(StringUtils.isEmpty(addressName)){
-            getLogger().debug(".isTargetAddressActive(): addressName is empty, exit returning -false-");
-            return(false);
-        }
-        getLogger().trace(".isTargetAddressActive(): IPCChannel is NOT null, get updated Address set via view");
-        List<Address> addressList = getAllViewMembers();
-        boolean addressIsActive = false;
-        getLogger().trace(".isTargetAddressActive(): Got the Address set via view, now iterate through and see our address is there");
-        for (Address currentAddress : addressList) {
-            getLogger().trace(".isTargetAddressActive(): Iterating through Address list, current element->{}", currentAddress);
-            if (currentAddress.toString().contentEquals(addressName)) {
-                getLogger().trace(".isTargetAddressActive(): Exit, A match");
-                addressIsActive = true;
-                break;
-            }
-        }
-        getLogger().debug(".isTargetAddressActive(): Exit, addressIsActive->{}",addressIsActive);
-        return(addressIsActive);
-    }
-
-    public List<JGroupsNetworkAddress> getAllClusterTargets(){
-        getLogger().debug(".getAllClusterTargets(): Entry");
-        List<Address> addressList = getAllViewMembers();
-        List<JGroupsNetworkAddress> adapterAddresses = new ArrayList<>();
-        for (Address currentAddress : addressList) {
-            getLogger().debug(".getAllTargets(): Iterating through Address list, current element->{}", currentAddress);
-            JGroupsNetworkAddress currentAdapterAddress = new JGroupsNetworkAddress();
-            currentAdapterAddress.setJGroupsAddress(currentAddress);
-            currentAdapterAddress.setAddressName(currentAddress.toString());
-            adapterAddresses.add(currentAdapterAddress);
-        }
-        getLogger().debug(".getAllClusterTargets(): Exit, adapterAddresses->{}", adapterAddresses);
-        return(adapterAddresses);
-    }
-
     protected Address getMyAddress(){
         if(getIPCChannel() != null){
             Address myAddress = getIPCChannel().getAddress();
             return(myAddress);
         }
         return(null);
+    }
+
+    public void buildChannelName(){
+        String channelName = getNamingServices().buildChannelName(getSubsystemDeploymentSite(), getSubsystem().getSystemName(), getEndpointType().getEndpointType(), getEndpointGroup().getEndpointGroupName(), getInstanceId());
+        setChannelName(channelName);
     }
     
     //

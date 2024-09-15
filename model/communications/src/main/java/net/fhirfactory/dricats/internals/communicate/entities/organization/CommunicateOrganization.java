@@ -81,9 +81,10 @@ public class CommunicateOrganization extends Organisation {
         sb.append("surrogateCommunicateUser=").append(getSurrogateCommunicateUser());
         sb.append(", tradingName=").append(getTradingName());
         sb.append(", serviceProviderRole=").append(getServiceProviderRole());
+        sb.append(", securityLabels=").append(getSecurityLabels());
         sb.append(", metadata=").append(getMetadata());
-        sb.append(", id=").append(getId());
         sb.append(", identifiers=").append(getIdentifiers());
+        sb.append(", objectID='").append(getObjectID()).append('\'');
         sb.append('}');
         return sb.toString();
     }

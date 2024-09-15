@@ -106,14 +106,15 @@ public class MediaObject extends DistributableObject{
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder("MediaObject{");
-        sb.append("mediaContent='").append(getMediaContent()).append('\'');
+        sb.append("mediaContent=").append(getMediaContent());
         sb.append(", mediaReference='").append(getMediaReference()).append('\'');
         sb.append(", mediaSize=").append(getMediaSize());
         sb.append(", mediaCreationDate=").append(getMediaCreationDate());
         sb.append(", mediaUpdateDate=").append(getMediaUpdateDate());
+        sb.append(", securityLabels=").append(getSecurityLabels());
         sb.append(", metadata=").append(getMetadata());
-        sb.append(", id=").append(getId());
         sb.append(", identifiers=").append(getIdentifiers());
+        sb.append(", objectID='").append(getObjectID()).append('\'');
         sb.append('}');
         return sb.toString();
     }

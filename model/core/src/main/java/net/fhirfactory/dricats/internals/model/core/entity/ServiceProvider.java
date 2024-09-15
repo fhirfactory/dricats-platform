@@ -69,9 +69,10 @@ public class ServiceProvider extends DistributableObject {
     public String toString() {
         final StringBuilder sb = new StringBuilder("ServiceProvider{");
         sb.append("roleType=").append(getRoleType());
+        sb.append(", securityLabels=").append(getSecurityLabels());
         sb.append(", metadata=").append(getMetadata());
-        sb.append(", id=").append(getId());
         sb.append(", identifiers=").append(getIdentifiers());
+        sb.append(", objectID='").append(getObjectID()).append('\'');
         sb.append('}');
         return sb.toString();
     }

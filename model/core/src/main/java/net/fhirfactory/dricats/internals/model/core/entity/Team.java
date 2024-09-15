@@ -161,9 +161,10 @@ public class Team extends DistributableObject {
         sb.append(", modificationDate=").append(getModificationDate());
         sb.append(", teamFunction=").append(getTeamFunction());
         sb.append(", teamType=").append(getTeamType());
+        sb.append(", securityLabels=").append(getSecurityLabels());
         sb.append(", metadata=").append(getMetadata());
-        sb.append(", id=").append(getId());
         sb.append(", identifiers=").append(getIdentifiers());
+        sb.append(", objectID='").append(getObjectID()).append('\'');
         sb.append('}');
         return sb.toString();
     }

@@ -81,9 +81,10 @@ public class CommunicateLocation extends Location {
         sb.append("surrogateCommunicateUser=").append(getSurrogateCommunicateUser());
         sb.append(", address=").append(getAddress());
         sb.append(", locationName='").append(getLocationName()).append('\'');
+        sb.append(", securityLabels=").append(getSecurityLabels());
         sb.append(", metadata=").append(getMetadata());
-        sb.append(", id=").append(getId());
         sb.append(", identifiers=").append(getIdentifiers());
+        sb.append(", objectID='").append(getObjectID()).append('\'');
         sb.append('}');
         return sb.toString();
     }

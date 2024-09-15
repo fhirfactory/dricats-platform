@@ -24,13 +24,13 @@ package net.fhirfactory.dricats.internals.model.base;
 import java.io.Serial;
 import java.time.LocalDateTime;
 
+import net.fhirfactory.dricats.internals.model.networking.NetworkEndpoint;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 import net.fhirfactory.dricats.internals.model.base.dataytypes.SerialisableObject;
-import net.fhirfactory.dricats.platform.networks.NetworkEndpoint;
 
 public class NotificationObject extends SerialisableObject {
     //

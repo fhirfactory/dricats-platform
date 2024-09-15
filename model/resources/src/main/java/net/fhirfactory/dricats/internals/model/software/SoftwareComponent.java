@@ -27,6 +27,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import net.fhirfactory.dricats.internals.model.software.interfaces.SubsystemInterface;
+import net.fhirfactory.dricats.internals.model.software.valuesets.SoftwareComponentIdentifierTypeEnum;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,6 +41,8 @@ import net.fhirfactory.dricats.internals.model.base.DistributableObjectIdentifie
 import net.fhirfactory.dricats.internals.model.base.DistributableObjectReference;
 import net.fhirfactory.dricats.internals.model.networking.valuesets.NetworkSecurityZoneEnum;
 import net.fhirfactory.dricats.internals.model.software.datatypes.SoftwareComponentType;
+
+import javax.inject.Inject;
 
 public class SoftwareComponent extends DistributableObject{
     //
@@ -61,11 +66,15 @@ public class SoftwareComponent extends DistributableObject{
     private String subsystemDeploymentGroup;
     private String subsystemDeploymentSite;
 
+    @Inject
+    private SubsystemInterface subsystem;
+
     //
     // Constructor(s)
     //
 
     public SoftwareComponent() {
+        super();
         this.containedComponents = new ArrayList<>();
         setSubsystemDeploymentSite("DefaultSite");
         setSubsystemDeploymentGroup("DefaultGroup");
@@ -100,6 +109,11 @@ public class SoftwareComponent extends DistributableObject{
     //
     // Bean Methods
     //
+
+    @JsonIgnore
+    public SoftwareSubsystem getSubsystem(){
+        return(subsystem.getSubsystem());
+    }
 
     public DistributableObjectReference getParentComponent() {
         return parentComponent;
@@ -175,6 +189,52 @@ public class SoftwareComponent extends DistributableObject{
 		this.subsystemDeploymentSite = subsystemDeploymentSite;
 	}
 
+    @JsonIgnore
+    public String getInstanceId() {
+        DistributableObjectIdentifier identifier = getIdentifier(SoftwareComponentIdentifierTypeEnum.IDENTIFIER_TYPE_SOFTWARE_COMPONENT_INSTANCE_ID);
+        if (identifier != null) {
+            return (identifier.getIdentifierValue());
+        }
+        return (null);
+    }
+
+    @JsonIgnore
+    public void setInstanceId(String instanceId) {
+        DistributableObjectIdentifier identifier = getIdentifier(SoftwareComponentIdentifierTypeEnum.IDENTIFIER_TYPE_SOFTWARE_COMPONENT_INSTANCE_ID);
+        if(identifier != null) {
+            identifier.setIdentifierValue(instanceId);
+            identifier.getEffectiveDate().setEffectiveStartDate(LocalDateTime.now());
+        } else {
+            identifier = new DistributableObjectIdentifier();
+            identifier.setIdentifierType(SoftwareComponentIdentifierTypeEnum.IDENTIFIER_TYPE_SOFTWARE_COMPONENT_INSTANCE_ID.toDistributableObjectIdentifierType());
+            identifier.setIdentifierValue(instanceId);
+            addIdentifier(identifier);
+        }
+    }
+
+    @JsonIgnore
+    public String getComponentName() {
+        DistributableObjectIdentifier identifier = getIdentifier(SoftwareComponentIdentifierTypeEnum.IDENTIFIER_TYPE_SOFTWARE_COMPONENT_NAME);
+        if (identifier != null) {
+            return (identifier.getIdentifierValue());
+        }
+        return (null);
+    }
+
+    @JsonIgnore
+    public void setComponentName(String instanceId) {
+        DistributableObjectIdentifier identifier = getIdentifier(SoftwareComponentIdentifierTypeEnum.IDENTIFIER_TYPE_SOFTWARE_COMPONENT_NAME);
+        if(identifier != null) {
+            identifier.setIdentifierValue(instanceId);
+            identifier.getEffectiveDate().setEffectiveStartDate(LocalDateTime.now());
+        } else {
+            identifier = new DistributableObjectIdentifier();
+            identifier.setIdentifierType(SoftwareComponentIdentifierTypeEnum.IDENTIFIER_TYPE_SOFTWARE_COMPONENT_NAME.toDistributableObjectIdentifierType());
+            identifier.setIdentifierValue(instanceId);
+            addIdentifier(identifier);
+        }
+    }
+
     //
     // Utility Methods
     //
@@ -186,11 +246,17 @@ public class SoftwareComponent extends DistributableObject{
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder("SoftwareComponent{");
-        sb.append(", parentComponent=").append(getParentComponent());
+        sb.append("parentComponent=").append(getParentComponent());
         sb.append(", containedComponents=").append(getContainedComponents());
         sb.append(", componentStartupDate=").append(getComponentStartupDate());
+        sb.append(", componentType=").append(getComponentType());
+        sb.append(", subsystemDeploymentZone=").append(getSubsystemDeploymentZone());
+        sb.append(", subsystemDeploymentGroup='").append(getSubsystemDeploymentGroup()).append('\'');
+        sb.append(", subsystemDeploymentSite='").append(getSubsystemDeploymentSite()).append('\'');
+        sb.append(", securityLabels=").append(getSecurityLabels());
         sb.append(", metadata=").append(getMetadata());
         sb.append(", identifiers=").append(getIdentifiers());
+        sb.append(", objectID='").append(getObjectID()).append('\'');
         sb.append('}');
         return sb.toString();
     }

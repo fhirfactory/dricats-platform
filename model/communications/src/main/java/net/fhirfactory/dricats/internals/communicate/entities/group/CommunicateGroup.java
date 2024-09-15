@@ -98,9 +98,10 @@ public class CommunicateGroup extends Group {
         sb.append(", creationDate=").append(getCreationDate());
         sb.append(", modificationDate=").append(getModificationDate());
         sb.append(", groupType=").append(getGroupType());
+        sb.append(", securityLabels=").append(getSecurityLabels());
         sb.append(", metadata=").append(getMetadata());
-        sb.append(", id=").append(getId());
         sb.append(", identifiers=").append(getIdentifiers());
+        sb.append(", objectID='").append(getObjectID()).append('\'');
         sb.append('}');
         return sb.toString();
     }

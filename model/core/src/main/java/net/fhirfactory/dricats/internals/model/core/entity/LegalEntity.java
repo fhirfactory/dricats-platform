@@ -69,9 +69,10 @@ public class LegalEntity extends DistributableObject {
     public String toString() {
         final StringBuilder sb = new StringBuilder("LegalEntity{");
         sb.append("serviceProviderRole=").append(getServiceProviderRole());
+        sb.append(", securityLabels=").append(getSecurityLabels());
         sb.append(", metadata=").append(getMetadata());
-        sb.append(", id=").append(getId());
         sb.append(", identifiers=").append(getIdentifiers());
+        sb.append(", objectID='").append(getObjectID()).append('\'');
         sb.append('}');
         return sb.toString();
     }

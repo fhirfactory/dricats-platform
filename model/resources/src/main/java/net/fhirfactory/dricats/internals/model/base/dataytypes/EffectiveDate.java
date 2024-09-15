@@ -47,6 +47,20 @@ public class EffectiveDate extends SerialisableObject {
     @JsonFormat(pattern = DateUtility.DEFAULT_JSON_FORMAT,  timezone = DefaultDeploymentConstants.DEPLOYMENT_TIMEZONE)
     private LocalDateTime effectiveEndDate;
 
+	//
+	// Constructor(s)
+	//
+
+	public EffectiveDate(){
+		setEffectiveStartDate(LocalDateTime.now());
+		setEffectiveEndDate(LocalDateTime.MAX);
+	}
+
+	public EffectiveDate(LocalDateTime effectiveStartDate, LocalDateTime effectiveEndDate) {
+		setEffectiveStartDate(effectiveStartDate);
+		setEffectiveEndDate(effectiveEndDate);
+	}
+
     //
     // Bean Methods
     //

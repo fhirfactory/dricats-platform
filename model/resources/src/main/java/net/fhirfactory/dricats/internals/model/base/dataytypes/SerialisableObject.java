@@ -21,6 +21,7 @@
  */
 package net.fhirfactory.dricats.internals.model.base.dataytypes;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.UUID;
 
@@ -28,7 +29,8 @@ public class SerialisableObject implements Serializable {
 	//
 	// Housekeeping
 	//
-	
+
+    @Serial
     private static final long serialVersionUID = 4428609418582057973L;
 	
     //

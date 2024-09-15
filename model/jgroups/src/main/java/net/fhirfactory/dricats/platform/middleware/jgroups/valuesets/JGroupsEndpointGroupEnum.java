@@ -21,25 +21,18 @@
  */
 package net.fhirfactory.dricats.platform.middleware.jgroups.valuesets;
 
-public enum JGroupsEndpointStatusEnum {
-	JGROUPS_ENDPOINT_STATUS_UNINITIALISED("jgroups_endpoint.status.uninitialised"),
-	JGROUPS_ENDPOINT_STATUS_INITIALISED("jgroups_endpoint.status.initialised"),
-	JGROUPS_ENDPOINT_STATUS_SAME("jgroups_endpoint.status.same"),
-    JGROUPS_ENDPOINT_STATUS_DETECTED("jgroups_endpoint.status.detected"),
-    JGROUPS_ENDPOINT_STATUS_REACHABLE("jgroups_endpoint.status.reachable"),
-    JGROUPS_ENDPOINT_STATUS_UNREACHABLE("jgroups_endpoint.status.unreachable"),
-    JGROUPS_ENDPOINT_STATUS_STARTED("jgroups_endpoint.status.started"),
-    JGROUPS_ENDPOINT_STATUS_OPERATIONAL("jgroups_endpoint.status.operational"),
-    JGROUPS_ENDPOINT_STATUS_SUSPECT("jgroups_endpoint.status.suspect"),
-    JGROUPS_ENDPOINT_STATUS_FAILED("jgroups_endpoint.status.failed");
+public enum JGroupsEndpointGroupEnum {
+    JGROUPS_ENDPOINT_GROUP_TASK_MANAGEMENT("TaskManagement"),
+    JGROUPS_ENDPOINT_GROUP_AUDIT("Audit"),
+    JGROUPS_ENDPOINT_GROUP_OAM("OAM");
 
-    private final String endpointStatus;
+    private String endpointGroup;
 
-    private JGroupsEndpointStatusEnum(String status){
-        this.endpointStatus = status;
+    private JGroupsEndpointGroupEnum(String endpointGroup){
+        this.endpointGroup = endpointGroup;
     }
 
-    public String getEndpointStatus() {
-        return endpointStatus;
+    public String getEndpointGroupName() {
+        return endpointGroup;
     }
 }

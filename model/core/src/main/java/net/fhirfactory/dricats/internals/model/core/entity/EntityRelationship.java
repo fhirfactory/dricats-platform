@@ -99,10 +99,11 @@ public class EntityRelationship extends DistributableObject {
         sb.append("relationshipSource=").append(getRelationshipSource());
         sb.append(", relationshipTarget=").append(getRelationshipTarget());
         sb.append(", relationshipType=").append(getRelationshipType());
-        sb.append(", metadata=").append(getMetadata());
-        sb.append(", id=").append(getId());
-        sb.append(", identifiers=").append(getIdentifiers());
         sb.append(", relationshipEffectiveDate=").append(getRelationshipEffectiveDate());
+        sb.append(", securityLabels=").append(getSecurityLabels());
+        sb.append(", metadata=").append(getMetadata());
+        sb.append(", identifiers=").append(getIdentifiers());
+        sb.append(", objectID='").append(getObjectID()).append('\'');
         sb.append('}');
         return sb.toString();
     }

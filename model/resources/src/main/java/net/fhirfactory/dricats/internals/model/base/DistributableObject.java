@@ -26,6 +26,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import net.fhirfactory.dricats.internals.model.base.dataytypes.EffectiveDate;
+import net.fhirfactory.dricats.internals.model.software.valuesets.SoftwareComponentIdentifierTypeEnum;
 import org.apache.commons.lang3.SerializationUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -64,6 +66,7 @@ public class DistributableObject extends SerialisableObject {
     }
     
     public DistributableObject( DistributableObjectIdentifier identifier) {
+        super();
         this.identifiers = new ArrayList<>();
         this.metadata = new DistributableObjectMetadata();
         this.securityLabels = new SecurityLabels();
@@ -112,6 +115,35 @@ public class DistributableObject extends SerialisableObject {
         return identifiers;
     }
 
+    @JsonIgnore
+    public DistributableObjectIdentifier getIdentifier(DistributableObjectIdentifierType identifierType){
+        for(DistributableObjectIdentifier identifier : getIdentifiers()){
+            if(identifier.getIdentifierType().equals(identifierType)){
+                return identifier;
+            }
+        }
+        return(null);
+    }
+
+    @JsonIgnore
+    public DistributableObjectIdentifier getIdentifier(SoftwareComponentIdentifierTypeEnum identifierType){
+        for(DistributableObjectIdentifier identifier : getIdentifiers()){
+            if(identifier.getIdentifierType().equals(identifierType)){
+                return identifier;
+            }
+        }
+        return(null);
+    }
+
+    @JsonIgnore
+    public void setIdentifier(SoftwareComponentIdentifierTypeEnum identifierType, String value, String display){
+        DistributableObjectIdentifierType newIdentifierType = identifierType.toDistributableObjectIdentifierType();
+        DistributableObjectIdentifier newIdentifier = new DistributableObjectIdentifier();
+        newIdentifier.setIdentifierType(newIdentifierType);
+        newIdentifier.setIdentifierValue(value);
+        newIdentifier.setEffectiveDate(new EffectiveDate());
+    }
+
     public void setIdentifiers(List<DistributableObjectIdentifier> identifiers) {
         this.identifiers = identifiers;
     }
@@ -130,5 +162,16 @@ public class DistributableObject extends SerialisableObject {
 
     protected Logger getLogger(){
         return(LOG);
+    }
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("DistributableObject{");
+        sb.append("identifiers=").append(getIdentifiers());
+        sb.append(", metadata=").append(getMetadata());
+        sb.append(", securityLabels=").append(getSecurityLabels());
+        sb.append(", objectID='").append(getObjectID()).append('\'');
+        sb.append('}');
+        return sb.toString();
     }
 }

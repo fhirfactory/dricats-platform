@@ -23,7 +23,11 @@ package net.fhirfactory.dricats.platform.middleware.jgroups;
 
 import java.io.Serial;
 import java.net.URI;
+import java.time.LocalDateTime;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import net.fhirfactory.dricats.internals.model.software.valuesets.SoftwareComponentIdentifierTypeEnum;
+import net.fhirfactory.dricats.platform.middleware.jgroups.valuesets.JGroupsEndpointGroupEnum;
 import org.jgroups.JChannel;
 import org.jgroups.blocks.RpcDispatcher;
 import org.slf4j.Logger;
@@ -50,9 +54,9 @@ abstract public class JGroupsNetworkEndpoint extends NetworkEndpoint{
 	//
 	// Attributes
 	//
-	
-    private String channelName;
+
     private String clusterName;
+    private JGroupsEndpointGroupEnum endpointGroup;
     private JGroupsMembership membership;
     private JChannel ipcChannel;
     private RpcDispatcher rpcDispatcher;
@@ -67,7 +71,6 @@ abstract public class JGroupsNetworkEndpoint extends NetworkEndpoint{
     //
     public JGroupsNetworkEndpoint(){
     	super();
-        this.channelName = null;
         this.clusterName = null;
         this.membership = new JGroupsMembership();
         this.ipcChannel = null;
@@ -87,19 +90,29 @@ abstract public class JGroupsNetworkEndpoint extends NetworkEndpoint{
     	    String jgroupsStackFilename, 
     	    JGroupsEndpointTypeEnum endpointType,
     	    String channelName,
-    	    String clusterName) {
+    	    String clusterName,
+            JGroupsEndpointGroupEnum endpointGroup) {
     	super(parentComponent, componentIdentifier, componentType, endpointURI, subsystemDeploymentSite, subsystemDeploymentGroup, deploymentZone );
     	setStackFilename(jgroupsStackFilename);
     	setEndpointType(endpointType);
     	setClusterName(clusterName);
     	setChannelName(channelName);
+        setEndpointGroup(endpointGroup);
     	setEndpointStatus(JGroupsEndpointStatusEnum.JGROUPS_ENDPOINT_STATUS_UNINITIALISED);
     }
 
     //
     // Bean Methods
     //
-    
+
+    public JGroupsEndpointGroupEnum getEndpointGroup() {
+        return endpointGroup;
+    }
+
+    public void setEndpointGroup(JGroupsEndpointGroupEnum endpointGroup) {
+        this.endpointGroup = endpointGroup;
+    }
+
     public String getClusterName() {
     	return(this.clusterName);
     }
@@ -172,14 +185,31 @@ abstract public class JGroupsNetworkEndpoint extends NetworkEndpoint{
     public void setMembership(JGroupsMembership membership) {
     	this.membership = membership;
     }
-    
+
+    @JsonIgnore
     public String getChannelName() {
-        return channelName;
+        DistributableObjectIdentifier identifier = getIdentifier(SoftwareComponentIdentifierTypeEnum.IDENTIFIER_TYPE_JGROUPS_CHANNEL_NAME);
+        if(identifier != null) {
+            return(identifier.getIdentifierValue());
+        }
+        return (null);
     }
 
+    @JsonIgnore
     public void setChannelName(String channelName) {
-        this.channelName = channelName;
+        DistributableObjectIdentifier identifier = getIdentifier(SoftwareComponentIdentifierTypeEnum.IDENTIFIER_TYPE_JGROUPS_CHANNEL_NAME);
+        if(identifier != null) {
+            identifier.setIdentifierValue(channelName);
+            identifier.getEffectiveDate().setEffectiveStartDate(LocalDateTime.now());
+        } else {
+            identifier = new DistributableObjectIdentifier();
+            identifier.setIdentifierType(SoftwareComponentIdentifierTypeEnum.IDENTIFIER_TYPE_JGROUPS_CHANNEL_NAME.toDistributableObjectIdentifierType());
+            identifier.setIdentifierValue(channelName);
+            addIdentifier(identifier);
+        }
     }
+
+
     
     //
     // Utility Methods

@@ -25,7 +25,7 @@ public enum JGroupsEndpointTypeEnum {
 	JGROUPS_ENDPOINT_TYPE_MESSAGING("Messaging"),
 	JGROUPS_ENDPOINT_TYPE_RPC("RPC");
 	
-    private String endpointType;
+    private final String endpointType;
 
     private JGroupsEndpointTypeEnum(String endpointType){
         this.endpointType = endpointType;
