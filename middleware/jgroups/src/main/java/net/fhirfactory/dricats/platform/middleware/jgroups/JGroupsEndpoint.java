@@ -23,7 +23,6 @@ package net.fhirfactory.dricats.platform.middleware.jgroups;
 
 import net.fhirfactory.dricats.platform.middleware.jgroups.datatypes.JGroupsNetworkAddress;
 import net.fhirfactory.dricats.platform.middleware.jgroups.valuesets.JGroupsEndpointStatusEnum;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.jgroups.Address;
 import org.jgroups.JChannel;
@@ -40,7 +39,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
+import net.fhirfactory.dricats.deployment.contants.DefaultDeploymentConstants;
 
+/**
+ *
+ * @author mhunter
+ */
 public abstract class JGroupsEndpoint extends JGroupsNetworkEndpoint implements MembershipListener{
 
 	//
@@ -55,8 +59,8 @@ public abstract class JGroupsEndpoint extends JGroupsNetworkEndpoint implements 
 	// Attributes
 	//
 
-    private static int INITIALISATION_RETRY_COUNT = 5;
-    private static Long INITIALISATION_RETRY_WAIT = 500L;
+    private static final int INITIALISATION_RETRY_COUNT = 5;
+    private static final Long INITIALISATION_RETRY_WAIT = 500L;
     private Boolean clusterMembershipProcessingScheduled;
     
     @Inject
@@ -68,7 +72,8 @@ public abstract class JGroupsEndpoint extends JGroupsNetworkEndpoint implements 
 
     public JGroupsEndpoint(){
     	super();
-        this.clusterMembershipProcessingScheduled = false;
+        setClusterMembershipProcessingScheduled(false);
+        
     }
     
     //
@@ -191,17 +196,22 @@ public abstract class JGroupsEndpoint extends JGroupsNetworkEndpoint implements 
                     getLogger().debug(".scheduleEndpointValidation(): doAgain ->{}", doAgain);
                     if (!doAgain) {
                         cancel();
-                        endpointCheckScheduled = false;
+                        setClusterMembershipProcessingScheduled(false);
                     }
                     getLogger().debug(".scheduleEndpointValidation(): Exit");
                 }
             };
             String timerName = "ClusterModificationProcessingTask";
             Timer timer = new Timer(timerName);
-            timer.schedule(endpointValidationTask, getJgroupsParticipantInformationService().getEndpointValidationStartDelay(), getJgroupsParticipantInformationService().getEndpointValidationPeriod());
-            endpointCheckScheduled = true;
+            timer.schedule(endpointValidationTask, DefaultDeploymentConstants.JGROUPS_CLUSTER_SCAN_DELAY, DefaultDeploymentConstants.JGROUPS_CLUSTER_SCAN_PERIOD);
+            setClusterMembershipProcessingScheduled(true);
         }
         getLogger().debug(".scheduleEndpointValidation(): Exit");
+    }
+    
+    
+    protected boolean performEndpointValidationCheck(){
+        return(false);
     }
 
     //
@@ -263,6 +273,11 @@ public abstract class JGroupsEndpoint extends JGroupsNetworkEndpoint implements 
         return(this.clusterMembershipProcessingScheduled);
     }
 
+    public void setClusterMembershipProcessingScheduled(Boolean clusterMembershipProcessingScheduled) {
+        this.clusterMembershipProcessingScheduled = clusterMembershipProcessingScheduled;
+    }
+
+
     //
     // JGroups Membership Methods
     //
@@ -306,4 +321,6 @@ public abstract class JGroupsEndpoint extends JGroupsNetworkEndpoint implements 
     protected Logger getLogger() {
     	return(LOG);
     }
+
+
 }

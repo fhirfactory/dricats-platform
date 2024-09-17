@@ -23,4 +23,8 @@ package net.fhirfactory.dricats.deployment.contants;
 
 public final class DefaultDeploymentConstants {
     public static final String DEPLOYMENT_TIMEZONE = "Australia/Sydney";
+    
+    // JGroups Logic Constants
+    public static final Long JGROUPS_CLUSTER_SCAN_DELAY = 5000L;
+    public static final Long JGROUPS_CLUSTER_SCAN_PERIOD = 5000L;
 }
