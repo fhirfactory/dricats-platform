@@ -22,6 +22,7 @@
 package net.fhirfactory.dricats.internals.model.base;
 
 import net.fhirfactory.dricats.internals.model.base.dataytypes.MediaContent;
+import net.fhirfactory.dricats.internals.model.messaging.MessageObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

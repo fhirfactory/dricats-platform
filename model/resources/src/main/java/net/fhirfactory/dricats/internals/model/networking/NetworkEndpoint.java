@@ -24,6 +24,7 @@ package net.fhirfactory.dricats.internals.model.networking;
 import java.io.Serial;
 import java.net.URI;
 
+import net.fhirfactory.dricats.internals.model.software.interfaces.SubsystemInterface;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -56,21 +57,24 @@ abstract public class NetworkEndpoint extends SoftwareComponent implements Metri
     // Constructor(s)
     //
 
+	/*
     public NetworkEndpoint() {
     	super();
     	this.endpointURI = null;
     	this.metricsData = new EndpointMetricsData();
     }
-    
+    */
+
     public NetworkEndpoint(
-    		DistributableObjectReference parentComponent, 
-    		DistributableObjectIdentifier componentIdentifier,
-    		SoftwareComponentType componentType,
-    		URI endpointURI,
-    	    String subsystemDeploymentSite,
-    	    String subsystemDeploymentGroup, 
-    		NetworkSecurityZoneEnum deploymentZone) {
-    	super(parentComponent, componentIdentifier, componentType, subsystemDeploymentSite, subsystemDeploymentGroup, deploymentZone );
+			DistributableObjectReference parentComponent,
+			DistributableObjectIdentifier componentIdentifier,
+			SoftwareComponentType componentType,
+			URI endpointURI,
+			String subsystemDeploymentSite,
+			String subsystemDeploymentGroup,
+			NetworkSecurityZoneEnum deploymentZone,
+			SubsystemInterface subsystemInterface) {
+    	super(parentComponent, componentIdentifier, componentType, subsystemDeploymentSite, subsystemDeploymentGroup, deploymentZone, subsystemInterface );
     	setEndpointURI(endpointURI);
     	this.metricsData = new EndpointMetricsData();
     }

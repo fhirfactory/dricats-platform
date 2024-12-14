@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>net.fhirfactory.dricats</groupId>
+        <artifactId>dricats-platform-model</artifactId>
+        <version>1.0.0-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>dricats-platform-model-topology</artifactId>
+    <name>DRICaTS-Platform :: Data Models :: topology</name>
+    <packaging>jar</packaging>
+
+    <properties>
+    </properties>
+
+    <dependencies>
+        <!--*******************************************************************************-->
+        <!-- JakartaEE (Wildfly) Libraries                                                 -->
+        <!--*******************************************************************************-->
+
+        <dependency>
+            <groupId>javax.enterprise</groupId>
+            <artifactId>cdi-api</artifactId>
+            <version>${version-javax.enterprise-cdi-api}</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jboss.spec.javax.annotation</groupId>
+            <artifactId>jboss-annotations-api_1.3_spec</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+        <!--*******************************************************************************-->
+        <!-- DRICaTS Libraries                                                 -->
+        <!--*******************************************************************************-->
+
+        <dependency>
+            <groupId>net.fhirfactory.dricats</groupId>
+            <artifactId>dricats-platform-model-core</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>net.fhirfactory.dricats</groupId>
+            <artifactId>dricats-platform-model-constants</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+        </dependency>
+
+        <!--*******************************************************************************-->
+        <!-- Apache Commons Libraries                                                      -->
+        <!--*******************************************************************************-->
+
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+        </dependency>
+
+        <!--*******************************************************************************-->
+        <!-- JSON Manipulation Libraries                                                   -->
+        <!--*******************************************************************************-->
+
+        <dependency>
+            <groupId>org.json</groupId>
+            <artifactId>json</artifactId>
+            <scope>compile</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-core</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.fasterxml.jackson.datatype</groupId>
+            <artifactId>jackson-datatype-jsr310</artifactId>
+            <scope>compile</scope>
+        </dependency>
+
+        <!--*******************************************************************************-->
+        <!-- Logging (SLF4J) Libraries                                                     -->
+        <!--*******************************************************************************-->
+
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <scope>compile</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-core</artifactId>
+            <scope>compile</scope>
+        </dependency>
+
+    </dependencies>
+
+</project>

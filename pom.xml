@@ -32,10 +32,11 @@
     </developers>
 
     <modules>
-	<module>common</module>
+	    <module>common</module>
         <module>middleware</module>
         <module>model</module>
         <module>documentation</module>
+        <module>twin</module>
     </modules>
 
     <scm>

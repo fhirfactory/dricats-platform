@@ -20,6 +20,7 @@
         <module>rules</module>
         <module>workflow</module>
         <module>persistence</module>
+        <module>configserver</module>
     </modules>
 
     <properties>

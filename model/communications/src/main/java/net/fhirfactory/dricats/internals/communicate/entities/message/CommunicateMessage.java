@@ -26,7 +26,7 @@ import net.fhirfactory.dricats.internals.communicate.entities.message.datatypes.
 import net.fhirfactory.dricats.internals.communicate.entities.message.valuesets.CommunicateMessageTypeEnum;
 import net.fhirfactory.dricats.internals.communicate.entities.rooms.datatypes.CommunicateRoomReference;
 import net.fhirfactory.dricats.internals.communicate.entities.user.datatypes.CommunicateUserReference;
-import net.fhirfactory.dricats.internals.model.base.MessageObject;
+import net.fhirfactory.dricats.internals.model.messaging.MessageObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

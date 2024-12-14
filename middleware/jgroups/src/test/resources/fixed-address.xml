@@ -1,0 +1,32 @@
+<config>
+    <!-- xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns="urn:jgroups"
+        xsi:schemaLocation="urn:jgroups http://www.jgroups.org/schema/jgroups.xsd"-->
+
+        <!-- TCP transport configuration -->
+    <TP bind_addr="127.0.0.1" bind_port="7800"/>
+            <!-- Optional: Specify fixed addresses (list of known members) -->
+    <static-routers>
+        <router>
+            <address>127.0.0.1:7801</address>
+        </router>
+        <router>
+            <address>127.0.0.1:7802</address>
+        </router>
+        <router>
+            <address>127.0.0.1:7803</address>
+        </router>
+    </static-routers>
+
+    <stack>
+        <protocol type="org.jgroups.protocols.TCP" />
+        <protocol type="org.jgroups.protocols.FD" /> <!-- Failure detection -->
+        <protocol type="org.jgroups.protocols.MERGE3" /> <!-- Merge protocol -->
+        <protocol type="org.jgroups.protocols.VERIFY_SUSPECT" /> <!-- Suspect verification -->
+        <protocol type="org.jgroups.protocols.BARRIER" /> <!-- Barrier protocol -->
+        <protocol type="org.jgroups.protocols.UDP" />
+        <protocol type="org.jgroups.protocols.STATE_TRANSFER" /> <!-- State transfer -->
+        <protocol type="org.jgroups.protocols.UNICAST3" /> <!-- Reliable unicast -->
+        <protocol type="org.jgroups.protocols.GMS" /> <!-- Group management -->
+    </stack>
+</config>

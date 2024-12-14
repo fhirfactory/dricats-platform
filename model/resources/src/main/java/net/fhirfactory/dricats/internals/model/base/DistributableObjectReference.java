@@ -42,6 +42,22 @@ public class DistributableObjectReference implements Serializable {
     private String targetObjectType;
 
     //
+    // Constructor(s)
+    //
+
+    public DistributableObjectReference() {
+        targetObjectIdentifier = null;
+        referenceDescription = null;
+        targetObjectType = null;
+    }
+
+    public DistributableObjectReference(DistributableObjectIdentifier targetObjectIdentifier, String referenceDescription, String targetObjectType) {
+        this.targetObjectIdentifier = targetObjectIdentifier;
+        this.referenceDescription = referenceDescription;
+        this.targetObjectType = targetObjectType;
+    }
+
+    //
     // Bean Methods
     //
 

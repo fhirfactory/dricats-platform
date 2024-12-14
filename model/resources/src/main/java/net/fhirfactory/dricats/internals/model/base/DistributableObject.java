@@ -24,7 +24,6 @@ package net.fhirfactory.dricats.internals.model.base;
 import java.io.Serial;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 import net.fhirfactory.dricats.internals.model.base.dataytypes.EffectiveDate;
 import net.fhirfactory.dricats.internals.model.software.valuesets.SoftwareComponentIdentifierTypeEnum;

@@ -13,12 +13,13 @@
     <name>DRICaTS-Platform :: Data Models</name>
     <modules>
         <module>resources</module>
-        <module>conditions</module>
+        <module>configuration</module>
         <module>communications</module>
         <module>jgroups</module>
-        <module>tasking</module>
+        <module>fhir</module>
         <module>core</module>
         <module>constants</module>
+        <module>topology</module>
     </modules>
     <packaging>pom</packaging>
 
