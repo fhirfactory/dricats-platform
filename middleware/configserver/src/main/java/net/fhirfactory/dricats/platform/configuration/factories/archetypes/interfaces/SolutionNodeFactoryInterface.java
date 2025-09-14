@@ -1,8 +1,9 @@
 package net.fhirfactory.dricats.platform.configuration.factories.archetypes.interfaces;
 
-import net.fhirfactory.pegacorn.core.model.topology.nodes.SolutionTopologyNode;
+
+import net.fhirfactory.dricats.model.configuration.configurationfile.SolutionConfigurationObject;
 
 public interface SolutionNodeFactoryInterface {
     public void initialise();
-    public SolutionTopologyNode getSolutionTopologyNode();
+    public SolutionConfigurationObject getSolutionTopologyNode();
 }

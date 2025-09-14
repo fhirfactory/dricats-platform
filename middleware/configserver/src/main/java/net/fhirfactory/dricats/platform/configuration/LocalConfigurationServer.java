@@ -2,7 +2,7 @@
  * Copyright (c) 2024 Mark A. Hunter
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
+ * of this applications and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
@@ -21,10 +21,11 @@
  */
 package net.fhirfactory.dricats.platform.configuration;
 
-import net.fhirfactory.dricats.internals.model.core.configuration.ConfigurationMapEntry;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import net.fhirfactory.dricats.model.topology.implementation.common.ConfigurationMapEntry;
 
 import javax.enterprise.context.ApplicationScoped;
 import java.time.LocalDateTime;
