@@ -17,16 +17,24 @@
    </properties>
 
     <dependencies>
+    	<!--
         <dependency>
             <groupId>net.fhirfactory.dricats</groupId>
             <artifactId>dricats-platform-model-resources</artifactId>
             <version>1.0.0-SNAPSHOT</version>
         </dependency>
+        -->
 
         <dependency>
             <groupId>net.fhirfactory.dricats</groupId>
             <artifactId>dricats-platform-model-constants</artifactId>
             <version>1.0.0-SNAPSHOT</version>
+        </dependency>
+        
+        <dependency>
+	        <groupId>net.fhirfactory.dricats</groupId>
+	        <artifactId>dricats-platform-common</artifactId>
+	        <version>1.0.0-SNAPSHOT</version>
         </dependency>
         
         <!--*******************************************************************************-->
@@ -36,6 +44,7 @@
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
+            <version>${version-org.apache.commons-lang3}</version>
         </dependency>
         
         <!--*******************************************************************************-->
@@ -58,11 +67,11 @@
             <artifactId>jackson-datatype-jsr310</artifactId>
             <scope>compile</scope>
         </dependency>
-
+        
         <!--*******************************************************************************-->
         <!-- Logging (SLF4J) Libraries                                                     -->
         <!--*******************************************************************************-->
-
+        
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
@@ -74,7 +83,20 @@
             <artifactId>logback-core</artifactId>
             <scope>compile</scope>
         </dependency>
-
+        
+        <!--*******************************************************************************-->
+        <!-- Junit5 (tests)                                                               -->
+        <!--*******************************************************************************-->
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-engine</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-simple</artifactId>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
 </project>

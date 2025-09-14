@@ -2,7 +2,7 @@
  * Copyright (c) 2021 Mark A. Hunter
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
+ * of this applications and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
@@ -21,14 +21,9 @@
  */
 package net.fhirfactory.dricats.platform.middleware.jgroups;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import net.fhirfactory.dricats.internals.model.base.DistributableObjectIdentifier;
-import net.fhirfactory.dricats.internals.model.base.DistributableObjectReference;
-import net.fhirfactory.dricats.internals.model.networking.NetworkEndpoint;
-import net.fhirfactory.dricats.internals.model.networking.valuesets.NetworkSecurityZoneEnum;
-import net.fhirfactory.dricats.internals.model.software.datatypes.SoftwareComponentType;
-import net.fhirfactory.dricats.internals.model.software.interfaces.SubsystemInterface;
-import net.fhirfactory.dricats.internals.model.software.valuesets.SoftwareComponentIdentifierTypeEnum;
+import net.fhirfactory.dricats.model.common.DistributableObjectId;
+import net.fhirfactory.dricats.model.topology.implementation.layers.application.interfaces.JGroupsInterface;
+import net.fhirfactory.dricats.model.topology.interfaces.SubsystemInterface;
 import net.fhirfactory.dricats.platform.middleware.jgroups.configuration.JChannelConfiguration;
 import net.fhirfactory.dricats.platform.middleware.jgroups.valuesets.JChannelStatusEnum;
 import org.apache.commons.lang3.exception.ExceptionUtils;
@@ -39,12 +34,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.Serial;
-import java.net.URI;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-public class JChannelEndpoint extends NetworkEndpoint{
+
+public class JChannelEndpoint extends JGroupsInterface {
 
 	//
 	// Housekeeping
@@ -52,7 +46,7 @@ public class JChannelEndpoint extends NetworkEndpoint{
 	@Serial
 	private static final long serialVersionUID = 3403310128066770387L;
 	private static final Logger LOG = LoggerFactory.getLogger(JChannelEndpoint.class);
-	
+
 	//
 	// Attributes
 	//
@@ -78,24 +72,17 @@ public class JChannelEndpoint extends NetworkEndpoint{
     */
 
     public JChannelEndpoint(
-            DistributableObjectReference parentComponent,
-            DistributableObjectIdentifier componentIdentifier,
-            SoftwareComponentType componentType,
-            URI endpointURI,
-            String subsystemDeploymentSite,
-            String subsystemDeploymentGroup,
-            NetworkSecurityZoneEnum deploymentZone,
-            JChannelConfiguration conifgurationObject,
+            DistributableObjectId ownerComponent,
+            JChannelConfiguration configurationObject,
             SubsystemInterface subsystemInterface) {
-    	super(parentComponent, componentIdentifier, componentType, endpointURI, subsystemDeploymentSite, subsystemDeploymentGroup, deploymentZone, subsystemInterface );
-    	setConfiguration(conifgurationObject);
+    	super(ownerComponent, configurationObject.getId(), "JGroups Endpoint", JGroupsInterface.INTERFACE_JGROUPS_RMI, configurationObject );
     	setEndpointStatus(JChannelStatusEnum.JGROUPS_ENDPOINT_STATUS_UNINITIALISED);
     }
 
     //
     // Bean Methods
     //
-    
+
     /**
    	 * @return the endpointStatus
    	 */
@@ -117,11 +104,11 @@ public class JChannelEndpoint extends NetworkEndpoint{
 	public void setConfiguration(JChannelConfiguration configurationObject) {
     	this.configuration = configurationObject;
     }
-    
+
     protected Object getLocalChannelLock(){
         return(this.localChannelLock);
     }
-    
+
     public JChannel getLocalChannel() {
         return localChannel;
     }
@@ -137,36 +124,13 @@ public class JChannelEndpoint extends NetworkEndpoint{
     public void setRPCDispatcher(RpcDispatcher rpcDispatcher) {
         this.rpcDispatcher = rpcDispatcher;
     }
-    
 
-    @JsonIgnore
-    public String getChannelName() {
-        DistributableObjectIdentifier identifier = getIdentifier(SoftwareComponentIdentifierTypeEnum.IDENTIFIER_TYPE_JGROUPS_CHANNEL_NAME);
-        if(identifier != null) {
-            return(identifier.getIdentifierValue());
-        }
-        return (null);
-    }
-
-    @JsonIgnore
-    public void setChannelName(String channelName) {
-        DistributableObjectIdentifier identifier = getIdentifier(SoftwareComponentIdentifierTypeEnum.IDENTIFIER_TYPE_JGROUPS_CHANNEL_NAME);
-        if(identifier != null) {
-            identifier.setIdentifierValue(channelName);
-            identifier.getEffectiveDate().setEffectiveStartDate(LocalDateTime.now());
-        } else {
-            identifier = new DistributableObjectIdentifier();
-            identifier.setIdentifierType(SoftwareComponentIdentifierTypeEnum.IDENTIFIER_TYPE_JGROUPS_CHANNEL_NAME.toDistributableObjectIdentifierType());
-            identifier.setIdentifierValue(channelName);
-            addIdentifier(identifier);
-        }
-    }
+    //
+    // JGroups Interface Methods
+    //
 
     public List<Address> getAllViewMembers() {
-        if (getLocalChannel() == null) {
-            return (new ArrayList<>());
-        }
-        if (getLocalChannel().getView() == null) {
+        if ((getLocalChannel() == null) || (getLocalChannel().getView() == null)) {
             return (new ArrayList<>());
         }
         try {
@@ -189,11 +153,11 @@ public class JChannelEndpoint extends NetworkEndpoint{
         return(null);
     }
 
-    
+
     //
     // Utility Methods
     //
-    
+
     @Override
     protected Logger getLogger() {
     	return(LOG);

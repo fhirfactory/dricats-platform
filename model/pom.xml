@@ -19,7 +19,6 @@
         <module>fhir</module>
         <module>core</module>
         <module>constants</module>
-        <module>topology</module>
     </modules>
     <packaging>pom</packaging>
 

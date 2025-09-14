@@ -11,6 +11,16 @@ import java.net.InetSocketAddress;
 import java.util.Collection;
 
 public class TestMessageServiceCommon implements Receiver {
+    //
+     // Housekeeping
+    //
+    private static final org.slf4j.Logger LOG = org.slf4j.LoggerFactory.getLogger(TestMessageServiceCommon.class);
+
+    //
+    // Attributes
+    //
+    public static final String TEST_CLUSTER_NAME = "TEST_MESSAGE_CLUSTER";
+
     private Integer port;
     private InetAddress host;
     private String clusterName;
@@ -18,6 +28,12 @@ public class TestMessageServiceCommon implements Receiver {
     private Collection<InetSocketAddress> initialHosts;
     private String lastReceivedMessage;
 
+    //
+    // Getters & Setters
+    //
+    public Integer getPort() {
+        return port;
+    }
     public void setPort(Integer port) {
         this.port = port;
     }
@@ -46,98 +62,102 @@ public class TestMessageServiceCommon implements Receiver {
         this.lastReceivedMessage = lastReceivedMessage;
     }
 
+    //
+    // Business Methods
+    //
     public void setup(){
+        LOG.debug("TestMessageServiceCommon.setup(): Entry");
 
-        System.out.println("TestMessageServiceCommon.setup(): [Create Protocol Stack] Start");
+        LOG.trace("TestMessageServiceCommon.setup(): [Create Protocol Stack] Start");
         Protocol[] protocols = new Protocol[9];
-        System.out.println("TestMessageServiceCommon.setup(): [Create Protocol Stack] Finish");
+        LOG.trace("TestMessageServiceCommon.setup(): [Create Protocol Stack] Finish");
 
-        System.out.println("TestMessageServiceCommon.setup(): [Create TCP Protocol & Add To Stack] Start");
+        LOG.trace("TestMessageServiceCommon.setup(): [Create TCP Protocol & Add To Stack] Start");
         TCP tcp = new TCP();
         // tcp.setProtocolStack(stack);
         tcp.setBindPort(port);
         tcp.setBindAddress(host);
         protocols[0] = tcp;
-        System.out.println("TestMessageServiceCommon.setup(): [Create TCP Protocol & Add To Stack] Finish");
+        LOG.trace("TestMessageServiceCommon.setup(): [Create TCP Protocol & Add To Stack] Finish");
 
-        System.out.println("TestMessageServiceCommon.setup(): [Create PING Protocol & Add To Stack] Start");
+        LOG.trace("TestMessageServiceCommon.setup(): [Create PING Protocol & Add To Stack] Start");
         TCPPING ping = new TCPPING();
         ping.setInitialHosts(initialHosts);
         protocols[1] = ping;
-        System.out.println("TestMessageServiceCommon.setup(): [Create PING Protocol & Add To Stack] Finish");
+        LOG.trace("TestMessageServiceCommon.setup(): [Create PING Protocol & Add To Stack] Finish");
 
-        System.out.println("TestMessageServiceCommon.setup(): [Create FD_SOCK Protocol & Add To Stack] Start");
+        LOG.trace("TestMessageServiceCommon.setup(): [Create FD_SOCK Protocol & Add To Stack] Start");
         FD_SOCK fdSock = new FD_SOCK();
         //fdSock.setProtocolStack(stack);
         protocols[2] = fdSock;
-        System.out.println("TestMessageServiceCommon.setup(): [Create FD_SOCK Protocol & Add To Stack] Finish");
-        System.out.println("TestMessageServiceCommon.setup(): [Create MERGE3 Protocol & Add To Stack] Start");
+        LOG.trace("TestMessageServiceCommon.setup(): [Create FD_SOCK Protocol & Add To Stack] Finish");
+        LOG.trace("TestMessageServiceCommon.setup(): [Create MERGE3 Protocol & Add To Stack] Start");
         MERGE3 merge = new MERGE3();
         //merge.setProtocolStack(stack);
         protocols[3] = merge;
-        System.out.println("TestMessageServiceCommon.setup(): [Create MERGE3 Protocol & Add To Stack] Finish");
+        LOG.trace("TestMessageServiceCommon.setup(): [Create MERGE3 Protocol & Add To Stack] Finish");
 
         VERIFY_SUSPECT verifySuspect = new VERIFY_SUSPECT();
         protocols[4] = verifySuspect;
 
-        System.out.println("TestMessageServiceCommon.setup(): [Create BARRIER Protocol & Add To Stack] Start");
+        LOG.trace("TestMessageServiceCommon.setup(): [Create BARRIER Protocol & Add To Stack] Start");
         BARRIER barrier = new BARRIER();
         //barrier.setProtocolStack(stack);
         protocols[5] = barrier;
-        System.out.println("TestMessageServiceCommon.setup(): [Create BARRIER Protocol & Add To Stack] Finish");
+        LOG.trace("TestMessageServiceCommon.setup(): [Create BARRIER Protocol & Add To Stack] Finish");
 
         NAKACK2 nakack2 = new NAKACK2();
         protocols[6] = nakack2;
 
-        System.out.println("TestMessageServiceCommon.setup(): [Create UNICAST3 Protocol & Add To Stack] Start");
+        LOG.trace("TestMessageServiceCommon.setup(): [Create UNICAST3 Protocol & Add To Stack] Start");
         UNICAST3 unicast3 = new UNICAST3();
         // unicast3.setProtocolStack(stack);
         protocols[7] = unicast3;
-        System.out.println("TestMessageServiceCommon.setup(): [Create UNICAST3 Protocol & Add To Stack] Finish");
+        LOG.trace("TestMessageServiceCommon.setup(): [Create UNICAST3 Protocol & Add To Stack] Finish");
 
         GMS gms = new GMS();
         protocols[8] = gms;
 
-        System.out.println("TestMessageServiceCommon.setup(): [Initialise JChannel] Start");
+        LOG.trace("TestMessageServiceCommon.setup(): [Initialise JChannel] Start");
         try {
             messageChannel = new JChannel(protocols);
         } catch (Exception e) {
             e.printStackTrace();
         }
-        System.out.println("TestMessageServiceCommon.setup(): [Initialise JChannel] Finish");
+        LOG.trace("TestMessageServiceCommon.setup(): [Initialise JChannel] Finish");
 
         messageChannel.setReceiver(this);
 
-        System.out.println("TestMessageServiceCommon.setup(): [Connect To Cluster] Start");
+        LOG.trace("TestMessageServiceCommon.setup(): [Connect To Cluster] Start");
         try {
             messageChannel.connect(clusterName);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-        System.out.println("TestMessageServiceCommon.setup(): [Connect To Cluster] Finish");
+        LOG.trace("TestMessageServiceCommon.setup(): [Connect To Cluster] Finish");
 
-        System.out.println("TestMessageServiceCommon.setup(): [Channel Details] - IPAddress -> " + getHost().toString());
-        System.out.println("TestMessageServiceCommon.setup(): [Channel Details] - Address -> " + messageChannel.getAddressAsString());
-        System.out.println("TestMessageServiceCommon.setup(): [Channel Details] - Cluster Name -> " + messageChannel.getClusterName());
-        System.out.println("TestMessageServiceCommon.setup(): [Channel Details] - View -> " + messageChannel.getViewAsString());
+        LOG.trace("TestMessageServiceCommon.setup(): [Channel Details] - IPAddress -> " + getHost().toString());
+        LOG.trace("TestMessageServiceCommon.setup(): [Channel Details] - Address -> " + messageChannel.getAddressAsString());
+        LOG.trace("TestMessageServiceCommon.setup(): [Channel Details] - Cluster Name -> " + messageChannel.getClusterName());
+        LOG.trace("TestMessageServiceCommon.setup(): [Channel Details] - View -> " + messageChannel.getViewAsString());
 
-        System.out.println("TestMessageServiceCommon.setup(): Exit");
+        LOG.debug("TestMessageServiceCommon.setup(): Exit");
     }
 
     public void sendMessage(String messageContent){
-        System.out.println("TestMessageServiceCommon.sendMessage(): Entry");
-        System.out.println("TestMessageServiceCommon.sendMessage(): [Create Message from String] Start");
+        LOG.debug("TestMessageServiceCommon.sendMessage(): Entry");
+        LOG.trace("TestMessageServiceCommon.sendMessage(): [Create Message from String] Start");
         Message message = new ObjectMessage(null, messageContent);
-        System.out.println("TestMessageServiceCommon.sendMessage(): [Create Message from String] Finish");
-        System.out.println("TestMessageServiceCommon.sendMessage(): [Send Message] Start");
+        LOG.trace("TestMessageServiceCommon.sendMessage(): [Create Message from String] Finish");
+        LOG.trace("TestMessageServiceCommon.sendMessage(): [Send Message] Start");
         try {
             messageChannel.send(message);
         } catch (Exception e) {
             e.printStackTrace();
         }
-        System.out.println("TestMessageServiceCommon.sendMessage(): [Send Message] FinishØ");
-        System.out.println("TestMessageServiceCommon.sendMessage(): Message sent: " + messageContent);
-        System.out.println("TestMessageServiceCommon.sendMessage(): Exit");
+        LOG.trace("TestMessageServiceCommon.sendMessage(): [Send Message] FinishØ");
+        LOG.trace("TestMessageServiceCommon.sendMessage(): Message sent: " + messageContent);
+        LOG.debug("TestMessageServiceCommon.sendMessage(): Exit");
     }
 
     public void shutdown(){
@@ -146,12 +166,12 @@ public class TestMessageServiceCommon implements Receiver {
 
     @Override
     public void viewAccepted(View view) {
-        System.out.println("TestMessageServiceCommon.viewAccepted():New view -> " + view);
+        LOG.trace("TestMessageServiceCommon.viewAccepted():New view -> " + view);
     }
 
     @Override
     public void receive(Message msg) {
         setLastReceivedMessage(msg.getObject().toString());
-        System.out.println("TestMessageServiceCommon.receive(): Received message: " + msg.getObject());
+        LOG.trace("TestMessageServiceCommon.receive(): Received message: " + msg.getObject());
     }
 }

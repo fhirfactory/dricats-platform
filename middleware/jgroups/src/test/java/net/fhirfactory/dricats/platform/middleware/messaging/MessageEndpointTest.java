@@ -24,47 +24,46 @@ public class MessageEndpointTest {
     public static final Logger LOG = LoggerFactory.getLogger(MessageEndpointTest.class);
 
     // Configure JChannel to use TCP and fixed addresses
-    private static final String CLUSTER_NAME = "TestCluster";
     private TestMessageReceiver receiver;
     private TestMessageSender messageSender;
     private Collection<InetSocketAddress> initialHosts;
 
     @BeforeEach
     public void setUp() throws Exception {
-        System.out.println("MessageEndpointTest.setUp(): Entry");
-        System.out.println("MessageEndpointTest.setUp(): [Create MessageReceiver][Create Receiver] Start");
+        LOG.debug("MessageEndpointTest.setUp(): Entry");
+        LOG.trace("MessageEndpointTest.setUp(): [Create MessageReceiver][Create Receiver] Start");
         receiver = new TestMessageReceiver();
-        System.out.println("MessageEndpointTest.setUp(): [Create MessageReceiver][Create Receiver] Finish");
-        System.out.println("MessageEndpointTest.setUp(): [Create MessageReceiver][Assign Port] Start");
+        LOG.trace("MessageEndpointTest.setUp(): [Create MessageReceiver][Create Receiver] Finish");
+        LOG.trace("MessageEndpointTest.setUp(): [Create MessageReceiver][Assign Port] Start");
         receiver.setPort(45000);
-        receiver.setHost(InetAddress.getByName("Marks-Air"));
-        System.out.println("MessageEndpointTest.setUp(): [Create MessageReceiver][Assign Port] Finish");
-        System.out.println("MessageEndpointTest.setUp(): [Create MessageReceiver][Assign Cluster Name] Start");
-        receiver.setClusterName(CLUSTER_NAME);
-        System.out.println("MessageEndpointTest.setUp(): [Create MessageReceiver][Assign Cluster Name] Finish");
-        createInitialHosts("Marks-Air", 45000,45010);
+        receiver.setHost(InetAddress.getByName("localhost"));
+        LOG.trace("MessageEndpointTest.setUp(): [Create MessageReceiver][Assign Port] Finish");
+        LOG.trace("MessageEndpointTest.setUp(): [Create MessageReceiver][Assign Cluster Name] Start");
+        receiver.setClusterName(TestMessageReceiver.TEST_CLUSTER_NAME);
+        LOG.trace("MessageEndpointTest.setUp(): [Create MessageReceiver][Assign Cluster Name] Finish");
+        createInitialHosts("localhost", 45000,45010);
         receiver.setInitialHosts(initialHosts);
-        System.out.println("MessageEndpointTest.setUp(): [Create MessageReceiver][Initialise Receiver] Start");
+        LOG.trace("MessageEndpointTest.setUp(): [Create MessageReceiver][Initialise Receiver] Start");
         receiver.setup();
-        System.out.println("MessageEndpointTest.setUp(): [Create MessageReceiver][Initialise Receiver] Finish");
+        LOG.trace("MessageEndpointTest.setUp(): [Create MessageReceiver][Initialise Receiver] Finish");
 
         // Wait for receivers to join the cluster before sending the message
         Thread.sleep(5000);
 
-        System.out.println("MessageEndpointTest.setUp(): [Create MessageSender][Create Sender] Start");
+        LOG.trace("MessageEndpointTest.setUp(): [Create MessageSender][Create Sender] Start");
         messageSender = new TestMessageSender();
-        System.out.println("MessageEndpointTest.setUp(): [Create MessageSender][Create Sender] Finish");
-        System.out.println("MessageEndpointTest.setUp(): [Create MessageSender][Assign Port] Start");
+        LOG.trace("MessageEndpointTest.setUp(): [Create MessageSender][Create Sender] Finish");
+        LOG.trace("MessageEndpointTest.setUp(): [Create MessageSender][Assign Port] Start");
         messageSender.setPort(45001);
-        messageSender.setHost(InetAddress.getByName("Marks-Air"));
-        System.out.println("MessageEndpointTest.setUp(): [Create MessageSender][Assign Port] Finish");
-        System.out.println("MessageEndpointTest.setUp(): [Create MessageSender][Assign Cluster Name] Start");
-        messageSender.setClusterName(CLUSTER_NAME);
-        System.out.println("MessageEndpointTest.setUp(): [Create MessageSender][Assign Cluster Name] Finish");
+        messageSender.setHost(InetAddress.getByName("localhost"));
+        LOG.trace("MessageEndpointTest.setUp(): [Create MessageSender][Assign Port] Finish");
+        LOG.trace("MessageEndpointTest.setUp(): [Create MessageSender][Assign Cluster Name] Start");
+        messageSender.setClusterName(TestMessageReceiver.TEST_CLUSTER_NAME);
+        LOG.trace("MessageEndpointTest.setUp(): [Create MessageSender][Assign Cluster Name] Finish");
         messageSender.setInitialHosts(initialHosts);
-        System.out.println("MessageEndpointTest.setUp(): [Create MessageSender][Initialise Sender] Start");
+        LOG.trace("MessageEndpointTest.setUp(): [Create MessageSender][Initialise Sender] Start");
         messageSender.setup();
-        System.out.println("MessageEndpointTest.setUp(): [Create MessageSender][Initialise Sender] Finish");
+        LOG.trace("MessageEndpointTest.setUp(): [Create MessageSender][Initialise Sender] Finish");
 
         // Wait for receivers to join the cluster before sending the message
         Thread.sleep(5000);
@@ -72,15 +71,16 @@ public class MessageEndpointTest {
 
     @Test
     public void testMessagePassing() throws Exception {
+        LOG.debug("MessageEndpointTest.testMessagePassing(): Entry");
         String messageContent = "Hello from the JGroups sender to 7801";
         // Run sender in a separate thread
         ExecutorService executor = Executors.newSingleThreadExecutor();
         executor.submit(() -> {
             for(int c = 0; c < 5; c++) {
                 try {
-                    System.out.println("MessageEndpointTest.testReceivers(): [Send Message] Start");
+                    LOG.trace("MessageEndpointTest.testReceivers(): [Send Message] Start");
                     messageSender.sendMessage(messageContent);
-                    System.out.println("MessageEndpointTest.testReceivers(): [Send Message] Finish");
+                    LOG.trace("MessageEndpointTest.testReceivers(): [Send Message] Finish");
 
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -89,6 +89,7 @@ public class MessageEndpointTest {
         });
         Thread.sleep(5000);
         assertTrue(StringUtils.equals(receiver.getLastReceivedMessage(), messageContent));
+        LOG.debug("MessageEndpointTest.testMessagePassing(): Exit");
     }
 
     @AfterEach

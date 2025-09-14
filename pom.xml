@@ -49,7 +49,7 @@
         <version-ca.uhn.hapi-hl7structures>2.3</version-ca.uhn.hapi-hl7structures>
 
         <version-ch.qos.logback>0.5</version-ch.qos.logback>
-        <version-ch.qos.logback-classic>1.5.6</version-ch.qos.logback-classic>
+        <version-ch.qos.logback-classic>1.5.18</version-ch.qos.logback-classic>
 
         <version-com.fasterxml.jackson.core-jackson-databind>2.17.2</version-com.fasterxml.jackson.core-jackson-databind>
         <version-com.fasterxml.jackson.core-jackson-core>2.17.2</version-com.fasterxml.jackson.core-jackson-core>
@@ -72,13 +72,13 @@
         <version-io.netty>4.1.71.Final</version-io.netty>
         <version-io.netty-netty-all>4.1.71.Final</version-io.netty-netty-all>
 
-        <version-org.arquillian>1.5.0.Final</version-org.arquillian>
+        <version-org.arquillian>2.0.0.Final</version-org.arquillian>
         <version-org.arquillian.cube>1.9.1</version-org.arquillian.cube>
         <version-org.arquillian-cube-kubernetes>1.18.2</version-org.arquillian-cube-kubernetes>
 
         <version-org.apache.camel>3.21.1</version-org.apache.camel>
 
-        <version-org.apache.commons-lang3>3.12.0</version-org.apache.commons-lang3>
+        <version-org.apache.commons-lang3>3.18.0</version-org.apache.commons-lang3>
 
         <version-org.apache.hadoop-hadoop-common>3.3.0</version-org.apache.hadoop-hadoop-common>
         <version-org.apache.hadoop-hadoop-mapreduce-client-jobclient>3.3.0
@@ -233,40 +233,6 @@
                 <groupId>org.picketbox</groupId>
                 <artifactId>picketbox</artifactId>
                 <version>5.1.0.Final</version>
-            </dependency>
-
-            <!-- ****************************************************************** -->
-            <!-- Arquillian BOM                                                     -->
-            <!-- ****************************************************************** -->
-
-            <dependency>
-                <groupId>org.jboss.arquillian</groupId>
-                <artifactId>arquillian-bom</artifactId>
-                <version>${version-org.arquillian}</version>
-                <exclusions>
-                    <exclusion>
-                        <artifactId>picketbox</artifactId>
-                        <groupId>org.picketbox</groupId>
-                    </exclusion>
-                    <exclusion>
-                        <artifactId>picketbox-parent</artifactId>
-                        <groupId>org.picketbox</groupId>
-                    </exclusion>
-                </exclusions>
-                <scope>import</scope>
-                <type>pom</type>
-            </dependency>
-
-            <!-- ****************************************************************** -->
-            <!-- Arquillian Shrinkwrap BOM                                          -->
-            <!-- ****************************************************************** -->
-
-            <dependency>
-                <groupId>org.jboss.shrinkwrap.resolver</groupId>
-                <artifactId>shrinkwrap-resolver-bom</artifactId>
-                <version>${version-org.jboss.shrinkwrap.resolver-shrinkwrap-resolver-bom}</version>
-                <type>pom</type>
-                <scope>import</scope>
             </dependency>
 
             <!-- ****************************************************************** -->

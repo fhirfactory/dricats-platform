@@ -1,22 +1,23 @@
 package net.fhirfactory.dricats.platform.middleware.jgroups;
 
-import net.fhirfactory.dricats.internals.model.base.DistributableObjectReference;
-import net.fhirfactory.dricats.internals.model.messaging.interfaces.LocalMessageServerInterface;
-import net.fhirfactory.dricats.internals.model.oam.interfaces.LocalMetricsServerInterface;
-import net.fhirfactory.dricats.internals.model.software.SoftwareComponent;
-import net.fhirfactory.dricats.internals.model.software.interfaces.MiddlewareComponentInterface;
-import net.fhirfactory.dricats.internals.model.software.interfaces.SubsystemInterface;
-import net.fhirfactory.dricats.internals.model.tasking.interfaces.LocalTaskServerInterface;
+import net.fhirfactory.dricats.model.messaging.interfaces.LocalMessageServerInterface;
+import net.fhirfactory.dricats.model.oam.interfaces.ILocalMetricsServerInterface;
+import net.fhirfactory.dricats.model.tasking.interfaces.LocalTaskServerInterface;
+import net.fhirfactory.dricats.model.topology.implementation.layers.application.interfaces.JGroupsInterface;
+import net.fhirfactory.dricats.model.topology.interfaces.MiddlewareComponentInterface;
+import net.fhirfactory.dricats.model.topology.interfaces.SolutionConfigurationInterface;
+import net.fhirfactory.dricats.model.topology.interfaces.SubsystemInterface;
 import net.fhirfactory.dricats.platform.configuration.LocalConfigurationServer;
-import net.fhirfactory.dricats.platform.middleware.jgroups.configuration.JChannelConfiguration;
 import net.fhirfactory.dricats.platform.middleware.jgroups.valuesets.JChannelTypeEnum;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.PostConstruct;
+import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import java.time.LocalDateTime;
 
+@ApplicationScoped
 public class JGroupsNodeManager {
     //
     // Housekeeping
@@ -37,7 +38,7 @@ public class JGroupsNodeManager {
     private JChannelEndpoint rpcChannel;
     private boolean initialized;
     private LocalDateTime startupInstant;
-    private SoftwareComponent topologyComponent;
+    private JGroupsInterface applicationComponent;
 
 
     //
@@ -48,13 +49,15 @@ public class JGroupsNodeManager {
     @Inject
     private LocalMessageServerInterface localMessageServer;
     @Inject
-    private LocalMetricsServerInterface localMetricsServer;
+    private ILocalMetricsServerInterface localMetricsServer;
     @Inject
     private LocalTaskServerInterface localTaskServer;
     @Inject
-    private SubsystemInterface subsystemComponent;
+    private SubsystemInterface subsystemInterface;
     @Inject
     private MiddlewareComponentInterface middlewareComponent;
+    @Inject
+    private SolutionConfigurationInterface solutionConfigurationInterface;
 
     //
     // Constructor(s)
@@ -91,22 +94,22 @@ public class JGroupsNodeManager {
     // Build My TopologyComponent
     //
 
-    protected SoftwareComponent createTopologyComponent() {
-        DistributableObjectReference parentReference = new DistributableObjectReference(middlewareComponent.getMiddlewareComponent().getInstanceId());
-        SoftwareComponent me = new SoftwareComponent()
-
+    protected JGroupsInterface createTopologyComponent() {
+        // TODO: implement proper topology component build
+        // Placeholder implementation to keep compilation passing
+        return applicationComponent;
     }
 
     //
     // Build JChannelEndpoint
     //
-
+ /**
     protected JChannelEndpoint createJChannelEndpoint(JChannelConfiguration configObject){
 
-        JChannelEndpoint endpoint = new JChannelEndpoint()
+        JChannelEndpoint endpoint = new JChannelEndpoint();
 
     }
-
+**/
     //
     // Getters and Setters
     //
