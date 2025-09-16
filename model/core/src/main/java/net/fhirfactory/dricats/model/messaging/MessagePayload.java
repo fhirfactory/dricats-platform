@@ -23,13 +23,15 @@ package net.fhirfactory.dricats.model.messaging;
 
 import java.io.Serial;
 
+import net.fhirfactory.dricats.model.data.Payload;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import net.fhirfactory.dricats.model.common.SerialisableObject;
 import net.fhirfactory.dricats.model.common.datatypes.CodeableConcept;
 
-public class MessagePayload extends SerialisableObject {
+public class MessagePayload extends Payload {
     //
     // Housekeeping
     //
@@ -42,10 +44,6 @@ public class MessagePayload extends SerialisableObject {
     // Attributes
     //
 
-    private CodeableConcept payloadType;
-    private String payloadDescription;
-    private String payload;
-
     //
     // Constructor(s)
     //
@@ -54,35 +52,22 @@ public class MessagePayload extends SerialisableObject {
     // Bean Methods
     //
 
-    public CodeableConcept getPayloadType() {
-        return payloadType;
-    }
-
-    public void setPayloadType(CodeableConcept payloadType) {
-        this.payloadType = payloadType;
-    }
-
-    public String getPayloadDescription() {
-        return payloadDescription;
-    }
-
-    public void setPayloadDescription(String payloadDescription) {
-        this.payloadDescription = payloadDescription;
-    }
-
-    public String getPayload() {
-        return payload;
-    }
-
-    public void setPayload(String payload) {
-        this.payload = payload;
-    }
-
     //
     // Utility Methods
     //
 
     protected Logger getLogger(){
         return(LOG);
+    }
+
+    //
+    // Standard Methods
+    //
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this)
+                .appendSuper(super.toString())
+                .toString();
     }
 }

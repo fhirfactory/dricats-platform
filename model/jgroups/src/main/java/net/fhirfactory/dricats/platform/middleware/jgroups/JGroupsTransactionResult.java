@@ -22,6 +22,7 @@
 package net.fhirfactory.dricats.platform.middleware.jgroups;
 
 import net.fhirfactory.dricats.platform.middleware.jgroups.valuesets.JGroupTransactionResultEnum;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -85,5 +86,18 @@ public class JGroupsTransactionResult implements Serializable {
 
     public void setTimestamp(LocalDateTime timestamp) {
         this.timestamp = timestamp;
+    }
+
+    //
+    // Standard Methods
+    //
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this)
+                .append("resultCode", resultCode)
+                .append("resultMessage", resultMessage)
+                .append("timestamp", timestamp)
+                .toString();
     }
 }

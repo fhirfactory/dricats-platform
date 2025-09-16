@@ -24,6 +24,8 @@ package net.fhirfactory.dricats.model.tasking;
 import java.io.Serial;
 import java.util.List;
 
+import net.fhirfactory.dricats.model.data.Payload;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,27 +44,27 @@ public class InternalTask extends DistributableObject {    //
     // Attributes
     //
 
-    private List<InternalTaskPayload> taskInputPayload;
-    private List<InternalTaskPayload> taskOutputPayload;
+    private List<Payload> taskInputPayload;
+    private List<Payload> taskOutputPayload;
     private InternalTaskProvenance taskProvenance;
 
     //
     // Bean Methods
     //
 
-    public List<InternalTaskPayload> getTaskInputPayload() {
+    public List<Payload> getTaskInputPayload() {
         return taskInputPayload;
     }
 
-    public void setTaskInputPayload(List<InternalTaskPayload> taskInputPayload) {
+    public void setTaskInputPayload(List<Payload> taskInputPayload) {
         this.taskInputPayload = taskInputPayload;
     }
 
-    public List<InternalTaskPayload> getTaskOutputPayload() {
+    public List<Payload> getTaskOutputPayload() {
         return taskOutputPayload;
     }
 
-    public void setTaskOutputPayload(List<InternalTaskPayload> taskOutputPayload) {
+    public void setTaskOutputPayload(List<Payload> taskOutputPayload) {
         this.taskOutputPayload = taskOutputPayload;
     }
 
@@ -80,5 +82,19 @@ public class InternalTask extends DistributableObject {    //
 
     protected Logger getLogger(){
         return(LOG);
+    }
+
+    //
+     // Standard Methods
+    //
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this)
+                .append("taskInputPayload", taskInputPayload)
+                .append("taskOutputPayload", taskOutputPayload)
+                .append("taskProvenance", taskProvenance)
+                .appendSuper(super.toString())
+                .toString();
     }
 }

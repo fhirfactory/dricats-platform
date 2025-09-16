@@ -23,7 +23,7 @@
 package net.fhirfactory.dricats.model.topology.implementation.relationships.datatypes;
 
 import net.fhirfactory.dricats.model.common.DistributableObjectId;
-import net.fhirfactory.dricats.model.topology.reference.relationships.FlowRelationship;
+import net.fhirfactory.dricats.model.reference.relationships.FlowRelationship;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -21,7 +21,9 @@
  */
 package net.fhirfactory.dricats.model.common.naming;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.apache.commons.lang3.SerializationUtils;
+import org.json.JSONPropertyIgnore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -305,6 +307,14 @@ public class QualifiedName implements Serializable {
         }
         getLogger().trace(".extractUnqualifiedNameWithQualifier(): Exit, no match found");
         return (null);
+    }
+
+    @JsonIgnore
+    public QualifiedNameToken getQualifiedNameToken() {
+        getLogger().debug(".getQualifiedNameToken(): Entry");
+        QualifiedNameToken qualifiedNameToken = new QualifiedNameToken(this);
+        getLogger().debug(".getQualifiedNameToken(): Exit, qualifiedNameToken->{}", qualifiedNameToken);
+        return (qualifiedNameToken);
     }
 
     //

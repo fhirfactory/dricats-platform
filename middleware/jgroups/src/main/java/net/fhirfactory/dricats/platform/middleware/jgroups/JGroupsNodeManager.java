@@ -1,18 +1,16 @@
 package net.fhirfactory.dricats.platform.middleware.jgroups;
 
-import net.fhirfactory.dricats.model.messaging.interfaces.LocalMessageServerInterface;
+import net.fhirfactory.dricats.model.messaging.interfaces.ILocalMessageService;
 import net.fhirfactory.dricats.model.oam.interfaces.ILocalMetricsServerInterface;
 import net.fhirfactory.dricats.model.tasking.interfaces.LocalTaskServerInterface;
 import net.fhirfactory.dricats.model.topology.implementation.layers.application.interfaces.JGroupsInterface;
 import net.fhirfactory.dricats.model.topology.interfaces.MiddlewareComponentInterface;
 import net.fhirfactory.dricats.model.topology.interfaces.SolutionConfigurationInterface;
-import net.fhirfactory.dricats.model.topology.interfaces.SubsystemInterface;
+import net.fhirfactory.dricats.model.topology.interfaces.ISubsystem;
 import net.fhirfactory.dricats.platform.configuration.LocalConfigurationServer;
-import net.fhirfactory.dricats.platform.middleware.jgroups.valuesets.JChannelTypeEnum;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import java.time.LocalDateTime;
@@ -33,9 +31,9 @@ public class JGroupsNodeManager {
     //
     // Attributes
     //
-    private JChannelEndpoint metricsChannel;
-    private JChannelEndpoint messagingChannel;
-    private JChannelEndpoint rpcChannel;
+    private JChannelInterface metricsChannel;
+    private JChannelInterface messagingChannel;
+    private JChannelInterface rpcChannel;
     private boolean initialized;
     private LocalDateTime startupInstant;
     private JGroupsInterface applicationComponent;
@@ -47,13 +45,13 @@ public class JGroupsNodeManager {
     @Inject
     private LocalConfigurationServer localConfigurationServer;
     @Inject
-    private LocalMessageServerInterface localMessageServer;
+    private ILocalMessageService localMessageServer;
     @Inject
     private ILocalMetricsServerInterface localMetricsServer;
     @Inject
     private LocalTaskServerInterface localTaskServer;
     @Inject
-    private SubsystemInterface subsystemInterface;
+    private ISubsystem subsystemInterface;
     @Inject
     private MiddlewareComponentInterface middlewareComponent;
     @Inject
@@ -70,25 +68,7 @@ public class JGroupsNodeManager {
     // Post Construct / Initialisation
     //
 
-    @PostConstruct
-    public void initialise(){
-        getLogger().debug(".initialise(): Entry");
-        if(isInitialized()){
-            getLogger().debug(".initialise(): Exit, already initialised");
-            return;
-        }
-        getLogger().trace(".initialise(): Begin Initialisation");
-        boolean foundConfigurationObjects = false;
-        while(!foundConfigurationObjects){
-            Object messagingConfigObject = localConfigurationServer.getConfigurationObject(JChannelTypeEnum.JGROUPS_ENDPOINT_TYPE_MESSAGING.getConfigObjectName());
-            Object taskingConfigObject = localConfigurationServer.getConfigurationObject(JChannelTypeEnum.JGROUPS_ENDPOINT_TYPE_TASKING.getConfigObjectName());
-            Object metricsConfigObject = localConfigurationServer.getConfigurationObject(JChannelTypeEnum.JGROUPS_ENDPOINT_TYPE_METRICS.getConfigObjectName());
-            if( messagingConfigObject == null || taskingConfigObject == null || metricsConfigObject == null ){
 
-            }
-
-        }
-    }
 
     //
     // Build My TopologyComponent

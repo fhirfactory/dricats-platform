@@ -22,6 +22,7 @@
 package net.fhirfactory.dricats.model.common;
 
 import java.io.Serial;
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.StringJoiner;
 
@@ -29,7 +30,7 @@ import net.fhirfactory.dricats.model.common.datatypes.EffectiveDate;
 import net.fhirfactory.dricats.model.common.naming.QualifiedName;
 import net.fhirfactory.dricats.model.common.naming.QualifiedNameToken;
 
-public class DistributableObjectId extends SerialisableObject {
+public class DistributableObjectId extends SerialisableObject implements Serializable {
     //
     // Housekeeping
     //
@@ -59,6 +60,7 @@ public class DistributableObjectId extends SerialisableObject {
     public DistributableObjectId(QualifiedName qualifiedName) {
         super();
         this.qualifiedName = qualifiedName;
+        this.setId(qualifiedName.getCommonName());
         this.effectiveDate = new EffectiveDate();
         this.effectiveDate.setEffectiveEndDate(LocalDateTime.MAX);
         this.effectiveDate.setEffectiveStartDate(LocalDateTime.now());
@@ -68,6 +70,7 @@ public class DistributableObjectId extends SerialisableObject {
         super();
         QualifiedNameToken qualifiedNameTokenObject = new QualifiedNameToken(qualifiedNameToken);
         this.qualifiedName = qualifiedNameTokenObject.toQualifiedName();
+        this.setId(getQualifiedName().getCommonName());
         this.effectiveDate = new EffectiveDate();
         this.effectiveDate.setEffectiveStartDate(LocalDateTime.now());
         this.effectiveDate.setEffectiveEndDate(LocalDateTime.MAX);

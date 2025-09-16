@@ -50,12 +50,12 @@ public class CommonName implements Serializable {
         value = "";
     }
 
-    public CommonName(String tokenContent) {
-        this.value = SerializationUtils.clone(tokenContent);
+    public CommonName(String value) {
+        this.value = SerializationUtils.clone(value);
     }
 
-    public CommonName(CommonName originalToken) {
-        this.value = SerializationUtils.clone(originalToken.getValue());
+    public CommonName(CommonName ori) {
+        this.value = SerializationUtils.clone(ori.getValue());
     }
 
     public CommonName(QualifiedName qualifiedName) {

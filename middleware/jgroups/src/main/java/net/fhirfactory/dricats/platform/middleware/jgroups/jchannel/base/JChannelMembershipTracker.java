@@ -22,7 +22,7 @@
 package net.fhirfactory.dricats.platform.middleware.jgroups.jchannel.base;
 
 import net.fhirfactory.dricats.deployment.contants.DefaultDeploymentConstants;
-import net.fhirfactory.dricats.platform.middleware.jgroups.JChannelEndpoint;
+import net.fhirfactory.dricats.platform.middleware.jgroups.JChannelInterface;
 import net.fhirfactory.dricats.platform.middleware.jgroups.datatypes.JGroupsMembership;
 import net.fhirfactory.dricats.platform.middleware.jgroups.datatypes.JGroupsNetworkAddress;
 import org.jgroups.Address;
@@ -43,7 +43,7 @@ public class JChannelMembershipTracker {
     //
     // Attributes
     //
-    private JChannelEndpoint endpoint;
+    private JChannelControllerBase channelController;
     private JGroupsMembership membership;
     private Boolean clusterMembershipProcessingScheduled;
 
@@ -51,8 +51,8 @@ public class JChannelMembershipTracker {
     // Constructor(s)
     //
 
-    public JChannelMembershipTracker(JChannelEndpoint endpoint) {
-        this.endpoint = endpoint;
+    public JChannelMembershipTracker(JChannelControllerBase channelController) {
+        this.channelController = channelController;
         this.membership = new JGroupsMembership();
         setClusterMembershipProcessingScheduled(false);
     }
@@ -65,8 +65,8 @@ public class JChannelMembershipTracker {
         getLogger().debug(".viewAccepted(): Entry, JGroups View Changed!");
         List<Address> addressList = newView.getMembers();
         getLogger().trace(".viewAccepted(): Got the Address set via view, now iterate through and see if one is suitable");
-        if(getEndpoint().getLocalChannel() != null) {
-            getLogger().debug("JGroupsCluster->{}", getEndpoint().getLocalChannel().getClusterName());
+        if(getChannelController().getLocalChannel() != null) {
+            getLogger().debug("JGroupsCluster->{}", getChannelController().getLocalChannel().getClusterName());
         } else {
             getLogger().debug("JGroupsCluster still Forming");
         }
@@ -81,11 +81,11 @@ public class JChannelMembershipTracker {
         //
         // A Report
         //
-        if((getEndpoint() != null) && getEndpoint().getLocalChannel() != null && getLogger().isDebugEnabled()) {
+        if((getChannelController() != null) && getChannelController().getLocalChannel() != null && getLogger().isDebugEnabled()) {
             getLogger().debug(".viewAccepted(): -------- Starting Channel Report -------");
-            String channelProperties = getEndpoint().getLocalChannel().getProperties();
+            String channelProperties = getChannelController().getLocalChannel().getProperties();
             getLogger().debug(".viewAccepted(): Properties->{}", channelProperties);
-            String jchannelState = getEndpoint().getLocalChannel().getState();
+            String jchannelState = getChannelController().getLocalChannel().getState();
             getLogger().debug(".viewAccepted(): State->{}", jchannelState);
             getLogger().debug(".viewAccepted(): -------- End Channel Report -------");
         }
@@ -157,8 +157,8 @@ public class JChannelMembershipTracker {
         return LOG;
     }
 
-    protected JChannelEndpoint getEndpoint() {
-        return (endpoint);
+    protected JChannelControllerBase getChannelController() {
+        return (channelController);
     }
 
     public JGroupsMembership getMembership() {

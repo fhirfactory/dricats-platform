@@ -22,8 +22,7 @@
 package net.fhirfactory.dricats.model.topology.implementation.relationships;
 
 import net.fhirfactory.dricats.model.topology.implementation.relationships.datatypes.ProcessingPathwaySegment;
-import net.fhirfactory.dricats.model.topology.implementation.relationships.datatypes.ProcessingPathwaySegmentPathway;
-import net.fhirfactory.dricats.model.topology.reference.layers.application.ApplicationProcess;
+import net.fhirfactory.dricats.model.reference.layers.application.ApplicationProcess;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

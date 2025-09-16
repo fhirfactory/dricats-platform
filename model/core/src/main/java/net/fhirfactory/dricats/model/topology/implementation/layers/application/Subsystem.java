@@ -25,8 +25,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import net.fhirfactory.dricats.model.common.DistributableObjectId;
 import net.fhirfactory.dricats.model.common.DistributableObjectIdentifier;
 import net.fhirfactory.dricats.model.topology.implementation.layers.technology.valuesets.NetworkSecurityZoneEnum;
-import net.fhirfactory.dricats.model.topology.interfaces.SubsystemInterface;
-import net.fhirfactory.dricats.model.topology.reference.layers.application.ApplicationComponent;
+import net.fhirfactory.dricats.model.topology.interfaces.ISubsystem;
+import net.fhirfactory.dricats.model.reference.layers.application.ApplicationComponent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,7 +34,7 @@ import java.io.Serial;
 import java.util.HashMap;
 import java.util.Map;
 
-public abstract class Subsystem extends ApplicationComponent implements SubsystemInterface {
+public abstract class Subsystem extends ApplicationComponent implements ISubsystem {
     //
     // Housekeeping
     //

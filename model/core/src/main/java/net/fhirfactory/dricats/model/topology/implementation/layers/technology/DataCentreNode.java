@@ -24,8 +24,7 @@ package net.fhirfactory.dricats.model.topology.implementation.layers.technology;
 import java.io.Serial;
 import java.io.Serializable;
 
-import net.fhirfactory.dricats.model.topology.implementation.layers.technology.valuesets.InfrastructureComponentTypeEnum;
-import net.fhirfactory.dricats.model.topology.reference.layers.technology.Node;
+import net.fhirfactory.dricats.model.reference.layers.technology.Node;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

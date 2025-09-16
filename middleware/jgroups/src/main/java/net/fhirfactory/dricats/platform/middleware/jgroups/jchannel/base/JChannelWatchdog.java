@@ -22,7 +22,7 @@
 package net.fhirfactory.dricats.platform.middleware.jgroups.jchannel.base;
 
 import net.fhirfactory.dricats.model.oam.interfaces.ILocalMetricsServerInterface;
-import net.fhirfactory.dricats.platform.middleware.jgroups.JChannelEndpoint;
+import net.fhirfactory.dricats.platform.middleware.jgroups.JChannelInterface;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,7 +37,7 @@ public class JChannelWatchdog {
     //
     // Attributes
     //
-    private JChannelEndpoint endpoint;
+    private JChannelInterface endpoint;
     private ILocalMetricsServerInterface metricsServer;
     private LocalDateTime startInstant;
     private LocalDateTime lastRunInstant;
@@ -51,7 +51,7 @@ public class JChannelWatchdog {
     //
     // Constructor(s)
     //
-    public JChannelWatchdog(JChannelEndpoint endpoint, ILocalMetricsServerInterface metricsServer) {
+    public JChannelWatchdog(JChannelInterface endpoint, ILocalMetricsServerInterface metricsServer) {
         this.endpoint = endpoint;
         this.metricsServer = metricsServer;
         this.startInstant = LocalDateTime.now();
@@ -82,7 +82,7 @@ public class JChannelWatchdog {
         return LOG;
     }
 
-    protected JChannelEndpoint getEndpoint() {
+    protected JChannelInterface getEndpoint() {
         return endpoint;
     }
 

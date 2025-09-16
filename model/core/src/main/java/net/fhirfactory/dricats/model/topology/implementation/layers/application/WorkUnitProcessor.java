@@ -23,7 +23,7 @@ package net.fhirfactory.dricats.model.topology.implementation.layers.application
 
 import java.io.Serial;
 
-import net.fhirfactory.dricats.model.topology.reference.layers.application.ApplicationComponent;
+import net.fhirfactory.dricats.model.reference.layers.application.ApplicationComponent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

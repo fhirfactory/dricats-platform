@@ -5,7 +5,7 @@ import net.fhirfactory.dricats.model.topology.implementation.layers.application.
 import net.fhirfactory.dricats.model.topology.implementation.layers.technology.valuesets.InfrastructureComponentTypeEnum;
 import net.fhirfactory.dricats.model.topology.implementation.layers.technology.valuesets.NetworkSecurityZoneEnum;
 import net.fhirfactory.dricats.model.topology.implementation.relationships.valuesets.ProcessingPathSegmentDistributionEnum;
-import net.fhirfactory.dricats.model.topology.reference.relationships.valuesets.RelationshipType;
+import net.fhirfactory.dricats.model.reference.relationships.valuesets.RelationshipType;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;

@@ -26,7 +26,7 @@ import java.io.Serializable;
 
 
 import net.fhirfactory.dricats.model.topology.implementation.layers.technology.valuesets.NetworkSecurityZoneEnum;
-import net.fhirfactory.dricats.model.topology.reference.common.valuesets.ElementTypeEnum;
+import net.fhirfactory.dricats.model.reference.common.valuesets.ElementTypeEnum;
 
 public class ApplicationElementConfigurationBase implements Serializable {
     //

@@ -21,47 +21,58 @@
  */
 package net.fhirfactory.dricats.model.topology.implementation.layers.application.valuesets;
 
-import net.fhirfactory.dricats.model.common.DistributableObjectIdentifierType;
+
+import net.fhirfactory.dricats.model.common.DistributableObjectIdentifier;
+import net.fhirfactory.dricats.model.common.datatypes.CodeableConcept;
+import net.fhirfactory.dricats.model.common.datatypes.CodeableConceptCode;
 
 import java.net.URI;
 
 public enum SoftwareComponentTypeEnum {
-	SUBSYSTEM ("SoftwareComponentNameIdentifier", "dricats.identifiers.applications-component.name", "https://fhirfactory.net/CodeSystems/IdentifierTypes"),
-	SUBSYSTEM_APPLICATION_CLUSTER ("SoftwareComponentNameIdentifier", "dricats.identifiers.applications-component.name", "https://fhirfactory.net/CodeSystems/IdentifierTypes"),
-	SUBSYSTEM_APPLICATION_INSTANCE ("SoftwareComponentNameIdentifier", "dricats.identifiers.applications-component.name", "https://fhirfactory.net/CodeSystems/IdentifierTypes"),
-	SUBSYSTEM_APPLICATION_FUNCTION_BLOCK ("SoftwareComponentNameIdentifier", "dricats.identifiers.applications-component.name", "https://fhirfactory.net/CodeSystems/IdentifierTypes"),
-	SUBSYSTEM_APPLICATION_SUBFUNCTION_BLOCK ("SoftwareComponentNameIdentifier", "dricats.identifiers.applications-component.name", "https://fhirfactory.net/CodeSystems/IdentifierTypes"),
-	NETWORK_ENDPOINT ("SoftwareComponentNameIdentifier", "dricats.identifiers.applications-component.name", "https://fhirfactory.net/CodeSystems/IdentifierTypes"),
-	SOLUTION ("SoftwareComponentNameIdentifier", "dricats.identifiers.applications-component.name", "https://fhirfactory.net/CodeSystems/IdentifierTypes");
+	SUBSYSTEM ("Subsystem","SoftwareComponentName", "dricats.s.applications-component.name", "https://fhirfactory.net/CodeSystems/Types"),
+	SUBSYSTEM_APPLICATION_CLUSTER ("SubsystemApplicationCluster","SoftwareComponentName", "dricats.s.applications-component.name", "https://fhirfactory.net/CodeSystems/Types"),
+	SUBSYSTEM_APPLICATION_INSTANCE ("SubsystemApplicationInstance","SoftwareComponentName", "dricats.s.applications-component.name", "https://fhirfactory.net/CodeSystems/Types"),
+	SUBSYSTEM_APPLICATION_WORK_UNIT_PROCESSOR ("WorkUnitProcessor","SoftwareComponentName", "dricats.s.applications-component.name", "https://fhirfactory.net/CodeSystems/Types"),
+	SUBSYSTEM_APPLICATION_WORK_UNIT_PROCESSOR_BLOCK ("WorkUnitProcessorBlock","SoftwareComponentName", "dricats.s.applications-component.name", "https://fhirfactory.net/CodeSystems/Types"),
+	NETWORK_ENDPOINT ("NetworkEndpoint","SoftwareComponentName", "dricats.s.applications-component.name", "https://fhirfactory.net/CodeSystems/Types"),
+	SOLUTION ("Solution", "SoftwareComponentName", "dricats.s.applications-component.name", "https://fhirfactory.net/CodeSystems/Types");
 
 
-	private final String identifierTypeCode;
-	private final String identifierTypeDisplay;
-	private final URI identifierTypeSystem;
+    private final String type;
+	private final String code;
+	private final String display;
+	private final URI system;
 
-	private SoftwareComponentTypeEnum(String display, String code, String system){
-		this.identifierTypeCode = code;
-		this.identifierTypeDisplay = display;
-		this.identifierTypeSystem = URI.create(system);
+	private SoftwareComponentTypeEnum(String type, String display, String code, String system){
+		this.type = type;
+        this.code = code;
+		this.display = display;
+		this.system = URI.create(system);
 	}
 
-	public String getIdentifierTypeCode() {
-		return identifierTypeCode;
+    public String getType(){
+        return(type);
+    }
+
+	public String getCode() {
+		return code;
 	}
 
-	public String getIdentifierTypeDisplay() {
-		return identifierTypeDisplay;
+	public String getDisplay() {
+		return display;
 	}
 
-	public URI getIdentifierTypeSystem() {
-		return identifierTypeSystem;
+	public URI getSystem() {
+		return system;
 	}
 
-	public DistributableObjectIdentifierType toDistributableObjectIdentifierType() {
-		DistributableObjectIdentifierType distributableObjectIdentifierType = new DistributableObjectIdentifierType();
-		distributableObjectIdentifierType.setCode(identifierTypeCode);
-		distributableObjectIdentifierType.setDisplay(identifierTypeDisplay);
-		distributableObjectIdentifierType.setSystem(identifierTypeSystem);
-		return(distributableObjectIdentifierType);
+	public CodeableConcept toDistributableObjectType() {
+        CodeableConcept codeableConcept = new CodeableConcept();
+        CodeableConceptCode codeableConceptCode = new CodeableConceptCode();
+        codeableConceptCode.setCode(getCode());
+        codeableConceptCode.setDisplay(getDisplay());
+        codeableConceptCode.setSystem(getSystem().toString());
+        codeableConcept.getCode().add(codeableConceptCode);
+		return(codeableConcept);
 	}
 }

@@ -23,8 +23,12 @@ package net.fhirfactory.dricats.model.messaging;
 
 import java.io.Serial;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
+import net.fhirfactory.dricats.model.common.DistributableObjectId;
+import net.fhirfactory.dricats.model.common.naming.CommonName;
 import net.fhirfactory.dricats.model.topology.implementation.layers.application.interfaces.MLLPInterface;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,8 +49,8 @@ public class MessageObject extends SerialisableObject {
     // Attributes
     //
 
-    private MLLPInterface messageSource;
-    private MLLPInterface messageTarget;
+    private DistributableObjectId messageSource;
+    private DistributableObjectId messageTarget;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss.SSSXXX")
     private LocalDateTime messageSendDate;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss.SSSXXX")
@@ -58,24 +62,55 @@ public class MessageObject extends SerialisableObject {
     //
     // Constructor(s)
     //
+    
+    public MessageObject(){
+        super();
+        setMessageReceiveDate(LocalDateTime.now());
+        setMessageSource(new DistributableObjectId());
+        setMessageTarget(new DistributableObjectId());
+        setMessagePayload(new MessagePayload());
+        setMessageSendDate(LocalDateTime.MIN);
+        setMessageSequenceNumber(-1);
+        setMessageId(UUID.randomUUID().toString());
+        setId(new CommonName("Message("+getMessageId()+")"));
+    }
+
+    public MessageObject(DistributableObjectId source, DistributableObjectId target, LocalDateTime sendDate, MessagePayload payload){
+        super();
+        setMessageReceiveDate(LocalDateTime.now());
+        setMessageSendDate(sendDate);
+        setMessageSource(source);
+        setMessageTarget(target);
+        setMessagePayload(payload);
+        setMessageSequenceNumber(0);
+        setMessageId(UUID.randomUUID().toString());
+        setId(new CommonName("Message("+getMessageId()+")"));
+    }
+
+    public  MessageObject(String MessageId, DistributableObjectId source, DistributableObjectId target, LocalDateTime sendDate, MessagePayload payload, int sequenceNumber ){
+        this(source, target, sendDate, payload);
+        setMessageId(MessageId);
+        setMessageSequenceNumber(sequenceNumber);
+        setId(new CommonName("Message("+getMessageId()+")"));
+    }
 
     //
     // Bean Methods
     //
 
-    public MLLPInterface getMessageSource() {
+    public DistributableObjectId getMessageSource() {
         return messageSource;
     }
 
-    public void setMessageSource(MLLPInterface messageSource) {
+    public void setMessageSource(DistributableObjectId messageSource) {
         this.messageSource = messageSource;
     }
 
-    public MLLPInterface getMessageTarget() {
+    public DistributableObjectId getMessageTarget() {
         return messageTarget;
     }
 
-    public void setMessageTarget(MLLPInterface messageTarget) {
+    public void setMessageTarget(DistributableObjectId messageTarget) {
         this.messageTarget = messageTarget;
     }
 
@@ -125,5 +160,18 @@ public class MessageObject extends SerialisableObject {
 
     protected Logger getLogger(){
         return(LOG);
+    }
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this)
+                .append("messageSource", messageSource)
+                .append("messageTarget", messageTarget)
+                .append("messageSendDate", messageSendDate)
+                .append("messageReceiveDate", messageReceiveDate)
+                .append("messageId", messageId)
+                .append("messageSequenceNumber", messageSequenceNumber)
+                .append("messagePayload", messagePayload)
+                .toString();
     }
 }

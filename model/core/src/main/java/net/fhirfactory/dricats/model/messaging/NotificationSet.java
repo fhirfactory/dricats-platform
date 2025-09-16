@@ -73,6 +73,10 @@ public class NotificationSet implements Serializable {
     public void setNotificationSetCreationDate(LocalDateTime messageSetCreationDate) {
         this.notificationSetCreationDate = messageSetCreationDate;
     }
+
+    public void addNotification(NotificationObject notification){
+        getNotificationSequence().put(getNotificationSequence().size(), notification);
+    }
     
     //
     // Utilities
@@ -80,5 +84,21 @@ public class NotificationSet implements Serializable {
     
     protected Logger getLogger() {
     	return(LOG);
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder toStringBuilder = new StringBuilder();
+        toStringBuilder.append("NotificationSet{");
+        toStringBuilder.append("notificationSequence=[");
+        for(int counter = 0; counter < notificationSequence.size(); counter += 1){
+            toStringBuilder.append(counter+"="+getNotificationSequence().get(counter).toString());
+            if(counter < notificationSequence.size() -1){
+                toStringBuilder.append(",");
+            }
+        }
+        toStringBuilder.append("]");
+        toStringBuilder.append(", notificationSetCreationDate=" + notificationSetCreationDate + "}");
+        return toStringBuilder.toString();
     }
 }

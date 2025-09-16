@@ -73,12 +73,36 @@ public class MessageSet implements Serializable {
     public void setMessageSetCreationDate(LocalDateTime messageSetCreationDate) {
         this.messageSetCreationDate = messageSetCreationDate;
     }
-    
+
+    public void addMessage(MessageObject message){
+        getMessageSequence().put(getMessageSequence().size(), message);
+    }
+
     //
     // Utility
     //
 
     protected Logger getLogger() {
     	return(LOG);
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder toStringBuilder = new StringBuilder();
+        toStringBuilder.append("NotificationSet{");
+        toStringBuilder.append("notificationSequence=[");
+        for(int counter = 0; counter < getMessageSequence().size(); counter += 1){
+            toStringBuilder.append(counter);
+            toStringBuilder.append("=");
+            toStringBuilder.append(getMessageSequence().get(counter).toString());
+            if(counter < getMessageSequence().size() -1){
+                toStringBuilder.append(",");
+            }
+        }
+        toStringBuilder.append("]");
+        toStringBuilder.append(", notificationSetCreationDate=");
+        toStringBuilder.append(getMessageSetCreationDate());
+        toStringBuilder.append("}");
+        return toStringBuilder.toString();
     }
 }

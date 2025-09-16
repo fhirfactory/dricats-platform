@@ -22,7 +22,7 @@
 package net.fhirfactory.dricats.model.topology.implementation.layers.technology;
 
 import net.fhirfactory.dricats.model.common.DistributableObjectIdentifier;
-import net.fhirfactory.dricats.model.topology.reference.layers.technology.Device;
+import net.fhirfactory.dricats.model.reference.layers.technology.Device;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

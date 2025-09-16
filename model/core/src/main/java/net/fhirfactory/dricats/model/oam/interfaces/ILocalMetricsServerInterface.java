@@ -1,7 +1,7 @@
 package net.fhirfactory.dricats.model.oam.interfaces;
 
 import net.fhirfactory.dricats.model.oam.ApplicationComponentMetricsData;
-import net.fhirfactory.dricats.model.topology.reference.layers.application.ApplicationComponent;
+import net.fhirfactory.dricats.model.reference.layers.application.ApplicationComponent;
 
 import java.time.LocalDateTime;
 import java.util.List;

@@ -74,14 +74,14 @@ public class JChannelFactory {
             } else {
                 newChannel = createJChannelProgrammatically(configObject);
             }
-            controller.getEndpoint().setLocalChannel(newChannel);
+            controller.setLocalChannel(newChannel);
             getLogger().trace(".createJChannel(): JChannel initialised, now setting JChannel name");
             newChannel.setName(configObject.getChannelName());
             getLogger().trace(".createJChannel(): JChannel Name set, now set ensure we don't get our own messages");
             newChannel.setDiscardOwnMessages(true);
             getLogger().trace(".createJChannel(): [Create RPC Dispatcher] Start");
             RpcDispatcher newRPCDispatcher = new RpcDispatcher(newChannel, controller);
-            controller.getEndpoint().setRPCDispatcher(newRPCDispatcher);
+            controller.setRPCDispatcher(newRPCDispatcher);
             getLogger().trace(".createJChannel(): [Create RPC Dispatcher] Finish");
             getLogger().trace(".createJChannel(): [Set Receiver] Start");
             newChannel.setReceiver(controller);

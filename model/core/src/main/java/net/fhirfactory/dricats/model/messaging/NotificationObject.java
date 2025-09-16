@@ -23,7 +23,11 @@ package net.fhirfactory.dricats.model.messaging;
 
 import java.io.Serial;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
+import net.fhirfactory.dricats.model.common.DistributableObjectId;
+import net.fhirfactory.dricats.model.common.naming.CommonName;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,8 +49,8 @@ public class NotificationObject extends SerialisableObject {
     // Attributes
     //
 
-    private MLLPInterface notificationSource;
-    private MLLPInterface notificationTarget;
+    private DistributableObjectId notificationSource;
+    private DistributableObjectId notificationTarget;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss.SSSXXX")
     private LocalDateTime notificationSendDate;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss.SSSXXX")
@@ -59,24 +63,54 @@ public class NotificationObject extends SerialisableObject {
     // Constructor(s)
     //
 
+    public NotificationObject(){
+        super();
+        setNotificationReceiveDate(LocalDateTime.now());
+        setNotificationSource(new DistributableObjectId());
+        setNotificationTarget(new DistributableObjectId());
+        setNotificationPayload(new NotificationPayload());
+        setNotificationSendDate(LocalDateTime.MIN);
+        setNotificationSequenceNumber(-1);
+        setNotificationId(UUID.randomUUID().toString());
+        setId(new CommonName("Notification("+getNotificationId()+")"));
+    }
+
+    public NotificationObject(DistributableObjectId source, DistributableObjectId target, LocalDateTime sendDate, NotificationPayload payload){
+        super();
+        setNotificationReceiveDate(LocalDateTime.now());
+        setNotificationSendDate(sendDate);
+        setNotificationSource(source);
+        setNotificationTarget(target);
+        setNotificationPayload(payload);
+        setNotificationSequenceNumber(0);
+        setNotificationId(UUID.randomUUID().toString());
+        setId(new CommonName("Notification("+getNotificationId()+")"));
+    }
+
+    public  NotificationObject(String notificationId, DistributableObjectId source, DistributableObjectId target, LocalDateTime sendDate, NotificationPayload payload, int sequenceNumber ){
+        this(source, target, sendDate, payload);
+        setNotificationId(notificationId);
+        setNotificationSequenceNumber(sequenceNumber);
+        setId(new CommonName("Notification("+getNotificationId()+")"));
+    }
 
     //
     // Bean Methods
     //
 
-    public MLLPInterface getNotificationSource() {
+    public DistributableObjectId getNotificationSource() {
         return notificationSource;
     }
 
-    public void setNotificationSource(MLLPInterface notificationSource) {
+    public void setNotificationSource(DistributableObjectId notificationSource) {
         this.notificationSource = notificationSource;
     }
 
-    public MLLPInterface getNotificationTarget() {
+    public DistributableObjectId getNotificationTarget() {
         return notificationTarget;
     }
 
-    public void setNotificationTarget(MLLPInterface notificationTarget) {
+    public void setNotificationTarget(DistributableObjectId notificationTarget) {
         this.notificationTarget = notificationTarget;
     }
 
@@ -127,5 +161,18 @@ public class NotificationObject extends SerialisableObject {
 
     protected Logger getLogger(){
         return(LOG);
+    }
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this)
+                .append("notificationSource", notificationSource)
+                .append("notificationTarget", notificationTarget)
+                .append("notificationSendDate", notificationSendDate)
+                .append("notificationReceiveDate", notificationReceiveDate)
+                .append("notificationId", notificationId)
+                .append("notificationSequenceNumber", notificationSequenceNumber)
+                .append("notificationPayload", notificationPayload)
+                .toString();
     }
 }

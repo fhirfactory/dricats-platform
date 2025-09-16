@@ -24,7 +24,7 @@ package net.fhirfactory.dricats.model.topology.implementation.layers.application
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import net.fhirfactory.dricats.model.common.DistributableObjectId;
 import net.fhirfactory.dricats.model.oam.ApplicationInterfaceMetricsData;
-import net.fhirfactory.dricats.model.topology.reference.layers.application.ApplicationInterface;
+import net.fhirfactory.dricats.model.reference.layers.application.ApplicationInterface;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

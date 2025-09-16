@@ -22,41 +22,59 @@
 package net.fhirfactory.dricats.platform.middleware.jgroups.jchannel.base;
 
 import net.fhirfactory.dricats.model.oam.interfaces.ILocalMetricsServerInterface;
-import net.fhirfactory.dricats.platform.middleware.jgroups.JChannelEndpoint;
+import net.fhirfactory.dricats.model.reference.layers.application.ApplicationComponent;
+import net.fhirfactory.dricats.model.topology.interfaces.ISubsystem;
+import net.fhirfactory.dricats.platform.configuration.LocalConfigurationServer;
+import net.fhirfactory.dricats.platform.middleware.jgroups.JChannelInterface;
 import net.fhirfactory.dricats.platform.middleware.jgroups.JGroupsNamingServices;
 import net.fhirfactory.dricats.platform.middleware.jgroups.valuesets.JChannelStatusEnum;
+import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.jgroups.Address;
+import org.jgroups.JChannel;
 import org.jgroups.Receiver;
 import org.jgroups.View;
+import org.jgroups.blocks.RpcDispatcher;
 import org.slf4j.Logger;
 
-abstract public class JChannelControllerBase implements Receiver {
+import javax.annotation.PostConstruct;
+import javax.inject.Inject;
+import java.util.ArrayList;
+import java.util.List;
+
+abstract public class JChannelControllerBase extends ApplicationComponent implements Receiver {
 
     //
     // Attributes
     //
-    private JChannelEndpoint endpoint;
-    private JGroupsNamingServices namingServices;
-    private ILocalMetricsServerInterface localMetricsServer;
-    private JChannelFactory channelFactory;
+    private JChannelInterface channelInterfaceTopologyElement;
     private JChannelMembershipTracker membershipHandler;
     private JChannelWatchdog watchdog;
+    private Boolean initialised;
+    private JChannel localChannel;
+    private RpcDispatcher rpcDispatcher;
+    private Object localChannelLock;
+
+    @Inject
+    private JGroupsNamingServices namingServices;
+
+    @Inject
+    private ILocalMetricsServerInterface localMetricsServer;
+
+    @Inject
+    private JChannelFactory channelFactory;
+
+    @Inject
+    private LocalConfigurationServer configurationServer;
+
+    @Inject
+    private ISubsystem subsystem;
 
     //
     // Constructor(s)
     //
-    public JChannelControllerBase(
-            JChannelEndpoint channelEndpoint,
-            JGroupsNamingServices namingServices,
-            JChannelFactory channelFactory,
-            ILocalMetricsServerInterface localMetricsServer) {
-        this.endpoint = channelEndpoint;
-        this.localMetricsServer = localMetricsServer;
-        this.namingServices = namingServices;
-        this.channelFactory = channelFactory;
-        this.membershipHandler = new JChannelMembershipTracker(channelEndpoint);
-
-        getEndpoint().getConfiguration().setChannelName(specifyChannelName());
-        getEndpoint().getConfiguration().setClusterName(specifyClusterName());
+    public JChannelControllerBase() {
+        super();
+        setInitialised(false);
     }
 
     //
@@ -64,8 +82,8 @@ abstract public class JChannelControllerBase implements Receiver {
     //
 
     abstract protected Logger getLogger();
-    abstract protected String specifyClusterName();
-    abstract protected String specifyChannelName();
+    abstract protected JChannelInterface resolveEndpoint();
+    abstract protected void populateIdentityDetails();
 
 
     //
@@ -82,9 +100,19 @@ abstract public class JChannelControllerBase implements Receiver {
     // Channel Initialization
     //
 
+    @PostConstruct
     public void initialise() {
         getLogger().debug(".initialise(): Entry");
-        if (getEndpoint().getEndpointStatus() != JChannelStatusEnum.JGROUPS_ENDPOINT_STATUS_UNINITIALISED) {
+
+        getLogger().info(".initialise(): [Populate Identity Details] Start");
+        populateIdentityDetails();
+        getLogger().info(".initialise(): [Populate Identity Details] Finish");
+
+        getLogger().info(".initialise(): [Resolve Endpoint] Start");
+        setChannelInterfaceTopologyElement(resolveEndpoint());
+        getLogger().info(".initialise(): [Resolve Endpoint] Finish");
+
+        if (getChannelInterfaceTopologyElement().getEndpointStatus() != JChannelStatusEnum.JGROUPS_ENDPOINT_STATUS_UNINITIALISED) {
             getLogger().debug(".initialise(): Exit, status is not JGROUPS_ENDPOINT_STATE_UNINITIALISED!");
             return;
         }
@@ -98,7 +126,7 @@ abstract public class JChannelControllerBase implements Receiver {
         // 2nd, Update Metrics
         //
         getLogger().info(".initialise(): Step 2: [Update Metrics] Start");
-        getEndpoint().getMetricsData().touchLastActivityInstant();
+        getChannelInterfaceTopologyElement().getMetricsData().touchLastActivityInstant();
         getLogger().info(".initialise(): Step 2: [Update Metrics] Finish");
 
     }
@@ -115,8 +143,29 @@ abstract public class JChannelControllerBase implements Receiver {
     // Getters and Setters
     //
 
-    protected JChannelEndpoint getEndpoint() {
-        return(endpoint);
+    protected LocalConfigurationServer getConfigurationServer(){
+        return(this.configurationServer);
+    }
+
+    public Boolean getInitialised() {
+        return initialised;
+    }
+
+    public void setInitialised(Boolean initialised) {
+        this.initialised = initialised;
+    }
+
+    protected JChannelInterface getChannelInterfaceTopologyElement(){
+        return(this.channelInterfaceTopologyElement);
+    }
+
+    // Minimal accessor to satisfy factory and other components expecting this name
+    public JChannelInterface getEndpoint() {
+        return getChannelInterfaceTopologyElement();
+    }
+
+    protected void setChannelInterfaceTopologyElement(JChannelInterface endpointTopologyElement){
+        this.channelInterfaceTopologyElement = endpointTopologyElement;
     }
 
     protected ILocalMetricsServerInterface getLocalMetricsServer() {
@@ -133,6 +182,58 @@ abstract public class JChannelControllerBase implements Receiver {
 
     protected JChannelFactory getLocalChannelFactory() {
         return channelFactory;
+    }
+
+    public JChannel getLocalChannel() {
+        return localChannel;
+    }
+
+    public void setLocalChannel(JChannel channel) {
+        this.localChannel = channel;
+    }
+
+    public RpcDispatcher getRPCDispatcher() {
+        return rpcDispatcher;
+    }
+
+    public void setRPCDispatcher(RpcDispatcher rpcDispatcher) {
+        this.rpcDispatcher = rpcDispatcher;
+    }
+
+    protected Object getLocalChannelLock(){
+        return(this.localChannelLock);
+    }
+
+    protected ISubsystem getSubsystem(){
+        return(subsystem);
+    }
+
+    //
+    // JGroups Interface Methods
+    //
+
+    public List<Address> getAllViewMembers() {
+        if ((getLocalChannel() == null) || (getLocalChannel().getView() == null)) {
+            return (new ArrayList<>());
+        }
+        try {
+            List<Address> members = new ArrayList<>();
+            synchronized (getLocalChannelLock()) {
+                members.addAll(getLocalChannel().getView().getMembers());
+            }
+            return (members);
+        } catch (Exception ex) {
+            getLogger().warn(".getAllMembers(): Failed to get View Members, Error: Message->{}, StackTrace->{}", ExceptionUtils.getMessage(ex), ExceptionUtils.getStackTrace(ex));
+        }
+        return (new ArrayList<>());
+    }
+
+    protected Address getMyAddress(){
+        if(getLocalChannel() != null){
+            Address myAddress = getLocalChannel().getAddress();
+            return(myAddress);
+        }
+        return(null);
     }
 
 }
