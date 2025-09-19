@@ -22,13 +22,14 @@
 package net.fhirfactory.dricats.internals.communicate.entities.user;
 
 import java.io.Serial;
+import java.util.StringJoiner;
 
+import net.fhirfactory.dricats.resources.base.identity.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import net.fhirfactory.dricats.internals.communicate.entities.user.datatypes.CommunicateSurrogateResourceReference;
 import net.fhirfactory.dricats.internals.communicate.entities.user.valuesets.CommunicateUserTypeEnum;
-import net.fhirfactory.dricats.model.individuals.User;
 
 public class CommunicateUser extends User {
 	//
@@ -145,15 +146,30 @@ public class CommunicateUser extends User {
 
     @Override
     public String toString() {
-        return "CommunicateUser{" +
-                "userID=" + getUserID() +
-                ", representedResource=" + representedResource +
-                ", surrogate=" + surrogate +
-                ", administrator=" + administrator +
-                ", deactivated=" + deactivated +
-                ", shadowBanned=" + shadowBanned +
-                ", avatarURL=" + avatarURL +
-                ", communicateUserType=" + communicateUserType +
-                '}';
+        return new StringJoiner(", ", CommunicateUser.class.getSimpleName() + "[", "]")
+                .add("representedResource=" + getRepresentedResource())
+                .add("surrogate=" + isSurrogate())
+                .add("administrator=" + isAdministrator())
+                .add("deactivated=" + isDeactivated())
+                .add("shadowBanned=" + isShadowBanned())
+                .add("avatarURL='" + getAvatarURL() + "'")
+                .add("communicateUserType=" + getCommunicateUserType())
+                .add("communicateUserToken='" + getCommunicateUserToken() + "'")
+                .add("logins=" + getLogins())
+                .add("status='" + getStatus() + "'")
+                .add("logins=" + getLogins())
+                .add("status='" + getStatus() + "'")
+                .add("gender='" + getGender() + "'")
+                .add("name=" + getName())
+                .add("birthDate=" + getBirthDate())
+                .add("address=" + getAddress())
+                .add("contactPoints=" + getContactPoints())
+                .add("status='" + getStatus() + "'")
+                .add("objectID=" + getObjectID())
+                .add("securityLabels=" + getSecurityLabels())
+                .add("metadata=" + getMetadata())
+                .add("identifiers=" + getIdentifiers())
+                .add("id=" + getId())
+                .toString();
     }
 }

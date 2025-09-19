@@ -1,12 +1,12 @@
 package net.fhirfactory.dricats.platform.middleware.jgroups;
 
-import net.fhirfactory.dricats.model.messaging.interfaces.ILocalMessageService;
-import net.fhirfactory.dricats.model.oam.interfaces.ILocalMetricsServerInterface;
-import net.fhirfactory.dricats.model.tasking.interfaces.LocalTaskServerInterface;
-import net.fhirfactory.dricats.model.topology.implementation.layers.application.interfaces.JGroupsInterface;
-import net.fhirfactory.dricats.model.topology.interfaces.MiddlewareComponentInterface;
-import net.fhirfactory.dricats.model.topology.interfaces.SolutionConfigurationInterface;
-import net.fhirfactory.dricats.model.topology.interfaces.ISubsystem;
+import net.fhirfactory.dricats.internals.messaging.interfaces.ILocalMessageService;
+import net.fhirfactory.dricats.internals.oam.interfaces.ILocalMetricsServerInterface;
+import net.fhirfactory.dricats.internals.tasking.interfaces.LocalTaskServerInterface;
+import net.fhirfactory.dricats.internals.topology.implementation.layers.application.interfaces.JGroupsInterface;
+import net.fhirfactory.dricats.internals.topology.interfaces.MiddlewareComponentInterface;
+import net.fhirfactory.dricats.internals.topology.interfaces.SolutionConfigurationInterface;
+import net.fhirfactory.dricats.internals.topology.interfaces.ISubsystem;
 import net.fhirfactory.dricats.platform.configuration.LocalConfigurationServer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

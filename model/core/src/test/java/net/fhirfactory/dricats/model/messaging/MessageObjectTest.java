@@ -1,9 +1,11 @@
 package net.fhirfactory.dricats.model.messaging;
 
-import net.fhirfactory.dricats.model.common.DistributableObjectId;
-import net.fhirfactory.dricats.model.common.naming.CommonName;
-import net.fhirfactory.dricats.model.common.naming.QualifiedName;
-import net.fhirfactory.dricats.model.common.naming.UnqualifiedName;
+import net.fhirfactory.dricats.internals.common.DistributableObjectId;
+import net.fhirfactory.dricats.internals.common.naming.CommonName;
+import net.fhirfactory.dricats.internals.common.naming.QualifiedName;
+import net.fhirfactory.dricats.internals.common.naming.UnqualifiedName;
+import net.fhirfactory.dricats.internals.messaging.MessageObject;
+import net.fhirfactory.dricats.internals.messaging.MessagePayload;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;

@@ -1,7 +1,8 @@
 package net.fhirfactory.dricats.model.reference.layers.application;
 
-import net.fhirfactory.dricats.model.common.DistributableObjectId;
-import net.fhirfactory.dricats.model.reference.common.valuesets.ElementTypeEnum;
+import net.fhirfactory.dricats.internals.common.DistributableObjectId;
+import net.fhirfactory.dricats.internals.reference.common.valuesets.ElementTypeEnum;
+import net.fhirfactory.dricats.internals.reference.layers.application.ApplicationInterface;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;

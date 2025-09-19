@@ -25,6 +25,7 @@ import java.io.Serial;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.fhirfactory.dricats.resources.base.entities.Team;
 import org.apache.commons.lang3.SerializationUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,7 +33,6 @@ import org.slf4j.LoggerFactory;
 import net.fhirfactory.dricats.internals.communicate.entities.rooms.datatypes.CommunicateRoomReference;
 import net.fhirfactory.dricats.internals.communicate.entities.session.CommunicateSession;
 import net.fhirfactory.dricats.internals.communicate.entities.user.datatypes.CommunicateUserReference;
-import net.fhirfactory.dricats.model.entity.Team;
 
 public class CommunicateTeam extends Team {
     @Serial

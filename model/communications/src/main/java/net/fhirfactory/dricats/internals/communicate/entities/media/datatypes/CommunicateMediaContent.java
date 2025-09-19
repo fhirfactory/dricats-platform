@@ -23,7 +23,7 @@ package net.fhirfactory.dricats.internals.communicate.entities.media.datatypes;
 
 import java.io.Serial;
 
-import net.fhirfactory.dricats.model.common.DistributableObject;
+import net.fhirfactory.dricats.internals.common.DistributableObject;
 
 class CommunicateMediaContent extends DistributableObject{
 	//

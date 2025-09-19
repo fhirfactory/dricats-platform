@@ -78,9 +78,9 @@ public enum CommunicateRoomTypeEnum {
             case COMMUNICATE_PATIENT_CENTRAL_ROOM:
                 return ("A Patient Central Room: a centralised point for dialogue surrounding a specific Patient");
             case COMMUNICATE_PATIENT_TASK_FULFILMENT_ROOM:
-                return ("A Patient Task Room: a room for dialogue surrounding a specific Patient task (page)");
+                return ("A Patient IAdministrativeTask Room: a room for dialogue surrounding a specific Patient task (page)");
             case COMMUNICATE_PRACTITIONER_MY_GENERAL_NOTIFICATIONS_ROOM:
-                return ("A General Notifications Room: a centralised point for all System, Organisation or Switchboard Operator originated notifications");
+                return ("A General Notifications Room: a centralised point for all System, IOrganisation or Switchboard Operator originated notifications");
             case COMMUNICATE_PRACTITIONER_ROLE_FULFILMENT_DISCUSSION_ROOM:
                 return ("A PractitionerRole Fulfillment Room - representing the room for dialogue between a Client and a PractitionerRole fulfiller");
             default:

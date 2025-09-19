@@ -5,12 +5,12 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>net.fhirfactory.dricats</groupId>
-        <artifactId>dricats-platform-middleware</artifactId>
+        <artifactId>dricats-middleware</artifactId>
         <version>1.0.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>dricats-platform-middleware-jgroups</artifactId>
-    <name>DRICaTS-Platform :: Middleware :: JGroups</name>
+    <artifactId>dricats-middleware-jgroups</artifactId>
+    <name>DRICaTS :: Middleware :: JGroups</name>
     <packaging>jar</packaging>
 
     <properties>
@@ -38,32 +38,32 @@
     
      	<dependency>
             <groupId>net.fhirfactory.dricats</groupId>
-            <artifactId>dricats-platform-common</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
+            <artifactId>dricats-common</artifactId>
+            <version>${project.version}</version>
         </dependency>
 
         <dependency>
             <groupId>net.fhirfactory.dricats</groupId>
-            <artifactId>dricats-platform-middleware-configserver</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
+            <artifactId>dricats-middleware-configserver</artifactId>
+            <version>${project.version}</version>
         </dependency>
 
         <dependency>
             <groupId>net.fhirfactory.dricats</groupId>
-            <artifactId>dricats-platform-model-constants</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
+            <artifactId>dricats-model-constants</artifactId>
+            <version>${project.version}</version>
         </dependency>
         
        <dependency>
             <groupId>net.fhirfactory.dricats</groupId>
-            <artifactId>dricats-platform-model-resources</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
+            <artifactId>dricats-model-resources-base</artifactId>
+            <version>${project.version}</version>
         </dependency>
 
        <dependency>
             <groupId>net.fhirfactory.dricats</groupId>
-            <artifactId>dricats-platform-model-jgroups</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
+            <artifactId>dricats-model-jgroups</artifactId>
+            <version>${project.version}</version>
         </dependency>
 
         <!--*******************************************************************************-->

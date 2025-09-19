@@ -22,7 +22,7 @@
 package net.fhirfactory.dricats.internals.communicate.entities.rooms.datatypes;
 
 import net.fhirfactory.dricats.internals.communicate.entities.user.CommunicateUser;
-import net.fhirfactory.dricats.model.common.datatypes.EffectiveDate;
+import net.fhirfactory.dricats.internals.common.datatypes.EffectiveDate;
 
 public class CommunicateRoomMember{
     private CommunicateUser member;

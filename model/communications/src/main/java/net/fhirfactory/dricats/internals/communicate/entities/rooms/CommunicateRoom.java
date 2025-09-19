@@ -41,10 +41,9 @@ import net.fhirfactory.dricats.internals.communicate.entities.rooms.datatypes.Co
 import net.fhirfactory.dricats.internals.communicate.entities.rooms.datatypes.CommunicateRoomStatus;
 import net.fhirfactory.dricats.internals.communicate.entities.rooms.valuesets.CommunicateRoomJoinRuleEnum;
 import net.fhirfactory.dricats.internals.communicate.entities.rooms.valuesets.CommunicateRoomTypeEnum;
-import net.fhirfactory.dricats.model.common.datatypes.EffectiveDate;
-import net.fhirfactory.dricats.model.individuals.Group;
+import net.fhirfactory.dricats.internals.common.datatypes.EffectiveDate;
 
-public class CommunicateRoom extends Group {
+public class CommunicateRoom  {
     //
     // Housekeeping
     //
@@ -255,7 +254,6 @@ public class CommunicateRoom extends Group {
     // Utility Methods
     //
 
-	@Override
     protected Logger getLogger() {
         return (LOG);
     }

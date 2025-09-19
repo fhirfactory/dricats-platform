@@ -21,14 +21,13 @@
  */
 package net.fhirfactory.dricats.internals.communicate.entities.organization;
 
-import java.io.Serial;
-import java.util.Objects;
-
+import net.fhirfactory.dricats.internals.communicate.entities.user.datatypes.CommunicateUserReference;
+import net.fhirfactory.dricats.resources.base.entities.Organisation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import net.fhirfactory.dricats.internals.communicate.entities.user.datatypes.CommunicateUserReference;
-import net.fhirfactory.dricats.model.entity.Organisation;
+import java.io.Serial;
+import java.util.Objects;
 
 public class CommunicateOrganization extends Organisation {
     //
@@ -79,8 +78,7 @@ public class CommunicateOrganization extends Organisation {
     public String toString() {
         final StringBuilder sb = new StringBuilder("CommunicateOrganization{");
         sb.append("surrogateCommunicateUser=").append(getSurrogateCommunicateUser());
-        sb.append(", tradingName=").append(getTradingName());
-        sb.append(", serviceProviderRole=").append(getServiceProviderRole());
+        sb.append(", tradingNames=").append(getTradingNames());
         sb.append(", securityLabels=").append(getSecurityLabels());
         sb.append(", metadata=").append(getMetadata());
         sb.append(", identifiers=").append(getIdentifiers());

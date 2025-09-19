@@ -22,7 +22,7 @@
 package net.fhirfactory.dricats.platform.middleware.jgroups.jchannel;
 
 import net.fhirfactory.dricats.deployment.valuesets.SubsystemInternalServiceNamesEnum;
-import net.fhirfactory.dricats.model.tasking.interfaces.LocalTaskServerInterface;
+import net.fhirfactory.dricats.internals.tasking.interfaces.LocalTaskServerInterface;
 import net.fhirfactory.dricats.platform.middleware.jgroups.JChannelInterface;
 import net.fhirfactory.dricats.platform.middleware.jgroups.jchannel.base.JChannelControllerBase;
 import org.slf4j.Logger;

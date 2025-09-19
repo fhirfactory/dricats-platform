@@ -5,12 +5,12 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>net.fhirfactory.dricats</groupId>
-        <artifactId>dricats-platform-twin</artifactId>
+        <artifactId>dricats-twin</artifactId>
         <version>1.0.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>dricats-platform-twin-group</artifactId>
-    <name>DRICaTS-Platform :: Digital Twin Framework  :: Group</name>
+    <artifactId>dricats-twin-group</artifactId>
+    <name>DRICaTS :: Digital Twin Framework :: Group</name>
     <packaging>jar</packaging>
 
     <properties>

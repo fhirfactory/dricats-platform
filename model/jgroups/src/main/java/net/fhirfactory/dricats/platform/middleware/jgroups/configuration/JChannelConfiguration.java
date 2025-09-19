@@ -26,7 +26,7 @@ import java.io.Serial;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import net.fhirfactory.dricats.model.configuration.ports.internal.JGroupsInterfaceConfigurationObject;
+import net.fhirfactory.dricats.internals.configuration.ports.internal.JGroupsInterfaceConfigurationObject;
 
 public class JChannelConfiguration extends JGroupsInterfaceConfigurationObject {
     //

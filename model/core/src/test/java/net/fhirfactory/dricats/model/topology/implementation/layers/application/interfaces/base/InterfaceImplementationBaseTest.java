@@ -1,6 +1,7 @@
 package net.fhirfactory.dricats.model.topology.implementation.layers.application.interfaces.base;
 
-import net.fhirfactory.dricats.model.common.DistributableObjectId;
+import net.fhirfactory.dricats.internals.common.DistributableObjectId;
+import net.fhirfactory.dricats.internals.topology.implementation.layers.application.interfaces.base.InterfaceImplementationBase;
 import org.junit.jupiter.api.Test;
 
 import java.net.URI;

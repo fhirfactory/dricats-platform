@@ -1,6 +1,7 @@
 package net.fhirfactory.dricats.model.reference.common;
 
-import net.fhirfactory.dricats.model.reference.common.valuesets.ElementTypeEnum;
+import net.fhirfactory.dricats.internals.reference.common.ElementBase;
+import net.fhirfactory.dricats.internals.reference.common.valuesets.ElementTypeEnum;
 import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;

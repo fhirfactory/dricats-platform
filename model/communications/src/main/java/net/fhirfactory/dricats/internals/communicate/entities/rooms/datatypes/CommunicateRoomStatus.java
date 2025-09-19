@@ -1,7 +1,7 @@
 package net.fhirfactory.dricats.internals.communicate.entities.rooms.datatypes;
 
 import net.fhirfactory.dricats.internals.communicate.entities.rooms.valuesets.CommunicateRoomStatusEnum;
-import net.fhirfactory.dricats.model.common.datatypes.EffectiveDate;
+import net.fhirfactory.dricats.internals.common.datatypes.EffectiveDate;
 
 public class CommunicateRoomStatus {
     CommunicateRoomStatusEnum statusValue;

@@ -1,7 +1,8 @@
 package net.fhirfactory.dricats.model.topology.implementation.layers.application.interfaces;
 
-import net.fhirfactory.dricats.model.common.DistributableObjectId;
-import net.fhirfactory.dricats.model.configuration.ports.internal.JGroupsInterfaceConfigurationObject;
+import net.fhirfactory.dricats.internals.common.DistributableObjectId;
+import net.fhirfactory.dricats.internals.configuration.ports.internal.JGroupsInterfaceConfigurationObject;
+import net.fhirfactory.dricats.internals.topology.implementation.layers.application.interfaces.JGroupsInterface;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

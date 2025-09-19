@@ -1,5 +1,8 @@
 package net.fhirfactory.dricats.model.common.naming;
 
+import net.fhirfactory.dricats.internals.common.naming.QualifiedName;
+import net.fhirfactory.dricats.internals.common.naming.QualifiedNameToken;
+import net.fhirfactory.dricats.internals.common.naming.UnqualifiedName;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

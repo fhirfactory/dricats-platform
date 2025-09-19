@@ -1,7 +1,8 @@
 package net.fhirfactory.dricats.model.topology.implementation.layers.application;
 
-import net.fhirfactory.dricats.model.common.DistributableObjectIdentifier;
-import net.fhirfactory.dricats.model.topology.implementation.layers.technology.valuesets.NetworkSecurityZoneEnum;
+import net.fhirfactory.dricats.internals.common.DistributableObjectIdentifier;
+import net.fhirfactory.dricats.internals.topology.implementation.layers.application.Subsystem;
+import net.fhirfactory.dricats.internals.topology.implementation.layers.technology.valuesets.NetworkSecurityZoneEnum;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -10,7 +11,7 @@ class SubsystemTest {
 
     static class MySubsystem extends Subsystem {
         @Override
-        DistributableObjectIdentifier specifySubsystemIdentifier() {
+        public DistributableObjectIdentifier specifySubsystemIdentifier() {
             return new DistributableObjectIdentifier();
         }
     }

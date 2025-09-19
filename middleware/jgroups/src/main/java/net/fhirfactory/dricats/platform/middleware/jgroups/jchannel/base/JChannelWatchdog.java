@@ -21,7 +21,7 @@
  */
 package net.fhirfactory.dricats.platform.middleware.jgroups.jchannel.base;
 
-import net.fhirfactory.dricats.model.oam.interfaces.ILocalMetricsServerInterface;
+import net.fhirfactory.dricats.internals.oam.interfaces.ILocalMetricsServerInterface;
 import net.fhirfactory.dricats.platform.middleware.jgroups.JChannelInterface;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

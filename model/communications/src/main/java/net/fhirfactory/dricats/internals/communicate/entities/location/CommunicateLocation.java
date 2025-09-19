@@ -21,14 +21,14 @@
  */
 package net.fhirfactory.dricats.internals.communicate.entities.location;
 
-import java.io.Serial;
-import java.util.Objects;
-
+import net.fhirfactory.dricats.internals.communicate.entities.user.datatypes.CommunicateUserReference;
+import net.fhirfactory.dricats.resources.base.entities.Location;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import net.fhirfactory.dricats.internals.communicate.entities.user.datatypes.CommunicateUserReference;
-import net.fhirfactory.dricats.model.entity.Location;
+
+import java.io.Serial;
+import java.util.Objects;
 
 public class CommunicateLocation extends Location {
     //
@@ -37,7 +37,6 @@ public class CommunicateLocation extends Location {
 
     @Serial
     private static final long serialVersionUID = -12345678900042L;
-    private static final Logger LOG = LoggerFactory.getLogger(CommunicateLocation.class);
 
     //
     // Attributes
@@ -70,24 +69,8 @@ public class CommunicateLocation extends Location {
     // Utility Methods
     //
 
-    @Override
-    protected Logger getLogger() {
-        return (LOG);
-    }
 
-    @Override
-    public String toString() {
-        final StringBuilder sb = new StringBuilder("CommunicateLocation{");
-        sb.append("surrogateCommunicateUser=").append(getSurrogateCommunicateUser());
-        sb.append(", address=").append(getAddress());
-        sb.append(", locationName='").append(getLocationName()).append('\'');
-        sb.append(", securityLabels=").append(getSecurityLabels());
-        sb.append(", metadata=").append(getMetadata());
-        sb.append(", identifiers=").append(getIdentifiers());
-        sb.append(", objectID='").append(getObjectID()).append('\'');
-        sb.append('}');
-        return sb.toString();
-    }
+
 
     @Override
     public boolean equals(Object o) {

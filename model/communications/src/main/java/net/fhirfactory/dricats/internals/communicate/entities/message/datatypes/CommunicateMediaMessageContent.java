@@ -22,7 +22,7 @@
 package net.fhirfactory.dricats.internals.communicate.entities.message.datatypes;
 
 import net.fhirfactory.dricats.internals.communicate.entities.media.datatypes.CommunicateMediaDetail;
-import net.fhirfactory.dricats.model.base.dataytypes.MediaContent;
+import net.fhirfactory.dricats.internals.data.MediaContent;
 
 public class CommunicateMediaMessageContent {
     private CommunicateMediaDetail mediaDetail;

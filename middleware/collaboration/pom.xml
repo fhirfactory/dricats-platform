@@ -5,13 +5,12 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>net.fhirfactory.dricats</groupId>
-        <artifactId>dricats-platform</artifactId>
+        <artifactId>dricats-middleware</artifactId>
         <version>1.0.0-SNAPSHOT</version>
-        <relativePath>../../pom.xml</relativePath>
     </parent>
 
-    <artifactId>dricats-platform-middleware-collaboration</artifactId>
-    <name>DRICaTS-Platform :: Middleware :: Collaboration</name>
+    <artifactId>dricats-middleware-collaboration</artifactId>
+    <name>DRICaTS :: Middleware :: Collaboration</name>
     <packaging>jar</packaging>
 
     <properties>

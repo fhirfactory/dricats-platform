@@ -5,12 +5,12 @@
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>net.fhirfactory.dricats</groupId>
-		<artifactId>dricats-platform</artifactId>
+		<artifactId>dricats</artifactId>
 		<version>1.0.0-SNAPSHOT</version>
 	</parent>
 
-	<artifactId>dricats-platform-documentation</artifactId>
-	<name>DRICaTS-Platform :: Documentation</name>
+	<artifactId>dricats-documentation</artifactId>
+	<name>DRICaTS :: Documentation</name>
 
 	<properties>
 	</properties>

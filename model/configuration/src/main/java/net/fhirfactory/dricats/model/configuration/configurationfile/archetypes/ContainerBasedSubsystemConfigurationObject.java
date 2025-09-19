@@ -21,11 +21,11 @@
  */
 package net.fhirfactory.dricats.model.configuration.configurationfile.archetypes;
 
-import net.fhirfactory.dricats.model.configuration.segments.DebuggingSupportConfigurationObject;
-import net.fhirfactory.dricats.model.configuration.segments.JavaDeploymentConfigurationObject;
-import net.fhirfactory.dricats.model.configuration.segments.LoadBalancerConfigurationObject;
-import net.fhirfactory.dricats.model.configuration.segments.SecurityCredentialConfigurationObject;
-import net.fhirfactory.dricats.model.configuration.segments.VolumeMountConfigurationObject;
+import net.fhirfactory.dricats.internals.configuration.segments.DebuggingSupportConfigurationObject;
+import net.fhirfactory.dricats.internals.configuration.segments.JavaDeploymentConfigurationObject;
+import net.fhirfactory.dricats.internals.configuration.segments.LoadBalancerConfigurationObject;
+import net.fhirfactory.dricats.internals.configuration.segments.SecurityCredentialConfigurationObject;
+import net.fhirfactory.dricats.internals.configuration.segments.VolumeMountConfigurationObject;
 
 public abstract class ContainerBasedSubsystemConfigurationObject extends BaseSubsystemConfigurationObject {
 

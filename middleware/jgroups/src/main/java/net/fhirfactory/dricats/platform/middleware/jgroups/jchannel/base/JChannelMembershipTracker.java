@@ -130,7 +130,7 @@ public class JChannelMembershipTracker {
     }
 
     //
-    // JGroups Group/Cluster Membership Event Listener
+    // JGroups IGroup/Cluster Membership Event Listener
     //
 
     public void processInterfaceAddition(JGroupsNetworkAddress addedInterface){

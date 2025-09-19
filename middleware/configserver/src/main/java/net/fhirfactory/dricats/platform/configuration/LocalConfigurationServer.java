@@ -25,7 +25,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import net.fhirfactory.dricats.model.topology.implementation.common.ConfigurationMapEntry;
+import net.fhirfactory.dricats.internals.topology.implementation.common.ConfigurationMapEntry;
 
 import javax.enterprise.context.ApplicationScoped;
 import java.time.LocalDateTime;

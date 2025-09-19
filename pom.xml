@@ -8,7 +8,7 @@
     <!-- Based on https://github.com/camelinaction/camelinaction2/blob/master/pom.xml -->
 
     <groupId>net.fhirfactory.dricats</groupId>
-    <artifactId>dricats-platform</artifactId>
+    <artifactId>dricats</artifactId>
     <version>1.0.0-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>DRICaTS-Platform</name>
@@ -117,7 +117,7 @@
         <version-org.hibernate-search>5.11.5.Final</version-org.hibernate-search>
         <version-org.hibernate-validator>6.1.3.Final</version-org.hibernate-validator>
 
-        <version-org.infinispan>12.1.7.Final</version-org.infinispan>
+        <version-org.infinispan>15.2.6.Final</version-org.infinispan>
 
         <version-org.jboss.resteasy-resteasy-servlet-initializer>4.5.3.Final
         </version-org.jboss.resteasy-resteasy-servlet-initializer>

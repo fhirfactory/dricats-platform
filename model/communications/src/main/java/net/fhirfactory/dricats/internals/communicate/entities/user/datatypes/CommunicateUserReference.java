@@ -24,7 +24,7 @@ package net.fhirfactory.dricats.internals.communicate.entities.user.datatypes;
 import java.io.Serial;
 
 import net.fhirfactory.dricats.internals.communicate.entities.user.valuesets.CommunicateUserTypeEnum;
-import net.fhirfactory.dricats.model.common.DistributableObjectReference;
+import net.fhirfactory.dricats.internals.common.DistributableObjectReference;
 
 public class CommunicateUserReference extends DistributableObjectReference {
 	//

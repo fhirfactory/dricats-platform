@@ -21,9 +21,9 @@
  */
 package net.fhirfactory.dricats.platform.middleware.jgroups;
 
-import net.fhirfactory.dricats.model.common.DistributableObjectId;
-import net.fhirfactory.dricats.model.topology.implementation.layers.application.interfaces.JGroupsInterface;
-import net.fhirfactory.dricats.model.topology.interfaces.ISubsystem;
+import net.fhirfactory.dricats.internals.common.DistributableObjectId;
+import net.fhirfactory.dricats.internals.topology.implementation.layers.application.interfaces.JGroupsInterface;
+import net.fhirfactory.dricats.internals.topology.interfaces.ISubsystem;
 import net.fhirfactory.dricats.platform.middleware.jgroups.configuration.JChannelConfiguration;
 import net.fhirfactory.dricats.platform.middleware.jgroups.valuesets.JChannelStatusEnum;
 import org.slf4j.Logger;

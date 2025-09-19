@@ -21,13 +21,13 @@
  */
 package net.fhirfactory.dricats.model.configuration.configurationfile.archetypes;
 
-import net.fhirfactory.dricats.model.configuration.ApplicationInstanceConfigurationObject;
-import net.fhirfactory.dricats.model.configuration.ports.base.ServerInterfaceConfigurationObject;
-import net.fhirfactory.dricats.model.configuration.segments.DeploymentModeConfigurationObject;
-import net.fhirfactory.dricats.model.configuration.segments.DeploymentSiteConfigurationObject;
-import net.fhirfactory.dricats.model.configuration.segments.DeploymentZoneConfigurationObject;
-import net.fhirfactory.dricats.model.configuration.segments.SecurityCredentialConfigurationObject;
-import net.fhirfactory.dricats.model.configuration.segments.SubsystemImageConfigurationObject;
+import net.fhirfactory.dricats.internals.configuration.ApplicationInstanceConfigurationObject;
+import net.fhirfactory.dricats.internals.configuration.ports.base.ServerInterfaceConfigurationObject;
+import net.fhirfactory.dricats.internals.configuration.segments.DeploymentModeConfigurationObject;
+import net.fhirfactory.dricats.internals.configuration.segments.DeploymentSiteConfigurationObject;
+import net.fhirfactory.dricats.internals.configuration.segments.DeploymentZoneConfigurationObject;
+import net.fhirfactory.dricats.internals.configuration.segments.SecurityCredentialConfigurationObject;
+import net.fhirfactory.dricats.internals.configuration.segments.SubsystemImageConfigurationObject;
 
 
 public class BaseSubsystemConfigurationObject {
