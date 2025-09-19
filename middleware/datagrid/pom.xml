@@ -14,8 +14,8 @@
     <packaging>pom</packaging>
 
     <modules>
-        <module>taskgrid</module>
-        <module>messagegrid</module>
+        <module>central</module>
+        <module>satellite</module>
     </modules>
 
     <properties>

@@ -27,6 +27,6 @@
         <protocol type="org.jgroups.protocols.UDP" />
         <protocol type="org.jgroups.protocols.STATE_TRANSFER" /> <!-- State transfer -->
         <protocol type="org.jgroups.protocols.UNICAST3" /> <!-- Reliable unicast -->
-        <protocol type="org.jgroups.protocols.GMS" /> <!-- Group management -->
+        <protocol type="org.jgroups.protocols.GMS" /> <!-- IGroup management -->
     </stack>
 </config>
