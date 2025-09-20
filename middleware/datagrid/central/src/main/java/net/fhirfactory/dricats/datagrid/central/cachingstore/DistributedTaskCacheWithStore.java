@@ -19,13 +19,13 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.fhirfactory.dricats.platform.persistence.infinispan;
+package net.fhirfactory.dricats.datagrid.central.cachingstore;
 
 
 import net.fhirfactory.dricats.internals.common.DistributableObjectId;
 import net.fhirfactory.dricats.internals.common.naming.CommonName;
 import net.fhirfactory.dricats.internals.tasking.InternalTask;
-import net.fhirfactory.dricats.platform.persistence.spi.ITaskPersistenceService;
+import net.fhirfactory.dricats.datagrid.central.spi.ITaskPersistenceService;
 import org.infinispan.Cache;
 import org.infinispan.configuration.cache.CacheMode;
 import org.infinispan.configuration.cache.ConfigurationBuilder;

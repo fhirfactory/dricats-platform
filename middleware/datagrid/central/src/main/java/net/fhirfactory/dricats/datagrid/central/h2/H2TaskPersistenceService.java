@@ -19,7 +19,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.fhirfactory.dricats.platform.persistence.h2;
+package net.fhirfactory.dricats.datagrid.central.h2;
 
 import net.fhirfactory.dricats.internals.common.DistributableObjectId;
 import net.fhirfactory.dricats.internals.common.datatypes.EffectiveDate;
@@ -28,7 +28,7 @@ import net.fhirfactory.dricats.internals.common.naming.QualifiedName;
 import net.fhirfactory.dricats.internals.common.naming.UnqualifiedName;
 import net.fhirfactory.dricats.internals.common.naming.UnqualifiedNameEntry;
 import net.fhirfactory.dricats.internals.tasking.InternalTask;
-import net.fhirfactory.dricats.platform.persistence.spi.ITaskPersistenceService;
+import net.fhirfactory.dricats.datagrid.central.spi.ITaskPersistenceService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

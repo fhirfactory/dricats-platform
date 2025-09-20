@@ -22,6 +22,7 @@
 package net.fhirfactory.dricats.internals.common;
 
 import java.io.Serial;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,7 +35,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import net.fhirfactory.dricats.internals.security.datatypes.SecurityLabels;
 
-public class DistributableObject extends SerialisableObject {
+public class DistributableObject extends SimpleDistributableObject implements Serializable {
     //
     // Housekeeping
     //
@@ -48,8 +49,6 @@ public class DistributableObject extends SerialisableObject {
     //
 
     private List<DistributableObjectIdentifier> identifiers;
-    private DistributableObjectId objectID;
-    private DistributableObjectMetadata metadata;
     private SecurityLabels securityLabels;
 
     //
@@ -59,40 +58,29 @@ public class DistributableObject extends SerialisableObject {
     public DistributableObject(){
     	super();
         this.identifiers = new ArrayList<>();
-        this.metadata = new DistributableObjectMetadata();
         this.securityLabels = new SecurityLabels();
     }
 
     public DistributableObject(QualifiedName qualifiedName) {
-        super();
+        super(qualifiedName);
         this.identifiers = new ArrayList<>();
-        DistributableObjectId objectId = new DistributableObjectId(qualifiedName);
-        this.setObjectID(objectId);
-        this.metadata = new DistributableObjectMetadata();
-        setId(getObjectID().getQualifiedName().getCommonName());
         this.securityLabels = new SecurityLabels();
     }
     
     public DistributableObject( DistributableObjectIdentifier identifier) {
         super();
         this.identifiers = new ArrayList<>();
-        this.metadata = new DistributableObjectMetadata();
         this.securityLabels = new SecurityLabels();
         getIdentifiers().add(identifier);
     }
 
     public DistributableObject(DistributableObject ori) {
-    	super();
+    	super(ori);
         if(getIdentifiers() == null){
             setIdentifiers(new ArrayList<>());
         }
         if(ori.getIdentifiers() != null) {
             getIdentifiers().addAll(ori.getIdentifiers());
-        }
-        if(ori.getMetadata() != null) {
-            setMetadata(SerializationUtils.clone(ori.getMetadata()));
-        } else {
-            setMetadata(new DistributableObjectMetadata());
         }
         if(ori.getSecurityLabels() != null){
             setSecurityLabels(SerializationUtils.clone(ori.getSecurityLabels()));
@@ -103,27 +91,12 @@ public class DistributableObject extends SerialisableObject {
     // Getters and Setters
     //
 
-    public DistributableObjectId getObjectID() {
-        return objectID;
-    }
-    public void setObjectID(DistributableObjectId objectID) {
-        this.objectID = objectID;
-    }
-
     public SecurityLabels getSecurityLabels() {
         return securityLabels;
     }
 
     public void setSecurityLabels(SecurityLabels securityLabels) {
         this.securityLabels = securityLabels;
-    }
-
-    public DistributableObjectMetadata getMetadata() {
-        return metadata;
-    }
-
-    public void setMetadata(DistributableObjectMetadata metadata) {
-        this.metadata = metadata;
     }
 
     public List<DistributableObjectIdentifier> getIdentifiers() {

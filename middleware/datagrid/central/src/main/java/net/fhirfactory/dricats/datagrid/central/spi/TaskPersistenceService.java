@@ -19,36 +19,38 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.fhirfactory.dricats.platform.persistence.spi;
+package net.fhirfactory.dricats.datagrid.central.spi;
 
 import net.fhirfactory.dricats.internals.tasking.InternalTask;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import javax.enterprise.context.ApplicationScoped;
 import java.util.Optional;
 
 /**
- * SPI for plugging a custom persistence service behind the InternalTask cache.
- *
- * Implement this interface in your application/module and expose it as a CDI bean (@ApplicationScoped)
- * to have the distributed cache delegate persistence operations to it.
+ * Default no-op implementation to keep the module self-contained.
+ * Applications can provide their own @ApplicationScoped bean implementing ITaskPersistenceService
+ * which CDI will select instead of this one (use @Alternative with higher priority if needed).
  */
-public interface ITaskPersistenceService {
-    /**
-     * Load an InternalTask by its cache key.
-     * @param key cache key
-     * @return Optional containing the InternalTask if found
-     */
-    Optional<InternalTask> load(String key);
+@ApplicationScoped
+@javax.enterprise.inject.Alternative
+public class TaskPersistenceService implements ITaskPersistenceService {
+    private static final Logger LOG = LoggerFactory.getLogger(TaskPersistenceService.class);
 
-    /**
-     * Persist an InternalTask by its cache key. Implementations should insert or update.
-     * @param key cache key
-     * @param task task to persist
-     */
-    void save(String key, InternalTask task);
+    @Override
+    public Optional<InternalTask> load(String key) {
+        LOG.trace("TaskPersistenceService.load({})", key);
+        return Optional.empty();
+    }
 
-    /**
-     * Delete an InternalTask by its cache key, if present.
-     * @param key cache key
-     */
-    void delete(String key);
+    @Override
+    public void save(String key, InternalTask task) {
+        LOG.trace("TaskPersistenceService.save({}, {})", key, task);
+    }
+
+    @Override
+    public void delete(String key) {
+        LOG.trace("TaskPersistenceService.delete({})", key);
+    }
 }
