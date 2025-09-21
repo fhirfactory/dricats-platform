@@ -28,6 +28,7 @@ import java.time.LocalDateTime;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 import net.fhirfactory.dricats.internals.common.datatypes.EffectiveDate;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 
 public class DistributableObjectMetadata extends SerialisableObject {
     //
@@ -42,6 +43,7 @@ public class DistributableObjectMetadata extends SerialisableObject {
     //
 
     private URI sourceSystem;
+    private String sourceSystemName;
     private EffectiveDate effectiveDate;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss.SSSXXX")
     private LocalDateTime creationDate;
@@ -51,6 +53,13 @@ public class DistributableObjectMetadata extends SerialisableObject {
     //
     // Bean Methods
     //
+
+    public String getSourceSystemName() {
+        return sourceSystemName;
+    }
+    public void setSourceSystemName(String sourceSystemName) {
+        this.sourceSystemName = sourceSystemName;
+    }
 
     public URI getSourceSystem() {
         return sourceSystem;
@@ -82,5 +91,20 @@ public class DistributableObjectMetadata extends SerialisableObject {
 
     public void setLastUpdateDate(LocalDateTime lastUpdateDate) {
         this.lastUpdateDate = lastUpdateDate;
+    }
+
+    //
+     // Standard Methods
+     //
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this)
+                .append("sourceSystem", sourceSystem)
+                .append("sourceSystemName", sourceSystemName)
+                .append("effectiveDate", effectiveDate)
+                .append("creationDate", creationDate)
+                .append("lastUpdateDate", lastUpdateDate)
+                .toString();
     }
 }

@@ -24,7 +24,7 @@ package net.fhirfactory.dricats.internals.data;
 import jakarta.ws.rs.core.MediaType;
 import net.fhirfactory.dricats.internals.common.DistributableObjectId;
 import net.fhirfactory.dricats.internals.topics.Topic;
-import net.fhirfactory.dricats.internals.topics.TopicSubscription;
+import net.fhirfactory.dricats.internals.pubsub.TopicSubscription;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

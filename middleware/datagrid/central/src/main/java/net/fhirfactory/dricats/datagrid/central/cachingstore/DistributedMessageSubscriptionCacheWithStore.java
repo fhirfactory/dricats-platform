@@ -2,7 +2,7 @@ package net.fhirfactory.dricats.datagrid.central.cachingstore;
 
 import net.fhirfactory.dricats.internals.common.DistributableObjectId;
 import net.fhirfactory.dricats.internals.common.naming.CommonName;
-import net.fhirfactory.dricats.internals.messaging.MessageSubscription;
+import net.fhirfactory.dricats.internals.pubsub.MessageSubscription;
 import net.fhirfactory.dricats.datagrid.central.spi.IMessageSubscriptionPersistenceService;
 import org.infinispan.Cache;
 import org.infinispan.configuration.cache.CacheMode;

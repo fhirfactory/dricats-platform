@@ -24,9 +24,9 @@ package net.fhirfactory.dricats.datagrid.notificationgrid;
 import net.fhirfactory.dricats.internals.common.DistributableObjectId;
 import net.fhirfactory.dricats.internals.common.naming.QualifiedName;
 import net.fhirfactory.dricats.internals.common.naming.QualifiedNameToken;
-import net.fhirfactory.dricats.internals.messaging.NotificationObject;
-import net.fhirfactory.dricats.internals.messaging.NotificationSet;
-import net.fhirfactory.dricats.internals.messaging.interfaces.ILocalNotificationService;
+import net.fhirfactory.dricats.internals.events.notifications.NotificationObject;
+import net.fhirfactory.dricats.internals.events.notifications.NotificationSet;
+import net.fhirfactory.dricats.internals.events.interfaces.ILocalNotificationService;
 import net.fhirfactory.dricats.internals.topology.implementation.layers.application.valuesets.SoftwareComponentTypeEnum;
 import net.fhirfactory.dricats.internals.topology.interfaces.ISubsystem;
 import org.slf4j.Logger;
@@ -95,11 +95,11 @@ public class LocalNotificationCache implements ILocalNotificationService {
             getLogger().warn(".queueMessage(): Exit, Message object is null");
             return;
         }
-        if(NotificationObject.getNotificationTarget() == null){
+        if(NotificationObject.getTarget() == null){
             getLogger().warn(".queueMessage(): Exit, Message target is null");
             return;
         }
-        QualifiedNameToken qualifiedNameToken = NotificationObject.getNotificationTarget().getQualifiedName().getQualifiedNameToken();
+        QualifiedNameToken qualifiedNameToken = NotificationObject.getTarget().getQualifiedName().getQualifiedNameToken();
         if(!getIncomingQueueCache().containsKey(qualifiedNameToken)){
             Queue<NotificationObject> incomingMessageQueue = new ConcurrentLinkedQueue<>();
             incomingMessageQueue.add(NotificationObject);
@@ -198,7 +198,7 @@ public class LocalNotificationCache implements ILocalNotificationService {
             getLogger().debug(".postNotification(): Exit, nothing to post, return -> {}", messagePostedInstant);
             return(messagePostedInstant);
         }
-        DistributableObjectId messageTarget = message.getNotificationTarget();
+        DistributableObjectId messageTarget = message.getTarget();
         if(messageTarget == null){
             getLogger().debug(".postNotification(): Exit, no target, return -> {}", messagePostedInstant);
             return(messagePostedInstant);

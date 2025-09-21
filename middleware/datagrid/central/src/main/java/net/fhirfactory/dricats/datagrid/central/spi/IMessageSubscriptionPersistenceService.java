@@ -21,7 +21,7 @@
  */
 package net.fhirfactory.dricats.datagrid.central.spi;
 
-import net.fhirfactory.dricats.internals.messaging.MessageSubscription;
+import net.fhirfactory.dricats.internals.pubsub.MessageSubscription;
 
 import java.util.Optional;
 

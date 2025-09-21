@@ -19,11 +19,11 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.fhirfactory.dricats.internals.messaging.interfaces;
+package net.fhirfactory.dricats.internals.events.interfaces;
 
 import net.fhirfactory.dricats.internals.common.naming.QualifiedNameToken;
-import net.fhirfactory.dricats.internals.messaging.NotificationObject;
-import net.fhirfactory.dricats.internals.messaging.NotificationSet;
+import net.fhirfactory.dricats.internals.events.notifications.NotificationObject;
+import net.fhirfactory.dricats.internals.events.notifications.NotificationSet;
 
 import java.time.LocalDateTime;
 

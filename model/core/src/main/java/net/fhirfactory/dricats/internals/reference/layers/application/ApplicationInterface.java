@@ -6,6 +6,7 @@ package net.fhirfactory.dricats.internals.reference.layers.application;
 import net.fhirfactory.dricats.internals.common.naming.UnqualifiedName;
 import net.fhirfactory.dricats.internals.reference.common.ElementBase;
 import net.fhirfactory.dricats.internals.common.DistributableObjectId;
+import net.fhirfactory.dricats.internals.reference.common.SimpleElementBase;
 import net.fhirfactory.dricats.internals.reference.common.valuesets.ElementTypeEnum;
 import org.apache.commons.lang3.SerializationUtils;
 import org.slf4j.Logger;
@@ -22,7 +23,7 @@ import java.util.Objects;
  * An Application Interface represents a point of access where application services
  * are made available to a user, another application component, or a node.
  */
-public class ApplicationInterface extends ElementBase {
+public class ApplicationInterface extends SimpleElementBase {
     //
     // Housekeeping
     //
@@ -150,9 +151,7 @@ public class ApplicationInterface extends ElementBase {
                 ", specialization='"+getSpecialization()+'\''+
                 ", properties="+getProperties()+
                 ", objectID="+getObjectID()+
-                ", identifiers="+getIdentifiers()+
                 ", metadata="+getMetadata()+
-                ", securityLabels="+getSecurityLabels()+
                 '}';
     }
 }

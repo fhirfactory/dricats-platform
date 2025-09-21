@@ -19,67 +19,65 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.fhirfactory.dricats.internals.common;
-
-import net.fhirfactory.dricats.internals.common.naming.CommonName;
-import net.fhirfactory.dricats.internals.common.naming.QualifiedName;
-import net.fhirfactory.dricats.internals.common.naming.UnqualifiedName;
+package net.fhirfactory.dricats.internals.events.messages;
 
 import java.io.Serial;
-import java.io.Serializable;
-import java.util.StringJoiner;
 import java.util.UUID;
 
-public class SerialisableObject implements Serializable{
-	//
-	// Housekeeping
-	//
+import net.fhirfactory.dricats.internals.common.DistributableObjectId;
+import net.fhirfactory.dricats.internals.common.naming.QualifiedName;
+import net.fhirfactory.dricats.internals.common.naming.UnqualifiedName;
+import net.fhirfactory.dricats.internals.data.Payload;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+public class MessagePayload extends Payload {
+    //
+    // Housekeeping
+    //
 
     @Serial
-    private static final long serialVersionUID = 4428609418582057973L;
-	
+    private static final long serialVersionUID = -12345678900057L;
+    private static final Logger LOG = LoggerFactory.getLogger(MessagePayload.class);
+
     //
     // Attributes
     //
-
-    private CommonName id;
 
     //
     // Constructor(s)
     //
 
-    public SerialisableObject() {
+    public MessagePayload() {
         super();
-        UnqualifiedName name = new UnqualifiedName("Object", UUID.randomUUID().toString());
+        UnqualifiedName unqualifiedName = new UnqualifiedName("MessagePayload", UUID.randomUUID().toString());
         QualifiedName qualifiedName = new QualifiedName();
-        qualifiedName.appendUnqualifiedName(name);
-        setId(qualifiedName.getCommonName());
+        qualifiedName.appendUnqualifiedName(unqualifiedName);
+        this.setObjectID(new DistributableObjectId(qualifiedName));
+        this.setId(getObjectID().getQualifiedName().getCommonName());
     }
 
     //
     // Bean Methods
     //
 
-    public CommonName getId() {
-        return id;
-    }
-
-    public void setId(CommonName id) {
-        this.id = id;
-    }
-
-    public Long getSerialVersionUID() {
-    	return(serialVersionUID);
-    }
-
     //
     // Utility Methods
     //
 
+    protected Logger getLogger(){
+        return(LOG);
+    }
+
+    //
+    // Standard Methods
+    //
+
     @Override
     public String toString() {
-        return new StringJoiner(", ", SerialisableObject.class.getSimpleName() + "[", "]")
-                .add("id=" + getId())
+        return new ToStringBuilder(this)
+                .appendSuper(super.toString())
                 .toString();
     }
 }

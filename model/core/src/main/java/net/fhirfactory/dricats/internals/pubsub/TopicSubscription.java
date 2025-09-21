@@ -19,67 +19,71 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.fhirfactory.dricats.internals.common;
+package net.fhirfactory.dricats.internals.pubsub;
 
-import net.fhirfactory.dricats.internals.common.naming.CommonName;
 import net.fhirfactory.dricats.internals.common.naming.QualifiedName;
-import net.fhirfactory.dricats.internals.common.naming.UnqualifiedName;
+import net.fhirfactory.dricats.internals.pubsub.common.QualifiedNameMask;
+import net.fhirfactory.dricats.internals.topics.Topic;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.Serial;
 import java.io.Serializable;
-import java.util.StringJoiner;
-import java.util.UUID;
 
-public class SerialisableObject implements Serializable{
-	//
-	// Housekeeping
-	//
-
+public class TopicSubscription extends QualifiedNameMask implements Serializable {
+    //
+    // Housekeeping
+    //
     @Serial
-    private static final long serialVersionUID = 4428609418582057973L;
-	
+    private static final long serialVersionUID = 1L;
+    private static final Logger LOG = LoggerFactory.getLogger(TopicSubscription.class);
+
     //
     // Attributes
     //
 
-    private CommonName id;
-
     //
     // Constructor(s)
     //
-
-    public SerialisableObject() {
+    public TopicSubscription() {
         super();
-        UnqualifiedName name = new UnqualifiedName("Object", UUID.randomUUID().toString());
-        QualifiedName qualifiedName = new QualifiedName();
-        qualifiedName.appendUnqualifiedName(name);
-        setId(qualifiedName.getCommonName());
+    }
+
+    public TopicSubscription(QualifiedName subscriptionMask) {
+        super(subscriptionMask);
+    }
+
+    public TopicSubscription(QualifiedName subscriptionMask, Boolean includeSubtopics) {
+        super(subscriptionMask, includeSubtopics);
     }
 
     //
-    // Bean Methods
+    // Getters and Setters
     //
 
-    public CommonName getId() {
-        return id;
-    }
-
-    public void setId(CommonName id) {
-        this.id = id;
-    }
-
-    public Long getSerialVersionUID() {
-    	return(serialVersionUID);
+    protected Logger getLogger(){
+        return LOG;
     }
 
     //
-    // Utility Methods
+    // Business Methods
     //
+
+    public boolean filterTopic(Topic topic){
+        boolean outcome = filter(topic.getTopicName());
+        return(outcome);
+    }
+
+    //
+    // Standard Methods
+    //
+
 
     @Override
     public String toString() {
-        return new StringJoiner(", ", SerialisableObject.class.getSimpleName() + "[", "]")
-                .add("id=" + getId())
+        return new ToStringBuilder(this)
+                .appendSuper(super.toString())
                 .toString();
     }
 }

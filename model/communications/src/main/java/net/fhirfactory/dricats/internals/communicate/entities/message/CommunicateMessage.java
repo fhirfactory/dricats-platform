@@ -32,7 +32,7 @@ import net.fhirfactory.dricats.internals.communicate.entities.message.datatypes.
 import net.fhirfactory.dricats.internals.communicate.entities.message.valuesets.CommunicateMessageTypeEnum;
 import net.fhirfactory.dricats.internals.communicate.entities.rooms.datatypes.CommunicateRoomReference;
 import net.fhirfactory.dricats.internals.communicate.entities.user.datatypes.CommunicateUserReference;
-import net.fhirfactory.dricats.internals.messaging.MessageObject;
+import net.fhirfactory.dricats.internals.events.messages.MessageObject;
 
 public class CommunicateMessage extends MessageObject {
     //
@@ -128,11 +128,11 @@ public class CommunicateMessage extends MessageObject {
         sb.append(", messageType=").append(getMessageType());
         sb.append(", messageContent=").append(getMessageContent());
         sb.append(", inResponseTo=").append(getInResponseTo());
-        sb.append(", messageSource=").append(getMessageSource());
-        sb.append(", messageTarget=").append(getMessageTarget());
-        sb.append(", messageSendDate=").append(getMessageSendDate());
-        sb.append(", messageReceiveDate=").append(getMessageReceiveDate());
-        sb.append(", messageId='").append(getMessageId()).append('\'');
+        sb.append(", messageSource=").append(getSource());
+        sb.append(", messageTarget=").append(getTarget());
+        sb.append(", messageSendDate=").append(getEventSendDate());
+        sb.append(", messageReceiveDate=").append(getEventReceiveDate());
+        sb.append(", messageId='").append(getId()).append('\'');
         sb.append(", messageSequenceNumber=").append(getMessageSequenceNumber());
         sb.append(", messagePayload=").append(getMessagePayload());
         sb.append('}');

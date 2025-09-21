@@ -19,11 +19,55 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.fhirfactory.dricats.internals.messaging.valuesets;
+package net.fhirfactory.dricats.internals.pubsub.common;
 
-public enum NotificationTypeEnum {
-    OBJECT_CREATION,
-    OBJECT_MODIFICATION,
-    OBJECT_DELETION,
-    INFORMATIVE_TEXT
+import org.apache.commons.lang3.builder.ToStringBuilder;
+
+import java.io.Serial;
+import java.io.Serializable;
+
+public class ApplicationComponentIdMask implements Serializable {
+    //
+    // Housekeeping
+    //
+    @Serial
+    private static final long serialVersionUID = 1L;
+
+    //
+    // Attributes
+    //
+
+    private QualifiedNameMask componentIdMask;
+
+    //
+    // Constructor(s)
+    //
+
+    public ApplicationComponentIdMask() {
+        super();
+    }
+
+    //
+    // Getters and Setters
+    //
+
+    public QualifiedNameMask getComponentIdMask() {
+        return componentIdMask;
+    }
+
+    public void setComponentIdMask(QualifiedNameMask componentIdMask) {
+        this.componentIdMask = componentIdMask;
+    }
+
+    //
+    // Standard Methods
+    //
+
+    @Override
+    public String
+    toString() {
+        return new ToStringBuilder(this)
+                .append("componentIdMask", componentIdMask)
+                .toString();
+    }
 }

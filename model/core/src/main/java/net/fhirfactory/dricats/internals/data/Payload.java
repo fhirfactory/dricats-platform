@@ -46,11 +46,7 @@ public class Payload extends ApplicationDataObject implements Serializable {
     //
     // Attributes
     //
-    private Topic payloadTopic;
     private PayloadSecurityStatus payloadSecurityStatus;
-    private DistributableObjectId payloadSource;
-    private List<DistributableObjectId> payloadTargets;
-    private MediaType payloadMediaType;
     private String payloadContent;
 
     //
@@ -59,20 +55,11 @@ public class Payload extends ApplicationDataObject implements Serializable {
 
     public Payload() {
         super();
-        payloadTargets = new ArrayList<>();
     }
 
     //
     // Bean Methods
     //
-
-    public Topic getPayloadTopic() {
-        return payloadTopic;
-    }
-
-    public void setPayloadTopic(Topic payloadTopic) {
-        this.payloadTopic = payloadTopic;
-    }
 
     public PayloadSecurityStatus getPayloadSecurityStatus() {
         return payloadSecurityStatus;
@@ -80,30 +67,6 @@ public class Payload extends ApplicationDataObject implements Serializable {
 
     public void setPayloadSecurityStatus(PayloadSecurityStatus payloadSecurityStatus) {
         this.payloadSecurityStatus = payloadSecurityStatus;
-    }
-
-    public DistributableObjectId getPayloadSource() {
-        return payloadSource;
-    }
-
-    public void setPayloadSource(DistributableObjectId payloadSource) {
-        this.payloadSource = payloadSource;
-    }
-
-    public List<DistributableObjectId> getPayloadTargets() {
-        return payloadTargets;
-    }
-
-    public void setPayloadTargets(List<DistributableObjectId> payloadTargets) {
-        this.payloadTargets = payloadTargets;
-    }
-
-    public MediaType getPayloadMediaType() {
-        return payloadMediaType;
-    }
-
-    public void setPayloadMediaType(MediaType payloadMediaType) {
-        this.payloadMediaType = payloadMediaType;
     }
 
     public String getPayloadContent() {
@@ -117,6 +80,8 @@ public class Payload extends ApplicationDataObject implements Serializable {
     //
     // Utility Methods
     //
+
+    @Override
     protected Logger getLogger(){
         return(LOG);
     }
@@ -128,12 +93,8 @@ public class Payload extends ApplicationDataObject implements Serializable {
     @Override
     public String toString() {
         return new ToStringBuilder(this)
-                .append("payloadTopic", payloadTopic)
                 .append("payloadSecurityStatus", payloadSecurityStatus)
-                .append("payloadSource", payloadSource)
-                .append("payloadTargets", payloadTargets)
-                .append("payloadMediaType", payloadMediaType)
-                .append("payloadContent", payloadContent)
+                 .append("payloadContent", payloadContent)
                 .appendSuper(super.toString())
                 .toString();
     }
@@ -143,11 +104,11 @@ public class Payload extends ApplicationDataObject implements Serializable {
         if (o == null || getClass() != o.getClass()) return false;
         if (!super.equals(o)) return false;
         Payload payload = (Payload) o;
-        return Objects.equals(payloadTopic, payload.payloadTopic) && Objects.equals(payloadSecurityStatus, payload.payloadSecurityStatus) && Objects.equals(payloadSource, payload.payloadSource) && Objects.equals(payloadMediaType, payload.payloadMediaType) && Objects.equals(payloadContent, payload.payloadContent);
+        return Objects.equals(payloadSecurityStatus, payload.payloadSecurityStatus) && Objects.equals(payloadContent, payload.payloadContent);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), payloadTopic, payloadSecurityStatus, payloadSource, payloadMediaType, payloadContent);
+        return Objects.hash(super.hashCode(), payloadSecurityStatus, payloadContent);
     }
 }

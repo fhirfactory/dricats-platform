@@ -19,13 +19,13 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.fhirfactory.dricats.internals.messaging.interfaces;
+package net.fhirfactory.dricats.internals.events.interfaces;
 
 import java.time.LocalDateTime;
 
 import net.fhirfactory.dricats.internals.common.naming.QualifiedNameToken;
-import net.fhirfactory.dricats.internals.messaging.MessageObject;
-import net.fhirfactory.dricats.internals.messaging.MessageSet;
+import net.fhirfactory.dricats.internals.events.messages.MessageObject;
+import net.fhirfactory.dricats.internals.events.messages.MessageSet;
 
 public interface ILocalMessageService {
     public LocalDateTime postMessage(MessageObject message);

@@ -21,7 +21,7 @@
  */
 package net.fhirfactory.dricats.datagrid.central.spi;
 
-import net.fhirfactory.dricats.internals.messaging.NotificationSubscription;
+import net.fhirfactory.dricats.internals.pubsub.NotificationSubscription;
 
 import java.util.Optional;
 

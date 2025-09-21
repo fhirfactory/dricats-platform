@@ -3,15 +3,20 @@
  */
 package net.fhirfactory.dricats.internals.reference.layers.application;
 
+import jakarta.ws.rs.core.MediaType;
 import net.fhirfactory.dricats.internals.reference.common.ElementBase;
 import net.fhirfactory.dricats.internals.reference.common.valuesets.ElementTypeEnum;
+import net.fhirfactory.dricats.internals.topics.Topic;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import java.io.Serial;
+import java.io.Serializable;
+import java.util.List;
 import java.util.Objects;
 
-public class ApplicationDataObject extends ElementBase {
+public class ApplicationDataObject extends ElementBase implements Serializable {
     //
     // Housekeeping
     //
@@ -19,8 +24,18 @@ public class ApplicationDataObject extends ElementBase {
     private static final Logger LOG = LoggerFactory.getLogger(ApplicationDataObject.class);
 
     //
+    // Attributes
+    //
+
+    private List<ApplicationFunction> accessingFunctions;
+    private List<ApplicationService> accessingServices;
+    private MediaType dataFormat;
+    private Topic dataTopic;
+
+    //
     // Constructor(s)
     //
+
     public ApplicationDataObject(){
         super();
         setElementType(ElementTypeEnum.APPLICATION_DATA_OBJECT);
@@ -29,16 +44,53 @@ public class ApplicationDataObject extends ElementBase {
     //
     // Bean Methods
     //
+
+    @Override
     protected Logger getLogger(){ return LOG; }
+
+    public List<ApplicationFunction> getAccessingFunctions() {
+        return accessingFunctions;
+    }
+
+    public void setAccessingFunctions(List<ApplicationFunction> accessingFunctions) {
+        this.accessingFunctions = accessingFunctions;
+    }
+
+    public List<ApplicationService> getAccessingServices() {
+        return accessingServices;
+    }
+
+    public void setAccessingServices(List<ApplicationService> accessingServices) {
+        this.accessingServices = accessingServices;
+    }
+
+    public MediaType getDataFormat() {
+        return dataFormat;
+    }
+
+    public void setDataFormat(MediaType dataFormat) {
+        this.dataFormat = dataFormat;
+    }
+
+    public Topic getDataTopic() {
+        return dataTopic;
+    }
+
+    public void setDataTopic(Topic dataTopic) {
+        this.dataTopic = dataTopic;
+    }
 
     //
     // Standard Methods
     //
 
-
     @Override
-    public String toString() {
+    public String       toString() {
         return new ToStringBuilder(this)
+                .append("accessingFunctions", accessingFunctions)
+                .append("accessingServices", accessingServices)
+                .append("dataFormat", dataFormat)
+                .append("dataTopic", dataTopic)
                 .appendSuper(super.toString())
                 .toString();
     }

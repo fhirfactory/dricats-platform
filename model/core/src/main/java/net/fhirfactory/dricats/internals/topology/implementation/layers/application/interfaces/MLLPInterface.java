@@ -26,6 +26,7 @@ import net.fhirfactory.dricats.internals.configuration.ports.internal.JGroupsInt
 import net.fhirfactory.dricats.internals.oam.base.CommonComponentMetricsData;
 import net.fhirfactory.dricats.internals.oam.interfaces.IMetricsExtractionService;
 import net.fhirfactory.dricats.internals.topology.implementation.layers.application.interfaces.base.InterfaceImplementationBase;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -109,7 +110,16 @@ abstract public class MLLPInterface extends InterfaceImplementationBase implemen
     // Utility Methods
     //
 
-	protected Logger getLogger(){
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this)
+                .append("endpointURI", endpointURI)
+                .appendSuper(super.toString())
+                .toString();
+    }
+
+    protected Logger getLogger(){
         return(LOG);
     }
 }

@@ -25,6 +25,7 @@ import net.fhirfactory.dricats.internals.oam.ApplicationComponentMetricsData;
 import net.fhirfactory.dricats.internals.reference.common.ElementBase;
 import net.fhirfactory.dricats.internals.common.DistributableObjectId;
 import net.fhirfactory.dricats.internals.reference.common.valuesets.ElementTypeEnum;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,7 +37,7 @@ import java.util.Objects;
 /**
  * Represents an Application Component in the Archimate application layer.
  * An Application Component represents an encapsulation of application functionality
- * aligned to implementation structure.
+ * aligned to the implementation structure.
  */
 public class ApplicationComponent extends ElementBase {
     //
@@ -55,6 +56,8 @@ public class ApplicationComponent extends ElementBase {
     private DistributableObjectId parent;
     private List<DistributableObjectId> subComponents;
     private ApplicationComponentMetricsData metricsData;
+    private List<DistributableObjectId> supportedApplicationFunctions;
+    private List<DistributableObjectId> supportedApplicationServices;
 
     //
     // Constructor(s)
@@ -63,6 +66,8 @@ public class ApplicationComponent extends ElementBase {
         super();
         this.interfaces = new ArrayList<>();
         this.subComponents = new ArrayList<>();
+        this.supportedApplicationFunctions = new ArrayList<>();
+        this.supportedApplicationServices = new ArrayList<>();
         metricsData = new ApplicationComponentMetricsData();
         this.setElementType(ElementTypeEnum.APPLICATION_COMPONENT);
         getLogger().trace("ApplicationComponent(): constructed");
@@ -71,6 +76,23 @@ public class ApplicationComponent extends ElementBase {
     //
     // Bean Methods
     //
+
+    public List<DistributableObjectId> getSupportedApplicationFunctions() {
+        return supportedApplicationFunctions;
+    }
+
+    public void setSupportedApplicationFunctions(List<DistributableObjectId> supportedApplicationFunctions) {
+        this.supportedApplicationFunctions = supportedApplicationFunctions;
+    }
+
+    public List<DistributableObjectId> getSupportedApplicationServices() {
+        return supportedApplicationServices;
+    }
+
+    public void setSupportedApplicationServices(List<DistributableObjectId> supportedApplicationServices) {
+        this.supportedApplicationServices = supportedApplicationServices;
+    }
+
     protected Logger getLogger(){
         return LOG;
     }
@@ -141,19 +163,14 @@ public class ApplicationComponent extends ElementBase {
 
     @Override
     public String toString() {
-        return getClass().getSimpleName()+"{"+
-                "name='"+getName()+'\''+
-                ", interfacesCount="+(interfaces==null?0:interfaces.size())+
-                ", parentRef="+(parent==null?"null":parent)+
-                ", subComponentsCount="+(subComponents==null?0:subComponents.size())+
-                ", documentation='"+getDocumentation()+'\''+
-                ", specialization='"+getSpecialization()+'\''+
-                ", properties="+getProperties()+
-                ", objectID="+getObjectID()+
-                ", identifiers="+getIdentifiers()+
-                ", metadata="+getMetadata()+
-                ", securityLabels="+getSecurityLabels()+
-                ", metricsData="+getMetricsData()+
-                '}';
+        return new ToStringBuilder(this)
+                .append("interfaces", interfaces)
+                .append("parent", parent)
+                .append("subComponents", subComponents)
+                .append("metricsData", metricsData)
+                .append("supportedApplicationFunctions", supportedApplicationFunctions)
+                .append("supportedApplicationServices", supportedApplicationServices)
+                .appendSuper(super.toString())
+                .toString();
     }
 }

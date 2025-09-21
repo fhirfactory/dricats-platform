@@ -153,11 +153,11 @@ public class CommunicateEmailMessage extends CommunicateMessage{
         sb.append(", messageType=").append(getMessageType());
         sb.append(", messageContent=").append(getMessageContent());
         sb.append(", inResponseTo=").append(getInResponseTo());
-        sb.append(", messageSource=").append(getMessageSource());
-        sb.append(", messageTarget=").append(getMessageTarget());
-        sb.append(", messageSendDate=").append(getMessageSendDate());
-        sb.append(", messageReceiveDate=").append(getMessageReceiveDate());
-        sb.append(", messageId='").append(getMessageId()).append('\'');
+        sb.append(", messageSource=").append(getSource());
+        sb.append(", messageTarget=").append(getTarget());
+        sb.append(", messageSendDate=").append(getEventSendDate());
+        sb.append(", messageReceiveDate=").append(getEventReceiveDate());
+        sb.append(", messageId='").append(getId()).append('\'');
         sb.append(", messageSequenceNumber=").append(getMessageSequenceNumber());
         sb.append(", messagePayload=").append(getMessagePayload());
         sb.append('}');

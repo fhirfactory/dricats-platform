@@ -24,9 +24,9 @@ package net.fhirfactory.dricats.datagrid.messagegrid;
 import net.fhirfactory.dricats.internals.common.DistributableObjectId;
 import net.fhirfactory.dricats.internals.common.naming.QualifiedName;
 import net.fhirfactory.dricats.internals.common.naming.QualifiedNameToken;
-import net.fhirfactory.dricats.internals.messaging.MessageObject;
-import net.fhirfactory.dricats.internals.messaging.MessageSet;
-import net.fhirfactory.dricats.internals.messaging.interfaces.ILocalMessageService;
+import net.fhirfactory.dricats.internals.events.messages.MessageObject;
+import net.fhirfactory.dricats.internals.events.messages.MessageSet;
+import net.fhirfactory.dricats.internals.events.interfaces.ILocalMessageService;
 import net.fhirfactory.dricats.internals.topology.implementation.layers.application.valuesets.SoftwareComponentTypeEnum;
 import net.fhirfactory.dricats.internals.topology.interfaces.ISubsystem;
 import org.slf4j.Logger;
@@ -97,11 +97,11 @@ public class LocalMessageCache implements ILocalMessageService {
             getLogger().warn(".queueMessage(): Exit, Message object is null");
             return;
         }
-        if(messageObject.getMessageTarget() == null){
+        if(messageObject.getTarget() == null){
             getLogger().warn(".queueMessage(): Exit, Message target is null");
             return;
         }
-        QualifiedNameToken qualifiedNameToken = messageObject.getMessageTarget().getQualifiedName().getQualifiedNameToken();
+        QualifiedNameToken qualifiedNameToken = messageObject.getTarget().getQualifiedName().getQualifiedNameToken();
         if(!getIncomingQueueCache().containsKey(qualifiedNameToken)){
             Queue<MessageObject> incomingMessageQueue = new ConcurrentLinkedQueue<>();
             incomingMessageQueue.add(messageObject);
@@ -175,7 +175,7 @@ public class LocalMessageCache implements ILocalMessageService {
             getLogger().debug(".postMessage(): Exit, nothing to post, return -> {}", messagePostedInstant);
             return(messagePostedInstant);
         }
-        DistributableObjectId messageTarget = message.getMessageTarget();
+        DistributableObjectId messageTarget = message.getTarget();
         if(messageTarget == null){
             getLogger().debug(".postMessage(): Exit, no target, return -> {}", messagePostedInstant);
             return(messagePostedInstant);

@@ -19,18 +19,23 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.fhirfactory.dricats.internals.messaging;
+package net.fhirfactory.dricats.internals.events.notifications;
 
 import java.io.Serial;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
+import net.fhirfactory.dricats.internals.common.DistributableObjectId;
+import net.fhirfactory.dricats.internals.common.naming.QualifiedName;
+import net.fhirfactory.dricats.internals.common.naming.UnqualifiedName;
+import net.fhirfactory.dricats.internals.data.Payload;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import net.fhirfactory.dricats.internals.common.SerialisableObject;
 
-public class NotificationPayload extends SerialisableObject {
+public class NotificationPayload extends Payload {
     //
     // Housekeeping
     //
@@ -43,44 +48,26 @@ public class NotificationPayload extends SerialisableObject {
     // Attributes
     //
 
-    private String notificationPayloadTypeName;
-    private String notificationPayloadTypeDescription;
-    private Map<String, String> notificationPayloadDetail;
-
     //
     // Constructor(s)
     //
 
     public NotificationPayload() {
-        notificationPayloadDetail = new HashMap<>();
+        super();
+        UnqualifiedName unqualifiedName = new UnqualifiedName("NotificationPayload", UUID.randomUUID().toString());
+        QualifiedName qualifiedName = new QualifiedName();
+        qualifiedName.appendUnqualifiedName(unqualifiedName);
+        this.setObjectID(new DistributableObjectId(qualifiedName));
+        this.setId(getObjectID().getQualifiedName().getCommonName());
     }
 
     //
     // Bean Methods
     //
 
-    public String getNotificationPayloadTypeName() {
-        return notificationPayloadTypeName;
-    }
-
-    public void setNotificationPayloadTypeName(String notificationPayloadTypeName) {
-        this.notificationPayloadTypeName = notificationPayloadTypeName;
-    }
-
-    public String getNotificationPayloadTypeDescription() {
-        return notificationPayloadTypeDescription;
-    }
-
-    public void setNotificationPayloadTypeDescription(String notificationPayloadTypeDescription) {
-        this.notificationPayloadTypeDescription = notificationPayloadTypeDescription;
-    }
-
-    public Map<String, String> getNotificationPayloadDetail() {
-        return notificationPayloadDetail;
-    }
-
-    public void setNotificationPayloadDetail(Map<String, String> notificationPayloadDetail) {
-        this.notificationPayloadDetail = notificationPayloadDetail;
+    @Override
+    protected Logger getLogger(){
+        return(LOG);
     }
 
 
@@ -88,7 +75,5 @@ public class NotificationPayload extends SerialisableObject {
     // Utility Methods
     //
 
-    protected Logger getLogger(){
-        return(LOG);
-    }
+
 }

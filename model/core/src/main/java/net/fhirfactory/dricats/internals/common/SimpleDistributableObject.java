@@ -22,11 +22,13 @@
 package net.fhirfactory.dricats.internals.common;
 
 import net.fhirfactory.dricats.internals.common.naming.QualifiedName;
+import net.fhirfactory.dricats.internals.common.naming.UnqualifiedName;
 import org.apache.commons.lang3.SerializationUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.Serial;
+import java.util.UUID;
 
 public class SimpleDistributableObject extends SerialisableObject {
     //
@@ -50,6 +52,11 @@ public class SimpleDistributableObject extends SerialisableObject {
 
     public SimpleDistributableObject(){
     	super();
+        UnqualifiedName unqualifiedName = new UnqualifiedName("Object", UUID.randomUUID().toString());
+        QualifiedName qualifiedName = new QualifiedName();
+        qualifiedName.appendUnqualifiedName(unqualifiedName);
+        this.setObjectID(new DistributableObjectId(qualifiedName));
+        this.setId(getObjectID().getQualifiedName().getCommonName());
         this.metadata = new DistributableObjectMetadata();
     }
 
@@ -57,8 +64,8 @@ public class SimpleDistributableObject extends SerialisableObject {
         super();
         DistributableObjectId objectId = new DistributableObjectId(qualifiedName);
         this.setObjectID(objectId);
+        this.setId(getObjectID().getQualifiedName().getCommonName());
         this.metadata = new DistributableObjectMetadata();
-        setId(getObjectID().getQualifiedName().getCommonName());
     }
 
     public SimpleDistributableObject(DistributableObjectIdentifier identifier) {

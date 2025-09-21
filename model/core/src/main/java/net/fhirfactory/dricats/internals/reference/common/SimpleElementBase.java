@@ -3,10 +3,11 @@
  */
 package net.fhirfactory.dricats.internals.reference.common;
 
-import net.fhirfactory.dricats.internals.common.DistributableObject;
+import net.fhirfactory.dricats.internals.common.SimpleDistributableObject;
 import net.fhirfactory.dricats.internals.reference.common.valuesets.ElementTypeEnum;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.HashMap;
@@ -14,19 +15,19 @@ import java.util.Map;
 import java.util.Objects;
 
 /**
- * Common reference for ArchiMate Elements.
+ * Common reference for ArchiMate Elements other than ApplicationComponent, DataObject and selected others.
  * Provides common ArchiMate attributes across elements per ArchiMate standard:
  * - name (mandatory)
  * - documentation (aka description)
  * - specialization (stereotype)
  * - properties (key/value)
  */
-public abstract class ElementBase extends DistributableObject implements Serializable {
+public abstract class SimpleElementBase extends SimpleDistributableObject implements Serializable {
     //
     // Housekeeping
     //
-    @Serial private static final long serialVersionUID = -730450129990001L;
-    private static final Logger LOG = LoggerFactory.getLogger(ElementBase.class);
+    @Serial private static final long serialVersionUID = -730450129220001L;
+    private static final Logger LOG = LoggerFactory.getLogger(SimpleElementBase.class);
 
     //
     // Attributes
@@ -40,13 +41,13 @@ public abstract class ElementBase extends DistributableObject implements Seriali
     //
     // Constructor(s)
     //
-    public ElementBase(){
+    public SimpleElementBase(){
         super();
         this.properties = new HashMap<>();
         getLogger().trace("ElementBase(): constructed");
     }
 
-    public ElementBase(String name, String documentation, String specialization, Map<String, String> properties, ElementTypeEnum elementType) {
+    public SimpleElementBase(String name, String documentation, String specialization, Map<String, String> properties, ElementTypeEnum elementType) {
         super();
         this.name = name;
         this.documentation = documentation;
@@ -56,7 +57,7 @@ public abstract class ElementBase extends DistributableObject implements Seriali
         getLogger().trace("ElementBase(name, documentation, specialization, properties, elementType): constructed");
     }
 
-    public ElementBase(ElementBase ori) {
+    public SimpleElementBase(SimpleElementBase ori) {
         super(ori);
         this.name = ori.name;
         this.documentation = ori.documentation;
@@ -66,7 +67,7 @@ public abstract class ElementBase extends DistributableObject implements Seriali
         getLogger().trace("ElementBase(ori): constructed");
     }
 
-    public ElementBase(String name, String documentation, String specialization, ElementTypeEnum elementType) {
+    public SimpleElementBase(String name, String documentation, String specialization, ElementTypeEnum elementType) {
         super();
         this.name = name;
         this.documentation = documentation;
@@ -79,8 +80,6 @@ public abstract class ElementBase extends DistributableObject implements Seriali
     //
     // Bean Methods
     //
-
-    @Override
     protected Logger getLogger(){
         return LOG;
     }
@@ -109,7 +108,7 @@ public abstract class ElementBase extends DistributableObject implements Seriali
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        ElementBase that = (ElementBase) o;
+        SimpleElementBase that = (SimpleElementBase) o;
         return Objects.equals(getObjectID(), that.getObjectID()) &&
                 Objects.equals(name, that.name) &&
                 elementType == that.elementType &&
@@ -132,9 +131,7 @@ public abstract class ElementBase extends DistributableObject implements Seriali
                 ", specialization='"+specialization+'\''+
                 ", properties="+properties+
                 ", objectID="+getObjectID()+
-                ", identifiers="+getIdentifiers()+
                 ", metadata="+getMetadata()+
-                ", securityLabels="+getSecurityLabels()+
                 '}';
     }
 }

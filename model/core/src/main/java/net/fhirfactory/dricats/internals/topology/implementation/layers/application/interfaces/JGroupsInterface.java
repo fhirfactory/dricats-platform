@@ -24,6 +24,7 @@ package net.fhirfactory.dricats.internals.topology.implementation.layers.applica
 import net.fhirfactory.dricats.internals.common.DistributableObjectId;
 import net.fhirfactory.dricats.internals.configuration.ports.internal.JGroupsInterfaceConfigurationObject;
 import net.fhirfactory.dricats.internals.topology.implementation.layers.application.interfaces.base.InterfaceImplementationBase;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -96,23 +97,12 @@ public class JGroupsInterface extends InterfaceImplementationBase implements Ser
     // Utility Methods
     //
 
+
     @Override
     public String toString() {
-        return new StringJoiner(", ", JGroupsInterface.class.getSimpleName() + "[", "]")
-                .add("configurationObject=" + configurationObject)
-                .add("metricsData=" + getMetricsData())
-                .add("owner=" + getOwner())
-                .add("services=" + getServices())
-                .add("elementType=" + getElementType())
-                .add("name='" + getName() + "'")
-                .add("documentation='" + getDocumentation() + "'")
-                .add("specialization='" + getSpecialization() + "'")
-                .add("properties=" + getProperties())
-                .add("objectID=" + getObjectID())
-                .add("securityLabels=" + getSecurityLabels())
-                .add("metadata=" + getMetadata())
-                .add("identifiers=" + getIdentifiers())
-                .add("id=" + getId())
+        return new ToStringBuilder(this)
+                .append("configurationObject", configurationObject)
+                .appendSuper(super.toString())
                 .toString();
     }
 

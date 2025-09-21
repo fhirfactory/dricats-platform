@@ -22,6 +22,7 @@
 package net.fhirfactory.dricats.internals.tasking;
 
 import java.io.Serial;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,7 +35,7 @@ import org.slf4j.LoggerFactory;
 import net.fhirfactory.dricats.internals.tasking.datatypes.InternalTaskProvenance;
 import net.fhirfactory.dricats.internals.common.DistributableObject;
 
-public class InternalTask extends DistributableObject {    //
+public class InternalTask extends DistributableObject implements Serializable {    //
     // Housekeeping
     //
 

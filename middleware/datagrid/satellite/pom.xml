@@ -5,11 +5,11 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>net.fhirfactory.dricats</groupId>
-        <artifactId>dricats-middleware-datagrid-taskgrid</artifactId>
+        <artifactId>dricats-middleware-datagrid</artifactId>
         <version>1.0.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>dricats-middleware-datagri-satellite</artifactId>
+    <artifactId>dricats-middleware-datagrid-satellite</artifactId>
     <name>DRICaTS :: Middleware :: DataGrid :: Satellite </name>
     <packaging>jar</packaging>
 
@@ -51,6 +51,24 @@
         </dependency>
 
         <!--*******************************************************************************-->
+        <!-- JGroups Manipulation Libraries                                                -->
+        <!--*******************************************************************************-->
+
+        <dependency>
+            <groupId>org.jgroups</groupId>
+            <artifactId>jgroups</artifactId>
+            <version>${version-org.jgroups-jgroups}</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jgroups.kubernetes</groupId>
+            <artifactId>jgroups-kubernetes</artifactId>
+            <version>${version-org.jgroups.kubernetes-jgroups-kubernetes}</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <!--*******************************************************************************-->
         <!-- DRICaTS Libraries                                                 -->
         <!--*******************************************************************************-->
 
@@ -68,7 +86,19 @@
 
         <dependency>
             <groupId>net.fhirfactory.dricats</groupId>
+            <artifactId>dricats-model-jgroups</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>net.fhirfactory.dricats</groupId>
             <artifactId>dricats-common</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>net.fhirfactory.dricats</groupId>
+            <artifactId>dricats-middleware-jgroups</artifactId>
             <version>${project.version}</version>
         </dependency>
 
@@ -131,6 +161,10 @@
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-simple</artifactId>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jgroups</groupId>
+            <artifactId>jgroups</artifactId>
         </dependency>
     </dependencies>
 

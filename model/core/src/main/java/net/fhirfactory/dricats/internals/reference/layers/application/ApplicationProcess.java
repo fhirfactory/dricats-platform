@@ -5,6 +5,7 @@ package net.fhirfactory.dricats.internals.reference.layers.application;
 
 import net.fhirfactory.dricats.internals.reference.common.ElementBase;
 import net.fhirfactory.dricats.internals.common.DistributableObjectId;
+import net.fhirfactory.dricats.internals.reference.common.SimpleElementBase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.io.Serial;
@@ -12,7 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class ApplicationProcess extends ElementBase {
+public class ApplicationProcess extends SimpleElementBase {
     @Serial private static final long serialVersionUID = -12345678910105L;
     private static final Logger LOG = LoggerFactory.getLogger(ApplicationProcess.class);
 
@@ -86,9 +87,7 @@ public class ApplicationProcess extends ElementBase {
                 ", specialization='"+getSpecialization()+'\''+
                 ", properties="+getProperties()+
                 ", objectID="+getObjectID()+
-                ", identifiers="+getIdentifiers()+
                 ", metadata="+getMetadata()+
-                ", securityLabels="+getSecurityLabels()+
                 '}';
     }
 }

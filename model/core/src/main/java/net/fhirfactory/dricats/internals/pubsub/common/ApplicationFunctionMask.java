@@ -19,67 +19,54 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.fhirfactory.dricats.internals.common;
+package net.fhirfactory.dricats.internals.pubsub.common;
 
-import net.fhirfactory.dricats.internals.common.naming.CommonName;
-import net.fhirfactory.dricats.internals.common.naming.QualifiedName;
-import net.fhirfactory.dricats.internals.common.naming.UnqualifiedName;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import java.io.Serial;
 import java.io.Serializable;
-import java.util.StringJoiner;
-import java.util.UUID;
 
-public class SerialisableObject implements Serializable{
-	//
-	// Housekeeping
-	//
-
+public class ApplicationFunctionMask implements Serializable {
+    //
+    // Housekeeping
+    //
     @Serial
-    private static final long serialVersionUID = 4428609418582057973L;
-	
+    private static final long serialVersionUID = 1L;
+
     //
     // Attributes
     //
 
-    private CommonName id;
+    private QualifiedNameMask functionIdMask;
 
     //
     // Constructor(s)
     //
 
-    public SerialisableObject() {
+    public ApplicationFunctionMask(){
         super();
-        UnqualifiedName name = new UnqualifiedName("Object", UUID.randomUUID().toString());
-        QualifiedName qualifiedName = new QualifiedName();
-        qualifiedName.appendUnqualifiedName(name);
-        setId(qualifiedName.getCommonName());
     }
 
     //
-    // Bean Methods
+    // Getters and Setters
     //
 
-    public CommonName getId() {
-        return id;
+    public QualifiedNameMask getFunctionIdMask() {
+        return functionIdMask;
     }
 
-    public void setId(CommonName id) {
-        this.id = id;
-    }
-
-    public Long getSerialVersionUID() {
-    	return(serialVersionUID);
+    public void setFunctionIdMask(QualifiedNameMask functionIdMask) {
+        this.functionIdMask = functionIdMask;
     }
 
     //
-    // Utility Methods
+    // Standard Methods
     //
 
     @Override
     public String toString() {
-        return new StringJoiner(", ", SerialisableObject.class.getSimpleName() + "[", "]")
-                .add("id=" + getId())
+        return new ToStringBuilder(this)
+                .append("functionIdMask", functionIdMask)
                 .toString();
     }
 }

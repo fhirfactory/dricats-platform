@@ -19,42 +19,54 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.fhirfactory.dricats.internals.messaging;
+package net.fhirfactory.dricats.internals.pubsub.common;
+
+import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import java.io.Serial;
+import java.io.Serializable;
 
-import net.fhirfactory.dricats.internals.data.Payload;
-import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-public class MessagePayload extends Payload {
+public class ApplicationComponentMask implements Serializable {
     //
     // Housekeeping
     //
-
     @Serial
-    private static final long serialVersionUID = -12345678900057L;
-    private static final Logger LOG = LoggerFactory.getLogger(MessagePayload.class);
+    private static final long serialVersionUID = 1L;
 
     //
     // Attributes
     //
 
+    private ApplicationComponentIdMask applicationComponentIdMask;
+    private ApplicationFunctionMask applicationFunctionMask;
+
     //
     // Constructor(s)
     //
 
-    //
-    // Bean Methods
-    //
+    public ApplicationComponentMask() {
+        this.applicationComponentIdMask = new ApplicationComponentIdMask();
+        this.applicationFunctionMask = new ApplicationFunctionMask();
+    }
 
     //
-    // Utility Methods
+    // Getters and Setters
     //
 
-    protected Logger getLogger(){
-        return(LOG);
+    public ApplicationComponentIdMask getApplicationComponentIdMask() {
+        return applicationComponentIdMask;
+    }
+
+    public void setApplicationComponentIdMask(ApplicationComponentIdMask applicationComponentIdMask) {
+        this.applicationComponentIdMask = applicationComponentIdMask;
+    }
+
+    public ApplicationFunctionMask getApplicationFunctionMask() {
+        return applicationFunctionMask;
+    }
+
+    public void setApplicationFunctionMask(ApplicationFunctionMask applicationFunctionMask) {
+        this.applicationFunctionMask = applicationFunctionMask;
     }
 
     //
@@ -62,9 +74,11 @@ public class MessagePayload extends Payload {
     //
 
     @Override
-    public String toString() {
+    public String
+    toString() {
         return new ToStringBuilder(this)
-                .appendSuper(super.toString())
+                .append("applicationComponentIdMask", applicationComponentIdMask)
+                .append("applicationFunctionMask", applicationFunctionMask)
                 .toString();
     }
 }

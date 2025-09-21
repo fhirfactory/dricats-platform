@@ -26,7 +26,7 @@ import net.fhirfactory.dricats.deployment.valuesets.SubsystemInternalServiceName
 import net.fhirfactory.dricats.internals.common.DistributableObjectId;
 import net.fhirfactory.dricats.internals.common.naming.QualifiedName;
 import net.fhirfactory.dricats.internals.common.naming.UnqualifiedName;
-import net.fhirfactory.dricats.internals.messaging.interfaces.ILocalMessageService;
+import net.fhirfactory.dricats.internals.events.interfaces.ILocalMessageService;
 import net.fhirfactory.dricats.internals.topology.implementation.layers.application.valuesets.SoftwareComponentTypeEnum;
 import net.fhirfactory.dricats.platform.middleware.jgroups.JChannelInterface;
 import net.fhirfactory.dricats.platform.middleware.jgroups.JGroupsTransactionResult;
@@ -35,7 +35,6 @@ import net.fhirfactory.dricats.platform.middleware.jgroups.jchannel.base.JChanne
 import net.fhirfactory.dricats.platform.middleware.jgroups.valuesets.JGroupTransactionResultEnum;
 import org.apache.commons.lang3.StringUtils;
 import org.jgroups.Message;
-import org.jgroups.ObjectMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -120,7 +119,7 @@ public class MessageDistributionService extends JChannelControllerBase {
 			result.setTimestamp(LocalDateTime.now());
 			return (result);
 		}
-		Message multicastMessage = new ObjectMessage(null, messageString);
+		Message multicastMessage = new Message(null, messageString);
         try {
             getLocalChannel().send(multicastMessage);
         } catch (Exception e) {
@@ -148,7 +147,7 @@ public class MessageDistributionService extends JChannelControllerBase {
 		if (StringUtils.equalsIgnoreCase("*", targetAddress.getAddressName())) {
 			JGroupsTransactionResult result = sendMessage(messageString);
 		}
-		Message multicastMessage = new ObjectMessage(targetAddress.getJGroupsAddress(), messageString);
+		Message multicastMessage = new Message(targetAddress.getJGroupsAddress(), messageString);
 		try {
             getLocalChannel().send(multicastMessage);
 		} catch (Exception e) {

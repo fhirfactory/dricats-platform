@@ -19,7 +19,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.fhirfactory.dricats.internals.messaging;
+package net.fhirfactory.dricats.internals.events.notifications;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import org.slf4j.Logger;

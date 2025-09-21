@@ -24,6 +24,7 @@ package net.fhirfactory.dricats.internals.topology.implementation.layers.applica
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import net.fhirfactory.dricats.internals.common.DistributableObjectId;
 import net.fhirfactory.dricats.internals.topology.implementation.layers.application.interfaces.base.InterfaceImplementationBase;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -113,21 +114,11 @@ public class HTTPInterface extends InterfaceImplementationBase implements Serial
     // Utility Methods
     //
 
+
     @Override
     public String toString() {
-        return new StringJoiner(", ", HTTPInterface.class.getSimpleName() + "[", "]")
-                .add("owner=" + getOwner())
-                .add("services=" + getServices())
-                .add("elementType=" + getElementType())
-                .add("name='" + getName() + "'")
-                .add("documentation='" + getDocumentation() + "'")
-                .add("specialization='" + getSpecialization() + "'")
-                .add("properties=" + getProperties())
-                .add("objectID=" + getObjectID())
-                .add("securityLabels=" + getSecurityLabels())
-                .add("metadata=" + getMetadata())
-                .add("identifiers=" + getIdentifiers())
-                .add("id=" + getId())
+        return new ToStringBuilder(this)
+                .appendSuper(super.toString())
                 .toString();
     }
 

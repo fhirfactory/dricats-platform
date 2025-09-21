@@ -19,67 +19,57 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.fhirfactory.dricats.internals.common;
+package net.fhirfactory.dricats.internals.pubsub.common;
 
-import net.fhirfactory.dricats.internals.common.naming.CommonName;
-import net.fhirfactory.dricats.internals.common.naming.QualifiedName;
-import net.fhirfactory.dricats.internals.common.naming.UnqualifiedName;
+import net.fhirfactory.dricats.internals.common.datatypes.EffectiveDate;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import java.io.Serial;
 import java.io.Serializable;
-import java.util.StringJoiner;
-import java.util.UUID;
+import java.time.LocalDateTime;
 
-public class SerialisableObject implements Serializable{
-	//
-	// Housekeeping
-	//
-
+public class EventTemporalWindow extends EffectiveDate implements Serializable {
+    //
+    // Housekeeping
+    //
     @Serial
-    private static final long serialVersionUID = 4428609418582057973L;
-	
+    private static final long serialVersionUID = 1L;
+
     //
     // Attributes
     //
 
-    private CommonName id;
 
     //
-    // Constructor(s)
+     // Constructor(s)
     //
 
-    public SerialisableObject() {
+    public EventTemporalWindow() {
         super();
-        UnqualifiedName name = new UnqualifiedName("Object", UUID.randomUUID().toString());
-        QualifiedName qualifiedName = new QualifiedName();
-        qualifiedName.appendUnqualifiedName(name);
-        setId(qualifiedName.getCommonName());
+        setEffectiveStartDate(LocalDateTime.MIN);
+        setEffectiveEndDate(LocalDateTime.MAX);
     }
 
     //
-    // Bean Methods
+     // Business Methods
     //
 
-    public CommonName getId() {
-        return id;
+    public Boolean isWithinTemporalWindow(LocalDateTime testDate){
+        return(testDate.isAfter(getEffectiveStartDate()) && testDate.isBefore(getEffectiveEndDate()));
     }
 
-    public void setId(CommonName id) {
-        this.id = id;
-    }
-
-    public Long getSerialVersionUID() {
-    	return(serialVersionUID);
+    public Boolean isWithinTemporalWindow(EffectiveDate testDate){
+        return(testDate.getEffectiveStartDate().isAfter(getEffectiveStartDate()) && testDate.getEffectiveStartDate().isBefore(getEffectiveEndDate()));
     }
 
     //
-    // Utility Methods
+    // Standard Methods
     //
 
     @Override
     public String toString() {
-        return new StringJoiner(", ", SerialisableObject.class.getSimpleName() + "[", "]")
-                .add("id=" + getId())
+        return new ToStringBuilder(this)
+                .appendSuper(super.toString())
                 .toString();
     }
 }

@@ -19,14 +19,18 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.fhirfactory.dricats.internals.messaging;
+package net.fhirfactory.dricats.internals.events.messages;
 
 import java.io.Serial;
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
 import net.fhirfactory.dricats.internals.common.DistributableObjectId;
 import net.fhirfactory.dricats.internals.common.naming.CommonName;
+import net.fhirfactory.dricats.internals.common.naming.QualifiedName;
+import net.fhirfactory.dricats.internals.common.naming.UnqualifiedName;
+import net.fhirfactory.dricats.internals.events.common.EventBase;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,7 +40,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import net.fhirfactory.dricats.internals.common.SerialisableObject;
 
 
-public class MessageObject extends SerialisableObject {
+public class MessageObject extends EventBase implements Serializable {
     //
     // Housekeeping
     //
@@ -48,13 +52,6 @@ public class MessageObject extends SerialisableObject {
     // Attributes
     //
 
-    private DistributableObjectId messageSource;
-    private DistributableObjectId messageTarget;
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss.SSSXXX")
-    private LocalDateTime messageSendDate;
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss.SSSXXX")
-    private LocalDateTime messageReceiveDate;
-    private String messageId;
     private Integer messageSequenceNumber;
     private MessagePayload messagePayload;
 
@@ -64,78 +61,43 @@ public class MessageObject extends SerialisableObject {
     
     public MessageObject(){
         super();
-        setMessageReceiveDate(LocalDateTime.now());
-        setMessageSource(new DistributableObjectId());
-        setMessageTarget(new DistributableObjectId());
+        UnqualifiedName unqualifiedName = new UnqualifiedName("Message", UUID.randomUUID().toString());
+        QualifiedName qualifiedName = new QualifiedName();
+        qualifiedName.appendUnqualifiedName(unqualifiedName);
+        this.setObjectID(new DistributableObjectId(qualifiedName));
+        this.setId(getObjectID().getQualifiedName().getCommonName());
         setMessagePayload(new MessagePayload());
-        setMessageSendDate(LocalDateTime.MIN);
         setMessageSequenceNumber(-1);
-        setMessageId(UUID.randomUUID().toString());
-        setId(new CommonName("Message("+getMessageId()+")"));
     }
 
     public MessageObject(DistributableObjectId source, DistributableObjectId target, LocalDateTime sendDate, MessagePayload payload){
         super();
-        setMessageReceiveDate(LocalDateTime.now());
-        setMessageSendDate(sendDate);
-        setMessageSource(source);
-        setMessageTarget(target);
+        setEventReceiveDate(LocalDateTime.now());
+        setEventSendDate(sendDate);
+        setSource(source);
+        setTarget(target);
         setMessagePayload(payload);
         setMessageSequenceNumber(0);
-        setMessageId(UUID.randomUUID().toString());
-        setId(new CommonName("Message("+getMessageId()+")"));
+        UnqualifiedName unqualifiedName = new UnqualifiedName("Message", UUID.randomUUID().toString());
+        QualifiedName qualifiedName = new QualifiedName();
+        qualifiedName.appendUnqualifiedName(unqualifiedName);
+        this.setObjectID(new DistributableObjectId(qualifiedName));
+        this.setId(getObjectID().getQualifiedName().getCommonName());
     }
 
     public  MessageObject(String MessageId, DistributableObjectId source, DistributableObjectId target, LocalDateTime sendDate, MessagePayload payload, int sequenceNumber ){
         this(source, target, sendDate, payload);
-        setMessageId(MessageId);
+        UnqualifiedName unqualifiedName = new UnqualifiedName("Message", UUID.randomUUID().toString());
+        QualifiedName qualifiedName = new QualifiedName();
+        qualifiedName.appendUnqualifiedName(unqualifiedName);
+        this.setObjectID(new DistributableObjectId(qualifiedName));
+        this.setId(getObjectID().getQualifiedName().getCommonName());
         setMessageSequenceNumber(sequenceNumber);
-        setId(new CommonName("Message("+getMessageId()+")"));
     }
 
     //
     // Bean Methods
     //
-
-    public DistributableObjectId getMessageSource() {
-        return messageSource;
-    }
-
-    public void setMessageSource(DistributableObjectId messageSource) {
-        this.messageSource = messageSource;
-    }
-
-    public DistributableObjectId getMessageTarget() {
-        return messageTarget;
-    }
-
-    public void setMessageTarget(DistributableObjectId messageTarget) {
-        this.messageTarget = messageTarget;
-    }
-
-    public LocalDateTime getMessageSendDate() {
-        return messageSendDate;
-    }
-
-    public void setMessageSendDate(LocalDateTime messageSendDate) {
-        this.messageSendDate = messageSendDate;
-    }
-
-    public LocalDateTime getMessageReceiveDate() {
-        return messageReceiveDate;
-    }
-
-    public void setMessageReceiveDate(LocalDateTime messageReceiveDate) {
-        this.messageReceiveDate = messageReceiveDate;
-    }
-
-    public String getMessageId() {
-        return messageId;
-    }
-
-    public void setMessageId(String messageId) {
-        this.messageId = messageId;
-    }
 
     public Integer getMessageSequenceNumber() {
         return messageSequenceNumber;
@@ -164,13 +126,9 @@ public class MessageObject extends SerialisableObject {
     @Override
     public String toString() {
         return new ToStringBuilder(this)
-                .append("messageSource", messageSource)
-                .append("messageTarget", messageTarget)
-                .append("messageSendDate", messageSendDate)
-                .append("messageReceiveDate", messageReceiveDate)
-                .append("messageId", messageId)
                 .append("messageSequenceNumber", messageSequenceNumber)
                 .append("messagePayload", messagePayload)
+                .appendSuper(super.toString())
                 .toString();
     }
 }
