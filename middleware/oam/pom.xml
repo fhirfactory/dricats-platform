@@ -5,27 +5,16 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>net.fhirfactory.dricats</groupId>
-        <artifactId>dricats</artifactId>
+        <artifactId>dricats-middleware</artifactId>
         <version>1.0.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>dricats-middleware</artifactId>
-    <name>DRICaTS :: Middleware</name>
+    <artifactId>dricats-middleware-oam</artifactId>
+    <name>DRICaTS :: Middleware :: OAM (parent)</name>
     <packaging>pom</packaging>
 
     <modules>
-        <module>collaboration</module>
-        <module>datagrid</module>
-        <module>jgroups</module>
-        <module>workflow</module>
-	    <module>ehr</module>
-        <module>auditing</module>
-        <module>configserver</module>
-        <module>oam</module>
+        <module>satellite</module>
+        <module>central</module>
     </modules>
-
-    <properties>
-
-    </properties>
-
 </project>
