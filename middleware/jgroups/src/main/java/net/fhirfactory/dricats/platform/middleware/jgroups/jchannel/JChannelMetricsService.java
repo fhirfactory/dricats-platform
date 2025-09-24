@@ -29,8 +29,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.enterprise.context.ApplicationScoped;
 
-@ApplicationScoped
-public class JChannelMetricsService extends JChannelControllerBase {
+abstract public class JChannelMetricsService extends JChannelControllerBase {
 	//
 	// Housekeeping
 	//

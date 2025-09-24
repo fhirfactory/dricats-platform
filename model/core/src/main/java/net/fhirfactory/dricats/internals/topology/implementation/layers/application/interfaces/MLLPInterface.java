@@ -23,8 +23,8 @@ package net.fhirfactory.dricats.internals.topology.implementation.layers.applica
 
 import net.fhirfactory.dricats.internals.common.DistributableObjectId;
 import net.fhirfactory.dricats.internals.configuration.ports.internal.JGroupsInterfaceConfigurationObject;
-import net.fhirfactory.dricats.internals.oam.base.CommonComponentMetricsData;
-import net.fhirfactory.dricats.internals.oam.interfaces.IMetricsExtractionService;
+import net.fhirfactory.dricats.internals.oam.metrics.base.CommonComponentMetricsData;
+import net.fhirfactory.dricats.internals.oam.metrics.interfaces.IMetricsExtractionService;
 import net.fhirfactory.dricats.internals.topology.implementation.layers.application.interfaces.base.InterfaceImplementationBase;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.slf4j.Logger;

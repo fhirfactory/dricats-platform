@@ -21,7 +21,7 @@
  */
 package net.fhirfactory.dricats.platform.middleware.jgroups.jchannel.base;
 
-import net.fhirfactory.dricats.internals.oam.interfaces.ILocalMetricsServerInterface;
+import net.fhirfactory.dricats.internals.oam.metrics.interfaces.ILocalMetricsServerInterface;
 import net.fhirfactory.dricats.internals.reference.layers.application.ApplicationComponent;
 import net.fhirfactory.dricats.internals.topology.interfaces.ISubsystem;
 import net.fhirfactory.dricats.platform.configuration.LocalConfigurationServer;

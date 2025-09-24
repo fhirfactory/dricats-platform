@@ -5,12 +5,12 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>net.fhirfactory.dricats</groupId>
-        <artifactId>dricats-middleware</artifactId>
+        <artifactId>dricats-middleware-datagrid</artifactId>
         <version>1.0.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>dricats-middleware-persistence</artifactId>
-    <name>DRICaTS-Platform :: Middleware :: (Default) Persistence Services</name>
+    <artifactId>dricats-middleware-datagrid-central</artifactId>
+    <name>DRICaTS :: Middleware :: DataGrid :: Central</name>
     <packaging>jar</packaging>
 
     <properties>
@@ -20,8 +20,8 @@
     <dependencies>
         <dependency>
             <groupId>net.fhirfactory.dricats</groupId>
-            <artifactId>dricats-model-resources</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
+            <artifactId>dricats-model-resources-base</artifactId>
+            <version>${project.version}</version>
         </dependency>
 
         <dependency>

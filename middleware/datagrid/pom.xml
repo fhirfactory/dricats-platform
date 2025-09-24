@@ -16,6 +16,7 @@
     <modules>
         <module>central</module>
         <module>satellite</module>
+        <module>common</module>
     </modules>
 
     <properties>

@@ -30,8 +30,8 @@ import org.slf4j.LoggerFactory;
 
 import javax.enterprise.context.ApplicationScoped;
 
-@ApplicationScoped
-public class JChannelOAMService extends JChannelControllerBase {
+
+abstract public class JChannelOAMService extends JChannelControllerBase {
 	//
 	// Housekeeping
 	//

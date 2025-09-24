@@ -1,7 +1,7 @@
 package net.fhirfactory.dricats.platform.middleware.jgroups;
 
 import net.fhirfactory.dricats.internals.events.interfaces.ILocalMessageService;
-import net.fhirfactory.dricats.internals.oam.interfaces.ILocalMetricsServerInterface;
+import net.fhirfactory.dricats.internals.oam.metrics.interfaces.ILocalMetricsServerInterface;
 import net.fhirfactory.dricats.internals.tasking.interfaces.LocalTaskServerInterface;
 import net.fhirfactory.dricats.internals.topology.implementation.layers.application.interfaces.JGroupsInterface;
 import net.fhirfactory.dricats.internals.topology.interfaces.MiddlewareComponentInterface;

@@ -21,7 +21,7 @@
  */
 package net.fhirfactory.dricats.internals.reference.layers.application;
 
-import net.fhirfactory.dricats.internals.oam.ApplicationComponentMetricsData;
+import net.fhirfactory.dricats.internals.oam.metrics.ApplicationComponentMetricsData;
 import net.fhirfactory.dricats.internals.reference.common.ElementBase;
 import net.fhirfactory.dricats.internals.common.DistributableObjectId;
 import net.fhirfactory.dricats.internals.reference.common.valuesets.ElementTypeEnum;

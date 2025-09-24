@@ -23,7 +23,7 @@ package net.fhirfactory.dricats.internals.topology.implementation.layers.applica
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import net.fhirfactory.dricats.internals.common.DistributableObjectId;
-import net.fhirfactory.dricats.internals.oam.ApplicationInterfaceMetricsData;
+import net.fhirfactory.dricats.internals.oam.metrics.ApplicationInterfaceMetricsData;
 import net.fhirfactory.dricats.internals.reference.layers.application.ApplicationInterface;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
