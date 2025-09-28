@@ -53,6 +53,10 @@ public class ApplicationComponentStatusSummary implements Serializable {
     //
     public ApplicationComponentStatusSummary() {
         super();
+        this.startupInstant = LocalDateTime.now();
+        this.heartbeatInstant = LocalDateTime.now();
+        this.lastActivityInstant = LocalDateTime.now();
+        this.lastHeartbeatInstant = LocalDateTime.now();
     }
 
     //

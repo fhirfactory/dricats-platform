@@ -51,6 +51,17 @@ public class DistributableObjectMetadata extends SerialisableObject {
     private LocalDateTime lastUpdateDate;
 
     //
+     // Constructor(s)
+    //
+
+    public DistributableObjectMetadata() {
+        super();
+        this.effectiveDate = new EffectiveDate();
+        this.creationDate = LocalDateTime.now();
+        this.lastUpdateDate = LocalDateTime.now();
+    }
+
+    //
     // Bean Methods
     //
 

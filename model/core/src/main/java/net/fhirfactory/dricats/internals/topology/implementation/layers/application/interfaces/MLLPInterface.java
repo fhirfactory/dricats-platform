@@ -22,7 +22,7 @@
 package net.fhirfactory.dricats.internals.topology.implementation.layers.application.interfaces;
 
 import net.fhirfactory.dricats.internals.common.DistributableObjectId;
-import net.fhirfactory.dricats.internals.configuration.ports.internal.JGroupsInterfaceConfigurationObject;
+import net.fhirfactory.dricats.internals.configuration.segments.ports.internal.JGroupsInterfaceConfigurationObject;
 import net.fhirfactory.dricats.internals.oam.metrics.base.CommonComponentMetricsData;
 import net.fhirfactory.dricats.internals.oam.metrics.interfaces.IMetricsExtractionService;
 import net.fhirfactory.dricats.internals.topology.implementation.layers.application.interfaces.base.InterfaceImplementationBase;

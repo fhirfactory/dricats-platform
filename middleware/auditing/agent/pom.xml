@@ -10,7 +10,7 @@
     </parent>
 
     <artifactId>dricats-middleware-auditing-agent</artifactId>
-    <name>DRICaTS :: Middleware :: Auditing:: Agent </name>
+    <name>DRICaTS :: Middleware :: Auditing :: Agent </name>
     <packaging>jar</packaging>
 
     <properties>

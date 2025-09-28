@@ -10,73 +10,13 @@
     </parent>
 
     <artifactId>dricats-middleware-oam-ui</artifactId>
-    <name>DRICaTS :: Middleware :: OAM UI</name>
-    <packaging>jar</packaging>
+    <name>DRICaTS :: Middleware :: OAM :: UI</name>
+    <packaging>pom</packaging>
 
-    <properties>
-        <maven.compiler.source>17</maven.compiler.source>
-        <maven.compiler.target>17</maven.compiler.target>
-        <javafx.version>20.0.2</javafx.version>
-        <jackson.version>2.17.2</jackson.version>
-    </properties>
-
-    <dependencies>
-        <!-- Core model types including ApplicationComponentSummary -->
-        <dependency>
-            <groupId>net.fhirfactory.dricats</groupId>
-            <artifactId>dricats-model-core</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-
-        <!-- Jackson for JSON mapping of REST responses -->
-        <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-databind</artifactId>
-            <version>${jackson.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-annotations</artifactId>
-            <version>${jackson.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-core</artifactId>
-            <version>${jackson.version}</version>
-        </dependency>
-
-        <!-- JavaFX controls for UI. These artifacts are platform-specific at runtime; compile scope keeps reactor builds lighter. -->
-        <dependency>
-            <groupId>org.openjfx</groupId>
-            <artifactId>javafx-controls</artifactId>
-            <version>${javafx.version}</version>
-        </dependency>
-    </dependencies>
-
-    <build>
-        <plugins>
-            <!-- Shade to create a runnable fat-jar if desired -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-shade-plugin</artifactId>
-                <version>3.5.0</version>
-                <executions>
-                    <execution>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>shade</goal>
-                        </goals>
-                        <configuration>
-                            <createDependencyReducedPom>false</createDependencyReducedPom>
-                            <transformers>
-                                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                                    <mainClass>net.fhirfactory.dricats.middleware.oam.ui.Launcher</mainClass>
-                                </transformer>
-                            </transformers>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>
-    </build>
+    <modules>
+        <module>fatclient</module>
+        <module>testpm</module>
+        <module>pm</module>
+        <!--module>pm</module-->
+    </modules>
 </project>

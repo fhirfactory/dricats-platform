@@ -1,0 +1,184 @@
+---
+subsystemInstant:
+  owningOrganizationName: "ACT Health"
+  solutionName: "AETHER"
+  solutionGroup: "au.gov.act.health.aether"
+  solutionDescription: "Hestia Audit Information Management Framework"
+  subsystemName: "aether-hestia-audit-im"
+  subsystemVersion: "1.0.0"
+  externalisedServiceName: "aether-hestia-audit-im"
+  externalisedServiceDNSName: "hestia-audit-im.sitea.aether.local"
+  externalisedServiceEndpointName: null
+  clusterServiceName: "aether-hestia-audit-im"
+  clusterServiceDNSName: "10.123.123.13"
+  processingPlantName: "AETHER.Hestia.Audit.IM"
+  processingPlantDNSName: "aether-hestia-audit-im"
+  processingPlantVersion: "1.0.0-SNAPSHOT"
+deploymentMode:
+  deploymentConfig: "systemconfig-microk8s-site-a.yaml"
+  interNetworkIPCStackConfigFile: "site-a-multi-zone-ipc-microk8s.xml"
+  intraNetworkIPCStackConfigFile: "site-a-private-network-ipc.xml"
+  interNetworkOAMStackConfigFile: "site-a-multi-zone-oam-microk8s.xml"
+  intraNetworkOAMStackConfigFile: "site-a-private-network-oam.xml"
+  kubernetes: true
+  processingPlantReplicationCount: 1
+  concurrent: false
+  usingInternalEncryption: true
+  otherDeploymentFlags: "AUDIT_EVENT_PERSISTENCE=false"
+deploymentSites:
+  siteCount: 1
+  site1Name: "Site-A"
+  site2Name: null
+  site3Name: null
+deploymentZone:
+  securityZoneName: "private-network"
+  nameSpace: "site-a"
+kubeReadinessProbe:
+  portValue: 9990
+  portType: "TCP"
+  hostDNSEntry: null
+  supportedInterfaceProfiles: []
+  webServicePath: "/health"
+  server: true
+  encrypted: false
+  startupDelay: 60
+kubeLivelinessProbe:
+  portValue: 9990
+  portType: "TCP"
+  hostDNSEntry: null
+  supportedInterfaceProfiles: []
+  webServicePath: "/health"
+  server: true
+  encrypted: false
+  startupDelay: 60
+prometheusPort:
+  portValue: 0
+  portType: "TCP"
+  hostDNSEntry: null
+  supportedInterfaceProfiles: []
+  webServicePath: "/"
+  server: true
+  encrypted: false
+jolokiaPort:
+  portValue: 8080
+  portType: "TCP"
+  hostDNSEntry: null
+  supportedInterfaceProfiles: []
+  webServicePath: "/"
+  server: true
+  encrypted: false
+subsystemImageProperties:
+  repository: "localhost:32000/"
+  imageName: "aether-hestia-audit-im"
+  imageVersion: "1.0.0-SNAPSHOT"
+  pullPolicy: "Always"
+defaultServicePortLowerBound: 16290
+loadBalancer:
+  type: "LoadBalancer"
+  ipAddress: "10.123.123.13"
+volumeMounts:
+  volumeMountName: "certificates"
+  volumeMountPath: "/var/lib/pegacorn-ssl-certs"
+  volumeName: "certificates"
+  volumeHostPath: "/volumes/workspace0/data/"
+hapiAPIKey:
+  credentialName: null
+  credentialPassword: null
+  credentialReferenceName: "hapi-fhir-secrets"
+  credentialReferenceKey: "hapiApiKey"
+javaDeploymentParameters:
+  jmxMaxHeapSizeMB: "1024Mi"
+  jvmMemSizeMB: null
+interZoneIPC:
+  name: "inter-zone-ipc"
+  portValue: 14702
+  portType: "endpoint.ipc_messaging.jgroups_interzone"
+  hostDNSEntry: "0.0.0.0"
+  supportedInterfaceProfiles:
+    - interfaceDefinitionName: "JGroups-Gossip"
+      interfaceDefinitionVersion: "1.0.0"
+  initialHosts:
+    - hostName: "aether-petasos-gossiprouter-one-site-a"
+      portNumber: "17004"
+    - hostName: "aether-petasos-gossiprouter-two-site-a"
+      portNumber: "17006"
+  server: "true"
+  encrypted: "false"
+intraZoneIPC:
+  name: "intra-zone-ipc"
+  portValue: 14700
+  portType: "endpoint.ipc_messaging.jgroups_intrazone"
+  hostDNSEntry: "0.0.0.0"
+  supportedInterfaceProfiles:
+    - interfaceDefinitionName: "JGroups-Kube"
+      interfaceDefinitionVersion: "1.0.0"
+  initialHosts:
+    - hostName: "localhost"
+      portNumber: "14700"
+  server: "true"
+  encrypted: "false"
+interZoneOAM:
+  name: "inter-zone-oam"
+  portValue: 14703
+  portType: "endpoint.ipc_messaging.jgroups_interzone"
+  hostDNSEntry: "0.0.0.0"
+  supportedInterfaceProfiles:
+    - interfaceDefinitionName: "JGroups-Gossip"
+      interfaceDefinitionVersion: "1.0.0"
+  initialHosts:
+    - hostName: "aether-petasos-gossiprouter-one-site-a"
+      portNumber: "17005"
+    - hostName: "aether-petasos-gossiprouter-two-site-a"
+      portNumber: "17007"
+  server: "true"
+  encrypted: "false"
+intraZoneOAM:
+  name: "intra-zone-oam"
+  portValue: 14701
+  portType: "endpoint.ipc_messaging.jgroups_intrazone"
+  hostDNSEntry: "0.0.0.0"
+  supportedInterfaceProfiles:
+    - interfaceDefinitionName: "JGroups-Kube"
+      interfaceDefinitionVersion: "1.0.0"
+  initialHosts:
+    - hostName: "localhost"
+      portNumber: "14700"
+  server: "true"
+  encrypted: "false"
+edgeAnswer:
+  name: "edge-answer"
+  portValue: 17300
+  portType: "TCP"
+  hostDNSEntry: null
+  supportedInterfaceProfiles:
+    - interfaceDefinitionName: "Fast Healthcare Interoperability Resources"
+      interfaceDefinitionVersion: "4.0.1"
+  servicePortValue: 17300
+  servicePortName: null
+  serviceDNSEntry: "10.123.123.4"
+  clusterServicePortOffsetValue: 0
+  path: null
+  server: true
+  encrypted: true
+interactHestiaDMHTTPClient:
+  name: "hestia-dm-http"
+  portType: "endpoint.restful"
+  portParameters: null;
+  defaultRetryCount: 3
+  defaultRetryWait: 10000
+  defaultTimeout: 5000
+  startupDelay: 30000
+  connectedSystem:
+    owningOrganizationName: "ACT Health"
+    solutionName: "AETHER"
+    subsystemName: "aether-hestia-dm"
+    subsystemVersion: "1.0.0"
+    externalisedServiceName: "fhir-restful-server"
+    externalisedServiceEndpointName: "hestia-dm-http"
+    targetPort1:
+      targetInterfaceDefinition:
+        interfaceDefinitionName: "FHIR-HTTP"
+        interfaceDefinitionVersion: "4.0.1"
+      encryptionRequired: "false"
+      targetPortValue: 17303
+      targetPortDNSName: "192.168.56.105"

@@ -21,123 +21,84 @@
  */
 package net.fhirfactory.dricats.model.configuration.configurationfile.archetypes;
 
-import net.fhirfactory.dricats.internals.configuration.ApplicationInstanceConfigurationObject;
-import net.fhirfactory.dricats.internals.configuration.ports.base.ServerInterfaceConfigurationObject;
-import net.fhirfactory.dricats.internals.configuration.segments.DeploymentModeConfigurationObject;
-import net.fhirfactory.dricats.internals.configuration.segments.DeploymentSiteConfigurationObject;
-import net.fhirfactory.dricats.internals.configuration.segments.DeploymentZoneConfigurationObject;
-import net.fhirfactory.dricats.internals.configuration.segments.SecurityCredentialConfigurationObject;
-import net.fhirfactory.dricats.internals.configuration.segments.SubsystemImageConfigurationObject;
+import net.fhirfactory.dricats.internals.configuration.segments.*;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+
+import java.io.Serial;
+import java.io.Serializable;
 
 
-public class BaseSubsystemConfigurationObject {
+public class BaseSubsystemConfigurationObject implements Serializable {
+    //
+     // Housekeeping
+    //
+    @Serial
+    private static final long serialVersionUID = 1L;
 
-    private ApplicationInstanceConfigurationObject subsystemInstant;
-    private DeploymentModeConfigurationObject deploymentMode;
-    private DeploymentSiteConfigurationObject deploymentSites;
+    //
+     // Attributes
+    //
+    private SolutionConfigurationObject solution;
+    private ApplicationConfigurationObject application;
+    private ApplicationInstanceConfigurationObject applicationInstance;
+    private SiteConfigurationObject deploymentMode;
+    private MultiSiteConfigurationObject deploymentSites;
     private DeploymentZoneConfigurationObject deploymentZone;
-    private ServerInterfaceConfigurationObject kubeReadinessProbe;
-    private ServerInterfaceConfigurationObject kubeLivelinessProbe;
-    private ServerInterfaceConfigurationObject prometheusPort;
-    private ServerInterfaceConfigurationObject jolokiaPort;
+    private ApplicationInstanceImageConfigurationObject subsystemImageProperties;
 
-    private SubsystemImageConfigurationObject subsystemImageProperties;
-    private SecurityCredentialConfigurationObject trustStorePassword;
-    private SecurityCredentialConfigurationObject keyPassword;
-
+    //
+     // Constructors
+    //
     public BaseSubsystemConfigurationObject() {
-        subsystemInstant = new ApplicationInstanceConfigurationObject();
-        deploymentMode = new DeploymentModeConfigurationObject();
-        deploymentSites = new DeploymentSiteConfigurationObject();
-        kubeLivelinessProbe = new ServerInterfaceConfigurationObject();
-        kubeReadinessProbe = new ServerInterfaceConfigurationObject();
-        subsystemImageProperties = new SubsystemImageConfigurationObject();
-        trustStorePassword = new SecurityCredentialConfigurationObject();
-        keyPassword = new SecurityCredentialConfigurationObject();
-        jolokiaPort = new ServerInterfaceConfigurationObject();
-        prometheusPort = new ServerInterfaceConfigurationObject();
+        applicationInstance = new ApplicationInstanceConfigurationObject();
+        deploymentMode = new SiteConfigurationObject();
+        deploymentSites = new MultiSiteConfigurationObject();
+        subsystemImageProperties = new ApplicationInstanceImageConfigurationObject();
         deploymentZone = new DeploymentZoneConfigurationObject();
     }
 
-    public ServerInterfaceConfigurationObject getKubeReadinessProbe() {
-        return kubeReadinessProbe;
+    //
+     // Bean Methods
+    //
+
+    public SolutionConfigurationObject getSolution() {
+        return solution;
     }
 
-    public void setKubeReadinessProbe(ServerInterfaceConfigurationObject kubeReadinessProbe) {
-        this.kubeReadinessProbe = kubeReadinessProbe;
+    public void setSolution(SolutionConfigurationObject solution) {
+        this.solution = solution;
     }
 
-    public ServerInterfaceConfigurationObject getKubeLivelinessProbe() {
-        return kubeLivelinessProbe;
+    public ApplicationConfigurationObject getApplication() {
+        return application;
     }
 
-    public void setKubeLivelinessProbe(ServerInterfaceConfigurationObject kubeLivelinessProbe) {
-        this.kubeLivelinessProbe = kubeLivelinessProbe;
+    public void setApplication(ApplicationConfigurationObject application) {
+        this.application = application;
     }
 
-    public ServerInterfaceConfigurationObject getPrometheusPort() {
-        return prometheusPort;
+    public ApplicationInstanceConfigurationObject getApplicationInstance() {
+        return applicationInstance;
     }
 
-    public void setPrometheusPort(ServerInterfaceConfigurationObject prometheusPort) {
-        this.prometheusPort = prometheusPort;
+    public void setApplicationInstance(ApplicationInstanceConfigurationObject applicationInstance) {
+        this.applicationInstance = applicationInstance;
     }
 
-    public ServerInterfaceConfigurationObject getJolokiaPort() {
-        return jolokiaPort;
-    }
-
-    public void setJolokiaPort(ServerInterfaceConfigurationObject jolokiaPort) {
-        this.jolokiaPort = jolokiaPort;
-    }
-
-    public ApplicationInstanceConfigurationObject getSubsystemInstant() {
-        return subsystemInstant;
-    }
-
-    public void setSubsystemInstant(ApplicationInstanceConfigurationObject subsystemInstant) {
-        this.subsystemInstant = subsystemInstant;
-    }
-
-    public DeploymentModeConfigurationObject getDeploymentMode() {
+    public SiteConfigurationObject getDeploymentMode() {
         return deploymentMode;
     }
 
-    public void setDeploymentMode(DeploymentModeConfigurationObject deploymentMode) {
+    public void setDeploymentMode(SiteConfigurationObject deploymentMode) {
         this.deploymentMode = deploymentMode;
     }
 
-    public DeploymentSiteConfigurationObject getDeploymentSites() {
+    public MultiSiteConfigurationObject getDeploymentSites() {
         return deploymentSites;
     }
 
-    public void setDeploymentSites(DeploymentSiteConfigurationObject deploymentSites) {
+    public void setDeploymentSites(MultiSiteConfigurationObject deploymentSites) {
         this.deploymentSites = deploymentSites;
-    }
-
-
-    public SubsystemImageConfigurationObject getSubsystemImageProperties() {
-        return subsystemImageProperties;
-    }
-
-    public void setSubsystemImageProperties(SubsystemImageConfigurationObject subsystemImageProperties) {
-        this.subsystemImageProperties = subsystemImageProperties;
-    }
-
-    public SecurityCredentialConfigurationObject getTrustStorePassword() {
-        return trustStorePassword;
-    }
-
-    public void setTrustStorePassword(SecurityCredentialConfigurationObject trustStorePassword) {
-        this.trustStorePassword = trustStorePassword;
-    }
-
-    public SecurityCredentialConfigurationObject getKeyPassword() {
-        return keyPassword;
-    }
-
-    public void setKeyPassword(SecurityCredentialConfigurationObject keyPassword) {
-        this.keyPassword = keyPassword;
     }
 
     public DeploymentZoneConfigurationObject getDeploymentZone() {
@@ -148,21 +109,28 @@ public class BaseSubsystemConfigurationObject {
         this.deploymentZone = deploymentZone;
     }
 
+    public ApplicationInstanceImageConfigurationObject getSubsystemImageProperties() {
+        return subsystemImageProperties;
+    }
+
+    public void setSubsystemImageProperties(ApplicationInstanceImageConfigurationObject subsystemImageProperties) {
+        this.subsystemImageProperties = subsystemImageProperties;
+    }
+
+    //
+     // Standard Methods
+    //
+
     @Override
     public String toString() {
-        return "BaseSubsystemPropertyFile{" +
-                "subsystemInstant=" + subsystemInstant +
-                ", deploymentMode=" + deploymentMode +
-                ", deploymentSites=" + deploymentSites +
-                ", kubeReadinessProbe=" + kubeReadinessProbe +
-                ", kubeLivelinessProbe=" + kubeLivelinessProbe +
-                ", prometheusPort=" + prometheusPort +
-                ", jolokiaPort=" + jolokiaPort +
-                ", subsystemImageProperties=" + subsystemImageProperties +
-                ", trustStorePassword=" + trustStorePassword +
-                ", keyPassword=" + keyPassword +
-                ", deploymentZone=" + deploymentZone +
-                "," + super.toString() +
-                '}';
+        return new ToStringBuilder(this)
+                .append("solution", solution)
+                .append("application", application)
+                .append("applicationInstance", applicationInstance)
+                .append("deploymentMode", deploymentMode)
+                .append("deploymentSites", deploymentSites)
+                .append("deploymentZone", deploymentZone)
+                .append("subsystemImageProperties", subsystemImageProperties)
+                .toString();
     }
 }

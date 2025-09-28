@@ -10,10 +10,9 @@
     </parent>
 
     <artifactId>dricats-middleware-datagrid-common</artifactId>
+    <name>DRICaTS :: Middleware :: DataGrid :: Common</name>
 
     <properties>
-        <maven.compiler.source>21</maven.compiler.source>
-        <maven.compiler.target>21</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
@@ -27,12 +26,6 @@
             <artifactId>cdi-api</artifactId>
             <version>${version-javax.enterprise-cdi-api}</version>
             <scope>compile</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.jboss.spec.javax.annotation</groupId>
-            <artifactId>jboss-annotations-api_1.3_spec</artifactId>
-            <scope>provided</scope>
         </dependency>
 
         <dependency>

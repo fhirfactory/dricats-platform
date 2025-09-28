@@ -21,7 +21,9 @@
  */
 package net.fhirfactory.dricats.internals.common.naming;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.apache.commons.lang3.SerializationUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -39,6 +41,8 @@ public class CommonName implements Serializable {
     // Member Variables
     //
 
+    public static String DEFAULT_NAME = "UNNAMED";
+
     private String value;
 
     //
@@ -46,7 +50,7 @@ public class CommonName implements Serializable {
     //
 
     public CommonName() {
-        value = "";
+        value = DEFAULT_NAME;
     }
 
     public CommonName(String value) {
@@ -81,6 +85,12 @@ public class CommonName implements Serializable {
 
     public void setValue(String tokenContent) {
         this.value = new String(tokenContent);
+    }
+
+    @JsonIgnore
+    public boolean isUnnamed() {
+        boolean test = StringUtils.isEmpty(this.value) || DEFAULT_NAME.equals(this.value);
+        return (test);
     }
 
     //

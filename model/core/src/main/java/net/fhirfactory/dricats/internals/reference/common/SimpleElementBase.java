@@ -52,7 +52,8 @@ public abstract class SimpleElementBase extends SimpleDistributableObject implem
         this.name = name;
         this.documentation = documentation;
         this.specialization = specialization;
-        this.properties = properties;
+        this.properties = new HashMap<>(properties);
+        this.properties.putAll(properties);
         this.elementType = elementType;
         getLogger().trace("ElementBase(name, documentation, specialization, properties, elementType): constructed");
     }
@@ -62,7 +63,8 @@ public abstract class SimpleElementBase extends SimpleDistributableObject implem
         this.name = ori.name;
         this.documentation = ori.documentation;
         this.specialization = ori.specialization;
-        this.properties = ori.properties;
+        this.properties = new HashMap<>();
+        this.properties.putAll(ori.properties);
         this.elementType = ori.elementType;
         getLogger().trace("ElementBase(ori): constructed");
     }

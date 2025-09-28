@@ -18,6 +18,5 @@
         <module>satellite</module>
         <module>central</module>
         <module>ui</module>
-        <module>uitest</module>
     </modules>
 </project>

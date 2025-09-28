@@ -1,0 +1,41 @@
+---
+solution:
+  solutionName: "CareFlow"
+  solutionGroup: "ACTHealth"
+  solutionDescription: "CareFlow Integrated Care Platform"
+  defaultObjectIdentifierType:
+    code: "MRN"
+    value: "12345"
+    display: "Medical Record Number"
+    system: "urn:id:mrn"
+  encryptedAtRestRequired: true
+  encryptedAtTransitRequired: true
+application:
+  vendorName: "DRICaTS"
+  applicationName: "OAM"
+  applicationVersion: "1.2.3"
+applicationInstance:
+  deploymentConfigFilename: "/etc/dricats/oam.yaml"
+  otherDeploymentFlags: "debug=true;trace=false"
+  applicationInstanceId: "oam-instance-001"
+  deploymentMode: "CONTAINER_KUBERNETES"
+deploymentMode:
+  siteName: "Canberra-Primary"
+  siteInstanceReplicationCount: 3
+  siteConcurrencyMode: "ROUND_ROBIN"
+  otherSiteDeploymentFlags:
+    maintenanceWindow: "Sun-02:00"
+    preferredAZ: "az-east-1"
+deploymentSites:
+  siteCount: 2
+  siteNames:
+  - "Canberra-Primary"
+  - "Canberra-Secondary"
+deploymentZone:
+  securityZoneName: "prod-secure"
+  nameSpace: "oam-prod"
+subsystemImageProperties:
+  repository: "registry.example.com/dricats"
+  imageName: "oam-service"
+  imageVersion: "2025.09.28"
+  pullPolicy: "IfNotPresent"

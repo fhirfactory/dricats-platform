@@ -108,16 +108,8 @@ public abstract class ContainerBasedSubsystemConfigurationObject extends BaseSub
                 ", debugProperties=" + debugProperties +
                 ", hapiAPIKey=" + hapiAPIKey +
                 ", javaDeploymentParameters=" + javaDeploymentParameters +
-                ", subsystemInstant=" + getSubsystemInstant() +
                 ", deploymentMode=" + getDeploymentMode() +
                 ", deploymentSites=" + getDeploymentSites() +
-                ", kubeReadinessProbe=" + getKubeReadinessProbe() +
-                ", kubeLivelinessProbe=" + getKubeLivelinessProbe() +
-                ", prometheusPort=" + getPrometheusPort() +
-                ", jolokiaPort=" + getJolokiaPort() +
-                ", subsystemImageProperties=" + getSubsystemImageProperties() +
-                ", trustStorePassword=" + getTrustStorePassword() +
-                ", keyPassword=" + getKeyPassword() +
                 '}';
     }
 }

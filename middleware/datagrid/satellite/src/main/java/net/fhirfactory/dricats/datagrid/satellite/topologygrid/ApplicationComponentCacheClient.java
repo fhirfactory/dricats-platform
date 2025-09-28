@@ -3,7 +3,8 @@ package net.fhirfactory.dricats.datagrid.satellite.topologygrid;
 import net.fhirfactory.dricats.internals.common.DistributableObjectId;
 import net.fhirfactory.dricats.internals.common.naming.CommonName;
 import net.fhirfactory.dricats.internals.oam.topology.ApplicationComponentSummary;
-import net.fhirfactory.dricats.internals.reference.layers.application.ApplicationComponent;
+import net.fhirfactory.dricats.datagrid.topology.IApplicationComponentCacheClient;
+import net.fhirfactory.dricats.internals.topology.implementation.layers.application.valuesets.SoftwareComponentTypeEnum;
 import org.infinispan.Cache;
 import org.infinispan.configuration.cache.CacheMode;
 import org.infinispan.configuration.cache.ConfigurationBuilder;
@@ -15,6 +16,7 @@ import org.slf4j.LoggerFactory;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.enterprise.context.ApplicationScoped;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
@@ -25,7 +27,7 @@ import java.util.concurrent.TimeUnit;
  * If an entry is missing, it will publish a load request so a store node can load and populate it.
  */
 @ApplicationScoped
-public class ApplicationComponentCacheClient {
+public class ApplicationComponentCacheClient implements IApplicationComponentCacheClient {
     private static final Logger LOG = LoggerFactory.getLogger(ApplicationComponentCacheClient.class);
 
     public static final String DEFAULT_CACHE_NAME = "ApplicationComponentCache";
@@ -106,11 +108,13 @@ public class ApplicationComponentCacheClient {
         LOG.info("ApplicationComponentCacheClient stopped");
     }
 
+    @Override
     public void put(ApplicationComponentSummary item) {
         String key = resolveKey(item);
         cache.put(key, item);
     }
 
+    @Override
     public ApplicationComponentSummary get(String key) {
         ApplicationComponentSummary existing = cache.get(key);
         if (existing != null) {
@@ -120,10 +124,13 @@ public class ApplicationComponentCacheClient {
         return cache.get(key);
     }
 
+    @Override
     public ApplicationComponentSummary remove(String key) { return cache.remove(key); }
 
+    @Override
     public boolean contains(String key) { return cache.containsKey(key); }
 
+    @Override
     public boolean containsOrLoad(String key) {
         if (contains(key)) { return true; }
         try {
@@ -134,7 +141,8 @@ public class ApplicationComponentCacheClient {
         return false;
     }
 
-    protected String resolveKey(ApplicationComponentSummary item) {
+    @Override
+    public String resolveKey(ApplicationComponentSummary item) {
         String key = null;
         try {
             DistributableObjectId objectId = item.getObjectID();
@@ -166,4 +174,13 @@ public class ApplicationComponentCacheClient {
     }
 
     public Optional<Cache<String, ApplicationComponentSummary>> getCache() { return Optional.ofNullable(cache); }
+
+    public ApplicationComponentSummary getSolutionComponent() {
+        throw new UnsupportedOperationException("Not implemented yet");
+    }
+
+    public List<ApplicationComponentSummary> getContainedComponents(DistributableObjectId parent, SoftwareComponentTypeEnum componentType) {
+        throw new UnsupportedOperationException("Not implemented yet");
+    }
+
 }

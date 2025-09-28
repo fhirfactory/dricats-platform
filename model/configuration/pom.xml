@@ -40,13 +40,30 @@
     <dependency>
         <groupId>com.fasterxml.jackson.core</groupId>
         <artifactId>jackson-core</artifactId>
+        <version>${version-com.fasterxml.jackson.core-jackson-core}</version>
+        <scope>compile</scope>
     </dependency>
 
     <dependency>
         <groupId>com.fasterxml.jackson.datatype</groupId>
         <artifactId>jackson-datatype-jsr310</artifactId>
+        <version>${version-com.fasterxml.jackson.datatype-jackson-datatype-jsr310}</version>
         <scope>compile</scope>
     </dependency>
+
+        <dependency>
+            <groupId>com.fasterxml.jackson.dataformat</groupId>
+            <artifactId>jackson-dataformat-yaml</artifactId>
+            <version>${version-com.fasterxml.jackson.core-jackson-databind}</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-annotations</artifactId>
+            <version>${version-com.fasterxml.jackson.annotations-jackson-annotations}</version>
+            <scope>compile</scope>
+        </dependency>
 
     <!--*******************************************************************************-->
     <!-- Logging (SLF4J) Libraries                                                     -->
@@ -65,11 +82,59 @@
     </dependency>
 
     <dependency>
-    	<groupId>net.fhirfactory.dricats</groupId>
-    	<artifactId>dricats-model-core</artifactId>
-    	<version>1.0.0-SNAPSHOT</version>
+        <groupId>net.fhirfactory.dricats</groupId>
+        <artifactId>dricats-model-core</artifactId>
+        <version>1.0.0-SNAPSHOT</version>
     </dependency>
+
+    <!-- Junit5 (tests) -->
+    <dependency>
+        <groupId>org.junit.jupiter</groupId>
+        <artifactId>junit-jupiter-engine</artifactId>
+        <scope>test</scope>
+    </dependency>
+    <dependency>
+        <groupId>org.junit.jupiter</groupId>
+        <artifactId>junit-jupiter-api</artifactId>
+        <scope>test</scope>
+    </dependency>
+
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-core</artifactId>
+            <version>${version-com.fasterxml.jackson.core-jackson-core}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>${version-com.fasterxml.jackson.core-jackson-databind}</version>
+            <scope>test</scope>
+        </dependency>
+
+
+        <dependency>
+            <groupId>com.fasterxml.jackson.datatype</groupId>
+            <artifactId>jackson-datatype-jsr310</artifactId>
+            <version>${version-com.fasterxml.jackson.datatype-jackson-datatype-jsr310}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.fasterxml.jackson.dataformat</groupId>
+            <artifactId>jackson-dataformat-yaml</artifactId>
+            <version>${version-com.fasterxml.jackson.core-jackson-databind}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-annotations</artifactId>
+            <version>${version-com.fasterxml.jackson.annotations-jackson-annotations}</version>
+            <scope>test</scope>
+        </dependency>
+
     </dependencies>
 
-
-        </project>
+</project>

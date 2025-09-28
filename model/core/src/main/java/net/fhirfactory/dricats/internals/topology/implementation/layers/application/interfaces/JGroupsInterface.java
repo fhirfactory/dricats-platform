@@ -22,7 +22,7 @@
 package net.fhirfactory.dricats.internals.topology.implementation.layers.application.interfaces;
 
 import net.fhirfactory.dricats.internals.common.DistributableObjectId;
-import net.fhirfactory.dricats.internals.configuration.ports.internal.JGroupsInterfaceConfigurationObject;
+import net.fhirfactory.dricats.internals.configuration.segments.ports.internal.JGroupsInterfaceConfigurationObject;
 import net.fhirfactory.dricats.internals.topology.implementation.layers.application.interfaces.base.InterfaceImplementationBase;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
@@ -30,7 +30,6 @@ import java.io.Serial;
 import java.io.Serializable;
 import java.net.URI;
 import java.util.Objects;
-import java.util.StringJoiner;
 
 public class JGroupsInterface extends InterfaceImplementationBase implements Serializable {
     //
