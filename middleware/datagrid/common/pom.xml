@@ -22,23 +22,23 @@
         <!--*******************************************************************************-->
 
         <dependency>
-            <groupId>javax.enterprise</groupId>
-            <artifactId>cdi-api</artifactId>
-            <version>${version-javax.enterprise-cdi-api}</version>
-            <scope>compile</scope>
+            <groupId>jakarta.enterprise</groupId>
+            <artifactId>jakarta.enterprise.cdi-api</artifactId>
+            <version>4.0.1</version>
+            <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>org.infinispan</groupId>
             <artifactId>infinispan-core</artifactId>
-            <version>${version-org.infinispan}</version>
+            <!-- version managed by BOM: ${version-org.infinispan} -->
         </dependency>
 
 
         <dependency>
             <groupId>jakarta.ws.rs</groupId>
             <artifactId>jakarta.ws.rs-api</artifactId>
-            <version>${version-jakarta.ra-api}</version>
+            <!-- version managed by BOM: ${version-jakarta.ra-api} -->
             <scope>provided</scope>
         </dependency>
 

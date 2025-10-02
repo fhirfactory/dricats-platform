@@ -35,6 +35,7 @@ import net.fhirfactory.dricats.platform.middleware.jgroups.jchannel.base.JChanne
 import net.fhirfactory.dricats.platform.middleware.jgroups.valuesets.JGroupTransactionResultEnum;
 import org.apache.commons.lang3.StringUtils;
 import org.jgroups.Message;
+import org.jgroups.ObjectMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -123,7 +124,7 @@ public class NotificationDistributionService extends JChannelControllerBase {
 			result.setTimestamp(LocalDateTime.now());
 			return (result);
 		}
-		Message multicastMessage = new Message(null, messageString);
+		Message multicastMessage = new ObjectMessage(null, messageString);
         try {
 			getLocalChannel().send(multicastMessage);
         } catch (Exception e) {
@@ -155,7 +156,7 @@ public class NotificationDistributionService extends JChannelControllerBase {
             getLogger().info(".sendMessage(): Exit, result -> {}", result);
             return (result);
 		}
-		Message multicastMessage = new Message(targetAddress.getJGroupsAddress(), messageString);
+		Message multicastMessage = new ObjectMessage(targetAddress.getJGroupsAddress(), messageString);
         JGroupsTransactionResult result = new JGroupsTransactionResult();
 		try {
             getLogger().info(".sendMessage(): Sending message to -> {}", targetAddress);

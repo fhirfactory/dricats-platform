@@ -21,6 +21,9 @@
  */
 package net.fhirfactory.dricats.datagrid.satellite.taskgrid;
 
+import jakarta.annotation.PostConstruct;
+import jakarta.annotation.PreDestroy;
+import jakarta.enterprise.context.ApplicationScoped;
 import net.fhirfactory.dricats.internals.common.DistributableObjectId;
 import net.fhirfactory.dricats.internals.common.naming.CommonName;
 import net.fhirfactory.dricats.internals.tasking.InternalTask;
@@ -32,9 +35,6 @@ import org.infinispan.manager.DefaultCacheManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
-import javax.enterprise.context.ApplicationScoped;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
@@ -259,34 +259,7 @@ public class DistributedTaskCache {
 
     protected String resolveKey(InternalTask task) {
         // Prefer DistributableObjectId.id (CommonName), then IAdministrativeTask.id (CommonName), else generate and set
-        String key = null;
-        try {
-            DistributableObjectId objectId = task.getObjectID();
-            if (objectId != null && objectId.getId() != null && objectId.getId().getValue() != null && !objectId.getId().getValue().isEmpty()) {
-                key = objectId.getId().getValue();
-            }
-        } catch (Exception e) {
-            // ignore and try next
-        }
-        if (key == null) {
-            try {
-                CommonName cn = task.getId();
-                if (cn != null && cn.getValue() != null && !cn.getValue().isEmpty()) {
-                    key = cn.getValue();
-                }
-            } catch (Exception e) {
-                // ignore and generate
-            }
-        }
-        if (key == null) {
-            key = UUID.randomUUID().toString();
-            // Best-effort: set IAdministrativeTask.id if missing
-            try {
-                task.setId(new CommonName(key));
-            } catch (Exception e) {
-                LOG.debug("resolveKey(IAdministrativeTask): unable to set generated id on task", e);
-            }
-        }
+        String key = task.resolveKey();
         return key;
     }
 

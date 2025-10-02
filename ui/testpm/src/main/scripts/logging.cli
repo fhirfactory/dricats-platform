@@ -1,0 +1,4 @@
+/subsystem=logging/logger=net.fhirfactory.dricats:add(level=DEBUG)
+/subsystem=logging/pattern-formatter=pattern-formatter:add(pattern="%d{yyyy-MM-dd HH:mm:ss,SSS} %-5p [%c] (%t) %s%e%n")
+/subsystem=logging/console-handler=CONSOLE:write-attribute(name=level,value=DEBUG)
+/subsystem=weld:write-attribute(name=non-portable-mode,value=true)

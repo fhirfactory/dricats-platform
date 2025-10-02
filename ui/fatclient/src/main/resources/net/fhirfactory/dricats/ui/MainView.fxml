@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane xmlns:fx="http://javafx.com/fxml/1" prefWidth="1100.0" prefHeight="600.0"
+            fx:controller="net.fhirfactory.dricats.ui.MainViewController">
+    <children>
+        <TabPane fx:id="tabPane" prefWidth="1100.0" prefHeight="600.0" tabClosingPolicy="UNAVAILABLE" />
+    </children>
+</AnchorPane>

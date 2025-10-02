@@ -24,6 +24,8 @@ package net.fhirfactory.dricats.middleware.oam.ui;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import net.fhirfactory.dricats.internals.common.DistributableObjectId;
 import net.fhirfactory.dricats.internals.common.naming.CommonName;
 import net.fhirfactory.dricats.internals.oam.metrics.ApplicationComponentMetricsData;
@@ -64,6 +66,8 @@ public class OamRestClient {
         this.httpClient = HttpClient.newHttpClient();
         this.mapper = new ObjectMapper()
                 .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        this.mapper.registerModule(new JavaTimeModule());
+        this.mapper.enable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
         this.baseUrl = baseUrl;
     }
 
@@ -79,14 +83,14 @@ public class OamRestClient {
     //
 
     public ApplicationComponentSummaryList listComponents() {
-        String url = normalize(baseUrl) + "/oam/applicationcomponents";
+        String url = normalize(baseUrl) + "/oam/applicationcomponent";
         HttpRequest req = HttpRequest.newBuilder().uri(URI.create(url)).GET().build();
         Instant start = Instant.now();
         try {
             LOG.info("[UI] GET {} - sending", url);
             HttpResponse<String> resp = httpClient.send(req, HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8));
             Duration d = Duration.between(start, Instant.now());
-            LOG.info("[UI] GET {} - status={} duration={}ms bytes={}", url, resp.statusCode(), d.toMillis(), resp.body() == null ? 0 : resp.body().length());
+            LOG.info("[UI] GET {} - status={} duration={}ms bytes={}, body={}", url, resp.statusCode(), d.toMillis(), resp.body() == null ? 0 : resp.body().length(), resp.body());
             if (resp.statusCode() >= 200 && resp.statusCode() < 300) {
                 return mapper.readValue(resp.body(), new TypeReference<ApplicationComponentSummaryList>(){});
             } else {
@@ -101,7 +105,7 @@ public class OamRestClient {
     public List<ApplicationComponentSummary> listSubcomponents(String id) {
         String url;
         try {
-            url = normalize(baseUrl) + "/oam/applicationcomponents/" + urlEncode(id) + "/subcomponents";
+            url = normalize(baseUrl) + "/oam/applicationcomponent/" + urlEncode(id) + "/subcomponents";
         } catch (IOException e) {
             LOG.error("[UI] urlEncode failed for id={}: {}", id, e.toString());
             return Collections.emptyList();
@@ -153,19 +157,8 @@ public class OamRestClient {
     }
 
     public static String resolveKey(ApplicationComponentSummary s) {
-        try {
-            CommonName cn = s.getId();
-            if (cn != null && cn.getValue() != null && !cn.getValue().isEmpty()) {
-                return cn.getValue();
-            }
-        } catch (Exception ignored) {}
-        try {
-            DistributableObjectId oid = s.getObjectID();
-            if (oid != null && oid.getId() != null && oid.getId().getValue() != null && !oid.getId().getValue().isEmpty()) {
-                return oid.getId().getValue();
-            }
-        } catch (Exception ignored) {}
-        return Objects.toString(s.getName(), "");
+        String key = s.resolveKey();
+        return(key);
     }
 
     private static String normalize(String base) {

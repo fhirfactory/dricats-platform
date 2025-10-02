@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>net.fhirfactory.dricats</groupId>
+        <artifactId>dricats-ui</artifactId>
+        <version>1.0.0-SNAPSHOT</version>
+    </parent>
+
+    <name>DRICaTS :: UI :: Presentation Manager (BEFE)</name>
+    <artifactId>dricats-ui-pm</artifactId>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+
+    <dependencies>
+
+        <!-- DRICaTS Core Model -->
+        <dependency>
+            <groupId>net.fhirfactory.dricats</groupId>
+            <artifactId>dricats-model-core</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <!-- DRICaTS Configuration Model -->
+
+        <dependency>
+            <groupId>net.fhirfactory.dricats</groupId>
+            <artifactId>dricats-model-configuration</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <!-- DRICaTS Local Configuration Server -->
+
+        <dependency>
+            <groupId>net.fhirfactory.dricats</groupId>
+            <artifactId>dricats-middleware-configserver</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <!-- DRICaTS Common DataGrid Services -->
+
+        <dependency>
+            <groupId>net.fhirfactory.dricats</groupId>
+            <artifactId>dricats-middleware-datagrid-common</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <!-- Jackson for serialising distribution map to JSON strings in JDBC layer -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>${version-com.fasterxml.jackson.core-jackson-databind}</version>
+        </dependency>
+
+        <!-- Apache Camel for REST exposure -->
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-cdi</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-rest</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-undertow</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-jackson</artifactId>
+        </dependency>
+
+        <!--*******************************************************************************-->
+        <!-- JGroups Manipulation Libraries                                                -->
+        <!--*******************************************************************************-->
+
+        <dependency>
+            <groupId>org.jgroups</groupId>
+            <artifactId>jgroups</artifactId>
+            <version>${version-org.jgroups-jgroups}</version>
+            <scope>compile</scope>
+        </dependency>
+    </dependencies>
+
+</project>

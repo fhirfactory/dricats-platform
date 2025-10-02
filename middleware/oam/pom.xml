@@ -17,6 +17,5 @@
         <module>common</module>
         <module>satellite</module>
         <module>central</module>
-        <module>ui</module>
     </modules>
 </project>

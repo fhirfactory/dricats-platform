@@ -1,5 +1,10 @@
 package net.fhirfactory.dricats.datagrid.central.topologygrid;
 
+import jakarta.annotation.PostConstruct;
+import jakarta.annotation.PreDestroy;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.inject.Instance;
+import jakarta.inject.Inject;
 import net.fhirfactory.dricats.internals.common.DistributableObjectId;
 import net.fhirfactory.dricats.internals.common.naming.CommonName;
 import net.fhirfactory.dricats.internals.oam.topology.ApplicationComponentSummary;
@@ -18,11 +23,6 @@ import org.infinispan.notifications.cachelistener.event.CacheEntryEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
-import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.inject.Instance;
-import javax.inject.Inject;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
@@ -122,7 +122,7 @@ public class DistributedApplicationComponentCacheWithStore {
     }
 
     public void put(ApplicationComponentSummary item) {
-        String key = resolveKey(item);
+        String key = item.resolveKey();
         cache.put(key, item);
     }
 
@@ -212,7 +212,7 @@ public class DistributedApplicationComponentCacheWithStore {
                     String key = e.getKey();
                     try {
                         for (ApplicationComponentSummary ac : repo.getAll()) {
-                            if (key.equals(resolveKey(ac))) {
+                            if (key.equals(ac.resolveKey())) {
                                 repo.remove(ac);
                                 LOG.debug("[{}] persisted REMOVE key={} value={}", cacheName, key, ac);
                                 break;
@@ -232,7 +232,7 @@ public class DistributedApplicationComponentCacheWithStore {
                     String key = e.getKey();
                     try {
                         for (ApplicationComponentSummary ac : repo.getAll()) {
-                            if (key.equals(resolveKey(ac))) {
+                            if (key.equals(ac.resolveKey())) {
                                 repo.remove(ac);
                                 LOG.debug("[{}] persisted EXPIRE key={} value={}", cacheName, key, ac);
                                 break;
@@ -263,7 +263,7 @@ public class DistributedApplicationComponentCacheWithStore {
                 // For now, attempt a simple linear scan of repo.getAll() and match by element id/name.
                 try {
                     for (ApplicationComponentSummary ac : repo.getAll()) {
-                        String candidate = resolveKey(ac);
+                        String candidate = ac.resolveKey();
                         if (key.equals(candidate)) {
                             cache.put(key, ac);
                             LOG.info("[{}] LoadRequestListener: populated key={} from repository", cacheName, key);
@@ -275,37 +275,6 @@ public class DistributedApplicationComponentCacheWithStore {
                 }
             });
         }
-    }
-
-    protected String resolveKey(ApplicationComponentSummary item) {
-        String key = null;
-        try {
-            DistributableObjectId objectId = item.getObjectID();
-            if (objectId != null && objectId.getId() != null && objectId.getId().getValue() != null && !objectId.getId().getValue().isEmpty()) {
-                key = objectId.getId().getValue();
-            }
-        } catch (Exception e) {
-            // ignore
-        }
-        if (key == null) {
-            try {
-                CommonName cn = item.getId();
-                if (cn != null && cn.getValue() != null && !cn.getValue().isEmpty()) {
-                    key = cn.getValue();
-                }
-            } catch (Exception e) {
-                // ignore
-            }
-        }
-        if (key == null) {
-            key = UUID.randomUUID().toString();
-            try {
-                item.setId(new CommonName(key));
-            } catch (Exception e) {
-                LOG.debug("resolveKey(ApplicationComponent): unable to set generated id on item", e);
-            }
-        }
-        return key;
     }
 
     public Optional<Cache<String, ApplicationComponentSummary>> getCache() { return Optional.ofNullable(cache); }

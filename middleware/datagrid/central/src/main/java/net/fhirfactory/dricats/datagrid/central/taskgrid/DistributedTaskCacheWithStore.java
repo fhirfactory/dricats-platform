@@ -22,6 +22,11 @@
 package net.fhirfactory.dricats.datagrid.central.taskgrid;
 
 
+import jakarta.annotation.PostConstruct;
+import jakarta.annotation.PreDestroy;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.inject.Instance;
+import jakarta.inject.Inject;
 import net.fhirfactory.dricats.internals.common.DistributableObjectId;
 import net.fhirfactory.dricats.internals.common.naming.CommonName;
 import net.fhirfactory.dricats.internals.tasking.InternalTask;
@@ -40,11 +45,6 @@ import org.infinispan.notifications.cachelistener.event.CacheEntryEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
-import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.inject.Instance;
-import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -184,7 +184,7 @@ public class DistributedTaskCacheWithStore {
             LOG.warn("put(InternalTask): task is null, ignoring");
             return;
         }
-        String key = resolveKey(task);
+        String key = task.resolveKey();
         taskCache.put(key, task);
         persistence().ifPresent(p -> {
             try {
@@ -429,35 +429,6 @@ public class DistributedTaskCacheWithStore {
                 LOG.debug("LoadRequestListener[{}]: error processing request for key={}", cacheName, key, ex);
             }
         }
-    }
-
-    protected String resolveKey(InternalTask task) {
-        String key = null;
-        try {
-            DistributableObjectId objectId = task.getObjectID();
-            if (objectId != null && objectId.getId() != null && objectId.getId().getValue() != null && !objectId.getId().getValue().isEmpty()) {
-                key = objectId.getId().getValue();
-            }
-        } catch (Exception e) {
-        }
-        if (key == null) {
-            try {
-                CommonName cn = task.getId();
-                if (cn != null && cn.getValue() != null && !cn.getValue().isEmpty()) {
-                    key = cn.getValue();
-                }
-            } catch (Exception e) {
-            }
-        }
-        if (key == null) {
-            key = UUID.randomUUID().toString();
-            try {
-                task.setId(new CommonName(key));
-            } catch (Exception e) {
-                LOG.debug("resolveKey(InternalTask): unable to set generated id on task", e);
-            }
-        }
-        return key;
     }
 
     public Optional<Cache<String, InternalTask>> getCache() {

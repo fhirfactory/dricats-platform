@@ -23,7 +23,7 @@ package net.fhirfactory.dricats.datagrid.satellite.notificationgrid;
 
 import net.fhirfactory.dricats.internals.common.DistributableObjectId;
 import net.fhirfactory.dricats.internals.common.naming.QualifiedName;
-import net.fhirfactory.dricats.internals.common.naming.QualifiedNameToken;
+import net.fhirfactory.dricats.internals.common.naming.IdToken;
 import net.fhirfactory.dricats.internals.events.notifications.NotificationObject;
 import net.fhirfactory.dricats.internals.events.notifications.NotificationSet;
 import net.fhirfactory.dricats.internals.events.interfaces.ILocalNotificationService;
@@ -50,7 +50,7 @@ public class LocalNotificationCache implements ILocalNotificationService {
     // Attributes
     //
 
-    private Map<QualifiedNameToken, Queue<NotificationObject>> incomingQueueCache ;
+    private Map<IdToken, Queue<NotificationObject>> incomingQueueCache ;
     private Queue<NotificationObject> outgoingQueueCache ;
 
     @Inject
@@ -73,7 +73,7 @@ public class LocalNotificationCache implements ILocalNotificationService {
         return LOG;
     }
 
-    protected Map<QualifiedNameToken, Queue<NotificationObject>> getIncomingQueueCache() {
+    protected Map<IdToken, Queue<NotificationObject>> getIncomingQueueCache() {
         return incomingQueueCache;
     }
 
@@ -99,19 +99,19 @@ public class LocalNotificationCache implements ILocalNotificationService {
             getLogger().warn(".queueMessage(): Exit, Message target is null");
             return;
         }
-        QualifiedNameToken qualifiedNameToken = NotificationObject.getTarget().getQualifiedName().getQualifiedNameToken();
-        if(!getIncomingQueueCache().containsKey(qualifiedNameToken)){
+        IdToken idToken = NotificationObject.getTarget().getQualifiedName().getIdToken();
+        if(!getIncomingQueueCache().containsKey(idToken)){
             Queue<NotificationObject> incomingMessageQueue = new ConcurrentLinkedQueue<>();
             incomingMessageQueue.add(NotificationObject);
-            getIncomingQueueCache().put(qualifiedNameToken, incomingMessageQueue);
+            getIncomingQueueCache().put(idToken, incomingMessageQueue);
         } else {
-            getIncomingQueueCache().get(qualifiedNameToken).add(NotificationObject);
+            getIncomingQueueCache().get(idToken).add(NotificationObject);
         }
         getLogger().debug(".queueMessage(): Exit");
     }
 
     @Override
-    public NotificationObject peekNextNotification( QualifiedNameToken consumerIdToken){
+    public NotificationObject peekNextNotification( IdToken consumerIdToken){
         if(consumerIdToken == null){
             getLogger().debug(".peekNextNotification(): Exit, consumerIdToken is null");
             return(null);
@@ -126,7 +126,7 @@ public class LocalNotificationCache implements ILocalNotificationService {
     }
 
     @Override
-    public NotificationObject pollNextNotification( QualifiedNameToken consumerIdToken){
+    public NotificationObject pollNextNotification( IdToken consumerIdToken){
         getLogger().debug(".pollNextNotification(): Entry, consumerIdToken -> {}", consumerIdToken);
         if(consumerIdToken == null){
             getLogger().debug(".pollNextNotification(): Exit, consumerIdToken is null");
@@ -142,7 +142,7 @@ public class LocalNotificationCache implements ILocalNotificationService {
     }
 
     @Override
-    public NotificationSet pollNextNotification(QualifiedNameToken consumer, Integer size) {
+    public NotificationSet pollNextNotification(IdToken consumer, Integer size) {
         getLogger().debug(".pollNextNotification(): Entry, consumerIdToken -> {}, size -> {}", consumer, size);
         NotificationSet notificationSet = new NotificationSet();
         if(consumer == null){

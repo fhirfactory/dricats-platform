@@ -21,6 +21,8 @@
  */
 package net.fhirfactory.dricats.datagrid.central.taskgrid.h2;
 
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.inject.Alternative;
 import net.fhirfactory.dricats.internals.common.DistributableObjectId;
 import net.fhirfactory.dricats.internals.common.datatypes.EffectiveDate;
 import net.fhirfactory.dricats.internals.common.naming.CommonName;
@@ -32,9 +34,9 @@ import net.fhirfactory.dricats.datagrid.central.taskgrid.spi.ITaskPersistenceSer
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.Priority;
-import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.inject.Alternative;
+import jakarta.annotation.*;
+
+
 import java.sql.*;
 import java.time.LocalDateTime;
 import java.util.*;
@@ -170,7 +172,6 @@ public class H2TaskPersistenceService implements ITaskPersistenceService {
             if (effStart != null) ed.setEffectiveStartDate(effStart);
             if (effEnd != null) ed.setEffectiveEndDate(effEnd);
             oid.setEffectiveDate(ed);
-            oid.setId(qn.getCommonName());
             t.setObjectID(oid);
 
             c.commit();

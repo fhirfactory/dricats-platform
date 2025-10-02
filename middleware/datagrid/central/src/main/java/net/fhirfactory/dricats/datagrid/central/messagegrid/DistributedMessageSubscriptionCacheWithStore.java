@@ -1,8 +1,13 @@
 package net.fhirfactory.dricats.datagrid.central.messagegrid;
 
+import jakarta.annotation.PostConstruct;
+import jakarta.annotation.PreDestroy;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.inject.Instance;
+import jakarta.inject.Inject;
 import net.fhirfactory.dricats.internals.common.DistributableObjectId;
 import net.fhirfactory.dricats.internals.common.naming.CommonName;
-import net.fhirfactory.dricats.internals.pubsub.MessageSubscription;
+import net.fhirfactory.dricats.internals.pubsub.messages.MessageSubscription;
 import net.fhirfactory.dricats.datagrid.central.taskgrid.spi.IMessageSubscriptionPersistenceService;
 import org.infinispan.Cache;
 import org.infinispan.configuration.cache.CacheMode;
@@ -18,11 +23,7 @@ import org.infinispan.notifications.cachelistener.event.CacheEntryEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
-import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.inject.Instance;
-import javax.inject.Inject;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -341,8 +342,8 @@ public class DistributedMessageSubscriptionCacheWithStore {
         String key = null;
         try {
             DistributableObjectId objectId = item.getObjectID();
-            if (objectId != null && objectId.getId() != null && objectId.getId().getValue() != null && !objectId.getId().getValue().isEmpty()) {
-                key = objectId.getId().getValue();
+            if (objectId != null && objectId.getQualifiedName() != null && objectId.getQualifiedName().getCommonName() != null && !objectId.getQualifiedName().getCommonName().getValue().isEmpty()) {
+                key = objectId.getQualifiedName().getCommonName().getValue();
             }
         } catch (Exception e) {
             // ignore

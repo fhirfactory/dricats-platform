@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<installation xmlns="urn:jboss:galleon:provisioning:3.0">
+    <!-- Community WildFly feature pack -->
+    <feature-pack>
+        <location>"wildfly@maven(org.wildfly:wildfly-galleon-pack):31.0.1.Final"</location>
+    </feature-pack>
+  <layers>
+    <!-- HTTP server -->
+    <layer name="undertow"/>
+    <!-- JAX-RS (REST) support -->
+    <layer name="jaxrs"/>
+    <!-- Basic logging -->
+    <layer name="logging"/>
+    <!-- Management (optional; remove if you don’t need it) -->
+    <!-- <layer name="management"/> -->
+  </layers>
+
+  <!-- Optional: trim to reduce size -->
+  <packages>
+    <exclude name="org.wildfly.test.feature.pack"/>
+  </packages>
+</installation>

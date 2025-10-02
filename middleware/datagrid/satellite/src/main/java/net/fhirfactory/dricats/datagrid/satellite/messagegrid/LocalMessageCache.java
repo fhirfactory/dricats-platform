@@ -21,9 +21,11 @@
  */
 package net.fhirfactory.dricats.datagrid.satellite.messagegrid;
 
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 import net.fhirfactory.dricats.internals.common.DistributableObjectId;
 import net.fhirfactory.dricats.internals.common.naming.QualifiedName;
-import net.fhirfactory.dricats.internals.common.naming.QualifiedNameToken;
+import net.fhirfactory.dricats.internals.common.naming.IdToken;
 import net.fhirfactory.dricats.internals.events.messages.MessageObject;
 import net.fhirfactory.dricats.internals.events.messages.MessageSet;
 import net.fhirfactory.dricats.internals.events.interfaces.ILocalMessageService;
@@ -32,8 +34,6 @@ import net.fhirfactory.dricats.internals.topology.interfaces.ISubsystem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
@@ -52,7 +52,7 @@ public class LocalMessageCache implements ILocalMessageService {
     // Attributes
     //
 
-    private Map<QualifiedNameToken, Queue<MessageObject>> incomingQueueCache ;
+    private Map<IdToken, Queue<MessageObject>> incomingQueueCache ;
     private Queue<MessageObject> outgoingQueueCache ;
 
     @Inject
@@ -75,7 +75,7 @@ public class LocalMessageCache implements ILocalMessageService {
         return LOG;
     }
 
-    protected Map<QualifiedNameToken, Queue<MessageObject>> getIncomingQueueCache() {
+    protected Map<IdToken, Queue<MessageObject>> getIncomingQueueCache() {
         return incomingQueueCache;
     }
 
@@ -101,19 +101,19 @@ public class LocalMessageCache implements ILocalMessageService {
             getLogger().warn(".queueMessage(): Exit, Message target is null");
             return;
         }
-        QualifiedNameToken qualifiedNameToken = messageObject.getTarget().getQualifiedName().getQualifiedNameToken();
-        if(!getIncomingQueueCache().containsKey(qualifiedNameToken)){
+        IdToken idToken = messageObject.getTarget().getQualifiedName().getIdToken();
+        if(!getIncomingQueueCache().containsKey(idToken)){
             Queue<MessageObject> incomingMessageQueue = new ConcurrentLinkedQueue<>();
             incomingMessageQueue.add(messageObject);
-            getIncomingQueueCache().put(qualifiedNameToken, incomingMessageQueue);
+            getIncomingQueueCache().put(idToken, incomingMessageQueue);
         } else {
-            getIncomingQueueCache().get(qualifiedNameToken).add(messageObject);
+            getIncomingQueueCache().get(idToken).add(messageObject);
         }
         getLogger().debug(".queueMessage(): Exit");
     }
 
     @Override
-    public MessageObject peekNextMessage( QualifiedNameToken consumerIdToken){
+    public MessageObject peekNextMessage( IdToken consumerIdToken){
         if(consumerIdToken == null){
             getLogger().debug(".peekIncomingMessage(): Exit, consumerIdToken is null");
             return(null);
@@ -128,7 +128,7 @@ public class LocalMessageCache implements ILocalMessageService {
     }
 
     @Override
-    public MessageObject pollNextMessage( QualifiedNameToken consumerIdToken){
+    public MessageObject pollNextMessage( IdToken consumerIdToken){
         getLogger().debug(".pollNextMessage(): Entry, consumerIdToken -> {}", consumerIdToken);
         if(consumerIdToken == null){
             getLogger().debug(".pollNextMessage(): Exit, consumerIdToken is null");
@@ -196,7 +196,7 @@ public class LocalMessageCache implements ILocalMessageService {
     }
 
     @Override
-    public MessageSet pollNextMessage(QualifiedNameToken consumerId, Integer size) {
+    public MessageSet pollNextMessage(IdToken consumerId, Integer size) {
         getLogger().debug(".pollNextMessage(): Entry, consumerIdToken -> {}, size -> {}", consumerId, size);
         MessageSet messageSet = new MessageSet();
         if(consumerId == null){

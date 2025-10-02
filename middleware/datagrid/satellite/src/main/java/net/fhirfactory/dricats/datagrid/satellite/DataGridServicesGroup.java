@@ -21,6 +21,9 @@
  */
 package net.fhirfactory.dricats.datagrid.satellite;
 
+import jakarta.annotation.PostConstruct;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 import net.fhirfactory.dricats.internals.common.DistributableObjectId;
 import net.fhirfactory.dricats.internals.common.naming.QualifiedName;
 import net.fhirfactory.dricats.internals.common.naming.UnqualifiedName;
@@ -30,9 +33,7 @@ import net.fhirfactory.dricats.internals.topology.interfaces.ISubsystem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.enterprise.context.ApplicationScoped;
-import javax.annotation.PostConstruct;
-import javax.inject.Inject;
+
 import java.io.Serial;
 import java.io.Serializable;
 

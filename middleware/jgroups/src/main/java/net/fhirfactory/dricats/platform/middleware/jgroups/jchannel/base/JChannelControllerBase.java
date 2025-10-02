@@ -21,6 +21,8 @@
  */
 package net.fhirfactory.dricats.platform.middleware.jgroups.jchannel.base;
 
+import jakarta.annotation.PostConstruct;
+import jakarta.inject.Inject;
 import net.fhirfactory.dricats.internals.oam.metrics.interfaces.ILocalMetricsServerInterface;
 import net.fhirfactory.dricats.internals.reference.layers.application.ApplicationComponent;
 import net.fhirfactory.dricats.internals.topology.interfaces.ISubsystem;
@@ -36,8 +38,6 @@ import org.jgroups.View;
 import org.jgroups.blocks.RpcDispatcher;
 import org.slf4j.Logger;
 
-import javax.annotation.PostConstruct;
-import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.List;
 

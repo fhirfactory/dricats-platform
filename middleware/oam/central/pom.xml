@@ -17,29 +17,22 @@
         <dependency>
             <groupId>net.fhirfactory.dricats</groupId>
             <artifactId>dricats-middleware-jgroups</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
+            <version>${project.version}</version>
         </dependency>
+
         <dependency>
             <groupId>net.fhirfactory.dricats</groupId>
             <artifactId>dricats-model-core</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
+            <version>${project.version}</version>
         </dependency>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-        </dependency>
-        <!-- Infinispan for distributed cache -->
-        <dependency>
-            <groupId>org.infinispan</groupId>
-            <artifactId>infinispan-core</artifactId>
-            <version>${version-org.infinispan}</version>
-        </dependency>
+
         <!-- OAM common repository interfaces/impls -->
         <dependency>
             <groupId>net.fhirfactory.dricats</groupId>
             <artifactId>dricats-middleware-datagrid-common</artifactId>
             <version>${project.version}</version>
         </dependency>
+
         <!-- Access ApplicationComponentCacheClient from satellite module -->
         <dependency>
             <groupId>net.fhirfactory.dricats</groupId>
@@ -47,6 +40,38 @@
             <version>${project.version}</version>
         </dependency>
 
+        <!-- Logging -->
+
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <scope>compile</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-core</artifactId>
+            <scope>compile</scope>
+        </dependency>
+
+        <!-- Infinispan for distributed cache -->
+
+        <dependency>
+            <groupId>org.infinispan</groupId>
+            <artifactId>infinispan-core</artifactId>
+            <!-- version managed by BOM: ${version-org.infinispan} -->
+        </dependency>
+
+        <!--*******************************************************************************-->
+        <!-- JGroups Manipulation Libraries                                                -->
+        <!--*******************************************************************************-->
+
+        <dependency>
+            <groupId>org.jgroups</groupId>
+            <artifactId>jgroups</artifactId>
+            <version>${version-org.jgroups-jgroups}</version>
+            <scope>compile</scope>
+        </dependency>
 
         <!-- H2 database for metrics persistence -->
         <dependency>
@@ -54,12 +79,14 @@
             <artifactId>h2</artifactId>
             <version>${version-com.h2database-h2}</version>
         </dependency>
+
         <!-- Jackson for serialising distribution map to JSON strings in JDBC layer -->
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
             <version>${version-com.fasterxml.jackson.core-jackson-databind}</version>
         </dependency>
+
         <!-- Apache Camel for REST exposure -->
         <dependency>
             <groupId>org.apache.camel</groupId>
@@ -69,10 +96,12 @@
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-rest</artifactId>
         </dependency>
+
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-undertow</artifactId>
         </dependency>
+
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-jackson</artifactId>

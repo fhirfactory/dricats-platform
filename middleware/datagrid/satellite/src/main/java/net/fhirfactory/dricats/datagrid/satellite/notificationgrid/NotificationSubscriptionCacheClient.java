@@ -1,8 +1,9 @@
 package net.fhirfactory.dricats.datagrid.satellite.notificationgrid;
 
-import net.fhirfactory.dricats.internals.common.DistributableObjectId;
-import net.fhirfactory.dricats.internals.common.naming.CommonName;
-import net.fhirfactory.dricats.internals.pubsub.NotificationSubscription;
+import jakarta.annotation.PostConstruct;
+import jakarta.annotation.PreDestroy;
+import jakarta.enterprise.context.ApplicationScoped;
+import net.fhirfactory.dricats.internals.pubsub.notifications.NotificationSubscription;
 import org.infinispan.Cache;
 import org.infinispan.configuration.cache.CacheMode;
 import org.infinispan.configuration.cache.ConfigurationBuilder;
@@ -11,11 +12,7 @@ import org.infinispan.manager.DefaultCacheManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
-import javax.enterprise.context.ApplicationScoped;
 import java.util.Optional;
-import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -142,33 +139,7 @@ public class NotificationSubscriptionCacheClient {
     }
 
     protected String resolveKey(NotificationSubscription item) {
-        String key = null;
-        try {
-            DistributableObjectId objectId = item.getObjectID();
-            if (objectId != null && objectId.getId() != null && objectId.getId().getValue() != null && !objectId.getId().getValue().isEmpty()) {
-                key = objectId.getId().getValue();
-            }
-        } catch (Exception e) {
-            // ignore
-        }
-        if (key == null) {
-            try {
-                CommonName cn = item.getId();
-                if (cn != null && cn.getValue() != null && !cn.getValue().isEmpty()) {
-                    key = cn.getValue();
-                }
-            } catch (Exception e) {
-                // ignore
-            }
-        }
-        if (key == null) {
-            key = UUID.randomUUID().toString();
-            try {
-                item.setId(new CommonName(key));
-            } catch (Exception e) {
-                LOG.debug("resolveKey(NotificationSubscription): unable to set generated id on item", e);
-            }
-        }
+        String key = item.resolveKey();
         return key;
     }
 

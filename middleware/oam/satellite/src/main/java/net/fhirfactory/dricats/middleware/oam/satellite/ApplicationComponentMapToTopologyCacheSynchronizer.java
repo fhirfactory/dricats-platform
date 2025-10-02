@@ -1,14 +1,14 @@
 package net.fhirfactory.dricats.middleware.oam.satellite;
 
+import jakarta.annotation.PostConstruct;
+import jakarta.annotation.PreDestroy;
+import jakarta.enterprise.context.ApplicationScoped;
 import net.fhirfactory.dricats.datagrid.satellite.topologygrid.ApplicationComponentCacheClient;
 import net.fhirfactory.dricats.internals.oam.topology.ApplicationComponentSummary;
 import net.fhirfactory.dricats.internals.reference.layers.application.ApplicationComponent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
-import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import java.util.Collection;
 import java.util.Objects;
