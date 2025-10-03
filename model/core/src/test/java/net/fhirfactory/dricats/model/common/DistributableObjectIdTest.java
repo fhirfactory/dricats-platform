@@ -2,7 +2,7 @@ package net.fhirfactory.dricats.model.common;
 
 import net.fhirfactory.dricats.internals.common.DistributableObjectId;
 import net.fhirfactory.dricats.internals.common.naming.QualifiedName;
-import net.fhirfactory.dricats.internals.common.naming.QualifiedNameToken;
+import net.fhirfactory.dricats.internals.common.naming.IdToken;
 import net.fhirfactory.dricats.internals.common.naming.UnqualifiedName;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
@@ -54,7 +54,7 @@ class DistributableObjectIdTest {
         QualifiedName qn = new QualifiedName();
         qn.appendUnqualifiedName(new UnqualifiedName("T","x"));
         qn.appendUnqualifiedName(new UnqualifiedName("U","y"));
-        String token = new QualifiedNameToken(qn).getContent();
+        String token = new IdToken(qn).getContent();
 
         DistributableObjectId id = new DistributableObjectId(token);
         assertNotNull(id.getQualifiedName());

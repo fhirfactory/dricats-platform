@@ -19,7 +19,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.fhirfactory.dricats.ui.uitest.handlers;
+package net.fhirfactory.dricats.ui.uitest.testdata;
 
 import jakarta.annotation.PostConstruct;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -34,6 +34,7 @@ import net.fhirfactory.dricats.internals.pathways.PathwayRouteSegment;
 import net.fhirfactory.dricats.internals.pathways.valuesets.PathwayRouteSelectionCriteriaEnum;
 import net.fhirfactory.dricats.internals.topics.Topic;
 import net.fhirfactory.dricats.ui.serverside.pathways.UIPathwayCacheService;
+import net.fhirfactory.dricats.ui.uitest.handlers.PathwayResourceHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -75,7 +76,7 @@ public class PathwayTestResourceSetBuilder {
     public void initialise(){
         LOG.debug(".initialise(): Entry");
         try {
-            createTestPathways();
+            // createTestPathways();
             pathwayCacheService.setInitialised(true);
         } catch (Exception e){
             LOG.warn(".initialise(): Failed to pre-populate test pathways: {}", e.getMessage());
@@ -132,7 +133,7 @@ public class PathwayTestResourceSetBuilder {
     /**
      * Create and register some simple test pathways in the cache.
      */
-    public void createTestPathways(){
+/*    public void createTestPathways(){
         LOG.info("Creating sample MessageProcessingPathway data for UI testing");
         // LIMS --> PAS
         Pathway pathologyResults = buildPathway("PathologyResults");
@@ -156,6 +157,7 @@ public class PathwayTestResourceSetBuilder {
 
         LOG.info("Added {} test pathways to cache", getPathwayCacheService().getPathways().size());
     }
+
 
     private DistributableObjectId buildPathwayRoute(DistributableObjectId pathwayId, PathwayRouteSelectionCriteriaEnum pattern, String a, String b, String c){
         // Create segment with deterministic ID
@@ -230,5 +232,5 @@ public class PathwayTestResourceSetBuilder {
         return p;
     }
 
-    private
+    */
 }

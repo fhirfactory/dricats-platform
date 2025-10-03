@@ -19,12 +19,12 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.fhirfactory.dricats.middleware.oam.uitest;
+package net.fhirfactory.dricats.ui.uitest;
 
 import jakarta.annotation.PostConstruct;
 import jakarta.enterprise.context.ApplicationScoped;
-import net.fhirfactory.dricats.middleware.oam.uitest.configuration.UITestServerConfiguration;
-import net.fhirfactory.dricats.middleware.oam.uitest.configuration.UITestServerConfigurationLoader;
+import net.fhirfactory.dricats.ui.uitest.configuration.UITestServerConfiguration;
+import net.fhirfactory.dricats.ui.uitest.configuration.UITestServerConfigurationLoader;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.builder.RouteBuilder;
 import org.slf4j.Logger;

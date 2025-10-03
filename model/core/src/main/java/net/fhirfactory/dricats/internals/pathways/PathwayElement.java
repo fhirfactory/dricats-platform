@@ -23,18 +23,25 @@
 package net.fhirfactory.dricats.internals.pathways;
 
 import net.fhirfactory.dricats.internals.common.DistributableObjectId;
+import net.fhirfactory.dricats.internals.common.naming.QualifiedName;
+import net.fhirfactory.dricats.internals.common.naming.UnqualifiedName;
 import net.fhirfactory.dricats.internals.reference.relationships.FlowRelationship;
+import net.fhirfactory.dricats.internals.reference.relationships.valuesets.RelationshipType;
+import net.fhirfactory.dricats.internals.topics.Topic;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
-public class PathwaySegmentPathElement extends FlowRelationship implements Serializable {
+public class PathwayElement extends FlowRelationship implements Serializable {
     //
     // Housekeeping
     //
-    private static final Logger LOG = LoggerFactory.getLogger(PathwaySegmentPathElement.class);
+    private static final Logger LOG = LoggerFactory.getLogger(PathwayElement.class);
     @Serial
     private static final long serialVersionUID = -12345678900001L;
 
@@ -42,19 +49,31 @@ public class PathwaySegmentPathElement extends FlowRelationship implements Seria
     // Attributes
     //
     private DistributableObjectId utilisedApplicationService;
+    private List<Topic> supportedTopics;
 
     //
     // Constructor(s)
     //
-    public PathwaySegmentPathElement(){
+    public PathwayElement(){
         super();
+        this.supportedTopics = new ArrayList<>();
     }
 
-    public PathwaySegmentPathElement(String relationshipID, String relationshipName, String relationshipDescription){
+    public PathwayElement(DistributableObjectId enablerComponent, String pathwayElementId, String pathwayElementName, String relationshipDescription, DistributableObjectId ingressPoint, DistributableObjectId egressPoint, List<Topic> supportedTopics){
         super();
-        DistributableObjectId derivedId = new DistributableObjectId(relationshipID);
-        this.setName(relationshipName);
+        QualifiedName pathwayElementIdName = new QualifiedName(enablerComponent.getQualifiedName());
+        UnqualifiedName pathwayElementUnqaulifiedName = new UnqualifiedName("PathwayElement", pathwayElementId);
+        pathwayElementIdName.appendUnqualifiedName(pathwayElementUnqaulifiedName);
+        DistributableObjectId derivedId = new DistributableObjectId(pathwayElementIdName);
+        this.setName(pathwayElementName);
         this.setDocumentation(relationshipDescription);
+        this.setTarget(egressPoint);
+        this.setSource(ingressPoint);
+        this.setFlowType("Information");
+        this.setType(RelationshipType.FLOW);
+        this.setSpecialization("PathwayElement");
+        this.supportedTopics = new ArrayList<>();
+        this.supportedTopics.addAll(supportedTopics);
     }
 
     //
@@ -70,4 +89,24 @@ public class PathwaySegmentPathElement extends FlowRelationship implements Seria
         this.utilisedApplicationService = utilisedApplicationService;
     }
 
+    public List<Topic> getSupportedTopics() {
+        return supportedTopics;
+    }
+
+    public void setSupportedTopics(List<Topic> supportedTopics) {
+        this.supportedTopics = supportedTopics;
+    }
+
+    //
+     // Standard Methods
+     //
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this)
+                .append("utilisedApplicationService", utilisedApplicationService)
+                .append("supportedTopics", supportedTopics)
+                .appendSuper(super.toString())
+                .toString();
+    }
 }

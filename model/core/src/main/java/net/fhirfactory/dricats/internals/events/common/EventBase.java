@@ -22,6 +22,8 @@
 package net.fhirfactory.dricats.internals.events.common;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import net.fhirfactory.dricats.common.DateUtility;
+import net.fhirfactory.dricats.deployment.contants.DefaultDeploymentConstants;
 import net.fhirfactory.dricats.internals.common.DistributableObjectId;
 import net.fhirfactory.dricats.internals.reference.layers.application.ApplicationEvent;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -42,9 +44,9 @@ public class EventBase extends ApplicationEvent implements Serializable {
     //
 
     private DistributableObjectId target;
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss.SSSXXX")
+    @JsonFormat(pattern = DateUtility.DEFAULT_JSON_FORMAT, timezone = DefaultDeploymentConstants.DEPLOYMENT_TIMEZONE)
     private LocalDateTime eventSendDate;
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss.SSSXXX")
+    @JsonFormat(pattern = DateUtility.DEFAULT_JSON_FORMAT, timezone = DefaultDeploymentConstants.DEPLOYMENT_TIMEZONE)
     private LocalDateTime eventReceiveDate;
     private Integer notificationSequenceNumber;
 

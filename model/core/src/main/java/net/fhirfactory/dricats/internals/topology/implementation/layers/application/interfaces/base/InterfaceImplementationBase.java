@@ -45,6 +45,7 @@ public class InterfaceImplementationBase extends ApplicationInterface implements
     //
     public final static String PROPERTY_URL = "PROPERTY_URL";
 
+
     //
     // Member Variables
     //

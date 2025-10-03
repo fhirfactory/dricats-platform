@@ -19,7 +19,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.fhirfactory.dricats.middleware.oam.ui;
+package net.fhirfactory.dricats.ui;
 
 import javafx.geometry.Insets;
 import javafx.scene.control.Label;
@@ -28,12 +28,20 @@ import javafx.scene.layout.BorderPane;
 
 public class TaskingTab extends Tab {
     public TaskingTab() {
-        super("tasking");
+        super("Tasking");
         setClosable(false);
-        BorderPane pane = new BorderPane();
-        Label placeholder = new Label("Tasking UI placeholder");
-        BorderPane.setMargin(placeholder, new Insets(10));
-        pane.setCenter(placeholder);
-        setContent(pane);
+        try {
+            javafx.fxml.FXMLLoader loader = new javafx.fxml.FXMLLoader(
+                    getClass().getResource("/net/fhirfactory/dricats/ui/TaskingTab.fxml")
+            );
+            javafx.scene.Parent root = loader.load();
+            setContent(root);
+        } catch (Exception e) {
+            BorderPane pane = new BorderPane();
+            Label placeholder = new Label("Tasking UI placeholder");
+            BorderPane.setMargin(placeholder, new Insets(10));
+            pane.setCenter(placeholder);
+            setContent(pane);
+        }
     }
 }

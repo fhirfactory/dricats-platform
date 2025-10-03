@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane prefHeight="600.0" prefWidth="1100.0" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="net.fhirfactory.dricats.ui.TopologyTabController">
+    <top>
+        <MenuBar>
+            <menus>
+                <Menu text="Actions">
+                    <items>
+                        <MenuItem fx:id="refreshMenuItem" text="Refresh" />
+                    </items>
+                </Menu>
+            </menus>
+        </MenuBar>
+    </top>
+    <center>
+        <SplitPane dividerPositions="0.35">
+            <items>
+                <TreeView fx:id="treeView" showRoot="false" />
+                <SplitPane orientation="VERTICAL" dividerPositions="0.33,0.66">
+                    <items>
+                        <VBox spacing="6.0">
+                            <children>
+                                <Label text="Component Details" />
+                                <TableView fx:id="detailsTable">
+                                    <columns>
+                                        <TableColumn fx:id="detailsAttrCol" prefWidth="180" text="Attribute" />
+                                        <TableColumn fx:id="detailsValCol" prefWidth="400" text="Value" />
+                                    </columns>
+                                </TableView>
+                            </children>
+                            <padding>
+                                <Insets topRightBottomLeft="8" />
+                            </padding>
+                        </VBox>
+                        <VBox spacing="6.0">
+                            <children>
+                                <Label text="UniqueName" />
+                                <TreeView fx:id="uniqueNameTree" />
+                            </children>
+                            <padding>
+                                <Insets topRightBottomLeft="8" />
+                            </padding>
+                        </VBox>
+                        <VBox spacing="6.0">
+                            <children>
+                                <Label text="Metrics (latest)" />
+                                <Button fx:id="refreshMetricsBtn" text="Refresh Metrics" />
+                                <TableView fx:id="metricsTable" VBox.vgrow="ALWAYS">
+                                    <columns>
+                                        <TableColumn fx:id="metricsAttrCol" prefWidth="220" text="Metric" />
+                                        <TableColumn fx:id="metricsValCol" prefWidth="400" text="Value" />
+                                    </columns>
+                                </TableView>
+                            </children>
+                            <padding>
+                                <Insets topRightBottomLeft="8" />
+                            </padding>
+                        </VBox>
+                    </items>
+                </SplitPane>
+            </items>
+        </SplitPane>
+    </center>
+</BorderPane>

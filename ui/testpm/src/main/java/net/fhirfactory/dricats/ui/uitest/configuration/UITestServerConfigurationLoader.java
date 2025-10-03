@@ -19,7 +19,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.fhirfactory.dricats.middleware.oam.uitest.configuration;
+package net.fhirfactory.dricats.ui.uitest.configuration;
 
 import net.fhirfactory.dricats.platform.configuration.factories.common.BaseConfigurationFileLoader;
 import org.slf4j.Logger;

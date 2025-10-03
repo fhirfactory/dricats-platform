@@ -17,6 +17,7 @@
         <module>fatclient</module>
         <module>testpm</module>
         <module>pm</module>
+        <module>serverside</module>
         <!--module>pm</module-->
     </modules>
 </project>

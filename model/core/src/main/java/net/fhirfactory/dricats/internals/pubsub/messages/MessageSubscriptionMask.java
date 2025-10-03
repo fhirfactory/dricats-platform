@@ -19,8 +19,9 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.fhirfactory.dricats.internals.pubsub;
+package net.fhirfactory.dricats.internals.pubsub.messages;
 
+import net.fhirfactory.dricats.internals.pubsub.TopicSubscription;
 import net.fhirfactory.dricats.internals.pubsub.common.ApplicationComponentIdMask;
 import net.fhirfactory.dricats.internals.pubsub.common.EventTemporalWindow;
 import net.fhirfactory.dricats.internals.pubsub.common.SubscriptionMaskBase;

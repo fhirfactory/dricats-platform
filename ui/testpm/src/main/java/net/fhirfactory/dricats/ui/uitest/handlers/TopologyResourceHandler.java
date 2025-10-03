@@ -24,22 +24,17 @@ package net.fhirfactory.dricats.ui.uitest.handlers;
 import jakarta.annotation.PostConstruct;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-import net.fhirfactory.dricats.internals.common.DistributableObjectId;
-import net.fhirfactory.dricats.internals.common.naming.QualifiedName;
-import net.fhirfactory.dricats.internals.common.naming.UnqualifiedName;
 import net.fhirfactory.dricats.internals.oam.metrics.ApplicationComponentMetricsData;
-import net.fhirfactory.dricats.internals.oam.topology.ApplicationComponentStatusSummary;
 import net.fhirfactory.dricats.internals.oam.topology.ApplicationComponentSummary;
 import net.fhirfactory.dricats.internals.oam.topology.ApplicationComponentSummaryList;
-import net.fhirfactory.dricats.internals.reference.common.valuesets.ElementTypeEnum;
-import net.fhirfactory.dricats.internals.topology.implementation.layers.application.valuesets.SoftwareComponentTypeEnum;
+import net.fhirfactory.dricats.internals.oam.topology.InterfaceComponentSummary;
+import net.fhirfactory.dricats.internals.reference.common.SimpleElementBase;
 import net.fhirfactory.dricats.ui.serverside.metrics.UIMetricsCacheService;
 import net.fhirfactory.dricats.ui.serverside.topology.UITopologyCacheService;
 import net.fhirfactory.dricats.ui.uitest.handlers.common.BaseHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -49,11 +44,11 @@ import java.util.stream.Collectors;
  * topology of components and simplistic metrics values.
  */
 @ApplicationScoped
-public class TestTopologyServices extends BaseHandler {
+public class TopologyResourceHandler extends BaseHandler {
     //
     // Housekeeping
     //
-    private static final Logger LOG = LoggerFactory.getLogger(TestTopologyServices.class);
+    private static final Logger LOG = LoggerFactory.getLogger(TopologyResourceHandler.class);
 
     //
     // Attributes
@@ -69,7 +64,7 @@ public class TestTopologyServices extends BaseHandler {
     // Constructor(s)
     //
 
-    public TestTopologyServices() {
+    public TopologyResourceHandler() {
         LOG.debug(".constructor(): Entry");
         getLogger().debug(".constructor(): Exit");
     }
@@ -82,7 +77,6 @@ public class TestTopologyServices extends BaseHandler {
         LOG.debug("initialise() invoked");
         getTestMetricsService().initialise();
         getTestComponentServices().initialise();
-        populateComponentMap();
         LOG.debug("initialise() exit");
     }
 
@@ -108,7 +102,10 @@ public class TestTopologyServices extends BaseHandler {
 
     public String listComponentsAsJSON() {
         LOG.debug("listComponents() invoked");
-        List<ApplicationComponentSummary> list = new ArrayList<>(testComponentServices.getComponents().values());
+        List<ApplicationComponentSummary> list = testComponentServices.getComponents().values().stream()
+                .filter(v -> v instanceof ApplicationComponentSummary)
+                .map(v -> (ApplicationComponentSummary) v)
+                .collect(Collectors.toList());
         LOG.info("Returning {} components", list.size());
         ApplicationComponentSummaryList resultList = new ApplicationComponentSummaryList();
         for (ApplicationComponentSummary currentListItem : list) {
@@ -125,7 +122,8 @@ public class TestTopologyServices extends BaseHandler {
             LOG.warn(".getComponent(), Exit, called with empty id");
             return null;
         }
-        ApplicationComponentSummary c = testComponentServices.getComponents().get(id);
+        net.fhirfactory.dricats.internals.reference.common.SimpleElementBase base = testComponentServices.getComponents().get(id);
+        ApplicationComponentSummary c = (base instanceof ApplicationComponentSummary) ? (ApplicationComponentSummary) base : null;
         if (c == null) {
             LOG.warn(".getComponent(): Component not found for id={}", id);
         }
@@ -148,6 +146,18 @@ public class TestTopologyServices extends BaseHandler {
         List<ApplicationComponentSummary> subs = getSubComponents(id);
         return(convertToJson(subs));
     }
+
+    public List<InterfaceComponentSummary> getInterfaces(String id) {
+        LOG.debug("getInterfaces(id={}) invoked", id);
+        List<InterfaceComponentSummary> interfaces = getTestComponentServices().getInterfaceComponents(id);
+        return interfaces;
+    }
+
+    public String getInterfacesAsJSON(String id){
+        List<InterfaceComponentSummary> interfaces = getInterfaces(id);
+        return(convertToJson(interfaces));
+    }
+
 
     public ApplicationComponentMetricsData getLatestMetricsForComponent(String id) {
         LOG.debug(".getLatestMetricsForComponent(): Entry, id={}", id);
@@ -177,7 +187,7 @@ public class TestTopologyServices extends BaseHandler {
         return(convertToJson(list));
     }
 
-    private static String keyOf(ApplicationComponentSummary c) {
+    private static String keyOf(SimpleElementBase c) {
         String key = c.resolveKey();
         return(key);
     }
@@ -189,89 +199,5 @@ public class TestTopologyServices extends BaseHandler {
 
 
 
-    //
-     // Test Data Loader
-    //
 
-    private void populateComponentMap (){
-        // Build a tiny component tree: application -> child1, child2
-        ApplicationComponentSummary application = new ApplicationComponentSummary();
-        application.setName("Test Subsystem");
-        application.setDocumentation("Top-level DRICaTS platform stub for UI testing");
-        UnqualifiedName unqName = new UnqualifiedName(SoftwareComponentTypeEnum.SUBSYSTEM.getType(), "TestSubsystem");
-        QualifiedName applicationName = new QualifiedName();
-        applicationName.appendUnqualifiedName(unqName);
-        application.setObjectID(new DistributableObjectId(applicationName));
-        application.setComponentStatus(new ApplicationComponentStatusSummary());
-        application.setElementType(ElementTypeEnum.APPLICATION_COMPONENT);
-        application.setSpecialization(SoftwareComponentTypeEnum.SUBSYSTEM.getType());
-        application.getMetadata().setCreationDate(LocalDateTime.now());
-        application.getMetadata().setLastUpdateDate(LocalDateTime.now());
-        application.getComponentStatus().setComponentStatus("Operational");
-        application.getComponentStatus().setComponentStatus("Operational and Processing");
-        application.getComponentStatus().setHeartbeatInstant(LocalDateTime.now());
-        application.getComponentStatus().setLastActivityInstant(LocalDateTime.now());
-        LOG.info(".populateComponentMap(): Adding Subsystem to Component Map -> key {}", application.resolveKey());
-        getTestComponentServices().getComponents().put(application.resolveKey(), application);
-
-        ApplicationComponentSummary applicationInstance = new ApplicationComponentSummary();
-        applicationInstance.setName("Test Application Instance");
-        applicationInstance.setDocumentation("A Single Instance of the Test Subsystem Application");
-        String uniqueId = String.valueOf(LocalDateTime.now().getSecond()) + String.valueOf(LocalDateTime.now().getNano());
-        UnqualifiedName applicationInstanceUnqualifiedName = new UnqualifiedName(SoftwareComponentTypeEnum.SUBSYSTEM_APPLICATION_INSTANCE.getType(), uniqueId);
-        QualifiedName applicationInstanceQualifiedName = new QualifiedName(applicationName);
-        applicationInstanceQualifiedName.appendUnqualifiedName(applicationInstanceUnqualifiedName);
-        applicationInstance.setObjectID(new DistributableObjectId(applicationInstanceQualifiedName));
-        applicationInstance.setComponentStatus(new ApplicationComponentStatusSummary());
-        applicationInstance.setParent(application.getObjectID());
-        applicationInstance.setElementType(ElementTypeEnum.APPLICATION_COMPONENT);
-        applicationInstance.setSpecialization(SoftwareComponentTypeEnum.SUBSYSTEM_APPLICATION_INSTANCE.getType());
-        applicationInstance.getMetadata().setCreationDate(LocalDateTime.now());
-        applicationInstance.getMetadata().setLastUpdateDate(LocalDateTime.now());
-        applicationInstance.getComponentStatus().setHeartbeatInstant(LocalDateTime.now());
-        applicationInstance.getComponentStatus().setLastActivityInstant(LocalDateTime.now());
-        application.getSubComponents().add(applicationInstance.getObjectID());
-        getTestComponentServices().getComponents().put(applicationInstance.resolveKey(), applicationInstance);
-        LOG.info(".populateComponentMap(): Adding Application Instance to Component Map -> key {}",applicationInstance.resolveKey());
-
-        ApplicationComponentSummary child1 = new ApplicationComponentSummary();
-        child1.setName("Messaging Services");
-        child1.setDocumentation("Handles inter-component messaging");
-        UnqualifiedName unqName1 = new UnqualifiedName(SoftwareComponentTypeEnum.SUBSYSTEM_APPLICATION_WORK_UNIT_PROCESSOR_BLOCK.getType(), "MessagingServices");
-        QualifiedName qualifiedName1 = new QualifiedName(applicationInstanceQualifiedName);
-        qualifiedName1.appendUnqualifiedName(unqName1);
-        child1.setObjectID(new DistributableObjectId(qualifiedName1));
-        child1.setParent(applicationInstance.getObjectID());
-        child1.setComponentStatus(new ApplicationComponentStatusSummary());
-        child1.setElementType(ElementTypeEnum.APPLICATION_COMPONENT);
-        child1.setSpecialization(SoftwareComponentTypeEnum.SUBSYSTEM_APPLICATION_WORK_UNIT_PROCESSOR_BLOCK.getType());;
-        child1.getMetadata().setCreationDate(LocalDateTime.now());
-        child1.getMetadata().setLastUpdateDate(LocalDateTime.now());
-        child1.getComponentStatus().setHeartbeatInstant(LocalDateTime.now());
-        child1.getComponentStatus().setLastActivityInstant(LocalDateTime.now());
-        applicationInstance.getSubComponents().add(child1.getObjectID());
-        getTestComponentServices().getComponents().put(child1.resolveKey(), child1);
-        LOG.info(".populateComponentMap(): Adding Messaging Services to Component Map -> key {}", child1.resolveKey());
-
-        ApplicationComponentSummary child2 = new ApplicationComponentSummary();
-        child2.setName("Metrics Service");
-        child2.setDocumentation("Collects and serves metrics");
-        UnqualifiedName unqName2 = new UnqualifiedName(SoftwareComponentTypeEnum.SUBSYSTEM_APPLICATION_WORK_UNIT_PROCESSOR_BLOCK.getType(), "MetricsService");
-        QualifiedName qualifiedName2 = new QualifiedName(applicationInstanceQualifiedName);
-        qualifiedName2.appendUnqualifiedName(unqName2);
-        child2.setObjectID(new DistributableObjectId(qualifiedName2));
-        child2.setParent(applicationInstance.getObjectID());
-        child2.setComponentStatus(new ApplicationComponentStatusSummary());
-        child2.setElementType(ElementTypeEnum.APPLICATION_COMPONENT);
-        child2.setSpecialization(SoftwareComponentTypeEnum.SUBSYSTEM_APPLICATION_WORK_UNIT_PROCESSOR_BLOCK.getType());;
-        child2.getMetadata().setCreationDate(LocalDateTime.now());
-        child2.getMetadata().setLastUpdateDate(LocalDateTime.now());
-        child2.getComponentStatus().setHeartbeatInstant(LocalDateTime.now());
-        child2.getComponentStatus().setLastActivityInstant(LocalDateTime.now());
-        applicationInstance.getSubComponents().add(child2.getObjectID());
-        getTestComponentServices().getComponents().put(child2.resolveKey(), child2);
-        LOG.info(".populateComponentMap(): Adding Metrics Service to Component Map -> key {}", child2.resolveKey());
-
-        LOG.info("Initialized in-memory component graph: {} entries", getTestComponentServices().getComponents().size());
-    }
 }

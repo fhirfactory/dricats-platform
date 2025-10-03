@@ -28,13 +28,15 @@ import net.fhirfactory.dricats.internals.common.datatypes.CodeableConceptCode;
 import java.net.URI;
 
 public enum SoftwareComponentTypeEnum {
-	SUBSYSTEM ("Subsystem","SoftwareComponentName", "dricats.s.applications-component.name", "https://fhirfactory.net/CodeSystems/Types"),
-	SUBSYSTEM_APPLICATION_CLUSTER ("SubsystemApplicationCluster","SoftwareComponentName", "dricats.s.applications-component.name", "https://fhirfactory.net/CodeSystems/Types"),
-	SUBSYSTEM_APPLICATION_INSTANCE ("SubsystemApplicationInstance","SoftwareComponentName", "dricats.s.applications-component.name", "https://fhirfactory.net/CodeSystems/Types"),
-	SUBSYSTEM_APPLICATION_WORK_UNIT_PROCESSOR ("WorkUnitProcessor","SoftwareComponentName", "dricats.s.applications-component.name", "https://fhirfactory.net/CodeSystems/Types"),
-	SUBSYSTEM_APPLICATION_WORK_UNIT_PROCESSOR_BLOCK ("WorkUnitProcessorBlock","SoftwareComponentName", "dricats.s.applications-component.name", "https://fhirfactory.net/CodeSystems/Types"),
-	NETWORK_ENDPOINT ("NetworkEndpoint","SoftwareComponentName", "dricats.s.applications-component.name", "https://fhirfactory.net/CodeSystems/Types"),
-	SOLUTION ("Solution", "SoftwareComponentName", "dricats.s.applications-component.name", "https://fhirfactory.net/CodeSystems/Types");
+	SUBSYSTEM ("Subsystem","Subsystem", "dricats.applications-component.name", "https://fhirfactory.net/CodeSystems/Types"),
+	SUBSYSTEM_APPLICATION_CLUSTER ("SubsystemApplicationCluster","Subsystem Application Cluster", "dricats.applications-component.name", "https://fhirfactory.net/CodeSystems/Types"),
+	SUBSYSTEM_APPLICATION_INSTANCE ("SubsystemApplicationInstance","Subsystem Application Instance", "dricats.applications-component.name", "https://fhirfactory.net/CodeSystems/Types"),
+	SUBSYSTEM_APPLICATION_WORK_UNIT_PROCESSOR ("WorkUnitProcessor","Work Unit Processor", "dricats.applications-component.name", "https://fhirfactory.net/CodeSystems/Types"),
+	SUBSYSTEM_APPLICATION_WORK_UNIT_PROCESSOR_GROUP("WorkUnitProcessorGroup","Work Unit Processor Group", "dricats.applications-component.name", "https://fhirfactory.net/CodeSystems/Types"),
+    SUBSYSTEM_APPLICATION_WORK_UNIT_PROCESSOR_INGRES ("WorkUnitProcessorIngres","Work Unit Processor Ingres", "dricats.applications-component.name", "https://fhirfactory.net/CodeSystems/Types"),
+    SUBSYSTEM_APPLICATION_WORK_UNIT_PROCESSOR_EGRESS ("WorkUnitProcessorEgress","Work Unit Processor Egress", "dricats.applications-component.name", "https://fhirfactory.net/CodeSystems/Types"),
+	NETWORK_ENDPOINT ("NetworkEndpoint","Network Endpoint", "dricats.applications-component.name", "https://fhirfactory.net/CodeSystems/Types"),
+	SOLUTION ("Solution", "Solution", "dricats.applications-component.name", "https://fhirfactory.net/CodeSystems/Types");
 
 
     private final String type;

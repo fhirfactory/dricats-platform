@@ -8,6 +8,8 @@ import net.fhirfactory.dricats.internals.events.messages.MessagePayload;
 import net.fhirfactory.dricats.internals.pubsub.common.ApplicationComponentIdMask;
 import net.fhirfactory.dricats.internals.pubsub.common.EventTemporalWindow;
 import net.fhirfactory.dricats.internals.pubsub.common.QualifiedNameMask;
+import net.fhirfactory.dricats.internals.pubsub.messages.MessageSubscription;
+import net.fhirfactory.dricats.internals.pubsub.messages.MessageSubscriptionMask;
 import net.fhirfactory.dricats.internals.topics.Topic;
 import org.junit.jupiter.api.Test;
 

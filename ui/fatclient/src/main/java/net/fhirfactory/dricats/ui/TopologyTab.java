@@ -35,36 +35,51 @@ import org.slf4j.LoggerFactory;
 import java.util.List;
 import java.util.Objects;
 
-public class OamTab extends Tab {
-    private static final Logger LOG = LoggerFactory.getLogger(OamTab.class);
+public class TopologyTab extends Tab {
+    private static final Logger LOG = LoggerFactory.getLogger(TopologyTab.class);
 
-    private final MainRESTClient client;
-    private TreeView<ApplicationComponentSummary> treeView;
+    // Fallback UI fields (used only if FXML fails to load)
+    private MainRESTClient client;
+    private TreeView<Object> treeView;
     private TableView<KVRow> metricsTable;
     private TableView<KVRow> detailsTable;
     private TreeView<String> uniqueNameTree;
     private Button refreshMetricsBtn;
 
-    public OamTab(String baseUrl) {
+    public TopologyTab(String baseUrl) {
         super("Topology");
-        this.client = new MainRESTClient(baseUrl);
         setClosable(false);
-        setContent(buildContent());
-        loadRoots();
+        try {
+            javafx.fxml.FXMLLoader loader = new javafx.fxml.FXMLLoader(
+                    getClass().getResource("/net/fhirfactory/dricats/ui/TopologyTab.fxml")
+            );
+            javafx.scene.Parent root = loader.load();
+            TopologyTabController controller = loader.getController();
+            if (controller != null) {
+                controller.setBaseUrl(baseUrl);
+            }
+            setContent(root);
+        } catch (Exception e) {
+            LOG.error("[UI] Failed to load TopologyTab.fxml, falling back to programmatic UI", e);
+            // Fallback to programmatic UI only if needed
+            setContent(buildContentFallback(baseUrl));
+        }
     }
 
-    private BorderPane buildContent() {
+    private BorderPane buildContentFallback(String baseUrl) {
+        // initialize client for fallback mode
+        this.client = new MainRESTClient(baseUrl);
         MenuBar menuBar = new MenuBar();
         Menu actionsMenu = new Menu("Actions");
         MenuItem refreshItem = new MenuItem("Refresh");
         refreshItem.setOnAction(e -> {
             LOG.info("[UI] Refresh requested.");
             loadRoots();
-            TreeItem<ApplicationComponentSummary> sel = treeView.getSelectionModel().getSelectedItem();
-            if (sel != null) {
-                refreshDetails(sel.getValue());
-                refreshUniqueName(sel.getValue());
-                refreshMetrics(sel.getValue());
+            TreeItem<Object> sel = treeView.getSelectionModel().getSelectedItem();
+            if (sel != null && sel.getValue() instanceof ApplicationComponentSummary s) {
+                refreshDetails(s);
+                refreshUniqueName(s);
+                refreshMetrics(s);
             } else {
                 refreshDetails(null);
                 refreshUniqueName(null);
@@ -76,31 +91,40 @@ public class OamTab extends Tab {
 
         treeView = new TreeView<>();
         treeView.setShowRoot(false);
-        treeView.setCellFactory(tv -> new TreeCell<>() {
-            @Override
-            protected void updateItem(ApplicationComponentSummary item, boolean empty) {
-                super.updateItem(item, empty);
-                if (empty || item == null) {
-                    setText(null);
-                } else {
-                    String label = item.getName();
-                    if (label == null || label.isBlank()) {
-                        label = MainRESTClient.resolveKey(item);
-                    }
+        treeView.setCellFactory(tv -> new TreeCell<Object>(){
+            @Override protected void updateItem(Object value, boolean empty){
+                super.updateItem(value, empty);
+                if(empty || value==null){ setText(null); setStyle(""); return; }
+                if(value instanceof ApplicationComponentSummary acs){
+                    String label = acs.getName();
+                    if(label==null || label.isBlank()){ label = MainRESTClient.resolveKey(acs); }
                     setText(label);
+                    setStyle("");
+                } else if (value instanceof net.fhirfactory.dricats.internals.oam.topology.InterfaceComponentSummary ifs){
+                    String label = ifs.getName();
+                    if(label==null || label.isBlank()){ label = ifs.resolveKey(); }
+                    setText(label);
+                    setStyle("-fx-text-fill: #2a7fff;");
+                } else {
+                    setText(String.valueOf(value));
+                    setStyle("");
                 }
             }
         });
 
         treeView.getSelectionModel().selectedItemProperty().addListener((obs, oldSel, newSel) -> {
             if (newSel != null) {
-                ApplicationComponentSummary s = newSel.getValue();
-                String id = s == null ? "" : MainRESTClient.resolveKey(s);
-                LOG.info("[UI] Tree selection changed to: {}", id);
-                loadChildrenIfNeeded(newSel);
-                refreshDetails(newSel.getValue());
-                refreshUniqueName(newSel.getValue());
-                refreshMetrics(newSel.getValue());
+                Object v = newSel.getValue();
+                if (v instanceof ApplicationComponentSummary s) {
+                    String id = MainRESTClient.resolveKey(s);
+                    LOG.info("[UI] Tree selection changed to: {}", id);
+                    loadChildrenIfNeeded(newSel);
+                    refreshDetails(s);
+                    refreshUniqueName(s);
+                    refreshMetrics(s);
+                } else {
+                    LOG.info("[UI] Tree selection is interface or other node");
+                }
             } else {
                 LOG.info("[UI] Tree selection cleared");
                 refreshDetails(null);
@@ -121,7 +145,7 @@ public class OamTab extends Tab {
 
         uniqueNameTree = new TreeView<>();
         uniqueNameTree.setShowRoot(true);
-        uniqueNameTree.setPrefHeight(120);
+        uniqueNameTree.setPrefHeight(200);
 
         metricsTable = new TableView<>();
         TableColumn<KVRow, String> mAttrCol = new TableColumn<>("Metric");
@@ -134,8 +158,9 @@ public class OamTab extends Tab {
         metricsTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_FLEX_LAST_COLUMN);
         refreshMetricsBtn = new Button("Refresh Metrics");
         refreshMetricsBtn.setOnAction(e -> {
-            TreeItem<ApplicationComponentSummary> sel = treeView.getSelectionModel().getSelectedItem();
-            refreshMetrics(sel == null ? null : sel.getValue());
+            TreeItem<Object> sel = treeView.getSelectionModel().getSelectedItem();
+            Object v = sel==null? null : sel.getValue();
+            refreshMetrics(v instanceof ApplicationComponentSummary s ? s : null);
         });
         VBox right = new VBox(8,
                 new Label("Component Details"),
@@ -264,7 +289,7 @@ public class OamTab extends Tab {
     }
 
     private void loadRoots() {
-        TreeItem<ApplicationComponentSummary> hiddenRoot = new TreeItem<>();
+        TreeItem<Object> hiddenRoot = new TreeItem<>();
         treeView.setRoot(hiddenRoot);
         List<ApplicationComponentSummary> roots = null;
         try {
@@ -285,8 +310,8 @@ public class OamTab extends Tab {
         }
     }
 
-    private TreeItem<ApplicationComponentSummary> createTreeItem(ApplicationComponentSummary s) {
-        TreeItem<ApplicationComponentSummary> item = new TreeItem<>(s);
+    private TreeItem<Object> createTreeItem(ApplicationComponentSummary s) {
+        TreeItem<Object> item = new TreeItem<>(s);
         item.getChildren().add(new TreeItem<>());
         item.expandedProperty().addListener((obs, o, n) -> {
             if (n) loadChildrenIfNeeded(item);
@@ -294,22 +319,31 @@ public class OamTab extends Tab {
         return item;
     }
 
-    private void loadChildrenIfNeeded(TreeItem<ApplicationComponentSummary> parentItem) {
-        if (parentItem == null || parentItem.getValue() == null) return;
+    private void loadChildrenIfNeeded(TreeItem<Object> parentItem) {
+        if (parentItem == null || !(parentItem.getValue() instanceof ApplicationComponentSummary)) return;
         if (!hasPlaceholder(parentItem)) return;
         parentItem.getChildren().clear();
 
-        String id = MainRESTClient.resolveKey(parentItem.getValue());
+        ApplicationComponentSummary s = (ApplicationComponentSummary) parentItem.getValue();
+        String id = MainRESTClient.resolveKey(s);
         List<ApplicationComponentSummary> kids = client.listSubcomponents(id);
-        if (kids.isEmpty()) {
-            return;
-        }
         for (ApplicationComponentSummary child : kids) {
-            parentItem.getChildren().add(createTreeItem(child));
+            if (child != null) parentItem.getChildren().add(createTreeItem(child));
+        }
+        // add interface nodes
+        try {
+            java.util.List<net.fhirfactory.dricats.internals.oam.topology.InterfaceComponentSummary> ifaces = client.listInterfaces(id);
+            if (ifaces != null) {
+                for (net.fhirfactory.dricats.internals.oam.topology.InterfaceComponentSummary iface : ifaces) {
+                    if (iface != null) parentItem.getChildren().add(new TreeItem<>(iface));
+                }
+            }
+        } catch (Exception e) {
+            LOG.warn("[UI] Failed to fetch interfaces for {}: {}", id, e.toString());
         }
     }
 
-    private boolean hasPlaceholder(TreeItem<ApplicationComponentSummary> item) {
+    private boolean hasPlaceholder(TreeItem<Object> item) {
         return item.getChildren().size() == 1 && item.getChildren().get(0).getValue() == null;
     }
 }

@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane xmlns:fx="http://javafx.com/fxml/1" fx:controller="net.fhirfactory.dricats.ui.RoutesTabController"
+            prefWidth="1100.0" prefHeight="600.0">
+    <children>
+        <BorderPane prefWidth="1100.0" prefHeight="600.0" AnchorPane.topAnchor="0.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
+            <top>
+                <ToolBar>
+                    <Label text="Routes" />
+                    <Separator orientation="VERTICAL" />
+                    <Button text="Refresh" fx:id="refreshButton" />
+                </ToolBar>
+            </top>
+            <center>
+                <SplitPane dividerPositions="0.35">
+                    <items>
+                        <TreeView fx:id="treeView" />
+                        <VBox spacing="6.0" fillWidth="true" prefWidth="700.0">
+                            <children>
+                                <TitledPane text="Segment Details" expanded="true">
+                                    <content>
+                                        <GridPane hgap="8" vgap="6" padding="10">
+                                            <columnConstraints>
+                                                <ColumnConstraints halignment="RIGHT" minWidth="120" />
+                                                <ColumnConstraints hgrow="ALWAYS" />
+                                            </columnConstraints>
+                                            <children>
+                                                <Label text="Index:" GridPane.rowIndex="0" GridPane.columnIndex="0" />
+                                                <Label fx:id="segIndexValue" text="-" GridPane.rowIndex="0" GridPane.columnIndex="1" />
+                                                <Label text="Distribution:" GridPane.rowIndex="1" GridPane.columnIndex="0" />
+                                                <Label fx:id="segDistributionValue" text="-" GridPane.rowIndex="1" GridPane.columnIndex="1" />
+                                                <Label text="Flows:" GridPane.rowIndex="2" GridPane.columnIndex="0" />
+                                                <Label fx:id="segFlowsCountValue" text="0" GridPane.rowIndex="2" GridPane.columnIndex="1" />
+                                            </children>
+                                        </GridPane>
+                                    </content>
+                                </TitledPane>
+                                <TitledPane text="Flows" expanded="true" VBox.vgrow="ALWAYS">
+                                    <content>
+                                        <TableView fx:id="flowsTable">
+                                            <columns>
+                                                <TableColumn text="Type" fx:id="flowColType" prefWidth="150.0" />
+                                                <TableColumn text="Name" fx:id="flowColName" prefWidth="300.0" />
+                                                <TableColumn text="ID" fx:id="flowColId" prefWidth="300.0" />
+                                            </columns>
+                                        </TableView>
+                                    </content>
+                                </TitledPane>
+                                <TitledPane text="Flow Details" expanded="true">
+                                    <content>
+                                        <GridPane hgap="8" vgap="6" padding="10">
+                                            <columnConstraints>
+                                                <ColumnConstraints halignment="RIGHT" minWidth="120" />
+                                                <ColumnConstraints hgrow="ALWAYS" />
+                                            </columnConstraints>
+                                            <children>
+                                                <Label text="Kind:" GridPane.rowIndex="0" GridPane.columnIndex="0" />
+                                                <Label fx:id="flowKindValue" text="-" GridPane.rowIndex="0" GridPane.columnIndex="1" />
+                                                <Label text="Name:" GridPane.rowIndex="1" GridPane.columnIndex="0" />
+                                                <Label fx:id="flowNameValue" text="-" GridPane.rowIndex="1" GridPane.columnIndex="1" />
+                                                <Label text="ID:" GridPane.rowIndex="2" GridPane.columnIndex="0" />
+                                                <Label fx:id="flowIdValue" text="-" GridPane.rowIndex="2" GridPane.columnIndex="1" />
+                                                <Label text="Documentation:" GridPane.rowIndex="3" GridPane.columnIndex="0" />
+                                                <Label fx:id="flowDocValue" text="-" wrapText="true" GridPane.rowIndex="3" GridPane.columnIndex="1" />
+                                            </children>
+                                        </GridPane>
+                                    </content>
+                                </TitledPane>
+                            </children>
+                        </VBox>
+                    </items>
+                </SplitPane>
+            </center>
+        </BorderPane>
+    </children>
+</AnchorPane>

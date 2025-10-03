@@ -25,7 +25,9 @@ import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
+import net.fhirfactory.dricats.internals.common.naming.CommonName;
 import net.fhirfactory.dricats.internals.common.naming.QualifiedName;
 import org.apache.commons.lang3.SerializationUtils;
 import org.slf4j.Logger;
@@ -113,6 +115,37 @@ public class DistributableObject extends SimpleDistributableObject implements Se
             setIdentifiers(new ArrayList<DistributableObjectIdentifier>());
         }
         getIdentifiers().add(identifier);
+    }
+
+    public String resolveKey() {
+        String key = null;
+        try {
+            DistributableObjectId objectId = this.getObjectID();
+            if (objectId != null && objectId.getQualifiedName() != null && objectId.getQualifiedName().getCommonName().getValue() != null && !objectId.getQualifiedName().getCommonName().getValue().isEmpty()) {
+                key = objectId.getQualifiedName().getCommonName().getValue();
+            }
+        } catch (Exception e) {
+            // ignore
+        }
+        if (key == null) {
+            try {
+                CommonName cn = this.getId();
+                if (cn != null && cn.getValue() != null && !cn.getValue().isEmpty()) {
+                    key = cn.getValue();
+                }
+            } catch (Exception e) {
+                // ignore
+            }
+        }
+        if (key == null) {
+            key = UUID.randomUUID().toString();
+            try {
+                this.setId(new CommonName(key));
+            } catch (Exception e) {
+                LOG.debug("resolveKey(NotificationSubscription): unable to set generated id on item", e);
+            }
+        }
+        return key;
     }
 
     //

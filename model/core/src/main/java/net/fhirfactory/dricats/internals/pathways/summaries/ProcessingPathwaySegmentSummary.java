@@ -19,7 +19,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.fhirfactory.dricats.internals.topology.implementation.relationships.datatypes;
+package net.fhirfactory.dricats.internals.pathways.summaries;
 
 import net.fhirfactory.dricats.internals.common.DistributableObject;
 import net.fhirfactory.dricats.internals.common.DistributableObjectId;

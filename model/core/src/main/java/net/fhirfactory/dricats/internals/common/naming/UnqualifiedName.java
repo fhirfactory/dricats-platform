@@ -81,7 +81,7 @@ public class UnqualifiedName implements Serializable {
         this.qualifier = otherUnqualifiedName.getQualifier();
     }
 
-    public UnqualifiedName(QualifiedNameToken token) {
+    public UnqualifiedName(IdToken token) {
         getLogger().debug(".UnqualifiedName(UnqualifiedNameToken): Entry, token --> {}", token);
         if (token == null) {
             throw (new IllegalArgumentException("null UnqualifiedNameToken passed to Constructor"));
@@ -155,30 +155,34 @@ public class UnqualifiedName implements Serializable {
     }
 
     @JsonIgnore
-    private QualifiedNameToken toToken() {
-        QualifiedNameToken token = new QualifiedNameToken(pseudoXMLAttribute(getQualifier(), getValue()));
+    private IdToken toToken() {
+        IdToken token = new IdToken(pseudoXMLAttribute(getQualifier(), getValue()));
         return token;
     }
 
     @JsonIgnore
-    public QualifiedNameToken getToken() {
-        QualifiedNameToken token = toToken();
+    public IdToken getToken() {
+        IdToken token = toToken();
         return (token);
     }
 
+    @JsonIgnore
     public String getConciseString() {
         return ( convertToConciseString());
     }
 
+    @JsonIgnore
     private String convertToConciseString() {
         String conciseString = "(" + this.getQualifier() + NAME_QUALIFIED_SEPARATOR  + this.getValue() + ")";
         return( conciseString);
     }
 
+    @JsonIgnore
     public String getUnqualifiedValue() {
         return (getValue());
     }
 
+    @JsonIgnore
     private String pseudoXMLAttribute(String attributeName, String attributeValue) {
         StringBuilder xmlAttributeBuilder = new StringBuilder();
         xmlAttributeBuilder.append("<");

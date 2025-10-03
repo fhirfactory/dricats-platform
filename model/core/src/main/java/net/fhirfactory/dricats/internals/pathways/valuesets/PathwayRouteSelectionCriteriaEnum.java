@@ -1,6 +1,6 @@
 package net.fhirfactory.dricats.internals.pathways.valuesets;
 
-public enum ProcessingPathSegmentDistributionEnum {
+public enum PathwayRouteSelectionCriteriaEnum {
     DISTRIBUTE_ALL,
     DISTRIBUTE_ROUND_ROBIN,
     DISTRIBUTE_RANDOM

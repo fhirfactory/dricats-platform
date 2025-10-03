@@ -22,12 +22,16 @@
 package net.fhirfactory.dricats.internals.oam.topology;
 
 import net.fhirfactory.dricats.internals.common.DistributableObjectId;
+import net.fhirfactory.dricats.internals.common.naming.CommonName;
 import net.fhirfactory.dricats.internals.reference.common.SimpleElementBase;
 import net.fhirfactory.dricats.internals.reference.layers.application.ApplicationComponent;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 public class ApplicationComponentSummary extends SimpleElementBase implements Serializable {
     //
@@ -41,6 +45,7 @@ public class ApplicationComponentSummary extends SimpleElementBase implements Se
     //
     private DistributableObjectId parent;
     private List<DistributableObjectId> subComponents;
+    private List<DistributableObjectId> interfaces;
     private ApplicationComponentStatusSummary componentStatus;
 
     //
@@ -48,10 +53,14 @@ public class ApplicationComponentSummary extends SimpleElementBase implements Se
     //
     public ApplicationComponentSummary(){
         super();
+        subComponents = new ArrayList<>();
+        componentStatus = new ApplicationComponentStatusSummary();
+        setInterfaces(new ArrayList<>());
     }
 
     public ApplicationComponentSummary( ApplicationComponent applicationComponent ){
         super();
+        subComponents = new ArrayList<>();
         setMetadata(applicationComponent.getMetadata());
         setObjectID(applicationComponent.getObjectID());
         setDocumentation(applicationComponent.getDocumentation());
@@ -59,11 +68,26 @@ public class ApplicationComponentSummary extends SimpleElementBase implements Se
         setObjectID(applicationComponent.getObjectID());
         setSpecialization(applicationComponent.getSpecialization());
         setElementType(applicationComponent.getElementType());
+        setComponentStatus(new ApplicationComponentStatusSummary());
+        getComponentStatus().setHeartbeatInstant(LocalDateTime.now());
+        getComponentStatus().setComponentStatus(applicationComponent.getMetricsData().getComponentStatus());
+        getComponentStatus().setLastActivityInstant(LocalDateTime.now());
+        getComponentStatus().setStartupInstant(applicationComponent.getMetadata().getCreationDate());
+        setInterfaces(new ArrayList<>());
+        getInterfaces().addAll(applicationComponent.getInterfaces());
     }
 
     //
     // Getters and Setters
     //
+
+    public List<DistributableObjectId> getInterfaces() {
+        return interfaces;
+    }
+
+    public void setInterfaces(List<DistributableObjectId> interfaces) {
+        this.interfaces = interfaces;
+    }
 
     public DistributableObjectId getParent() {
         return parent;
@@ -89,6 +113,8 @@ public class ApplicationComponentSummary extends SimpleElementBase implements Se
         this.componentStatus = componentStatus;
     }
 
+
+
     //
     // Utility Methods
     //
@@ -107,6 +133,7 @@ public class ApplicationComponentSummary extends SimpleElementBase implements Se
                 ", metadata=" + getMetadata() +
                 ", id=" + getId() +
                 ", componentStatus=" + getComponentStatus() +
+                ", interfaces=" + getInterfaces() +
                 '}';
     }
 }

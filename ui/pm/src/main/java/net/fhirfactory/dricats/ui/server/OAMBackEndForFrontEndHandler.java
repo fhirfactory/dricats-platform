@@ -19,7 +19,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.fhirfactory.dricats.middleware.oam.ui.server;
+package net.fhirfactory.dricats.ui.server;
 
 import net.fhirfactory.dricats.datagrid.topology.IApplicationComponentCacheClient;
 import net.fhirfactory.dricats.internals.common.DistributableObjectId;

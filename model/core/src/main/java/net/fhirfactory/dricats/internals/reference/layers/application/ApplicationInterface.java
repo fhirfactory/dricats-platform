@@ -8,6 +8,7 @@ import net.fhirfactory.dricats.internals.reference.common.ElementBase;
 import net.fhirfactory.dricats.internals.common.DistributableObjectId;
 import net.fhirfactory.dricats.internals.reference.common.SimpleElementBase;
 import net.fhirfactory.dricats.internals.reference.common.valuesets.ElementTypeEnum;
+import net.fhirfactory.dricats.internals.topics.Topic;
 import org.apache.commons.lang3.SerializationUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,6 +42,7 @@ public class ApplicationInterface extends SimpleElementBase {
 
     private DistributableObjectId owner;
     private List<DistributableObjectId> services;
+    private List<ApplicationDataObject> supportedDataObjects;
 
 
     //

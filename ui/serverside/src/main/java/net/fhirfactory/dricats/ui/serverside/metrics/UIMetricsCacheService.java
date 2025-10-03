@@ -1,22 +1,22 @@
 package net.fhirfactory.dricats.ui.serverside.metrics;
 
 import jakarta.annotation.PostConstruct;
+import jakarta.enterprise.context.ApplicationScoped;
 import net.fhirfactory.dricats.internals.oam.metrics.ApplicationComponentMetricsData;
 import net.fhirfactory.dricats.internals.oam.topology.ApplicationComponentSummary;
 import org.slf4j.LoggerFactory;
 
-import javax.enterprise.context.ApplicationScoped;
 import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
 @ApplicationScoped
-public class UIMetricsService {
+public class UIMetricsCacheService {
     //
      // Housekeeping
     //
-    private static final org.slf4j.Logger LOG = LoggerFactory.getLogger(UIMetricsService.class);
+    private static final org.slf4j.Logger LOG = LoggerFactory.getLogger(UIMetricsCacheService.class);
 
     //
     // Attributes
@@ -29,7 +29,7 @@ public class UIMetricsService {
      // Constructor(s)
     //
 
-    public UIMetricsService() {
+    public UIMetricsCacheService() {
         LOG.debug("TestMetricsService() invoked");
         startupInstant = Instant.now();
         metricsMap = new HashMap<>();
@@ -54,12 +54,13 @@ public class UIMetricsService {
             LOG.warn(".getLatestMetricsForComponent(): Cannot build metrics: component not found for component");
             return null;
         }
-        ApplicationComponentMetricsData m = metricsMap.get(component.getObjectID().toToken());
+        String key = Optional.ofNullable(component.getObjectID()).map(id -> id.getIdToken()).map(t -> t.getContent()).orElse("");
+        ApplicationComponentMetricsData m = metricsMap.get(key);
         if (m == null) {
             m = new ApplicationComponentMetricsData();
             m.setComponentID(component.getObjectID());
             m.setParticipantName(Optional.ofNullable(component.getName()).orElse(""));
-            metricsMap.put(component.getObjectID().toToken(), m);
+            metricsMap.put(key, m);
         }
         m.setComponentStatus("OK");
         m.getMessagingStatistics().incrementEgressMessageAttemptCount();

@@ -27,12 +27,11 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.event.Observes;
 import jakarta.enterprise.event.Startup;
 import jakarta.inject.Inject;
-import net.fhirfactory.dricats.ui.uitest.UitestApplication;
-import net.fhirfactory.dricats.ui.uitest.handlers.TestTopologyServices;
+import net.fhirfactory.dricats.ui.uitest.handlers.TopologyResourceHandler;
+import net.fhirfactory.dricats.ui.uitest.testdata.TopologyTestResourceSetBuilder;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.model.rest.RestBindingMode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,11 +40,11 @@ import org.slf4j.LoggerFactory;
  * backed by an in-memory stub service for UI testing.
  */
 @ApplicationScoped
-public class UitestOamRestRoute extends RouteBuilder {
+public class CoreOAMRoutes extends RouteBuilder {
     //
      // Housekeeping
     //
-    private static final Logger LOG = LoggerFactory.getLogger(UitestOamRestRoute.class);
+    private static final Logger LOG = LoggerFactory.getLogger(CoreOAMRoutes.class);
 
     //
     // Attributes
@@ -53,10 +52,10 @@ public class UitestOamRestRoute extends RouteBuilder {
     private boolean initialized = false;
 
     @Inject
-    UitestApplication mainApplication;
+    TopologyResourceHandler topologyHandler;
 
     @Inject
-    TestTopologyServices testOamService;
+    TopologyTestResourceSetBuilder topologyTestResourceSetBuilder;
 
     @Inject
     CamelContext camelContext;
@@ -65,15 +64,8 @@ public class UitestOamRestRoute extends RouteBuilder {
     public void initialize(){
         if(!initialized){
             LOG.info("UitestOamRestRoute:initialize(): Initialising");
-
-            LOG.info("UitestOamRestRoute:initialize(): mainApplication.getUiTestServerConfiguration() -> {}", mainApplication.getUiTestServerConfiguration());
-            testOamService.initialise();
-            try {
-                camelContext.addRoutes(this);
-                camelContext.start();
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
+            topologyHandler.initialise();
+            topologyTestResourceSetBuilder.initialise();
             initialized = true;
             LOG.info("UitestOamRestRoute:initialize(): Initialising.... Done!");
         }
@@ -102,66 +94,39 @@ public class UitestOamRestRoute extends RouteBuilder {
                 .setHeader(Exchange.CONTENT_TYPE, constant("text/plain"))
                 .logStackTrace(true);
 
-        // Configure REST with Netty-HTTP + Jackson JSON binding
-        String host = System.getProperty("camel.rest.host", "localhost");
-        int port;
-        try {
-            port = Integer.parseInt(System.getProperty("camel.rest.port", "12000"));
-        } catch (NumberFormatException nfe) {
-            port = 12000;
-        }
-        LOG.info("Configuring REST: component=netty-http host="+host+" port="+port+ " contextPath=/ apiContextPath=/api-doc");
-
-        restConfiguration()
-                .component("netty-http")
-                .host(host)
-                .port(port)
-                .scheme("http")
-                .bindingMode(RestBindingMode.off)
-                .dataFormatProperty("prettyPrint", "true")
-                .contextPath("/")
-                .apiContextPath("/api-doc")
-                .apiProperty("api.title", "DRICaTS OAM UI Test API")
-                .apiProperty("api.version", "1.0");
-
-        // Define REST endpoints identical to central module
-        rest("/oam")
-                // Application Components
-                .get("/applicationcomponent").to("direct:uitest-list-components").produces("application/json")
-                .get("/applicationcomponent/{id}").to("direct:uitest-get-component")
-                .get("/applicationcomponent/{id}/subcomponents").to("direct:uitest-get-subcomponents")
-                // Metrics
-                .get("/metrics").to("direct:uitest-get-metrics-range")
-                .get("/metrics/{id}").to("direct:uitest-get-metrics-latest");
-
-
         from("direct:uitest-list-components").routeId("uitest-list-components")
                 .log("[UITEST] Listing all application components. headers=${headers}")
-                .bean(testOamService, "listComponentsAsJSON")
+                .bean(topologyHandler, "listComponentsAsJSON")
                 .setHeader(Exchange.CONTENT_TYPE, constant("application/json"))
                 .log("[UITEST] Components returned");
 
         from("direct:uitest-get-component").routeId("uitest-get-component")
                 .log("[UITEST] Get component by id='${header.id}'")
-                .bean(testOamService, "getComponentAsJSON(${header.id})")
+                .bean(topologyHandler, "getComponentAsJSON(${header.id})")
                 .setHeader(Exchange.CONTENT_TYPE, constant("application/json"))
                 .log("[UITEST] Component lookup completed");
 
         from("direct:uitest-get-subcomponents").routeId("uitest-get-subcomponents")
                 .log("[UITEST] Get subcomponents for id='${header.id}'")
-                .bean(testOamService, "getSubComponentsAsJSON(${header.id})")
+                .bean(topologyHandler, "getSubComponentsAsJSON(${header.id})")
                 .setHeader(Exchange.CONTENT_TYPE, constant("application/json"))
                 .log("[UITEST] Subcomponents lookup completed");
 
+        from("direct:uitest-get-interfaces").routeId("uitest-get-interfaces")
+                .log("[UITEST] Get interfaces for id='${header.id}'")
+                .bean(topologyHandler, "getInterfacesAsJSON(${header.id})")
+                .setHeader(Exchange.CONTENT_TYPE, constant("application/json"))
+                .log("[UITEST] Interfaces lookup completed");
+
         from("direct:uitest-get-metrics-range").routeId("uitest-get-metrics-range")
                 .log("[UITEST] Get metrics range start='${header.start}' end='${header.end}'")
-                .bean(testOamService, "getMetricsInRangeAsJSON(${header.start}, ${header.end})")
+                .bean(topologyHandler, "getMetricsInRangeAsJSON(${header.start}, ${header.end})")
                 .setHeader(Exchange.CONTENT_TYPE, constant("application/json"))
                 .log("[UITEST] Metrics range lookup completed");
 
         from("direct:uitest-get-metrics-latest").routeId("uitest-get-metrics-latest")
                 .log("[UITEST] Get latest metrics for id='${header.id}'")
-                .bean(testOamService, "getLatestMetricsForComponentAsJSON(${header.id})")
+                .bean(topologyHandler, "getLatestMetricsForComponentAsJSON(${header.id})")
                 .setHeader(Exchange.CONTENT_TYPE, constant("application/json"))
                 .log("[UITEST] Latest metrics lookup completed");
     }

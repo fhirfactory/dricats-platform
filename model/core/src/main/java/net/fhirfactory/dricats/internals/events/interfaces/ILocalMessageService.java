@@ -23,13 +23,13 @@ package net.fhirfactory.dricats.internals.events.interfaces;
 
 import java.time.LocalDateTime;
 
-import net.fhirfactory.dricats.internals.common.naming.QualifiedNameToken;
+import net.fhirfactory.dricats.internals.common.naming.IdToken;
 import net.fhirfactory.dricats.internals.events.messages.MessageObject;
 import net.fhirfactory.dricats.internals.events.messages.MessageSet;
 
 public interface ILocalMessageService {
     public LocalDateTime postMessage(MessageObject message);
-    public MessageObject peekNextMessage(QualifiedNameToken consumerId);
-    public MessageObject pollNextMessage(QualifiedNameToken consumerId);
-    public MessageSet pollNextMessage(QualifiedNameToken consumerId, Integer size);
+    public MessageObject peekNextMessage(IdToken consumerId);
+    public MessageObject pollNextMessage(IdToken consumerId);
+    public MessageSet pollNextMessage(IdToken consumerId, Integer size);
 }

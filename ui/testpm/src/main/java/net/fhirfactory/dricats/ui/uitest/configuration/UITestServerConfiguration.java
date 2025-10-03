@@ -19,7 +19,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.fhirfactory.dricats.middleware.oam.uitest.configuration;
+package net.fhirfactory.dricats.ui.uitest.configuration;
 
 import net.fhirfactory.dricats.internals.configuration.segments.ports.external.HTTPServerConfigurationObject;
 import net.fhirfactory.dricats.model.configuration.configurationfile.archetypes.BaseSubsystemConfigurationObject;

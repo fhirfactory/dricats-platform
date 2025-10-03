@@ -96,8 +96,8 @@ public class QualifiedName implements Serializable {
      *
      * @param token An FDNToken from which the FDN may be instantiated.
      */
-    public QualifiedName(QualifiedNameToken token) {
-        getLogger().debug(".QualifiedName( QualifiedNameToken token ): Constructor invoked, token --> {}", token);
+    public QualifiedName(IdToken token) {
+        getLogger().trace(".QualifiedName( QualifiedNameToken token ): Constructor invoked, token --> {}", token);
         if (token == null) {
             throw (new IllegalArgumentException("Empty parameter passed to Constructor"));
         }
@@ -151,6 +151,7 @@ public class QualifiedName implements Serializable {
         }
     }
 
+    @JsonIgnore
     protected Logger getLogger() {
         return (LOG);
     }
@@ -162,8 +163,9 @@ public class QualifiedName implements Serializable {
      * @param toBeAddedUnqualifiedName An RDN that should be appended (injected as the
      *                     "Least Significant" member of the FDN.
      */
+    @JsonIgnore
     public QualifiedName appendUnqualifiedName(UnqualifiedName toBeAddedUnqualifiedName) {
-        getLogger().debug(".appendUnqualifiedName(): Entry, toBeAddedUnqualifiedName --> {}", toBeAddedUnqualifiedName);
+        getLogger().trace(".appendUnqualifiedName(): Entry, toBeAddedUnqualifiedName --> {}", toBeAddedUnqualifiedName);
         if (toBeAddedUnqualifiedName == null) {
             throw (new IllegalArgumentException("Empty UnqualifiedName passed to appendUnqualifiedName"));
         }
@@ -171,7 +173,7 @@ public class QualifiedName implements Serializable {
         int existingSetSize = this.getRelativeDNCount();
         newUnqualifiedName.setSequenceNumber(existingSetSize);
         this.unqualifiedNameSet.put(existingSetSize, newUnqualifiedName);
-        getLogger().debug(".appendUnqualifiedName(): Exit, updated QualifiedName -> {}", this);
+        getLogger().trace(".appendUnqualifiedName(): Exit, updated QualifiedName -> {}", this);
         return(this);
     }
 
@@ -186,6 +188,7 @@ public class QualifiedName implements Serializable {
      * @return Returns the "Parent" FDN of this FDN. The "Parent" FDN is one
      * that has the current "Least Significant" member removed from it.
      */
+    @JsonIgnore
     public QualifiedName getParentQualifiedName() {
         getLogger().trace(".getParentQualifiedName(): Entry");
         if (this.getRelativeDNCount() <= 1) {
@@ -200,6 +203,7 @@ public class QualifiedName implements Serializable {
         return (newParentQualifiedName);
     }
 
+    @JsonIgnore
     public UnqualifiedName getUnqualifiedName() {
         getLogger().trace(".getUnqualifiedName(): Entry");
         if (this.getRelativeDNCount() <= 0) {
@@ -211,6 +215,7 @@ public class QualifiedName implements Serializable {
         return (leastSignificantUnqualifiedName);
     }
 
+    @JsonIgnore
     public QualifiedName extractQualifiedNameForQualifier(String qualifier){
         getLogger().trace(".getQualifiedNameForQualifier(): Entry, qualifier --> {}", qualifier);
         QualifiedName foundName = new QualifiedName();
@@ -226,6 +231,7 @@ public class QualifiedName implements Serializable {
         return null;
     }
 
+    @JsonIgnore
     public boolean isEmpty() {
         getLogger().trace(".isEmpty(): Entry");
         if (this.getRelativeDNCount() <= 0) {
@@ -242,15 +248,18 @@ public class QualifiedName implements Serializable {
         return (this.unqualifiedNameSet);
     }
 
-    public void setRDNSet(Map<Integer, UnqualifiedNameEntry> rdnSet) {
+
+    public void setUnqualifiedNameEntries(Map<Integer, UnqualifiedNameEntry> rdnSet) {
         this.unqualifiedNameSet = rdnSet;
     }
 
+    @JsonIgnore
     public int getRelativeDNCount() {
         getLogger().trace(".getRDNCount(): Entry/Exit");
         return (this.unqualifiedNameSet.size());
     }
 
+    @JsonIgnore
     public CommonName getCommonName() {
         getLogger().trace(".getCommonName(): Entry");
         CommonName commonName = new CommonName(this);
@@ -258,6 +267,7 @@ public class QualifiedName implements Serializable {
         return (commonName);
     }
 
+    @JsonIgnore
     private String pseudoXMLAttribute(int order, String attributeName, String attributeValue) {
         StringBuilder xmlAttributeBuilder = new StringBuilder();
         xmlAttributeBuilder.append("<");
@@ -274,6 +284,7 @@ public class QualifiedName implements Serializable {
         return (xmlAttributeBuilder.toString());
     }
 
+    @JsonIgnore
     public String getCommonNameValue() {
         getLogger().trace(".getCommonNameValue(): Entry");
         String id = new CommonName(this).getValue();
@@ -281,6 +292,7 @@ public class QualifiedName implements Serializable {
         return (id);
     }
 
+    @JsonIgnore
     public void appendQualifiedName(QualifiedName additionalQualifiedName) {
         getLogger().trace(".appendFDN(): Entry, additionalFDN --> {}", additionalQualifiedName);
         if (additionalQualifiedName == null) {
@@ -295,6 +307,7 @@ public class QualifiedName implements Serializable {
         getLogger().trace(".appendFDN: Exit");
     }
 
+    @JsonIgnore
     public UnqualifiedName extractUnqualifiedNameWithQualifier(String qualifier) {
         getLogger().trace(".extractUnqualifiedNameWithQualifier(): Entry, qualifier --> {}", qualifier);
         for (UnqualifiedName currentUnqualifiedName : this.unqualifiedNameSet.values()) {
@@ -309,11 +322,11 @@ public class QualifiedName implements Serializable {
     }
 
     @JsonIgnore
-    public QualifiedNameToken getQualifiedNameToken() {
-        getLogger().debug(".getQualifiedNameToken(): Entry");
-        QualifiedNameToken qualifiedNameToken = new QualifiedNameToken(this);
-        getLogger().debug(".getQualifiedNameToken(): Exit, qualifiedNameToken->{}", qualifiedNameToken);
-        return (qualifiedNameToken);
+    public IdToken getIdToken() {
+        getLogger().trace(".getQualifiedNameToken(): Entry");
+        IdToken idToken = new IdToken(this);
+        getLogger().trace(".getQualifiedNameToken(): Exit, qualifiedNameToken->{}", idToken);
+        return (idToken);
     }
 
     //
@@ -333,14 +346,14 @@ public class QualifiedName implements Serializable {
 
     @Override
     public int hashCode() {
-        getLogger().debug(".hashCode(): Entry");
+        getLogger().trace(".hashCode(): Entry");
         int hashCode = 0;
         for(UnqualifiedNameEntry currentUnqualifiedNameEntry : this.unqualifiedNameSet.values()){
             getLogger().trace(".hashCode(): currentUnqualifiedNameEntry --> {}", currentUnqualifiedNameEntry);
             hashCode = 31 * currentUnqualifiedNameEntry.hashCode();
             getLogger().trace(".hashCode(): currentUnqualifiedNameEntry.hashCode() --> {}", currentUnqualifiedNameEntry.hashCode());
         }
-        getLogger().debug(".hashCode(): Exit, hashCode --> {}", hashCode);
+        getLogger().trace(".hashCode(): Exit, hashCode --> {}", hashCode);
         return hashCode;
     }
 

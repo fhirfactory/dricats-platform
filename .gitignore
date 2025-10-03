@@ -51,3 +51,7 @@ model/messaging/.classpath
 model/resources/.classpath
 
 model/tasking/.classpath
+/ui/testpm/target/
+/ui/serverside/target/
+/ui/pm/target/
+/ui/fatclient/target/

@@ -4,7 +4,7 @@ import net.fhirfactory.dricats.internals.topology.implementation.common.valueset
 import net.fhirfactory.dricats.internals.topology.implementation.layers.application.valuesets.SoftwareComponentTypeEnum;
 import net.fhirfactory.dricats.internals.topology.implementation.layers.technology.valuesets.InfrastructureComponentTypeEnum;
 import net.fhirfactory.dricats.internals.topology.implementation.layers.technology.valuesets.NetworkSecurityZoneEnum;
-import net.fhirfactory.dricats.internals.topology.implementation.relationships.valuesets.ProcessingPathSegmentDistributionEnum;
+import net.fhirfactory.dricats.internals.pathways.valuesets.PathwayRouteSelectionCriteriaEnum;
 import net.fhirfactory.dricats.internals.reference.relationships.valuesets.RelationshipType;
 import org.junit.jupiter.api.Test;
 
@@ -18,7 +18,7 @@ class EnumsSmokeTest {
         assertTrue(SoftwareComponentTypeEnum.values().length > 0);
         assertTrue(InfrastructureComponentTypeEnum.values().length > 0);
         assertTrue(NetworkSecurityZoneEnum.values().length > 0);
-        assertTrue(ProcessingPathSegmentDistributionEnum.values().length > 0);
+        assertTrue(PathwayRouteSelectionCriteriaEnum.values().length > 0);
         assertTrue(RelationshipType.values().length > 0);
     }
 

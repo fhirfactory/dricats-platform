@@ -26,11 +26,12 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.StringJoiner;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import net.fhirfactory.dricats.internals.common.datatypes.EffectiveDate;
 import net.fhirfactory.dricats.internals.common.naming.QualifiedName;
-import net.fhirfactory.dricats.internals.common.naming.QualifiedNameToken;
+import net.fhirfactory.dricats.internals.common.naming.IdToken;
 
-public class DistributableObjectId extends SerialisableObject implements Serializable {
+public class DistributableObjectId  implements Serializable {
     //
     // Housekeeping
     //
@@ -60,7 +61,6 @@ public class DistributableObjectId extends SerialisableObject implements Seriali
     public DistributableObjectId(QualifiedName qualifiedName) {
         super();
         this.qualifiedName = qualifiedName;
-        this.setId(qualifiedName.getCommonName());
         this.effectiveDate = new EffectiveDate();
         this.effectiveDate.setEffectiveEndDate(LocalDateTime.MAX);
         this.effectiveDate.setEffectiveStartDate(LocalDateTime.now());
@@ -68,9 +68,8 @@ public class DistributableObjectId extends SerialisableObject implements Seriali
 
     public DistributableObjectId(String qualifiedNameToken){
         super();
-        QualifiedNameToken qualifiedNameTokenObject = new QualifiedNameToken(qualifiedNameToken);
-        this.qualifiedName = qualifiedNameTokenObject.toQualifiedName();
-        this.setId(getQualifiedName().getCommonName());
+        IdToken idTokenObject = new IdToken(qualifiedNameToken);
+        this.qualifiedName = idTokenObject.toQualifiedName();
         this.effectiveDate = new EffectiveDate();
         this.effectiveDate.setEffectiveStartDate(LocalDateTime.now());
         this.effectiveDate.setEffectiveEndDate(LocalDateTime.MAX);
@@ -98,6 +97,16 @@ public class DistributableObjectId extends SerialisableObject implements Seriali
     }
 
     //
+     // toToken
+    //
+
+    @JsonIgnore
+    public IdToken getIdToken(){
+        IdToken stringFromQualifiedName = getQualifiedName().getIdToken();
+        return stringFromQualifiedName;
+    }
+
+    //
     // Utility Methods
     //
 
@@ -106,7 +115,6 @@ public class DistributableObjectId extends SerialisableObject implements Seriali
         return new StringJoiner(", ", DistributableObjectId.class.getSimpleName() + "[", "]")
                 .add("qualifiedName=" + getQualifiedName())
                 .add("effectiveDate=" + getEffectiveDate())
-                .add("id=" + getId())
                 .toString();
     }
 
@@ -117,7 +125,7 @@ public class DistributableObjectId extends SerialisableObject implements Seriali
         DistributableObjectId that = (DistributableObjectId) o;
         if (getQualifiedName() != null ? !getQualifiedName().equals(that.getQualifiedName()) : that.getQualifiedName() != null) return false;
         if (getEffectiveDate() != null ? !getEffectiveDate().equals(that.getEffectiveDate()) : that.getEffectiveDate() != null) return false;
-        return getId() != null ? getId().equals(that.getId()) : that.getId() == null;
+        return true;
     }
 
     @Override
@@ -135,7 +143,6 @@ public class DistributableObjectId extends SerialisableObject implements Seriali
         result = 31 * result + resultHour;
         result = 31 * result + resultMinute;
         result = 31 * result + resultSecond;
-        result = 31 * result + (getId() != null ? getId().hashCode() : 0);
         return result;
     }
 }

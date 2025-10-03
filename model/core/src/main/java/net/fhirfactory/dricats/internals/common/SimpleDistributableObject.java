@@ -91,6 +91,7 @@ public class SimpleDistributableObject extends SerialisableObject {
     }
     public void setObjectID(DistributableObjectId objectID) {
         this.objectID = objectID;
+        this.setId(objectID.getQualifiedName().getCommonName());
     }
 
     public DistributableObjectMetadata getMetadata() {

@@ -1,7 +1,7 @@
 package net.fhirfactory.dricats.model.common.naming;
 
 import net.fhirfactory.dricats.internals.common.naming.QualifiedName;
-import net.fhirfactory.dricats.internals.common.naming.QualifiedNameToken;
+import net.fhirfactory.dricats.internals.common.naming.IdToken;
 import net.fhirfactory.dricats.internals.common.naming.UnqualifiedName;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
@@ -66,14 +66,14 @@ class QualifiedNameTest {
         QualifiedName original = new QualifiedName();
         original.appendUnqualifiedName(new UnqualifiedName("X","1"));
         original.appendUnqualifiedName(new UnqualifiedName("Y","2"));
-        QualifiedNameToken token = new QualifiedNameToken(original);
+        IdToken token = new IdToken(original);
 
         // Construct using QualifiedName(QualifiedNameToken)
-        QualifiedName fromCtor = new QualifiedName(new QualifiedNameToken(token.getContent()));
+        QualifiedName fromCtor = new QualifiedName(new IdToken(token.getContent()));
         assertEquals(original, fromCtor);
 
         // And via token conversion
-        QualifiedName fromToken = new QualifiedNameToken(token.getContent()).toQualifiedName();
+        QualifiedName fromToken = new IdToken(token.getContent()).toQualifiedName();
         assertEquals(original, fromToken);
     }
 

@@ -22,7 +22,9 @@
 package net.fhirfactory.dricats.internals.pathways;
 
 import net.fhirfactory.dricats.internals.common.DistributableObjectId;
+import net.fhirfactory.dricats.internals.pathways.valuesets.PathwayRouteSelectionCriteriaEnum;
 import net.fhirfactory.dricats.internals.reference.layers.application.ApplicationProcess;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,38 +32,61 @@ import java.io.Serial;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Path extends ApplicationProcess {
+public class Pathway extends ApplicationProcess {
     //
     // Housekeeping
     //
     @Serial
     private static final long serialVersionUID = -12345678900003L;
-    private static final Logger LOG = LoggerFactory.getLogger(Path.class);
+    private static final Logger LOG = LoggerFactory.getLogger(Pathway.class);
 
     //
      // Attributes
     //
-     // Map<Sequence Number, Pathway Segment ID>
-    private Map<Integer, DistributableObjectId> pathwaySequence;
+     // Map<Priority, PathwayRoute ID>
+    private Map<Integer, DistributableObjectId> possiblePathwayRoutes;
+    private PathwayRouteSelectionCriteriaEnum routeSelectionCriteria;
 
     //
      // Constructor(s)
     //
-    public Path(){
+    public Pathway(){
         super();
-        pathwaySequence = new HashMap<>();
+        possiblePathwayRoutes = new HashMap<>();
+        routeSelectionCriteria = PathwayRouteSelectionCriteriaEnum.DISTRIBUTE_RANDOM;
+
     }
 
     //
     // Getters and Setters
     //
 
-    public Map<Integer, DistributableObjectId> getPathwaySequence() {
-        return pathwaySequence;
+    public Map<Integer, DistributableObjectId> getPossiblePathwayRoutes() {
+        return possiblePathwayRoutes;
     }
 
-    public void setPathwaySequence(Map<Integer, DistributableObjectId> pathwaySequence) {
-        this.pathwaySequence = pathwaySequence;
+    public void setPossiblePathwayRoutes(Map<Integer, DistributableObjectId> possiblePathwayRoutes) {
+        this.possiblePathwayRoutes = possiblePathwayRoutes;
     }
 
+    public PathwayRouteSelectionCriteriaEnum getRouteSelectionCriteria() {
+        return routeSelectionCriteria;
+    }
+
+    public void setRouteSelectionCriteria(PathwayRouteSelectionCriteriaEnum routeSelectionCriteria) {
+        this.routeSelectionCriteria = routeSelectionCriteria;
+    }
+
+    //
+     // Standard Methods
+    //
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this)
+                .append("possiblePathwayRoutes", possiblePathwayRoutes)
+                .append("routeSelectionCriteria", routeSelectionCriteria)
+                .appendSuper(super.toString())
+                .toString();
+    }
 }

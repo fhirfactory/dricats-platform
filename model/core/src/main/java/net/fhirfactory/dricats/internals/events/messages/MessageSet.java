@@ -22,6 +22,8 @@
 package net.fhirfactory.dricats.internals.events.messages;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import net.fhirfactory.dricats.common.DateUtility;
+import net.fhirfactory.dricats.deployment.contants.DefaultDeploymentConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,7 +45,7 @@ public class MessageSet implements Serializable {
     // Attributes
     //
     Map<Integer, MessageObject> messageSequence;
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss.SSSXXX")
+    @JsonFormat(pattern = DateUtility.DEFAULT_JSON_FORMAT, timezone = DefaultDeploymentConstants.DEPLOYMENT_TIMEZONE)
     private LocalDateTime messageSetCreationDate;
 
     //

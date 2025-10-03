@@ -19,13 +19,12 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.fhirfactory.dricats.middleware.oam.ui.server;
+package net.fhirfactory.dricats.ui.server;
 
 import net.fhirfactory.dricats.internals.topology.implementation.layers.application.WorkUnitProcessor;
 import net.fhirfactory.dricats.platform.configuration.LocalConfigurationServer;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.model.rest.RestBindingMode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

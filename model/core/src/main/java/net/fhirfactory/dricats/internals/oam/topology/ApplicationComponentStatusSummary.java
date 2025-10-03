@@ -22,6 +22,8 @@
 package net.fhirfactory.dricats.internals.oam.topology;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import net.fhirfactory.dricats.common.DateUtility;
+import net.fhirfactory.dricats.deployment.contants.DefaultDeploymentConstants;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -39,13 +41,13 @@ public class ApplicationComponentStatusSummary implements Serializable {
     //
     private String componentStatus;
     private String componentStatusDescription;
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss.SSSXXX")
+    @JsonFormat(pattern = DateUtility.DEFAULT_JSON_FORMAT, timezone = DefaultDeploymentConstants.DEPLOYMENT_TIMEZONE)
     private LocalDateTime startupInstant;
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss.SSSXXX")
+    @JsonFormat(pattern = DateUtility.DEFAULT_JSON_FORMAT, timezone = DefaultDeploymentConstants.DEPLOYMENT_TIMEZONE)
     private LocalDateTime heartbeatInstant;
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss.SSSXXX")
+    @JsonFormat(pattern = DateUtility.DEFAULT_JSON_FORMAT, timezone = DefaultDeploymentConstants.DEPLOYMENT_TIMEZONE)
     private LocalDateTime lastActivityInstant;
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss.SSSXXX")
+    @JsonFormat(pattern = DateUtility.DEFAULT_JSON_FORMAT, timezone = DefaultDeploymentConstants.DEPLOYMENT_TIMEZONE)
     private LocalDateTime lastHeartbeatInstant;
 
     //

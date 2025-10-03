@@ -19,10 +19,10 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.fhirfactory.dricats.middleware.oam.ui;
+package net.fhirfactory.dricats.ui;
 
 public class Launcher {
     public static void main(String[] args) {
-        MainApp.main(args);
+        FatClientMainApp.main(args);
     }
 }

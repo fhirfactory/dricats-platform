@@ -19,9 +19,8 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.fhirfactory.dricats.internals.pubsub;
+package net.fhirfactory.dricats.internals.pubsub.messages;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import net.fhirfactory.dricats.internals.common.DistributableObjectId;
 import net.fhirfactory.dricats.internals.events.messages.MessageObject;
 import net.fhirfactory.dricats.internals.pubsub.common.SubscriptionBase;
@@ -32,7 +31,6 @@ import org.slf4j.LoggerFactory;
 
 import java.io.Serial;
 import java.io.Serializable;
-import java.time.LocalDateTime;
 
 public class MessageSubscription extends SubscriptionBase implements Serializable {
     //

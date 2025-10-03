@@ -8,6 +8,8 @@ import net.fhirfactory.dricats.internals.events.notifications.NotificationPayloa
 import net.fhirfactory.dricats.internals.pubsub.common.ApplicationComponentIdMask;
 import net.fhirfactory.dricats.internals.pubsub.common.EventTemporalWindow;
 import net.fhirfactory.dricats.internals.pubsub.common.QualifiedNameMask;
+import net.fhirfactory.dricats.internals.pubsub.notifications.NotificationSubscription;
+import net.fhirfactory.dricats.internals.pubsub.notifications.NotificationSubscriptionMask;
 import net.fhirfactory.dricats.internals.topics.Topic;
 import org.junit.jupiter.api.Test;
 

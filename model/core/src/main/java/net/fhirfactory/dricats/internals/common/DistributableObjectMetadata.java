@@ -27,6 +27,8 @@ import java.time.LocalDateTime;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
+import net.fhirfactory.dricats.common.DateUtility;
+import net.fhirfactory.dricats.deployment.contants.DefaultDeploymentConstants;
 import net.fhirfactory.dricats.internals.common.datatypes.EffectiveDate;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
@@ -45,9 +47,9 @@ public class DistributableObjectMetadata extends SerialisableObject {
     private URI sourceSystem;
     private String sourceSystemName;
     private EffectiveDate effectiveDate;
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss.SSSXXX")
+    @JsonFormat(pattern = DateUtility.DEFAULT_JSON_FORMAT, timezone = DefaultDeploymentConstants.DEPLOYMENT_TIMEZONE)
     private LocalDateTime creationDate;
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss.SSSXXX")
+    @JsonFormat(pattern = DateUtility.DEFAULT_JSON_FORMAT, timezone = DefaultDeploymentConstants.DEPLOYMENT_TIMEZONE)
     private LocalDateTime lastUpdateDate;
 
     //

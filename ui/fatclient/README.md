@@ -30,7 +30,7 @@ Option A: Run the shaded jar (recommended)
 
 Option B: Run from your IDE
 - Set the main class to:
-  net.fhirfactory.dricats.middleware.oam.ui.Launcher
+  net.fhirfactory.dricats.ui.Launcher
 - Run normally. The app is a standard JavaFX Application (see MainApp).
 
 

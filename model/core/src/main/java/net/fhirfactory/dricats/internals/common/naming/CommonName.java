@@ -22,6 +22,8 @@
 package net.fhirfactory.dricats.internals.common.naming;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonValue;
 import org.apache.commons.lang3.SerializationUtils;
 import org.apache.commons.lang3.StringUtils;
 
@@ -53,6 +55,7 @@ public class CommonName implements Serializable {
         value = DEFAULT_NAME;
     }
 
+    @JsonCreator
     public CommonName(String value) {
         this.value = SerializationUtils.clone(value);
     }
@@ -76,9 +79,24 @@ public class CommonName implements Serializable {
         value = nameContentBuilder.toString();
     }
 
+    public CommonName(IdToken token) {
+        QualifiedName tempQualifiedName = new QualifiedName(token);
+        StringBuilder nameContentBuilder = new StringBuilder();
+        Map<Integer, UnqualifiedNameEntry> unqualifiedNameSet = tempQualifiedName.getUnqualifiedNameEntries();
+        int setSize = unqualifiedNameSet.size();
+        for (int counter = 0; counter < setSize; counter++) {
+            UnqualifiedName currentUnqualifiedName = unqualifiedNameSet.get(counter);
+            nameContentBuilder.append(currentUnqualifiedName.getValue());
+            if (counter < (setSize - 1)) {
+                nameContentBuilder.append(".");
+            }
+        }
+    }
+
     //
     // Accessor(s)
     //
+    @JsonValue
     public String getValue() {
         return (this.value);
     }

@@ -3,6 +3,7 @@
  */
 package net.fhirfactory.dricats.internals.reference.common;
 
+import net.fhirfactory.dricats.internals.common.DistributableObjectId;
 import net.fhirfactory.dricats.internals.common.SimpleDistributableObject;
 import net.fhirfactory.dricats.internals.reference.common.valuesets.ElementTypeEnum;
 import org.slf4j.Logger;
@@ -135,5 +136,22 @@ public abstract class SimpleElementBase extends SimpleDistributableObject implem
                 ", objectID="+getObjectID()+
                 ", metadata="+getMetadata()+
                 '}';
+    }
+
+    //
+    // Resolve a Key
+    //
+
+    public String resolveKey() {
+        String key = null;
+        try {
+            DistributableObjectId objectId = this.getObjectID();
+            if (objectId != null && objectId.getQualifiedName() != null && objectId.getQualifiedName().getCommonName().getValue() != null && !objectId.getQualifiedName().getCommonName().getValue().isEmpty()) {
+                key = objectId.getQualifiedName().getCommonName().getValue();
+            }
+        } catch (Exception e) {
+            // ignore
+        }
+        return key;
     }
 }

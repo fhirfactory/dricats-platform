@@ -73,7 +73,7 @@ public class DataGridServicesGroup extends ApplicationComponent implements Seria
         DistributableObjectId subsystemId = getSubsystem().getSubsystem().getObjectID();
         QualifiedName subsystemQualifiedName = subsystemId.getQualifiedName();
         QualifiedName myQualifiedName = new QualifiedName(subsystemQualifiedName);
-        myQualifiedName.appendUnqualifiedName(new UnqualifiedName(SoftwareComponentTypeEnum.SUBSYSTEM_APPLICATION_WORK_UNIT_PROCESSOR_BLOCK.getType(), "DataGrid"));
+        myQualifiedName.appendUnqualifiedName(new UnqualifiedName(SoftwareComponentTypeEnum.SUBSYSTEM_APPLICATION_WORK_UNIT_PROCESSOR_GROUP.getType(), "DataGrid"));
         DistributableObjectId myId = new DistributableObjectId(myQualifiedName);
         setObjectID(myId);
         getLogger().info(".initialisation(): [Resolve DistributableObjectId] End");

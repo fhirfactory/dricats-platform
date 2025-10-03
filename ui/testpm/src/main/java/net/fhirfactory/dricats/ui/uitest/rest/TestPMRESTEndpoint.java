@@ -28,7 +28,6 @@ import jakarta.enterprise.event.Observes;
 import jakarta.enterprise.event.Startup;
 import jakarta.inject.Inject;
 import net.fhirfactory.dricats.ui.uitest.UitestApplication;
-import net.fhirfactory.dricats.ui.uitest.handlers.TestTopologyServices;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
@@ -56,31 +55,35 @@ public class TestPMRESTEndpoint extends RouteBuilder {
     UitestApplication mainApplication;
 
     @Inject
-    TestTopologyServices testOamService;
+    CamelContext camelContext;
 
     @Inject
-    CamelContext camelContext;
+    CoreOAMRoutes coreOAMRoutes;
+
+    @Inject
+    CorePathwayRoutes corePathwayRoutes;
 
     @PostConstruct
     public void initialize(){
         if(!initialized){
-            LOG.info("UitestOamRestRoute:initialize(): Initialising");
+            LOG.info("TestPMRESTEndpoint:initialize(): Initialising");
 
-            LOG.info("UitestOamRestRoute:initialize(): mainApplication.getUiTestServerConfiguration() -> {}", mainApplication.getUiTestServerConfiguration());
-            testOamService.initialise();
+            LOG.info("TestPMRESTEndpoint:initialize(): mainApplication.getUiTestServerConfiguration() -> {}", mainApplication.getUiTestServerConfiguration());
             try {
                 camelContext.addRoutes(this);
+                camelContext.addRoutes(coreOAMRoutes);
+                camelContext.addRoutes(corePathwayRoutes);
                 camelContext.start();
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
             initialized = true;
-            LOG.info("UitestOamRestRoute:initialize(): Initialising.... Done!");
+            LOG.info("TestPMRESTEndpoint:initialize(): Initialising.... Done!");
         }
     }
 
     private void forceEagerInitialization(@Observes Startup startup) {
-        LOG.info("UitestOamRestRoute:forceEagerInitialization(): !!!");
+        LOG.info("TestPMRESTEndpoint:forceEagerInitialization(): !!!");
     }
 
     //
@@ -125,44 +128,32 @@ public class TestPMRESTEndpoint extends RouteBuilder {
                 .apiProperty("api.version", "1.0");
 
         // Define REST endpoints identical to central module
-        rest("/oam")
+        rest()
                 // Application Components
-                .get("/applicationcomponent").to("direct:uitest-list-components").produces("application/json")
-                .get("/applicationcomponent/{id}").to("direct:uitest-get-component")
-                .get("/applicationcomponent/{id}/subcomponents").to("direct:uitest-get-subcomponents")
+                .get("/oam/applicationcomponent").to("direct:uitest-list-components").produces("application/json")
+                .get("/oam/applicationcomponent/{id}").to("direct:uitest-get-component")
+                .get("/oam/applicationcomponent/{id}/subcomponents").to("direct:uitest-get-subcomponents")
+                .get("/oam/applicationcomponent/{id}/interfaces").to("direct:uitest-get-interfaces")
                 // Metrics
-                .get("/metrics").to("direct:uitest-get-metrics-range")
-                .get("/metrics/{id}").to("direct:uitest-get-metrics-latest");
+                .get("/oam/metrics").to("direct:uitest-get-metrics-range")
+                .get("/oam/metrics/{id}").to("direct:uitest-get-metrics-latest")
+                // Pathways
+                .get("/api/pathway").to("direct:uitest-list-pathways").produces("application/json")
+                .post("/api/pathway").to("direct:uitest-create-pathway")
+                .get("/api/pathway/{id}").to("direct:uitest-get-pathway")
+                .put("/api/pathway/{id}").to("direct:uitest-update-pathway")
+                .delete("/api/pathway/{id}").to("direct:uitest-delete-pathway")
+                .get("/api/pathway/{id}/routes").to("direct:uitest-get-pathway-routes")
+                .post("/api/pathway/{id}/routes").to("direct:uitest-create-pathway-route")
+                .get("/api/route/{id}").to("direct:uitest-get-pathway-route")
+                .put("/api/route/{id}").to("direct:uitest-update-pathway-route")
+                .delete("/api/route/{id}").to("direct:uitest-delete-pathway-route")
+                .get("/api/segment/{id}").to("direct:uitest-get-pathway-route-segment")
+                .put("/api/segment/{id}").to("direct:uitest-update-pathway-route-segment")
+                .delete("/api/segment/{id}").to("direct:uitest-delete-pathway-route-segment")
+                .get("/api/pathwayelement").to("direct:uitest-list-pathway-elements").produces("application/json")
+                .get("/api/pathwayelement/{id}").to("direct:uitest-get-pathway-element");
 
 
-        from("direct:uitest-list-components").routeId("uitest-list-components")
-                .log("[UITEST] Listing all application components. headers=${headers}")
-                .bean(testOamService, "listComponentsAsJSON")
-                .setHeader(Exchange.CONTENT_TYPE, constant("application/json"))
-                .log("[UITEST] Components returned");
-
-        from("direct:uitest-get-component").routeId("uitest-get-component")
-                .log("[UITEST] Get component by id='${header.id}'")
-                .bean(testOamService, "getComponentAsJSON(${header.id})")
-                .setHeader(Exchange.CONTENT_TYPE, constant("application/json"))
-                .log("[UITEST] Component lookup completed");
-
-        from("direct:uitest-get-subcomponents").routeId("uitest-get-subcomponents")
-                .log("[UITEST] Get subcomponents for id='${header.id}'")
-                .bean(testOamService, "getSubComponentsAsJSON(${header.id})")
-                .setHeader(Exchange.CONTENT_TYPE, constant("application/json"))
-                .log("[UITEST] Subcomponents lookup completed");
-
-        from("direct:uitest-get-metrics-range").routeId("uitest-get-metrics-range")
-                .log("[UITEST] Get metrics range start='${header.start}' end='${header.end}'")
-                .bean(testOamService, "getMetricsInRangeAsJSON(${header.start}, ${header.end})")
-                .setHeader(Exchange.CONTENT_TYPE, constant("application/json"))
-                .log("[UITEST] Metrics range lookup completed");
-
-        from("direct:uitest-get-metrics-latest").routeId("uitest-get-metrics-latest")
-                .log("[UITEST] Get latest metrics for id='${header.id}'")
-                .bean(testOamService, "getLatestMetricsForComponentAsJSON(${header.id})")
-                .setHeader(Exchange.CONTENT_TYPE, constant("application/json"))
-                .log("[UITEST] Latest metrics lookup completed");
     }
 }

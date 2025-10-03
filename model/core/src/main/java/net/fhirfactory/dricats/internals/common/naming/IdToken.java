@@ -21,6 +21,8 @@
  */
 package net.fhirfactory.dricats.internals.common.naming;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.Map;
@@ -37,7 +39,7 @@ import java.util.Objects;
  *  - Build such a String from a QualifiedName (toStringFromQualifiedName)
  *  - Parse that String back into a QualifiedName (toQualifiedName)
  */
-public class QualifiedNameToken implements Serializable {
+public class IdToken implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
 
@@ -47,17 +49,21 @@ public class QualifiedNameToken implements Serializable {
     // Constructors
     //
 
-    public QualifiedNameToken() {
+    public IdToken() {
         this.token = "";
     }
 
-    public QualifiedNameToken(String token) {
+    public IdToken(String token) {
         this.token = token == null ? "" : token;
     }
 
-    public QualifiedNameToken(QualifiedName qualifiedName) {
+    public IdToken(QualifiedName qualifiedName) {
         this.token = toStringFromQualifiedName(qualifiedName);
     }
+
+    //
+    // Accessors / Mutators
+    //
 
     public String getContent() {
         return token;
@@ -95,6 +101,8 @@ public class QualifiedNameToken implements Serializable {
      * Parse the current token content back into a QualifiedName by explicitly mapping
      * the pseudo-XML produced by toStringFromQualifiedName().
      */
+
+    @JsonIgnore
     public QualifiedName toQualifiedName() {
         if (token == null || token.isEmpty()) {
             return new QualifiedName();
@@ -165,7 +173,7 @@ public class QualifiedNameToken implements Serializable {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        QualifiedNameToken that = (QualifiedNameToken) o;
+        IdToken that = (IdToken) o;
         return Objects.equals(token, that.token);
     }
 

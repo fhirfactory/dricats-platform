@@ -42,6 +42,15 @@
             <scope>compile</scope>
         </dependency>
 
+        <!-- UI ServerSide Services -->
+
+        <dependency>
+            <groupId>net.fhirfactory.dricats</groupId>
+            <artifactId>dricats-ui-serverside</artifactId>
+            <version>${project.version}</version>
+            <scope>compile</scope>
+        </dependency>
+
         <!-- Apache Camel -->
 
         <dependency>
