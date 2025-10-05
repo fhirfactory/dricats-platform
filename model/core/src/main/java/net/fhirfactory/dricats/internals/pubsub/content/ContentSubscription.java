@@ -19,64 +19,70 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.fhirfactory.dricats.internals.pathways;
+package net.fhirfactory.dricats.internals.pubsub.content;
 
-import net.fhirfactory.dricats.internals.common.DistributableObjectId;
-import net.fhirfactory.dricats.internals.common.SimpleDistributableObject;
-import net.fhirfactory.dricats.internals.common.naming.QualifiedName;
+import net.fhirfactory.dricats.internals.pubsub.TopicSubscription;
+import net.fhirfactory.dricats.internals.pubsub.common.ApplicationComponentIdMask;
+import net.fhirfactory.dricats.internals.pubsub.common.EventTemporalWindow;
+import net.fhirfactory.dricats.internals.pubsub.common.SubscriptionMaskBase;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.Serial;
 import java.io.Serializable;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
 
-public class PathwayRoute extends SimpleDistributableObject implements Serializable {
+public class ContentSubscription extends SubscriptionMaskBase implements Serializable {
     //
     // Housekeeping
     //
     @Serial
-    private static final long serialVersionUID = 1L;
-    private static final Logger LOG = LoggerFactory.getLogger(PathwayRoute.class);
+    private static final long serialVersionUID = -12345678200051L;
+    private static final Logger LOG = LoggerFactory.getLogger(ContentSubscription.class);
 
     //
     // Attributes
     //
-     // Map<priority, PathwayRouteSegment id>
-    private Map<Integer, DistributableObjectId> routeSegmentSequence;
 
     //
-    // Constructor(s)
+    // Constructors
     //
-    public PathwayRoute(){
+    public ContentSubscription() {
         super();
-        routeSegmentSequence = new HashMap<>();
     }
 
-    public PathwayRoute(QualifiedName qualifiedName){
-        super(qualifiedName);
-        routeSegmentSequence = new HashMap<>();
+    public ContentSubscription(ApplicationComponentIdMask internalEventSource, ApplicationComponentIdMask internalEventTarget, List<TopicSubscription> eventTopicSubscriptions, String eventOrigin, String eventFinalDestination, EventTemporalWindow temporalWindow ){
+        super(internalEventSource, internalEventTarget, eventTopicSubscriptions, eventOrigin, eventFinalDestination, temporalWindow);
     }
 
     //
-    public Map<Integer, DistributableObjectId> getRouteSegmentSequence() {
-        return routeSegmentSequence;
+    // Getters and Setters
+    //
+
+    @Override
+    protected Logger getLogger(){
+        return LOG;
     }
 
-    public void setRouteSegmentSequence(Map<Integer, DistributableObjectId> routeSegmentSequence) {
-        this.routeSegmentSequence = routeSegmentSequence;
-    }
+    //
+    // Business Methods
+    //
 
     //
     // Standard Methods
     //
 
+
     @Override
     public String toString() {
         return new ToStringBuilder(this)
-                .append("segmentSequence", routeSegmentSequence)
+                .append("internalEventSource", internalEventSource)
+                .append("internalEventTarget", internalEventTarget)
+                .append("eventTopicSubscriptions", eventTopicSubscriptions)
+                .append("eventOrigin", eventOrigin)
+                .append("eventFinalDestination", eventFinalDestination)
+                .append("temporalWindow", temporalWindow)
                 .appendSuper(super.toString())
                 .toString();
     }

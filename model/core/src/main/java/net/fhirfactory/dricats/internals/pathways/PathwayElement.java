@@ -22,9 +22,12 @@
 
 package net.fhirfactory.dricats.internals.pathways;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import net.fhirfactory.dricats.internals.common.DistributableObjectId;
 import net.fhirfactory.dricats.internals.common.naming.QualifiedName;
 import net.fhirfactory.dricats.internals.common.naming.UnqualifiedName;
+import net.fhirfactory.dricats.internals.data.Payload;
+import net.fhirfactory.dricats.internals.pubsub.content.ContentFilter;
 import net.fhirfactory.dricats.internals.reference.relationships.FlowRelationship;
 import net.fhirfactory.dricats.internals.reference.relationships.valuesets.RelationshipType;
 import net.fhirfactory.dricats.internals.topics.Topic;
@@ -49,6 +52,8 @@ public class PathwayElement extends FlowRelationship implements Serializable {
     // Attributes
     //
     private DistributableObjectId utilisedApplicationService;
+    private ContentFilter ingressContentFilter;
+    private ContentFilter egressContentFilter;
     private List<Topic> supportedTopics;
 
     //
@@ -77,7 +82,7 @@ public class PathwayElement extends FlowRelationship implements Serializable {
     }
 
     //
-    // Business Methods
+    // Bean Methods
     //
 
 
@@ -97,6 +102,38 @@ public class PathwayElement extends FlowRelationship implements Serializable {
         this.supportedTopics = supportedTopics;
     }
 
+    public ContentFilter getIngressContentFilter() {
+        return ingressContentFilter;
+    }
+
+    public void setIngressContentFilter(ContentFilter ingressContentFilter) {
+        this.ingressContentFilter = ingressContentFilter;
+    }
+
+    public ContentFilter getEgressContentFilter() {
+        return egressContentFilter;
+    }
+
+    public void setEgressContentFilter(ContentFilter egressContentFilter) {
+        this.egressContentFilter = egressContentFilter;
+    }
+
+    //
+     // Business Methods
+     //
+
+    @JsonIgnore
+    public boolean passesIngressFilter(Payload payload){
+        boolean filter = getIngressContentFilter().filter(payload.getDataTopic(), payload.getDataFormat());
+        return (filter);
+    }
+
+    @JsonIgnore
+    public boolean passesEgressFilter(Payload payload){
+        boolean filter = getEgressContentFilter().filter(payload.getDataTopic(), payload.getDataFormat());
+        return (filter);
+    }
+
     //
      // Standard Methods
      //
@@ -106,6 +143,8 @@ public class PathwayElement extends FlowRelationship implements Serializable {
         return new ToStringBuilder(this)
                 .append("utilisedApplicationService", utilisedApplicationService)
                 .append("supportedTopics", supportedTopics)
+                .append("ingressContentFilter", ingressContentFilter)
+                .append("egressContentFilter", egressContentFilter)
                 .appendSuper(super.toString())
                 .toString();
     }

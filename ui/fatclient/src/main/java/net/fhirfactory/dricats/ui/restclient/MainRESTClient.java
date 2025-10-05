@@ -536,6 +536,56 @@ public class MainRESTClient {
         return getFlowById(key);
     }
 
+    public PathwayElement createFlow(PathwayElement flow){
+        String url = normalize(baseUrl) + "/api/pathwayelement";
+        try {
+            String body = mapper.writeValueAsString(flow);
+            HttpRequest req = HttpRequest.newBuilder().uri(URI.create(url))
+                    .header("Content-Type", "application/json")
+                    .POST(HttpRequest.BodyPublishers.ofString(body, StandardCharsets.UTF_8)).build();
+            HttpResponse<String> resp = httpClient.send(req, HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8));
+            if (resp.statusCode() >= 200 && resp.statusCode() < 300 && resp.body() != null) {
+                return mapper.readValue(resp.body(), PathwayElement.class);
+            }
+        } catch (Exception e) {
+            LOG.error("[UI] POST {} failed: {}", url, e.toString());
+        }
+        return null;
+    }
+
+    public PathwayElement updateFlow(PathwayElement flow){
+        String id = resolveRestKey(flow==null? null : flow.getObjectID());
+        if(id==null){ return null; }
+        String url;
+        try { url = normalize(baseUrl) + "/api/pathwayelement/" + urlEncode(id); } catch (IOException e) { return null; }
+        try {
+            String body = mapper.writeValueAsString(flow);
+            HttpRequest req = HttpRequest.newBuilder().uri(URI.create(url))
+                    .header("Content-Type", "application/json")
+                    .PUT(HttpRequest.BodyPublishers.ofString(body, StandardCharsets.UTF_8)).build();
+            HttpResponse<String> resp = httpClient.send(req, HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8));
+            if (resp.statusCode() >= 200 && resp.statusCode() < 300 && resp.body() != null) {
+                return mapper.readValue(resp.body(), PathwayElement.class);
+            }
+        } catch (Exception e){
+            LOG.error("[UI] PUT {} failed: {}", url, e.toString());
+        }
+        return null;
+    }
+
+    public boolean deleteFlow(String id){
+        String url;
+        try { url = normalize(baseUrl) + "/api/pathwayelement/" + urlEncode(id); } catch (IOException e) { return false; }
+        try {
+            HttpRequest req = HttpRequest.newBuilder().uri(URI.create(url)).DELETE().build();
+            HttpResponse<String> resp = httpClient.send(req, HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8));
+            return resp.statusCode() >= 200 && resp.statusCode() < 300;
+        } catch (Exception e){
+            LOG.error("[UI] DELETE {} failed: {}", url, e.toString());
+            return false;
+        }
+    }
+
     private static String urlEncode(String s) throws IOException {
         return java.net.URLEncoder.encode(s, StandardCharsets.UTF_8);
     }

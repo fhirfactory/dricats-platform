@@ -62,7 +62,7 @@ public class UnqualifiedName implements Serializable {
     }
 
     public UnqualifiedName(String qualifier, String nameValue) {
-        getLogger().debug(".UnqualifiedName(String, String): Entry, Qualifier --> {}, Value --> {}", qualifier, nameValue);
+        getLogger().trace(".UnqualifiedName(String, String): Entry, Qualifier --> {}, Value --> {}", qualifier, nameValue);
         if ((qualifier == null) || (nameValue == null)) {
             throw (new IllegalArgumentException("null name or nameValue passed to Constructor"));
         }
@@ -82,7 +82,7 @@ public class UnqualifiedName implements Serializable {
     }
 
     public UnqualifiedName(IdToken token) {
-        getLogger().debug(".UnqualifiedName(UnqualifiedNameToken): Entry, token --> {}", token);
+        getLogger().trace(".UnqualifiedName(UnqualifiedNameToken): Entry, token --> {}", token);
         if (token == null) {
             throw (new IllegalArgumentException("null UnqualifiedNameToken passed to Constructor"));
         }

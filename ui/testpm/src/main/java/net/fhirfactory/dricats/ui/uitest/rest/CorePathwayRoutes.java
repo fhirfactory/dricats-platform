@@ -22,9 +22,11 @@
 package net.fhirfactory.dricats.ui.uitest.rest;
 
 import com.fasterxml.jackson.core.JsonParseException;
+import jakarta.annotation.PostConstruct;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import net.fhirfactory.dricats.ui.uitest.handlers.PathwayResourceHandler;
+import net.fhirfactory.dricats.ui.uitest.testdata.PathwayTestResourceSetBuilder;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.slf4j.Logger;
@@ -41,8 +43,13 @@ public class CorePathwayRoutes extends RouteBuilder {
      // Attributes
     //
 
+    private boolean initialized = false;
+
     @Inject
     private PathwayResourceHandler pathwayResourceHandler;
+
+    @Inject
+    private PathwayTestResourceSetBuilder pathwayTestResourceSetBuilder;
 
     //
      // Constructor(s)
@@ -51,6 +58,21 @@ public class CorePathwayRoutes extends RouteBuilder {
     public CorePathwayRoutes() {
         LOG.debug(".constructor(): Entry");
         LOG.debug(".constructor(): Exit");
+    }
+
+    //
+    // Post Construct (for dependency injection)
+    //
+
+    @PostConstruct
+    public void initialize(){
+        if(!initialized){
+            LOG.info("UitestOamRestRoute:initialize(): Initialising");
+            pathwayResourceHandler.initialise();
+            pathwayTestResourceSetBuilder.initialise();
+            initialized = true;
+            LOG.info("UitestOamRestRoute:initialize(): Initialising.... Done!");
+        }
     }
 
     //

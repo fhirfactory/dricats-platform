@@ -22,8 +22,11 @@
 package net.fhirfactory.dricats.internals.oam.topology;
 
 import net.fhirfactory.dricats.internals.common.DistributableObjectId;
+import net.fhirfactory.dricats.internals.pubsub.content.ContentFilter;
+import net.fhirfactory.dricats.internals.pubsub.content.ContentSubscription;
 import net.fhirfactory.dricats.internals.reference.common.SimpleElementBase;
 import net.fhirfactory.dricats.internals.reference.layers.application.ApplicationComponent;
+import net.fhirfactory.dricats.internals.topology.implementation.layers.application.interfaces.base.InterfaceImplementationBase;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -43,6 +46,7 @@ public class InterfaceComponentSummary extends SimpleElementBase implements Seri
     //
     private DistributableObjectId parent;
     private ApplicationComponentStatusSummary componentStatus;
+    private List<ContentFilter> contentFilters;
 
     //
     // Constructor(s)
@@ -50,6 +54,7 @@ public class InterfaceComponentSummary extends SimpleElementBase implements Seri
     public InterfaceComponentSummary(){
         super();
         componentStatus = new ApplicationComponentStatusSummary();
+        contentFilters = new ArrayList<>();
     }
 
     public InterfaceComponentSummary(ApplicationComponent applicationComponent ){
@@ -68,9 +73,33 @@ public class InterfaceComponentSummary extends SimpleElementBase implements Seri
         getComponentStatus().setStartupInstant(applicationComponent.getMetadata().getCreationDate());
     }
 
+    public InterfaceComponentSummary(InterfaceImplementationBase interfaceImplementation ){
+        super();
+        setMetadata(interfaceImplementation.getMetadata());
+        setObjectID(interfaceImplementation.getObjectID());
+        setDocumentation(interfaceImplementation.getDocumentation());
+        setName(interfaceImplementation.getName());
+        setObjectID(interfaceImplementation.getObjectID());
+        setSpecialization(interfaceImplementation.getSpecialization());
+        setElementType(interfaceImplementation.getElementType());
+        setComponentStatus(new ApplicationComponentStatusSummary());
+        getComponentStatus().setHeartbeatInstant(LocalDateTime.now());
+        getComponentStatus().setComponentStatus(interfaceImplementation.getMetricsData().getComponentStatus());
+        getComponentStatus().setLastActivityInstant(LocalDateTime.now());
+        getComponentStatus().setStartupInstant(interfaceImplementation.getMetadata().getCreationDate());
+        getContentFilters().addAll(interfaceImplementation.getContentFilters());
+    }
+
     //
     // Getters and Setters
     //
+
+    public List<ContentFilter> getContentFilters() {
+        return contentFilters;
+    }
+    public void setContentFilters(List<ContentFilter> contentFilters) {
+        this.contentFilters = contentFilters;
+    }
 
     public DistributableObjectId getParent() {
         return parent;

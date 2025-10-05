@@ -2,9 +2,6 @@ package net.fhirfactory.dricats.ui;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
-import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.VBox;
 import net.fhirfactory.dricats.internals.oam.metrics.ApplicationComponentMetricsData;
 import net.fhirfactory.dricats.internals.oam.metrics.datatypes.ComponentMessagingStatistics;
 import net.fhirfactory.dricats.internals.oam.topology.ApplicationComponentSummary;
@@ -87,15 +84,37 @@ public class TopologyTabController {
                         refreshDetails(s);
                         refreshUniqueName(s);
                         refreshMetrics(s);
+                    } else if (v instanceof net.fhirfactory.dricats.internals.oam.topology.InterfaceComponentSummary ifs) {
+                        // Do not open dialog on selection. Only on double-click (handled by mouse handler).
+                        LOG.info("[UI] Interface selected: {}", ifs.resolveKey());
                     } else {
-                        LOG.info("[UI] Tree selection is interface or other node");
-                        // For interfaces, we don't show details/metrics for now per minimal change
+                        LOG.info("[UI] Tree selection is other node");
                     }
                 } else {
                     LOG.info("[UI] Tree selection cleared");
                     refreshDetails(null);
                     refreshUniqueName(null);
                     refreshMetrics(null);
+                }
+            });
+
+            // Open Interface detail dialog only on double-click
+            treeView.setOnMouseClicked(event -> {
+                if (event.getClickCount() == 2) {
+                    TreeItem<Object> sel = treeView.getSelectionModel().getSelectedItem();
+                    if (sel != null) {
+                        Object v = sel.getValue();
+                        if (v instanceof net.fhirfactory.dricats.internals.oam.topology.InterfaceComponentSummary ifs) {
+                            LOG.info("[UI] Interface double-clicked: {}", ifs.resolveKey());
+                            try {
+                                InterfaceDetailDialog dlg = new InterfaceDetailDialog(client, ifs);
+                                dlg.initOwner(treeView.getScene()==null? null : treeView.getScene().getWindow());
+                                dlg.showAndWait();
+                            } catch (Exception ex) {
+                                LOG.warn("[UI] Failed to open PathwayElement dialog: {}", ex.toString());
+                            }
+                        }
+                    }
                 }
             });
         }
