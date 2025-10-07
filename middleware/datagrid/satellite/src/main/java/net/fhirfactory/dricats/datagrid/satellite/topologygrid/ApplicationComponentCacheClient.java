@@ -1,12 +1,33 @@
+/*
+ * Copyright (c) 2024 Mark A. Hunter
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this applications and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
 package net.fhirfactory.dricats.datagrid.satellite.topologygrid;
 
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
 import jakarta.enterprise.context.ApplicationScoped;
 import net.fhirfactory.dricats.internals.common.DistributableObjectId;
-import net.fhirfactory.dricats.internals.common.naming.CommonName;
-import net.fhirfactory.dricats.internals.oam.topology.ApplicationComponentSummary;
+import net.fhirfactory.dricats.internals.oam.topology.base.ApplicationComponentSummary;
 import net.fhirfactory.dricats.datagrid.topology.IApplicationComponentCacheClient;
+import net.fhirfactory.dricats.reference.archimate.common.valuesets.ElementTypeEnum;
 import net.fhirfactory.dricats.internals.topology.implementation.layers.application.valuesets.SoftwareComponentTypeEnum;
 import org.infinispan.Cache;
 import org.infinispan.configuration.cache.CacheMode;
@@ -16,9 +37,10 @@ import org.infinispan.manager.DefaultCacheManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -153,8 +175,95 @@ public class ApplicationComponentCacheClient implements IApplicationComponentCac
         throw new UnsupportedOperationException("Not implemented yet");
     }
 
-    public List<ApplicationComponentSummary> getContainedComponents(DistributableObjectId parent, SoftwareComponentTypeEnum componentType) {
-        throw new UnsupportedOperationException("Not implemented yet");
+    public List<ApplicationComponentSummary> getContainedComponents(DistributableObjectId parentObjectId, SoftwareComponentTypeEnum componentType) {
+        LOG.debug(".getContainedComponents(): Entry, parentObjectId={}, componentType={}", parentObjectId, componentType);
+        String key = null;
+        if (parentObjectId != null && parentObjectId.getQualifiedName() != null && parentObjectId.getQualifiedName().getCommonName().getValue() != null && !parentObjectId.getQualifiedName().getCommonName().getValue().isEmpty()) {
+            key = parentObjectId.getQualifiedName().getCommonName().getValue();
+        }
+        if(key == null)
+            return Collections.emptyList();
+        ApplicationComponentSummary parent = get(key);
+
+        if(parent == null){
+            LOG.info(".getContainedComponents(): Exit, No subcomponents for id={} (component missing)", parentObjectId);
+            return Collections.emptyList();
+        }
+        if(parent.getElementType() != ElementTypeEnum.APPLICATION_COMPONENT){
+            LOG.info(".getContainedComponents(): Exit, No subcomponents for id={} (component is not a ApplicationComponent)", parentObjectId);
+            return Collections.emptyList();
+        }
+        List<ApplicationComponentSummary> result = new ArrayList<>();
+        // Determine child list based on the specific summary subtype
+        if (parent instanceof net.fhirfactory.dricats.internals.oam.topology.SubsystemSummary) {
+            net.fhirfactory.dricats.internals.oam.topology.SubsystemSummary subs = (net.fhirfactory.dricats.internals.oam.topology.SubsystemSummary) parent;
+            if (subs.getApplicationClusters() != null) {
+                for (DistributableObjectId childId : subs.getApplicationClusters()) {
+                    String currentKey = childId.getQualifiedName().getCommonName().getValue();
+                    ApplicationComponentSummary child = get(currentKey);
+                    if (child != null) {
+                        result.add((ApplicationComponentSummary) child);
+                    } else {
+                        LOG.warn(".getContainedComponents(): No child component found for currentKey={}", currentKey);
+                    }
+                }
+            }
+            if (subs.getApplicationInstances() != null) {
+                for (DistributableObjectId childId : subs.getApplicationInstances()) {
+                    String currentKey = childId.getQualifiedName().getCommonName().getValue();
+                    ApplicationComponentSummary child = get(currentKey);
+                    if (child != null) {
+                        result.add( child);
+                    } else {
+                        LOG.warn(".getContainedComponents(): No child component found for childId={}", childId);
+                    }
+                }
+            }
+        } else if (parent instanceof net.fhirfactory.dricats.internals.oam.topology.ApplicationClusterSummary) {
+            net.fhirfactory.dricats.internals.oam.topology.ApplicationClusterSummary cluster = (net.fhirfactory.dricats.internals.oam.topology.ApplicationClusterSummary) parent;
+            if (cluster.getApplicationInstances() != null) {
+                for (DistributableObjectId childId : cluster.getApplicationInstances()) {
+                    String currentKey = childId.getQualifiedName().getCommonName().getValue();
+                    ApplicationComponentSummary child = get(currentKey);
+                    if (child != null) {
+                        result.add(child);
+                    } else {
+                        LOG.warn(".getContainedComponents(): No child component found for childId={}", childId);
+                    }
+                }
+            }
+        } else if (parent instanceof net.fhirfactory.dricats.internals.oam.topology.ApplicationInstanceSummary) {
+            net.fhirfactory.dricats.internals.oam.topology.ApplicationInstanceSummary instance = (net.fhirfactory.dricats.internals.oam.topology.ApplicationInstanceSummary) parent;
+            if (instance.getWupGroups() != null) {
+                for (DistributableObjectId childId : instance.getWupGroups()) {
+                    String childKey = childId.getQualifiedName().getCommonName().getValue();
+                    ApplicationComponentSummary child = get(childKey);
+                    if (child != null) {
+                        result.add(child);
+                    } else {
+                        LOG.warn(".getContainedComponents(): No child component found for childKey={}", childKey);
+                    }
+                }
+            }
+        } else if (parent instanceof net.fhirfactory.dricats.internals.oam.topology.WUPGroupSummary) {
+            net.fhirfactory.dricats.internals.oam.topology.WUPGroupSummary group = (net.fhirfactory.dricats.internals.oam.topology.WUPGroupSummary) parent;
+            if (group.getWorkUnitProcessors() != null) {
+                for (DistributableObjectId childId : group.getWorkUnitProcessors()) {
+                    String childKey = childId.getQualifiedName().getCommonName().getValue();
+                    ApplicationComponentSummary child = get(childKey);
+                    if (child != null) {
+                        result.add( child);
+                    } else {
+                        LOG.warn(".getContainedComponents(): No child component found for childKey={}", childKey);
+                    }
+                }
+            }
+        }
+        LOG.info(".getContainedComponents(): Exit, Returning {} subcomponents for parentObjectId={}", result.size(), parentObjectId);
+        return result;
+
+
+
     }
 
 }

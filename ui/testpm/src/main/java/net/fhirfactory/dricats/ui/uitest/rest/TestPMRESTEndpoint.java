@@ -133,7 +133,8 @@ public class TestPMRESTEndpoint extends RouteBuilder {
                 .get("/oam/applicationcomponent").to("direct:uitest-list-components").produces("application/json")
                 .get("/oam/applicationcomponent/{id}").to("direct:uitest-get-component")
                 .get("/oam/applicationcomponent/{id}/subcomponents").to("direct:uitest-get-subcomponents")
-                .get("/oam/applicationcomponent/{id}/interfaces").to("direct:uitest-get-interfaces")
+                .get("/oam/applicationcomponent/{id}/ingressinterfaces").to("direct:uitest-get-ingress-interfaces")
+                .get("/oam/applicationcomponent/{id}/egressinterfaces").to("direct:uitest-get-egress-interfaces")
                 // Metrics
                 .get("/oam/metrics").to("direct:uitest-get-metrics-range")
                 .get("/oam/metrics/{id}").to("direct:uitest-get-metrics-latest")

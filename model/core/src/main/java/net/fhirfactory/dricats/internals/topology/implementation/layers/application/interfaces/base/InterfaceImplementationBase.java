@@ -25,7 +25,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import net.fhirfactory.dricats.internals.common.DistributableObjectId;
 import net.fhirfactory.dricats.internals.oam.metrics.ApplicationInterfaceMetricsData;
 import net.fhirfactory.dricats.internals.pubsub.content.ContentFilter;
-import net.fhirfactory.dricats.internals.reference.layers.application.ApplicationInterface;
+import net.fhirfactory.dricats.reference.archimate.layers.application.ApplicationInterface;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

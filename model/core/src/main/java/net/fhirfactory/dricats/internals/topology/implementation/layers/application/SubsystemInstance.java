@@ -23,7 +23,7 @@ package net.fhirfactory.dricats.internals.topology.implementation.layers.applica
 
 import java.io.Serial;
 
-import net.fhirfactory.dricats.internals.reference.layers.application.ApplicationComponent;
+import net.fhirfactory.dricats.reference.archimate.layers.application.ApplicationComponent;
 import net.fhirfactory.dricats.internals.topology.implementation.layers.technology.DataCentreNode;
 import net.fhirfactory.dricats.internals.topology.implementation.layers.technology.Platform;
 import org.slf4j.Logger;

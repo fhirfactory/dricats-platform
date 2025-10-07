@@ -83,7 +83,8 @@ public class TopicSubscription extends QualifiedNameMask implements Serializable
     @Override
     public String toString() {
         return new ToStringBuilder(this)
-                .appendSuper(super.toString())
+                .append("Mask",getMask())
+                .append("includeContained", getIncludeContained())
                 .toString();
     }
 }

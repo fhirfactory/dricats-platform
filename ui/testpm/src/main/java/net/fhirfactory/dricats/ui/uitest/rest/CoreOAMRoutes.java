@@ -112,9 +112,15 @@ public class CoreOAMRoutes extends RouteBuilder {
                 .setHeader(Exchange.CONTENT_TYPE, constant("application/json"))
                 .log("[UITEST] Subcomponents lookup completed");
 
-        from("direct:uitest-get-interfaces").routeId("uitest-get-interfaces")
+            from("direct:uitest-get-ingress-interfaces").routeId("uitest-get-ingress-interfaces")
                 .log("[UITEST] Get interfaces for id='${header.id}'")
-                .bean(topologyHandler, "getInterfacesAsJSON(${header.id})")
+                .bean(topologyHandler, "getIngressInterfacesAsJSON(${header.id})")
+                .setHeader(Exchange.CONTENT_TYPE, constant("application/json"))
+                .log("[UITEST] Interfaces lookup completed");
+
+        from("direct:uitest-get-egress-interfaces").routeId("uitest-get-egress-interfaces")
+                .log("[UITEST] Get interfaces for id='${header.id}'")
+                .bean(topologyHandler, "getEgressInterfacesAsJSON(${header.id})")
                 .setHeader(Exchange.CONTENT_TYPE, constant("application/json"))
                 .log("[UITEST] Interfaces lookup completed");
 

@@ -21,18 +21,13 @@
  */
 package net.fhirfactory.dricats.internals.data;
 
-import jakarta.ws.rs.core.MediaType;
-import net.fhirfactory.dricats.internals.common.DistributableObjectId;
-import net.fhirfactory.dricats.internals.reference.layers.application.ApplicationDataObject;
-import net.fhirfactory.dricats.internals.topics.Topic;
+import net.fhirfactory.dricats.reference.archimate.layers.application.ApplicationDataObject;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.Serial;
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 
 public class Payload extends ApplicationDataObject implements Serializable {

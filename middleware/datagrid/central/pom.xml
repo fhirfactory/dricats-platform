@@ -43,6 +43,17 @@
         </dependency>
 
         <dependency>
+            <groupId>org.infinispan</groupId>
+            <artifactId>infinispan-cachestore-jdbc</artifactId>
+            <version>${version-org.infinispan}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.infinispan</groupId>
+            <artifactId>infinispan-cachestore-jdbc-common</artifactId>
+            <version>${version-org.infinispan}</version>
+        </dependency>
+
+        <dependency>
             <groupId>org.jgroups</groupId>
             <artifactId>jgroups</artifactId>
             <version>${version-org.jgroups-jgroups}</version>

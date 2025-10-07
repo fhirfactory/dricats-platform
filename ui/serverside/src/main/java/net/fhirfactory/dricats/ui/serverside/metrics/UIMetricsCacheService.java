@@ -3,7 +3,7 @@ package net.fhirfactory.dricats.ui.serverside.metrics;
 import jakarta.annotation.PostConstruct;
 import jakarta.enterprise.context.ApplicationScoped;
 import net.fhirfactory.dricats.internals.oam.metrics.ApplicationComponentMetricsData;
-import net.fhirfactory.dricats.internals.oam.topology.ApplicationComponentSummary;
+import net.fhirfactory.dricats.internals.oam.topology.base.ApplicationComponentSummary;
 import org.slf4j.LoggerFactory;
 
 import java.time.Instant;

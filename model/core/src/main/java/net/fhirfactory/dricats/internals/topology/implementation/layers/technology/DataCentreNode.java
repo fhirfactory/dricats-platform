@@ -24,7 +24,7 @@ package net.fhirfactory.dricats.internals.topology.implementation.layers.technol
 import java.io.Serial;
 import java.io.Serializable;
 
-import net.fhirfactory.dricats.internals.reference.layers.technology.Node;
+import net.fhirfactory.dricats.reference.archimate.layers.technology.Node;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

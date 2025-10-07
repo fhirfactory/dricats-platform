@@ -22,7 +22,6 @@
 package net.fhirfactory.dricats.internals.communicate.entities.organization;
 
 import net.fhirfactory.dricats.internals.communicate.entities.user.datatypes.CommunicateUserReference;
-import net.fhirfactory.dricats.resources.base.entities.Organisation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

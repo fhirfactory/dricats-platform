@@ -26,7 +26,7 @@ import net.fhirfactory.dricats.internals.common.DistributableObjectId;
 import net.fhirfactory.dricats.internals.common.naming.QualifiedName;
 import net.fhirfactory.dricats.internals.oam.metrics.ApplicationComponentMetricsData;
 import net.fhirfactory.dricats.internals.oam.metrics.interfaces.ILocalMetricsServerInterface;
-import net.fhirfactory.dricats.internals.oam.topology.ApplicationComponentSummary;
+import net.fhirfactory.dricats.internals.oam.topology.base.ApplicationComponentSummary;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

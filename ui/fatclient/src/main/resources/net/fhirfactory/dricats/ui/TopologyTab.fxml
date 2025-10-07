@@ -45,6 +45,39 @@
                                 <Insets topRightBottomLeft="8" />
                             </padding>
                         </VBox>
+                        <!-- New Interfaces pane: horizontally split into Ingress (left) and Egress (right) -->
+                        <SplitPane dividerPositions="0.5">
+                            <items>
+                                <VBox spacing="6.0">
+                                    <children>
+                                        <Label text="Ingress Interface Details" />
+                                        <TableView fx:id="ingressInterfaceTable" VBox.vgrow="ALWAYS">
+                                            <columns>
+                                                <TableColumn fx:id="ingressAttrCol" prefWidth="180" text="Attribute" />
+                                                <TableColumn fx:id="ingressValCol" prefWidth="400" text="Value" />
+                                            </columns>
+                                        </TableView>
+                                    </children>
+                                    <padding>
+                                        <Insets topRightBottomLeft="8" />
+                                    </padding>
+                                </VBox>
+                                <VBox spacing="6.0">
+                                    <children>
+                                        <Label text="Egress Interface Details" />
+                                        <TableView fx:id="egressInterfaceTable" VBox.vgrow="ALWAYS">
+                                            <columns>
+                                                <TableColumn fx:id="egressAttrCol" prefWidth="180" text="Attribute" />
+                                                <TableColumn fx:id="egressValCol" prefWidth="400" text="Value" />
+                                            </columns>
+                                        </TableView>
+                                    </children>
+                                    <padding>
+                                        <Insets topRightBottomLeft="8" />
+                                    </padding>
+                                </VBox>
+                            </items>
+                        </SplitPane>
                         <VBox spacing="6.0">
                             <children>
                                 <Label text="Metrics (latest)" />

@@ -27,7 +27,7 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import net.fhirfactory.dricats.internals.oam.metrics.ApplicationComponentMetricsData;
 import net.fhirfactory.dricats.internals.oam.metrics.datatypes.ComponentMessagingStatistics;
-import net.fhirfactory.dricats.internals.oam.topology.ApplicationComponentSummary;
+import net.fhirfactory.dricats.internals.oam.topology.base.ApplicationComponentSummary;
 import net.fhirfactory.dricats.ui.restclient.MainRESTClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -100,10 +100,15 @@ public class TopologyTab extends Tab {
                     if(label==null || label.isBlank()){ label = MainRESTClient.resolveKey(acs); }
                     setText(label);
                     setStyle("");
-                } else if (value instanceof net.fhirfactory.dricats.internals.oam.topology.InterfaceComponentSummary ifs){
-                    String label = ifs.getName();
-                    if(label==null || label.isBlank()){ label = ifs.resolveKey(); }
-                    setText(label);
+                } else if (value instanceof net.fhirfactory.dricats.internals.oam.topology.IngressInterfaceComponentSummary ifIn){
+                    String label = ifIn.getName();
+                    if(label==null || label.isBlank()){ label = ifIn.resolveKey(); }
+                    setText("[IN] "+label);
+                    setStyle("-fx-text-fill: #2a7fff;");
+                } else if (value instanceof net.fhirfactory.dricats.internals.oam.topology.EgressInterfaceComponentSummary ifOut){
+                    String label = ifOut.getName();
+                    if(label==null || label.isBlank()){ label = ifOut.resolveKey(); }
+                    setText("[OUT] "+label);
                     setStyle("-fx-text-fill: #2a7fff;");
                 } else {
                     setText(String.valueOf(value));
@@ -332,10 +337,22 @@ public class TopologyTab extends Tab {
         }
         // add interface nodes
         try {
-            java.util.List<net.fhirfactory.dricats.internals.oam.topology.InterfaceComponentSummary> ifaces = client.listInterfaces(id);
+            java.util.List<? extends net.fhirfactory.dricats.internals.oam.topology.base.InterfaceComponentSummary> ifaces = client.listInterfaces(id);
             if (ifaces != null) {
-                for (net.fhirfactory.dricats.internals.oam.topology.InterfaceComponentSummary iface : ifaces) {
-                    if (iface != null) parentItem.getChildren().add(new TreeItem<>(iface));
+                for (Object iface : ifaces) {
+                    if (iface != null && iface.getClass().isArray()) {
+                        int len = java.lang.reflect.Array.getLength(iface);
+                        for (int i = 0; i < len; i++) {
+                            Object elem = java.lang.reflect.Array.get(iface, i);
+                            if (elem instanceof net.fhirfactory.dricats.internals.oam.topology.IngressInterfaceComponentSummary ||
+                                elem instanceof net.fhirfactory.dricats.internals.oam.topology.EgressInterfaceComponentSummary) {
+                                parentItem.getChildren().add(new TreeItem<>(elem));
+                            }
+                        }
+                    } else if (iface instanceof net.fhirfactory.dricats.internals.oam.topology.IngressInterfaceComponentSummary ||
+                               iface instanceof net.fhirfactory.dricats.internals.oam.topology.EgressInterfaceComponentSummary) {
+                        parentItem.getChildren().add(new TreeItem<>(iface));
+                    }
                 }
             }
         } catch (Exception e) {

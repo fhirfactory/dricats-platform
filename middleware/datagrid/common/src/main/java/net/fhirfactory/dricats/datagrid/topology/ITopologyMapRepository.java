@@ -1,7 +1,7 @@
 package net.fhirfactory.dricats.datagrid.topology;
 
 import net.fhirfactory.dricats.internals.common.DistributableObjectId;
-import net.fhirfactory.dricats.internals.oam.topology.ApplicationComponentSummary;
+import net.fhirfactory.dricats.internals.oam.topology.base.ApplicationComponentSummary;
 
 import java.util.Collection;
 import java.util.List;

@@ -24,7 +24,7 @@ package net.fhirfactory.dricats.platform.middleware.jgroups.jchannel.base;
 import jakarta.annotation.PostConstruct;
 import jakarta.inject.Inject;
 import net.fhirfactory.dricats.internals.oam.metrics.interfaces.ILocalMetricsServerInterface;
-import net.fhirfactory.dricats.internals.reference.layers.application.ApplicationComponent;
+import net.fhirfactory.dricats.reference.archimate.layers.application.ApplicationComponent;
 import net.fhirfactory.dricats.internals.topology.interfaces.ISubsystem;
 import net.fhirfactory.dricats.platform.configuration.LocalConfigurationServer;
 import net.fhirfactory.dricats.platform.middleware.jgroups.JChannelInterface;

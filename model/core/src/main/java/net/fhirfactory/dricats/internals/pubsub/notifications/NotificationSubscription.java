@@ -24,7 +24,7 @@ package net.fhirfactory.dricats.internals.pubsub.notifications;
 import net.fhirfactory.dricats.internals.common.DistributableObjectId;
 import net.fhirfactory.dricats.internals.events.notifications.NotificationObject;
 import net.fhirfactory.dricats.internals.pubsub.common.SubscriptionBase;
-import net.fhirfactory.dricats.internals.reference.layers.application.ApplicationFunction;
+import net.fhirfactory.dricats.reference.archimate.layers.application.ApplicationFunction;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

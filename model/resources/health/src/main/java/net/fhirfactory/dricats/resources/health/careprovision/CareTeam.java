@@ -22,7 +22,7 @@
 package net.fhirfactory.dricats.resources.health.careprovision;
 
 import net.fhirfactory.dricats.internals.common.DistributableObjectReference;
-import net.fhirfactory.dricats.resources.base.entities.Team;
+import net.fhirfactory.dricats.internals.entities.actors.Team;
 
 import java.io.Serial;
 import java.io.Serializable;

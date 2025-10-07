@@ -31,6 +31,7 @@ import org.slf4j.Logger;
 import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 abstract public class SubscriptionMaskBase implements Serializable {
@@ -60,13 +61,15 @@ abstract public class SubscriptionMaskBase implements Serializable {
         setEventOrigin("*");
         setEventFinalDestination("*");
         setTemporalWindow(new EventTemporalWindow());
+        eventTopicSubscriptions = new ArrayList<>();
     }
 
     public SubscriptionMaskBase(ApplicationComponentIdMask internalEventSource, ApplicationComponentIdMask internalEventTarget, List<TopicSubscription> eventTopicSubscriptions, String eventOrigin, String eventFinalDestination, EventTemporalWindow temporalWindow ){
         super();
+        eventTopicSubscriptions = new ArrayList<>();
         setInternalEventSource(internalEventSource);
         setInternalEventTarget(internalEventTarget);
-        setEventTopicSubscriptions(eventTopicSubscriptions);
+        getEventTopicSubscriptions().addAll(eventTopicSubscriptions);
         setEventOrigin(eventOrigin);
         setEventFinalDestination(eventFinalDestination);
         setTemporalWindow(temporalWindow);
@@ -267,14 +270,18 @@ abstract public class SubscriptionMaskBase implements Serializable {
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this)
+        ToStringBuilder stringBuilder = new ToStringBuilder(this)
                 .append("internalEventSource", internalEventSource)
-                .append("internalEventTarget", internalEventTarget)
-                .append("eventTopics", eventTopicSubscriptions)
-                .append("eventOrigin", eventOrigin)
+                .append("internalEventTarget", internalEventTarget);
+        int counter = 0;
+        for(TopicSubscription currentTopicSubscription : getEventTopicSubscriptions()){
+            stringBuilder.append("eventTopicSubscriptions"+"["+counter+"]", currentTopicSubscription);
+            counter++;
+        }
+        stringBuilder.append("eventOrigin", eventOrigin)
                 .append("eventFinalDestination", eventFinalDestination)
                 .append("temporalWindow", temporalWindow)
-                .appendSuper(super.toString())
-                .toString();
+                .appendSuper(super.toString());
+        return(stringBuilder.toString());
     }
 }

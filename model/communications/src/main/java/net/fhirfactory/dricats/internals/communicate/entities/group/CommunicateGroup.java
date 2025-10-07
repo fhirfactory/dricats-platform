@@ -23,7 +23,7 @@ package net.fhirfactory.dricats.internals.communicate.entities.group;
 
 import net.fhirfactory.dricats.internals.communicate.entities.rooms.datatypes.CommunicateRoomReference;
 import net.fhirfactory.dricats.internals.communicate.entities.user.CommunicateUser;
-import net.fhirfactory.dricats.resources.base.entities.Group;
+import net.fhirfactory.dricats.internals.entities.actors.Group;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

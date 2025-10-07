@@ -51,7 +51,7 @@ public enum InterfaceComponentTypeEnum {
         codeableConceptCode.setCode(getCode());
         codeableConceptCode.setDisplay(getDisplay());
         codeableConceptCode.setSystem(getSystem().toString());
-        codeableConcept.getCode().add(codeableConceptCode);
+        codeableConcept.getCoding().add(codeableConceptCode);
         return(codeableConcept);
     }
 }

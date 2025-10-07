@@ -25,17 +25,17 @@ import jakarta.annotation.PostConstruct;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import net.fhirfactory.dricats.internals.oam.metrics.ApplicationComponentMetricsData;
-import net.fhirfactory.dricats.internals.oam.topology.ApplicationComponentSummary;
-import net.fhirfactory.dricats.internals.oam.topology.ApplicationComponentSummaryList;
-import net.fhirfactory.dricats.internals.oam.topology.InterfaceComponentSummary;
-import net.fhirfactory.dricats.internals.reference.common.SimpleElementBase;
+import net.fhirfactory.dricats.internals.oam.topology.EgressInterfaceComponentSummary;
+import net.fhirfactory.dricats.internals.oam.topology.IngressInterfaceComponentSummary;
+import net.fhirfactory.dricats.internals.oam.topology.base.ApplicationComponentSummary;
+import net.fhirfactory.dricats.internals.oam.topology.base.ApplicationComponentSummaryList;
+import net.fhirfactory.dricats.reference.archimate.common.SimpleElementBase;
 import net.fhirfactory.dricats.ui.serverside.metrics.UIMetricsCacheService;
 import net.fhirfactory.dricats.ui.serverside.topology.UITopologyCacheService;
 import net.fhirfactory.dricats.ui.uitest.handlers.common.BaseHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -109,7 +109,7 @@ public class TopologyResourceHandler extends BaseHandler {
         LOG.info("Returning {} components", list.size());
         ApplicationComponentSummaryList resultList = new ApplicationComponentSummaryList();
         for (ApplicationComponentSummary currentListItem : list) {
-            if(currentListItem.getParent() == null) {
+            if(currentListItem instanceof net.fhirfactory.dricats.internals.oam.topology.SubsystemSummary) {
                 resultList.getElementList().add(currentListItem);
             }
         }
@@ -122,7 +122,7 @@ public class TopologyResourceHandler extends BaseHandler {
             LOG.warn(".getComponent(), Exit, called with empty id");
             return null;
         }
-        net.fhirfactory.dricats.internals.reference.common.SimpleElementBase base = testComponentServices.getComponents().get(id);
+        SimpleElementBase base = testComponentServices.getComponents().get(id);
         ApplicationComponentSummary c = (base instanceof ApplicationComponentSummary) ? (ApplicationComponentSummary) base : null;
         if (c == null) {
             LOG.warn(".getComponent(): Component not found for id={}", id);
@@ -147,14 +147,25 @@ public class TopologyResourceHandler extends BaseHandler {
         return(convertToJson(subs));
     }
 
-    public List<InterfaceComponentSummary> getInterfaces(String id) {
+    public List<IngressInterfaceComponentSummary> getIngressInterfaces(String id) {
         LOG.debug("getInterfaces(id={}) invoked", id);
-        List<InterfaceComponentSummary> interfaces = getTestComponentServices().getInterfaceComponents(id);
+        List<IngressInterfaceComponentSummary> interfaces = getTestComponentServices().getIngressInterfaces(id);
         return interfaces;
     }
 
-    public String getInterfacesAsJSON(String id){
-        List<InterfaceComponentSummary> interfaces = getInterfaces(id);
+    public String getIngressInterfacesAsJSON(String id){
+        List<IngressInterfaceComponentSummary> interfaces = getIngressInterfaces(id);
+        return(convertToJson(interfaces));
+    }
+
+    public List<EgressInterfaceComponentSummary> getEgressInterfaces(String id) {
+        LOG.debug("getEgressInterfaces(id={}) invoked", id);
+        List<EgressInterfaceComponentSummary> interfaces = getTestComponentServices().getEgressInterfaces(id);
+        return interfaces;
+    }
+
+    public String getEgressInterfacesAsJSON(String id){
+        List<EgressInterfaceComponentSummary> interfaces = getEgressInterfaces(id);
         return(convertToJson(interfaces));
     }
 

@@ -51,7 +51,7 @@ public class DistributableObject extends SimpleDistributableObject implements Se
     //
 
     private List<DistributableObjectIdentifier> identifiers;
-    private SecurityLabels securityLabels;
+
 
     //
     // Constructor(s)
@@ -60,19 +60,17 @@ public class DistributableObject extends SimpleDistributableObject implements Se
     public DistributableObject(){
     	super();
         this.identifiers = new ArrayList<>();
-        this.securityLabels = new SecurityLabels();
+
     }
 
     public DistributableObject(QualifiedName qualifiedName) {
         super(qualifiedName);
         this.identifiers = new ArrayList<>();
-        this.securityLabels = new SecurityLabels();
     }
     
     public DistributableObject( DistributableObjectIdentifier identifier) {
         super();
         this.identifiers = new ArrayList<>();
-        this.securityLabels = new SecurityLabels();
         getIdentifiers().add(identifier);
     }
 
@@ -92,14 +90,6 @@ public class DistributableObject extends SimpleDistributableObject implements Se
     //
     // Getters and Setters
     //
-
-    public SecurityLabels getSecurityLabels() {
-        return securityLabels;
-    }
-
-    public void setSecurityLabels(SecurityLabels securityLabels) {
-        this.securityLabels = securityLabels;
-    }
 
     public List<DistributableObjectIdentifier> getIdentifiers() {
         return identifiers;

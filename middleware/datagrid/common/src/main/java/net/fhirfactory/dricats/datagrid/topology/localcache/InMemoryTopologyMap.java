@@ -3,7 +3,12 @@ package net.fhirfactory.dricats.datagrid.topology.localcache;
 import net.fhirfactory.dricats.datagrid.topology.ITopologyMapRepository;
 import net.fhirfactory.dricats.internals.common.DistributableObjectId;
 
-import net.fhirfactory.dricats.internals.oam.topology.ApplicationComponentSummary;
+import net.fhirfactory.dricats.internals.oam.topology.ApplicationInstanceSummary;
+import net.fhirfactory.dricats.internals.oam.topology.SubsystemSummary;
+import net.fhirfactory.dricats.internals.oam.topology.WUPGroupSummary;
+import net.fhirfactory.dricats.internals.oam.topology.WUPSummary;
+import net.fhirfactory.dricats.internals.oam.topology.base.ApplicationComponentSummary;
+import net.fhirfactory.dricats.internals.topology.implementation.layers.application.valuesets.SoftwareComponentTypeEnum;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -82,17 +87,29 @@ public class InMemoryTopologyMap implements ITopologyMapRepository {
         Optional<ApplicationComponentSummary> parentOpt = findById(id);
         if (parentOpt.isEmpty()) { return Collections.emptyList(); }
         ApplicationComponentSummary parent = parentOpt.get();
-        if (parent.getSubComponents() == null || parent.getSubComponents().isEmpty()) {
-            return Collections.emptyList();
-        }
-        List<ApplicationComponentSummary> children = new ArrayList<>();
-        for (DistributableObjectId childId : parent.getSubComponents()) {
-            ApplicationComponentSummary child = componentsById.get(childId);
-            if (child != null) {
-                children.add(child);
-            }
-        }
+        List<ApplicationComponentSummary> children = getChildren(parent.getObjectID());
         return children;
+    }
+
+    protected List<ApplicationComponentSummary> getChildren(DistributableObjectId id){
+        if (id == null) { return Collections.emptyList(); }
+        Optional<ApplicationComponentSummary> parentOpt = findById(id);
+        if (parentOpt.isEmpty()) { return Collections.emptyList(); }
+        ApplicationComponentSummary parent = parentOpt.get();
+        List<DistributableObjectId> resultList = new ArrayList<>();
+        if(parent.getSpecialization().contentEquals(SoftwareComponentTypeEnum.SUBSYSTEM.getType())){
+            SubsystemSummary subsystem = (SubsystemSummary) parent;
+            resultList.addAll(subsystem.getApplicationInstances());
+        }
+        if(parent.getSpecialization().contentEquals(SoftwareComponentTypeEnum.SUBSYSTEM_APPLICATION_INSTANCE.getType())){
+            ApplicationInstanceSummary applicationInstance = (ApplicationInstanceSummary) parent;
+            resultList.addAll(applicationInstance.getWupGroups());
+        }
+        if(parent.getSpecialization().contentEquals(SoftwareComponentTypeEnum.SUBSYSTEM_APPLICATION_WORK_UNIT_PROCESSOR_GROUP.getType())){
+            WUPGroupSummary wupGroup = (WUPGroupSummary) parent;
+            resultList.addAll(wupGroup.getWorkUnitProcessors());
+        }
+        return( Collections.emptyList());
     }
 
     @Override

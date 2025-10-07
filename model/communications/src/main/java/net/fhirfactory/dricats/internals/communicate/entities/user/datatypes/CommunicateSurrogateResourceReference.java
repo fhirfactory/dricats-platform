@@ -22,7 +22,7 @@
 package net.fhirfactory.dricats.internals.communicate.entities.user.datatypes;
 
 import net.fhirfactory.dricats.internals.common.DistributableObjectReference;
-import net.fhirfactory.dricats.resources.base.identity.datatypes.UserLogin;
+import net.fhirfactory.dricats.internals.common.datatypes.UserLogin;
 
 
 public class CommunicateSurrogateResourceReference {

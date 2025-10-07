@@ -40,7 +40,7 @@ public class CodeableConcept extends SerialisableObject {
     // Attributes
     //
 
-    private List<CodeableConceptCode> code;
+    private List<CodeableConceptCode> coding;
     private String display;
     private String system;
 
@@ -49,19 +49,19 @@ public class CodeableConcept extends SerialisableObject {
     //
 
     public CodeableConcept() {
-        setCode(new ArrayList<CodeableConceptCode>());
+        setCoding(new ArrayList<CodeableConceptCode>());
     }
 
     //
     // Bean Methods
     //
 
-    public List<CodeableConceptCode> getCode() {
-        return code;
+    public List<CodeableConceptCode> getCoding() {
+        return coding;
     }
 
-    public void setCode(List<CodeableConceptCode> code) {
-        this.code = code;
+    public void setCoding(List<CodeableConceptCode> coding) {
+        this.coding = coding;
     }
 
     public String getDisplay() {
@@ -91,7 +91,7 @@ public class CodeableConcept extends SerialisableObject {
     
 	@Override
 	public int hashCode() {
-		return Objects.hash(code, display, system);
+		return Objects.hash(coding, display, system);
 	}
 
 	@Override
@@ -106,7 +106,7 @@ public class CodeableConcept extends SerialisableObject {
 			return false;
 		}
 		CodeableConcept other = (CodeableConcept) obj;
-		return Objects.equals(code, other.code) && Objects.equals(display, other.display)
+		return Objects.equals(coding, other.coding) && Objects.equals(display, other.display)
 				&& Objects.equals(system, other.system);
 	}
 
@@ -114,7 +114,7 @@ public class CodeableConcept extends SerialisableObject {
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
 		builder.append("CodeableConcept [code=");
-		builder.append(code);
+		builder.append(coding);
 		builder.append(", display=");
 		builder.append(display);
 		builder.append(", system=");

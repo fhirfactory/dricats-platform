@@ -27,9 +27,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import net.fhirfactory.dricats.internals.oam.metrics.ApplicationComponentMetricsData;
-import net.fhirfactory.dricats.internals.oam.topology.ApplicationComponentSummary;
-import net.fhirfactory.dricats.internals.oam.topology.ApplicationComponentSummaryList;
-import net.fhirfactory.dricats.internals.oam.topology.InterfaceComponentSummary;
+import net.fhirfactory.dricats.internals.oam.topology.EgressInterfaceComponentSummary;
+import net.fhirfactory.dricats.internals.oam.topology.IngressInterfaceComponentSummary;
+import net.fhirfactory.dricats.internals.oam.topology.base.ApplicationComponentSummary;
+import net.fhirfactory.dricats.internals.oam.topology.base.ApplicationComponentSummaryList;
+import net.fhirfactory.dricats.internals.oam.topology.base.InterfaceComponentSummary;
 import net.fhirfactory.dricats.internals.pathways.Pathway;
 import net.fhirfactory.dricats.internals.pathways.PathwayRoute;
 import net.fhirfactory.dricats.internals.pathways.PathwayRouteSegment;
@@ -47,6 +49,7 @@ import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -592,9 +595,16 @@ public class MainRESTClient {
 
     // --- Interfaces for a component ---
     public java.util.List<InterfaceComponentSummary> listInterfaces(String id) {
+        List<InterfaceComponentSummary> interfaceList = new ArrayList<>();
+        interfaceList.addAll(listIngressInterfaces(id));
+        interfaceList.addAll(listEgressInterfaces(id));
+        return interfaceList;
+    }
+
+    public List<IngressInterfaceComponentSummary> listIngressInterfaces(String id) {
         String url;
         try {
-            url = normalize(baseUrl) + "/oam/applicationcomponent/" + urlEncode(id) + "/interfaces";
+            url = normalize(baseUrl) + "/oam/applicationcomponent/" + urlEncode(id) + "/ingressinterfaces";
         } catch (IOException e) {
             LOG.error("[UI] urlEncode failed for id={}: {}", id, e.toString());
             return java.util.Collections.emptyList();
@@ -607,7 +617,35 @@ public class MainRESTClient {
             Duration d = Duration.between(start, Instant.now());
             LOG.info("[UI] GET {} - status={} duration={}ms bytes={}", url, resp.statusCode(), d.toMillis(), resp.body() == null ? 0 : resp.body().length());
             if (resp.statusCode() >= 200 && resp.statusCode() < 300) {
-                return mapper.readValue(resp.body(), new TypeReference<java.util.List<InterfaceComponentSummary>>(){});
+                List<IngressInterfaceComponentSummary> ingressInterfaces = mapper.readValue(resp.body(), new TypeReference<java.util.List<IngressInterfaceComponentSummary>>(){});
+                return ingressInterfaces;
+            } else {
+                LOG.warn("[UI] GET {} returned non-success status {}", url, resp.statusCode());
+            }
+        } catch (Exception e) {
+            LOG.error("[UI] GET {} failed: {}", url, e.toString());
+        }
+        return java.util.Collections.emptyList();
+    }
+
+    public List<EgressInterfaceComponentSummary> listEgressInterfaces(String id) {
+        String url;
+        try {
+            url = normalize(baseUrl) + "/oam/applicationcomponent/" + urlEncode(id) + "/egressinterfaces";
+        } catch (IOException e) {
+            LOG.error("[UI] urlEncode failed for id={}: {}", id, e.toString());
+            return java.util.Collections.emptyList();
+        }
+        HttpRequest req = HttpRequest.newBuilder().uri(URI.create(url)).GET().build();
+        Instant start = Instant.now();
+        try {
+            LOG.info("[UI] GET {} - sending", url);
+            HttpResponse<String> resp = httpClient.send(req, HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8));
+            Duration d = Duration.between(start, Instant.now());
+            LOG.info("[UI] GET {} - status={} duration={}ms bytes={}", url, resp.statusCode(), d.toMillis(), resp.body() == null ? 0 : resp.body().length());
+            if (resp.statusCode() >= 200 && resp.statusCode() < 300) {
+                List<EgressInterfaceComponentSummary> egressInterfaces = mapper.readValue(resp.body(), new TypeReference<java.util.List<EgressInterfaceComponentSummary>>(){});
+                return egressInterfaces;
             } else {
                 LOG.warn("[UI] GET {} returned non-success status {}", url, resp.statusCode());
             }

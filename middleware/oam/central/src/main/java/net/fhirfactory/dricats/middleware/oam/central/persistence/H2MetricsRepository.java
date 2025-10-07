@@ -3,7 +3,8 @@ package net.fhirfactory.dricats.middleware.oam.central.persistence;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import net.fhirfactory.dricats.internals.oam.metrics.ApplicationComponentMetricsData;
-import net.fhirfactory.dricats.internals.reference.layers.application.ApplicationComponent;
+import net.fhirfactory.dricats.internals.oam.topology.base.ApplicationComponentSummary;
+import net.fhirfactory.dricats.reference.archimate.layers.application.ApplicationComponent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -333,7 +334,7 @@ public class H2MetricsRepository {
     }
 
     // --- Overloads using ApplicationComponentSummary ---------------------------------
-    public void insertMetrics(net.fhirfactory.dricats.internals.oam.topology.ApplicationComponentSummary component,
+    public void insertMetrics(ApplicationComponentSummary component,
                               ApplicationComponentMetricsData md) {
         Long compFk = ensureComponentRow(component, md);
         String sql = "INSERT INTO metrics_records (component_fk, component_id, component_name, participant_name, component_type, last_activity, startup_instant, component_status, ingres_count, egress_attempt, egress_success, egress_failure, internal_distributed, internal_received, internal_distribution_map) " +
@@ -365,7 +366,7 @@ public class H2MetricsRepository {
         }
     }
 
-    private Long ensureComponentRow(net.fhirfactory.dricats.internals.oam.topology.ApplicationComponentSummary component,
+    private Long ensureComponentRow(ApplicationComponentSummary component,
                                     ApplicationComponentMetricsData md) {
         String commonName = null;
         if (component != null && component.getObjectID() != null && component.getObjectID().getQualifiedName() != null && component.getObjectID().getQualifiedName().getCommonName() != null) {
@@ -412,7 +413,7 @@ public class H2MetricsRepository {
         return null;
     }
 
-    public ApplicationComponentMetricsData fetchLatestForComponent(net.fhirfactory.dricats.internals.oam.topology.ApplicationComponentSummary component) {
+    public ApplicationComponentMetricsData fetchLatestForComponent(ApplicationComponentSummary component) {
         String componentId = (component != null && component.getObjectID()!=null && component.getObjectID().getQualifiedName()!=null && component.getObjectID().getQualifiedName().getCommonName()!=null)
                 ? component.getObjectID().getQualifiedName().getCommonName().getValue() : null;
         String sql = "SELECT mr.* FROM metrics_records mr JOIN application_components ac ON mr.component_fk = ac.id WHERE ac.object_id_common_name = ? ORDER BY mr.last_activity DESC NULLS LAST, mr.id DESC LIMIT 1";
@@ -429,7 +430,7 @@ public class H2MetricsRepository {
         return null;
     }
 
-    public void insertFailure(net.fhirfactory.dricats.internals.oam.topology.ApplicationComponentSummary component, String description) {
+    public void insertFailure(ApplicationComponentSummary component, String description) {
         Long compFk = ensureComponentRow(component, null);
         String sql = "INSERT INTO component_failures (component_fk, component_id, component_name, participant_name, failure_description, failure_time) VALUES (?,?,?,?,?,?)";
         try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {

@@ -23,10 +23,9 @@ package net.fhirfactory.dricats.internals.pubsub.common;
 
 import net.fhirfactory.dricats.internals.common.DistributableObject;
 import net.fhirfactory.dricats.internals.common.DistributableObjectId;
-import net.fhirfactory.dricats.internals.common.naming.CommonName;
 import net.fhirfactory.dricats.internals.common.naming.QualifiedName;
 import net.fhirfactory.dricats.internals.common.naming.UnqualifiedName;
-import net.fhirfactory.dricats.internals.reference.layers.application.ApplicationFunction;
+import net.fhirfactory.dricats.reference.archimate.layers.application.ApplicationFunction;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import java.io.Serial;

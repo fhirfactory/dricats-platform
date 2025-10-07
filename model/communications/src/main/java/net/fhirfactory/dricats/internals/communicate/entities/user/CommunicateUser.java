@@ -24,7 +24,7 @@ package net.fhirfactory.dricats.internals.communicate.entities.user;
 import java.io.Serial;
 import java.util.StringJoiner;
 
-import net.fhirfactory.dricats.resources.base.identity.User;
+import net.fhirfactory.dricats.internals.entities.actors.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

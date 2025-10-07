@@ -26,7 +26,7 @@ import net.fhirfactory.dricats.internals.common.DistributableObjectId;
 import net.fhirfactory.dricats.internals.common.DistributableObjectIdentifier;
 import net.fhirfactory.dricats.internals.topology.implementation.layers.technology.valuesets.NetworkSecurityZoneEnum;
 import net.fhirfactory.dricats.internals.topology.interfaces.ISubsystem;
-import net.fhirfactory.dricats.internals.reference.layers.application.ApplicationComponent;
+import net.fhirfactory.dricats.reference.archimate.layers.application.ApplicationComponent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

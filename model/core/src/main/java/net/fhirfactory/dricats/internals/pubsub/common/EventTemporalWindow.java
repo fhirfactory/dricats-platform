@@ -27,6 +27,7 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 public class EventTemporalWindow extends EffectiveDate implements Serializable {
     //
@@ -46,8 +47,8 @@ public class EventTemporalWindow extends EffectiveDate implements Serializable {
 
     public EventTemporalWindow() {
         super();
-        setEffectiveStartDate(LocalDateTime.MIN);
-        setEffectiveEndDate(LocalDateTime.MAX);
+        setEffectiveStartDate(LocalDateTime.now().minusYears(10));
+        setEffectiveEndDate(LocalDateTime.now().plusYears(10));
     }
 
     //
@@ -63,13 +64,28 @@ public class EventTemporalWindow extends EffectiveDate implements Serializable {
     }
 
     //
+     // Business Methods
+     //
+
+    public String prettyPrint(){
+        StringBuilder sb = new StringBuilder();
+        DateTimeFormatter newDateTime = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        sb.append("From: ").append(getEffectiveStartDate().format(newDateTime)).append("\n");
+        sb.append("To: ").append(getEffectiveEndDate().format(newDateTime)).append("\n");
+        return(sb.toString());
+    }
+
+    //
     // Standard Methods
     //
+
 
     @Override
     public String toString() {
         return new ToStringBuilder(this)
-                .appendSuper(super.toString())
+                .append("effectiveStartDate", getEffectiveStartDate())
+                .append("effectiveEndDate", getEffectiveEndDate())
+                .append("id", getId())
                 .toString();
     }
 }

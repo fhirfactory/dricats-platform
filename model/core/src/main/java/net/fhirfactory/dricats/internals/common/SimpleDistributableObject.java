@@ -23,6 +23,7 @@ package net.fhirfactory.dricats.internals.common;
 
 import net.fhirfactory.dricats.internals.common.naming.QualifiedName;
 import net.fhirfactory.dricats.internals.common.naming.UnqualifiedName;
+import net.fhirfactory.dricats.internals.security.datatypes.SecurityLabels;
 import org.apache.commons.lang3.SerializationUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,7 +46,7 @@ public class SimpleDistributableObject extends SerialisableObject {
 
     private DistributableObjectId objectID;
     private DistributableObjectMetadata metadata;
-
+    private SecurityLabels securityLabels;
     //
     // Constructor(s)
     //
@@ -58,6 +59,7 @@ public class SimpleDistributableObject extends SerialisableObject {
         this.setObjectID(new DistributableObjectId(qualifiedName));
         this.setId(getObjectID().getQualifiedName().getCommonName());
         this.metadata = new DistributableObjectMetadata();
+        this.securityLabels = new SecurityLabels();
     }
 
     public SimpleDistributableObject(QualifiedName qualifiedName) {
@@ -66,25 +68,44 @@ public class SimpleDistributableObject extends SerialisableObject {
         this.setObjectID(objectId);
         this.setId(getObjectID().getQualifiedName().getCommonName());
         this.metadata = new DistributableObjectMetadata();
+        this.securityLabels = new SecurityLabels();
     }
 
     public SimpleDistributableObject(DistributableObjectIdentifier identifier) {
         super();
         this.metadata = new DistributableObjectMetadata();
+        this.securityLabels = new SecurityLabels();
     }
 
     public SimpleDistributableObject(SimpleDistributableObject ori) {
     	super();
+        this.securityLabels = new SecurityLabels();
         if(ori.getMetadata() != null) {
             setMetadata(SerializationUtils.clone(ori.getMetadata()));
         } else {
             setMetadata(new DistributableObjectMetadata());
+        }
+        if(ori.getSecurityLabels() != null) {
+            setSecurityLabels(SerializationUtils.clone(ori.getSecurityLabels()));
+        } else {
+            setSecurityLabels(new SecurityLabels());
+        }
+        if(ori.getObjectID() != null) {
+            setObjectID(SerializationUtils.clone(ori.getObjectID()));
         }
     }
 
     //
     // Getters and Setters
     //
+
+    public SecurityLabels getSecurityLabels() {
+        return securityLabels;
+    }
+
+    public void setSecurityLabels(SecurityLabels securityLabels) {
+        this.securityLabels = securityLabels;
+    }
 
     public DistributableObjectId getObjectID() {
         return objectID;

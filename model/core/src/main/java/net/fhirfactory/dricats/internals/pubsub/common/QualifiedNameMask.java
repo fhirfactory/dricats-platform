@@ -22,7 +22,9 @@
 package net.fhirfactory.dricats.internals.pubsub.common;
 
 import net.fhirfactory.dricats.internals.common.naming.QualifiedName;
+import net.fhirfactory.dricats.internals.common.naming.UnqualifiedName;
 import net.fhirfactory.dricats.internals.common.naming.UnqualifiedNameEntry;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -189,5 +191,27 @@ public class QualifiedNameMask implements Serializable {
         }
         getLogger().trace(".entriesMatchUpTo(): All {} entries matched, returning true.", count);
         return true;
+    }
+
+    public String prettyPrint(){
+        StringBuilder sb = new StringBuilder();
+        for(int i=0; i<mask.getRelativeDNCount(); i++){
+            UnqualifiedNameEntry currentUnqualifiedName = mask.getUnqualifiedNameEntries().get(i);
+            sb.append(currentUnqualifiedName.getQualifier()).append("->").append(currentUnqualifiedName.getValue()).append("\n");
+        }
+        sb.append("Include Contained: ").append(getIncludeContained());
+        return sb.toString();
+    }
+
+    //
+     // Standard Methods
+    //
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this)
+                .append("mask", getMask())
+                .append("includeContained", getIncludeContained())
+                .toString();
     }
 }

@@ -25,7 +25,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import net.fhirfactory.dricats.common.DateUtility;
 import net.fhirfactory.dricats.deployment.contants.DefaultDeploymentConstants;
 import net.fhirfactory.dricats.internals.common.DistributableObjectId;
-import net.fhirfactory.dricats.internals.reference.layers.application.ApplicationEvent;
+import net.fhirfactory.dricats.reference.archimate.layers.application.ApplicationEvent;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import java.io.Serial;

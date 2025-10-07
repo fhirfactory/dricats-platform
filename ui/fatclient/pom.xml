@@ -68,6 +68,19 @@
             <artifactId>slf4j-simple</artifactId>
             <version>${version-org.slf4j}</version>
         </dependency>
+
+        <dependency>
+            <groupId>jakarta.xml.bind</groupId>
+            <artifactId>jakarta.xml.bind-api</artifactId>
+            <version>2.3.3</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>jakarta.ws.rs</groupId>
+            <artifactId>jakarta.ws.rs-api</artifactId>
+            <version>3.1.0</version>
+            <scope>compile</scope>
+        </dependency>
     </dependencies>
 
     <build>
@@ -87,7 +100,7 @@
                             <createDependencyReducedPom>false</createDependencyReducedPom>
                             <transformers>
                                 <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                                    <mainClass>net.fhirfactory.dricats.ui.Launcher</mainClass>
+                                    <mainClass>net.fhirfactory.dricats.ui.AdministrationUILauncher</mainClass>
                                 </transformer>
                             </transformers>
                         </configuration>

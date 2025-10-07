@@ -23,7 +23,7 @@ package net.fhirfactory.dricats.internals.pathways;
 
 import net.fhirfactory.dricats.internals.common.DistributableObjectId;
 import net.fhirfactory.dricats.internals.pathways.valuesets.PathwayRouteSelectionCriteriaEnum;
-import net.fhirfactory.dricats.internals.reference.layers.application.ApplicationProcess;
+import net.fhirfactory.dricats.reference.archimate.layers.application.ApplicationProcess;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

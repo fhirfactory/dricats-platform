@@ -27,7 +27,7 @@ import jakarta.inject.Inject;
 import net.fhirfactory.dricats.internals.common.DistributableObjectId;
 import net.fhirfactory.dricats.internals.common.naming.QualifiedName;
 import net.fhirfactory.dricats.internals.common.naming.UnqualifiedName;
-import net.fhirfactory.dricats.internals.reference.layers.application.ApplicationComponent;
+import net.fhirfactory.dricats.reference.archimate.layers.application.ApplicationComponent;
 import net.fhirfactory.dricats.internals.topology.implementation.layers.application.valuesets.SoftwareComponentTypeEnum;
 import net.fhirfactory.dricats.internals.topology.interfaces.ISubsystem;
 import org.slf4j.Logger;

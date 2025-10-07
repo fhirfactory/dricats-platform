@@ -1,7 +1,7 @@
 package net.fhirfactory.dricats.middleware.oam.satellite;
 
 import net.fhirfactory.dricats.internals.common.DistributableObjectId;
-import net.fhirfactory.dricats.internals.reference.layers.application.ApplicationComponent;
+import net.fhirfactory.dricats.reference.archimate.layers.application.ApplicationComponent;
 
 import java.util.Collection;
 import java.util.List;

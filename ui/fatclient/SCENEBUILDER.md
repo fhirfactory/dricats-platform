@@ -46,7 +46,7 @@ Notes and tips
   • In SceneBuilder, you can set Controller → Controller Class to match the FXML and use Preview to validate layout.
   • Controller code isn’t required for basic preview, but it helps with fx:id injection checks.
 - Running the app to see changes live:
-  • From IDEA: run net.fhirfactory.dricats.ui.Launcher (or FatClientMainApp) after building.
+  • From IDEA: run net.fhirfactory.dricats.ui.AdministrationUILauncher (or FatClientMainApp) after building.
   • Or use Maven: mvn -q -pl ui/fatclient -am package and run the shaded jar produced by the module.
 
 Troubleshooting
