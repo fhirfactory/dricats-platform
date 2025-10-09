@@ -21,7 +21,7 @@
  */
 package net.fhirfactory.dricats.resources.health.individuals;
 
-import net.fhirfactory.dricats.internals.entities.actors.Person;
+import net.fhirfactory.dricats.resources.actors.Person;
 
 import java.io.Serial;
 import java.io.Serializable;

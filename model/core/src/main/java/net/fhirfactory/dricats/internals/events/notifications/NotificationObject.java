@@ -32,6 +32,7 @@ import net.fhirfactory.dricats.internals.common.naming.QualifiedName;
 import net.fhirfactory.dricats.internals.common.naming.UnqualifiedName;
 import net.fhirfactory.dricats.internals.events.common.EventBase;
 import net.fhirfactory.dricats.internals.events.messages.MessagePayload;
+import org.apache.commons.lang3.SerializationUtils;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -65,6 +66,11 @@ public class NotificationObject extends EventBase {
         this.setObjectID(new DistributableObjectId(qualifiedName));
         this.setId(getObjectID().getQualifiedName().getCommonName());
         setNotificationPayload(new NotificationPayload());
+    }
+
+    public NotificationObject(NotificationObject notificationObject){
+        super(notificationObject);
+        this.notificationPayload = SerializationUtils.clone(notificationObject.getNotificationPayload());
     }
 
     public NotificationObject(DistributableObjectId source, DistributableObjectId target, LocalDateTime sendDate, NotificationPayload payload){

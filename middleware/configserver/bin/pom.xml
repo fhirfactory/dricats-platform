@@ -78,6 +78,7 @@
         <dependency>
             <groupId>org.jgroups</groupId>
             <artifactId>jgroups</artifactId>
+            <version>${version-org.jgroups-jgroups}</version>
             <scope>compile</scope>
         </dependency>
 

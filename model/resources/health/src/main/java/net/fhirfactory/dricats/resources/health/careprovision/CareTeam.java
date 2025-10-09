@@ -22,7 +22,7 @@
 package net.fhirfactory.dricats.resources.health.careprovision;
 
 import net.fhirfactory.dricats.internals.common.DistributableObjectReference;
-import net.fhirfactory.dricats.internals.entities.actors.Team;
+import net.fhirfactory.dricats.resources.actors.Team;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -116,14 +116,12 @@ public class CareTeam extends Team implements Serializable {
                 .add("category='" + getCategory() + "'")
                 .add("subject=" + getSubject())
                 .add("name='" + getName() + "'")
-                .add("description='" + getDescription() + "'")
                 .add("type='" + getType() + "'")
                 .add("contact=" + getContact())
                 .add("members=" + getMembers())
                 .add("objectID=" + getObjectID())
                 .add("securityLabels=" + getSecurityLabels())
                 .add("metadata=" + getMetadata())
-                .add("identifiers=" + getIdentifiers())
                 .add("id=" + getId())
                 .toString();
     }

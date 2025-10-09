@@ -22,15 +22,21 @@
 package net.fhirfactory.dricats.internals.events.common;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import jdk.jfr.Event;
 import net.fhirfactory.dricats.common.DateUtility;
 import net.fhirfactory.dricats.deployment.contants.DefaultDeploymentConstants;
 import net.fhirfactory.dricats.internals.common.DistributableObjectId;
 import net.fhirfactory.dricats.reference.archimate.layers.application.ApplicationEvent;
+import org.apache.commons.lang3.SerializationUtils;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 
 public class EventBase extends ApplicationEvent implements Serializable {
     //
@@ -48,7 +54,7 @@ public class EventBase extends ApplicationEvent implements Serializable {
     private LocalDateTime eventSendDate;
     @JsonFormat(pattern = DateUtility.DEFAULT_JSON_FORMAT, timezone = DefaultDeploymentConstants.DEPLOYMENT_TIMEZONE)
     private LocalDateTime eventReceiveDate;
-    private Integer notificationSequenceNumber;
+    private Map<Integer, DistributableObjectId> history;
 
 
     //
@@ -60,9 +66,17 @@ public class EventBase extends ApplicationEvent implements Serializable {
         setEventSendDate(LocalDateTime.now());
      }
 
-    //
-    // Accessors
-    //
+     public EventBase(EventBase ori){
+         super(ori);
+         this.target = SerializationUtils.clone(ori.getTarget());
+         this.eventSendDate = ori.eventSendDate;
+         this.eventReceiveDate = ori.eventReceiveDate;
+         this.history = new HashMap<>(ori.history);
+     }
+
+                      //
+                      // Accessors
+                      //
 
     public DistributableObjectId getTarget(){
         return target;
@@ -88,21 +102,43 @@ public class EventBase extends ApplicationEvent implements Serializable {
         this.eventReceiveDate = eventReceiveDate;
     }
 
+    public Map<Integer, DistributableObjectId> getHistory() {
+        return history;
+    }
+
+    public void setHistory(Map<Integer, DistributableObjectId> history) {
+        this.history = history;
+    }
+
     //
-    // Standard Methods
+     // Business Methods
     //
 
+
+
+    // Standard Methods
+    //
 
     @Override
     public String toString() {
         return new ToStringBuilder(this)
-                .append("target", target)
-                .append("eventSendDate", eventSendDate)
-                .append("eventReceiveDate", eventReceiveDate)
-                .append("notificationSequenceNumber", notificationSequenceNumber)
-                .appendSuper(super.toString())
+                .append("target", getTarget())
+                .append("eventSendDate", getEventSendDate())
+                .append("eventReceiveDate", getEventReceiveDate())
+                .append("history", getHistory())
+                .append("triggeringFunctions", getTriggeringFunctions())
+                .append("triggeredFunctions", getTriggeredFunctions())
+                .append("associatedData", getAssociatedData())
+                .append("source", getSource())
+                .append("elementType", getElementType())
+                .append("name", getName())
+                .append("documentation", getDocumentation())
+                .append("specialization", getSpecialization())
+                .append("properties", getProperties())
+                .append("securityLabels", getSecurityLabels())
+                .append("objectID", getObjectID())
+                .append("metadata", getMetadata())
+                .append("id", getId())
                 .toString();
     }
-
-
 }

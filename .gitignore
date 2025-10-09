@@ -153,3 +153,17 @@ twin/person/target/maven-archiver/pom.properties
 twin/practitioner/target/maven-archiver/pom.properties
 
 twin/practitionerrole/target/maven-archiver/pom.properties
+
+archetypes/integration/hl7v2x/target/maven-archiver/
+
+archetypes/twin/client/target/maven-archiver/pom.properties
+
+archetypes/twin/group/target/maven-archiver/pom.properties
+
+archetypes/twin/location/target/maven-archiver/pom.properties
+
+archetypes/twin/organisation/target/maven-archiver/pom.properties
+
+archetypes/twin/person/target/maven-archiver/pom.properties
+
+archetypes/twin/sdc/target/maven-archiver/pom.properties

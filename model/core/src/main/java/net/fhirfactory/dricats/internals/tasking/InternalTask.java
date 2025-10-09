@@ -21,21 +21,20 @@
  */
 package net.fhirfactory.dricats.internals.tasking;
 
+import net.fhirfactory.dricats.internals.data.Payload;
+import net.fhirfactory.dricats.internals.tasking.datatypes.InternalTaskProvenance;
+import net.fhirfactory.dricats.internals.tasking.valuesets.InternalTaskTypeEnum;
+import net.fhirfactory.dricats.reference.archimate.layers.application.ApplicationProcess;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.fhirfactory.dricats.internals.data.Payload;
-import net.fhirfactory.dricats.internals.tasking.valuesets.InternalTaskTypeEnum;
-import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import net.fhirfactory.dricats.internals.tasking.datatypes.InternalTaskProvenance;
-import net.fhirfactory.dricats.internals.common.DistributableObject;
-
-public class InternalTask extends DistributableObject implements Serializable {    //
+public class InternalTask extends ApplicationProcess implements Serializable {    //
     // Housekeeping
     //
 

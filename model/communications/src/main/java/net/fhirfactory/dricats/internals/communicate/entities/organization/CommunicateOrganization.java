@@ -22,6 +22,8 @@
 package net.fhirfactory.dricats.internals.communicate.entities.organization;
 
 import net.fhirfactory.dricats.internals.communicate.entities.user.datatypes.CommunicateUserReference;
+import net.fhirfactory.dricats.resources.actors.Organisation;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -75,15 +77,24 @@ public class CommunicateOrganization extends Organisation {
 
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder("CommunicateOrganization{");
-        sb.append("surrogateCommunicateUser=").append(getSurrogateCommunicateUser());
-        sb.append(", tradingNames=").append(getTradingNames());
-        sb.append(", securityLabels=").append(getSecurityLabels());
-        sb.append(", metadata=").append(getMetadata());
-        sb.append(", identifiers=").append(getIdentifiers());
-        sb.append(", objectID='").append(getObjectID()).append('\'');
-        sb.append('}');
-        return sb.toString();
+        return new ToStringBuilder(this)
+                .append("surrogateCommunicateUser", getSurrogateCommunicateUser())
+                .append("addresses", getAddresses())
+                .append("category", getCategory())
+                .append("internal", isInternal())
+                .append("roles", getRoles())
+                .append("contactPoints", getContactPoints())
+                .append("elementType", getElementType())
+                .append("name", getName())
+                .append("documentation", getDocumentation())
+                .append("specialization", getSpecialization())
+                .append("properties", getProperties())
+                .append("identifiers", getIdentifiers())
+                .append("securityLabels", getSecurityLabels())
+                .append("objectID", getObjectID())
+                .append("metadata", getMetadata())
+                .append("id", getId())
+                .toString();
     }
 
     @Override

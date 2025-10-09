@@ -22,7 +22,7 @@
 package net.fhirfactory.dricats.internals.communicate.entities.location;
 
 import net.fhirfactory.dricats.internals.communicate.entities.user.datatypes.CommunicateUserReference;
-import net.fhirfactory.dricats.internals.entities.actors.Location;
+import net.fhirfactory.dricats.resources.entities.Location;
 
 
 import java.io.Serial;

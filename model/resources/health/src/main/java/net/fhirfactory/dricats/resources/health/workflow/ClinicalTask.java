@@ -23,5 +23,7 @@ package net.fhirfactory.dricats.resources.health.workflow;
 
 import net.fhirfactory.dricats.internals.tasking.InternalTask;
 
-public class ClinicalTask extends InternalTask {
+import java.io.Serializable;
+
+public class ClinicalTask extends InternalTask implements Serializable {
 }

@@ -24,6 +24,7 @@ package net.fhirfactory.dricats.internals.events.messages;
 import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.UUID;
 
 import net.fhirfactory.dricats.internals.common.DistributableObjectId;
@@ -31,6 +32,7 @@ import net.fhirfactory.dricats.internals.common.naming.CommonName;
 import net.fhirfactory.dricats.internals.common.naming.QualifiedName;
 import net.fhirfactory.dricats.internals.common.naming.UnqualifiedName;
 import net.fhirfactory.dricats.internals.events.common.EventBase;
+import org.apache.commons.lang3.SerializationUtils;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -68,6 +70,15 @@ public class MessageObject extends EventBase implements Serializable {
         this.setId(getObjectID().getQualifiedName().getCommonName());
         setMessagePayload(new MessagePayload());
         setMessageSequenceNumber(-1);
+    }
+
+    public MessageObject(MessageObject messageObject){
+        super(messageObject);
+        if(messageObject == null){
+            return;
+        }
+        setMessageSequenceNumber(messageObject.getMessageSequenceNumber());
+        setMessagePayload(SerializationUtils.clone(messageObject.getMessagePayload()));
     }
 
     public MessageObject(DistributableObjectId source, DistributableObjectId target, LocalDateTime sendDate, MessagePayload payload){
@@ -114,6 +125,10 @@ public class MessageObject extends EventBase implements Serializable {
     public void setMessagePayload(MessagePayload messagePayload) {
         this.messagePayload = messagePayload;
     }
+
+    //
+     // Business Methods
+    //
 
     //
     // Utility Methods

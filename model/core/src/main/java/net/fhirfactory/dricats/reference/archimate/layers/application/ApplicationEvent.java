@@ -5,6 +5,7 @@ package net.fhirfactory.dricats.reference.archimate.layers.application;
 
 import net.fhirfactory.dricats.internals.common.DistributableObjectId;
 import net.fhirfactory.dricats.reference.archimate.common.SimpleElementBase;
+import org.apache.commons.lang3.SerializationUtils;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,6 +40,17 @@ public class ApplicationEvent extends SimpleElementBase {
         this.triggeredFunctions = new ArrayList<>();
         this.associatedData = new ArrayList<>();
         this.source = null;
+    }
+
+    public ApplicationEvent(ApplicationEvent ori){
+        super(ori);
+        this.triggeringFunctions = new ArrayList<>();
+        this.triggeringFunctions.addAll(ori.getTriggeringFunctions());
+        this.triggeredFunctions = new ArrayList<>();
+        this.triggeredFunctions.addAll(ori.getTriggeredFunctions());
+        this.associatedData = new ArrayList<>();
+        this.associatedData.addAll(ori.getAssociatedData());
+        this.source = SerializationUtils.clone(ori.getSource());
     }
 
     //

@@ -23,7 +23,8 @@ package net.fhirfactory.dricats.internals.communicate.entities.group;
 
 import net.fhirfactory.dricats.internals.communicate.entities.rooms.datatypes.CommunicateRoomReference;
 import net.fhirfactory.dricats.internals.communicate.entities.user.CommunicateUser;
-import net.fhirfactory.dricats.internals.entities.actors.Group;
+import net.fhirfactory.dricats.resources.actors.Group;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -89,20 +90,25 @@ public class CommunicateGroup extends Group {
 
     @Override
     public String toString() {
-        return new StringJoiner(", ", CommunicateGroup.class.getSimpleName() + "[", "]")
-                .add("allRooms=" + getAllRooms())
-                .add("surrogateCommunicateUser=" + getSurrogateCommunicateUser())
-                .add("groupType='" + getGroupType() + "'")
-                .add("description='" + getDescription() + "'")
-                .add("managingOrganization=" + getManagingOrganization())
-                .add("active=" + isActive())
-                .add("modificationDate=" + getModificationDate())
-                .add("creationDate=" + getCreationDate())
-                .add("objectID=" + getObjectID())
-                .add("securityLabels=" + getSecurityLabels())
-                .add("metadata=" + getMetadata())
-                .add("identifiers=" + getIdentifiers())
-                .add("id=" + getId())
+        return new ToStringBuilder(this)
+                .append("allRooms", getAllRooms())
+                .append("surrogateCommunicateUser", getSurrogateCommunicateUser())
+                .append("groupType", getGroupType())
+                .append("managingOrganization", getManagingOrganization())
+                .append("active", isActive())
+                .append("modificationDate", getModificationDate())
+                .append("creationDate", getCreationDate())
+                .append("membership", getMembership())
+                .append("participants", getParticipants())
+                .append("elementType", getElementType())
+                .append("name", getName())
+                .append("documentation", getDocumentation())
+                .append("specialization", getSpecialization())
+                .append("properties", getProperties())
+                .append("securityLabels", getSecurityLabels())
+                .append("objectID", getObjectID())
+                .append("metadata", getMetadata())
+                .append("id", getId())
                 .toString();
     }
 

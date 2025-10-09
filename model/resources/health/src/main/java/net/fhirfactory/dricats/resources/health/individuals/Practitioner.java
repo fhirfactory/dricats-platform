@@ -21,12 +21,12 @@
  */
 package net.fhirfactory.dricats.resources.health.individuals;
 
-import net.fhirfactory.dricats.internals.common.DistributableObject;
+import net.fhirfactory.dricats.resources.actors.ServiceDeliveryConsultant;
 
 import java.io.Serial;
 import java.io.Serializable;
 
-public class Practitioner extends DistributableObject implements Serializable {
+public class Practitioner extends ServiceDeliveryConsultant implements Serializable {
     //
     // Housekeeping
     //

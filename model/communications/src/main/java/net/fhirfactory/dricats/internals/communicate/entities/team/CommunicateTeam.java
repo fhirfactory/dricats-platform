@@ -25,7 +25,7 @@ import java.io.Serial;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.fhirfactory.dricats.internals.entities.actors.Team;
+import net.fhirfactory.dricats.resources.actors.Team;
 import org.apache.commons.lang3.SerializationUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

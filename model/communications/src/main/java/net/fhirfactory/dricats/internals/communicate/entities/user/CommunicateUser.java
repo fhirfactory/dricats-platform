@@ -24,7 +24,8 @@ package net.fhirfactory.dricats.internals.communicate.entities.user;
 import java.io.Serial;
 import java.util.StringJoiner;
 
-import net.fhirfactory.dricats.internals.entities.actors.User;
+import net.fhirfactory.dricats.resources.actors.User;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -146,30 +147,32 @@ public class CommunicateUser extends User {
 
     @Override
     public String toString() {
-        return new StringJoiner(", ", CommunicateUser.class.getSimpleName() + "[", "]")
-                .add("representedResource=" + getRepresentedResource())
-                .add("surrogate=" + isSurrogate())
-                .add("administrator=" + isAdministrator())
-                .add("deactivated=" + isDeactivated())
-                .add("shadowBanned=" + isShadowBanned())
-                .add("avatarURL='" + getAvatarURL() + "'")
-                .add("communicateUserType=" + getCommunicateUserType())
-                .add("communicateUserToken='" + getCommunicateUserToken() + "'")
-                .add("logins=" + getLogins())
-                .add("status='" + getStatus() + "'")
-                .add("logins=" + getLogins())
-                .add("status='" + getStatus() + "'")
-                .add("gender='" + getGender() + "'")
-                .add("name=" + getName())
-                .add("birthDate=" + getBirthDate())
-                .add("address=" + getAddress())
-                .add("contactPoints=" + getContactPoints())
-                .add("status='" + getStatus() + "'")
-                .add("objectID=" + getObjectID())
-                .add("securityLabels=" + getSecurityLabels())
-                .add("metadata=" + getMetadata())
-                .add("identifiers=" + getIdentifiers())
-                .add("id=" + getId())
+        return new ToStringBuilder(this)
+                .append("representedResource", getRepresentedResource())
+                .append("surrogate", isSurrogate())
+                .append("administrator", isAdministrator())
+                .append("deactivated", isDeactivated())
+                .append("shadowBanned", isShadowBanned())
+                .append("avatarURL", getAvatarURL())
+                .append("communicateUserType", getCommunicateUserType())
+                .append("communicateUserToken", getCommunicateUserToken())
+                .append("logins", getLogins())
+                .append("status", getStatus())
+                .append("logins", getLogins())
+                .append("status", getStatus())
+                .append("responsibilities", getResponsibilities())
+                .append("actors", getActors())
+                .append("owner", getOwner())
+                .append("elementType", getElementType())
+                .append("name", getName())
+                .append("documentation", getDocumentation())
+                .append("specialization", getSpecialization())
+                .append("properties", getProperties())
+                .append("identifiers", getIdentifiers())
+                .append("securityLabels", getSecurityLabels())
+                .append("objectID", getObjectID())
+                .append("metadata", getMetadata())
+                .append("id", getId())
                 .toString();
     }
 }

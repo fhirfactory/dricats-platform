@@ -36,8 +36,8 @@
         <module>middleware</module>
         <module>model</module>
         <module>documentation</module>
-        <module>twin</module>
 	<module>ui</module>
+	<module>archetypes</module>
     </modules>
 
     <scm>
