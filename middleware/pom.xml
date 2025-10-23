@@ -15,13 +15,15 @@
 
     <modules>
         <module>collaboration</module>
-        <module>datagrid</module>
+        <module>taskgrid</module>
+        <module>messagegrid</module>
         <module>jgroups</module>
         <module>workflow</module>
-	    <module>ehr</module>
+        <module>ehr</module>
         <module>auditing</module>
-        <module>configserver</module>
-        <module>oam</module>
+	    <module>configurationgrid</module>
+        <module>topologygrid</module>
+        <module>metricsgrid</module>
     </modules>
 
     <properties>

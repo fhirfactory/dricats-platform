@@ -21,7 +21,7 @@
  */
 package net.fhirfactory.dricats.ui.uitest.configuration;
 
-import net.fhirfactory.dricats.platform.configuration.factories.common.BaseConfigurationFileLoader;
+import net.fhirfactory.dricats.datagrid.satellite.configurationgrid.factories.common.BaseConfigurationFileLoader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -4,6 +4,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
+import net.fhirfactory.dricats.internals.data.valuesets.MimeTypeEnum;
 import net.fhirfactory.dricats.internals.oam.metrics.ApplicationComponentMetricsData;
 import net.fhirfactory.dricats.internals.oam.metrics.datatypes.ComponentMessagingStatistics;
 import net.fhirfactory.dricats.internals.oam.topology.base.ApplicationComponentSummary;
@@ -305,10 +306,10 @@ public class TopologyTabController {
                 String temporal = ""; try { temporal = java.util.Objects.toString(cf.getTemporalWindow().prettyPrint(), ""); } catch (Exception ignored) {}
                 String mediaTypes = "";
                 try {
-                    java.util.List<jakarta.ws.rs.core.MediaType> mts = cf.getSupportedMediaTypes();
+                    java.util.List<MimeTypeEnum> mts = cf.getSupportedMediaTypes();
                     if (mts != null && !mts.isEmpty()) {
                         java.util.List<String> mtTexts = new java.util.ArrayList<>();
-                        for (jakarta.ws.rs.core.MediaType mt : mts) {
+                        for (MimeTypeEnum mt : mts) {
                             if (mt != null) mtTexts.add(java.util.Objects.toString(mt, ""));
                         }
                         mediaTypes = String.join("; ", mtTexts);

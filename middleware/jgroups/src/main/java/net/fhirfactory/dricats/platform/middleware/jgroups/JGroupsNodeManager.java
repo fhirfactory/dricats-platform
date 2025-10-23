@@ -7,7 +7,7 @@ import net.fhirfactory.dricats.internals.topology.implementation.layers.applicat
 import net.fhirfactory.dricats.internals.topology.interfaces.MiddlewareComponentInterface;
 import net.fhirfactory.dricats.internals.topology.interfaces.SolutionConfigurationInterface;
 import net.fhirfactory.dricats.internals.topology.interfaces.ISubsystem;
-import net.fhirfactory.dricats.platform.configuration.LocalConfigurationServer;
+import net.fhirfactory.dricats.datagrid.satellite.configurationgrid.LocalConfigurationServer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

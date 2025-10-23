@@ -29,6 +29,7 @@ import jakarta.ws.rs.core.MediaType;
 import net.fhirfactory.dricats.internals.common.DistributableObjectId;
 import net.fhirfactory.dricats.internals.common.naming.QualifiedName;
 import net.fhirfactory.dricats.internals.common.naming.UnqualifiedName;
+import net.fhirfactory.dricats.internals.data.valuesets.MimeTypeEnum;
 import net.fhirfactory.dricats.internals.oam.topology.*;
 import net.fhirfactory.dricats.internals.oam.topology.base.ApplicationComponentSummary;
 import net.fhirfactory.dricats.internals.oam.topology.base.InterfaceComponentSummary;
@@ -236,7 +237,7 @@ public class TopologyTestResourceSetBuilder {
 
     protected ContentFilter createContentFilter(){
         ContentFilter newFilter = new ContentFilter();
-        newFilter.getSupportedMediaTypes().add(MediaType.TEXT_PLAIN_TYPE);
+        newFilter.getSupportedMediaTypes().add(MimeTypeEnum.TXT);
         TopicSubscription subscription = new TopicSubscription();
         QualifiedName qualifiedNameMask = new QualifiedName();
         qualifiedNameMask.appendUnqualifiedName(new UnqualifiedName("Domain", "Health"));

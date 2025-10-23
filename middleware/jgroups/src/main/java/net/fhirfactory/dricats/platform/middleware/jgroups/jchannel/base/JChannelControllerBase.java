@@ -26,7 +26,7 @@ import jakarta.inject.Inject;
 import net.fhirfactory.dricats.internals.oam.metrics.interfaces.ILocalMetricsServerInterface;
 import net.fhirfactory.dricats.reference.archimate.layers.application.ApplicationComponent;
 import net.fhirfactory.dricats.internals.topology.interfaces.ISubsystem;
-import net.fhirfactory.dricats.platform.configuration.LocalConfigurationServer;
+import net.fhirfactory.dricats.datagrid.satellite.configurationgrid.LocalConfigurationServer;
 import net.fhirfactory.dricats.platform.middleware.jgroups.JChannelInterface;
 import net.fhirfactory.dricats.platform.middleware.jgroups.JGroupsNamingServices;
 import net.fhirfactory.dricats.platform.middleware.jgroups.valuesets.JChannelStatusEnum;

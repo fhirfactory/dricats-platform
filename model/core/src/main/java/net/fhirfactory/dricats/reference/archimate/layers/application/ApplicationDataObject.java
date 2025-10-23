@@ -3,10 +3,10 @@
  */
 package net.fhirfactory.dricats.reference.archimate.layers.application;
 
-import jakarta.ws.rs.core.MediaType;
+import net.fhirfactory.dricats.internals.data.valuesets.MimeTypeEnum;
+import net.fhirfactory.dricats.internals.topics.Topic;
 import net.fhirfactory.dricats.reference.archimate.common.ElementBase;
 import net.fhirfactory.dricats.reference.archimate.common.valuesets.ElementTypeEnum;
-import net.fhirfactory.dricats.internals.topics.Topic;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,7 +29,7 @@ public class ApplicationDataObject extends ElementBase implements Serializable {
 
     private List<ApplicationFunction> accessingFunctions;
     private List<ApplicationService> accessingServices;
-    private MediaType dataFormat;
+    private MimeTypeEnum dataFormat;
     private Topic dataTopic;
 
     //
@@ -64,11 +64,11 @@ public class ApplicationDataObject extends ElementBase implements Serializable {
         this.accessingServices = accessingServices;
     }
 
-    public MediaType getDataFormat() {
+    public MimeTypeEnum getDataFormat() {
         return dataFormat;
     }
 
-    public void setDataFormat(MediaType dataFormat) {
+    public void setDataFormat(MimeTypeEnum dataFormat) {
         this.dataFormat = dataFormat;
     }
 

@@ -22,6 +22,7 @@
 package net.fhirfactory.dricats.internals.pubsub.content;
 
 import jakarta.ws.rs.core.MediaType;
+import net.fhirfactory.dricats.internals.data.valuesets.MimeTypeEnum;
 import net.fhirfactory.dricats.internals.pubsub.TopicSubscription;
 import net.fhirfactory.dricats.internals.pubsub.common.SubscriptionMaskBase;
 import net.fhirfactory.dricats.internals.topics.Topic;
@@ -45,7 +46,7 @@ public class ContentFilter extends SubscriptionMaskBase implements Serializable 
     //
      // Attributes
     //
-    private List<MediaType> supportedMediaTypes;
+    private List<MimeTypeEnum> supportedMediaTypes;
 
     //
     // Constructor(s)
@@ -58,11 +59,11 @@ public class ContentFilter extends SubscriptionMaskBase implements Serializable 
     //
     // Getters and Setters
     //
-    public List<MediaType> getSupportedMediaTypes() {
+    public List<MimeTypeEnum> getSupportedMediaTypes() {
         return supportedMediaTypes;
     }
 
-    public void setMediaType(List<MediaType> mediaTypes) {
+    public void setMediaType(List<MimeTypeEnum> mediaTypes) {
         this.supportedMediaTypes = mediaTypes;
     }
 
@@ -73,11 +74,11 @@ public class ContentFilter extends SubscriptionMaskBase implements Serializable 
     //
     // Business Methods
     //
-    public boolean filter(Topic contentTopic, MediaType messageMediaType){
+    public boolean filter(Topic contentTopic, MimeTypeEnum messageMediaType){
         getLogger().debug(".filter(Topic, MediaType): Entry, contentTopic -> {}, messageMediaType -> {}", contentTopic, messageMediaType);
         boolean mediaTypeTestOutcome = false;
-        for(MediaType currentMediaType : getSupportedMediaTypes()){
-            if(currentMediaType.isCompatible(messageMediaType)){
+        for(MimeTypeEnum currentMediaType : getSupportedMediaTypes()){
+            if(currentMediaType.equals(messageMediaType)){
                 mediaTypeTestOutcome = true;
                 break;
             }

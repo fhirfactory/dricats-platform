@@ -21,7 +21,10 @@
  */
 package net.fhirfactory.dricats.internals.audit.implementation;
 
+import net.fhirfactory.dricats.internals.data.Payload;
+import net.fhirfactory.dricats.internals.events.messages.MessageObject;
 import net.fhirfactory.dricats.reference.archimate.layers.application.ApplicationProcess;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -32,4 +35,42 @@ public class ApplicationAuditEvent extends ApplicationProcess implements Seriali
     //
     @Serial
     private static final long serialVersionUID = 1L;
+
+    //
+    // Attributes
+    //
+
+    private Payload payload;
+
+
+    //
+    // Constructor(s)
+    //
+
+    //
+    // Bean Methods
+    //
+
+
+    //
+    // Standard Methods
+    //
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this)
+                .append("components", getComponents())
+                .append("usedServices", getUsedServices())
+                .append("accessDataObjects", getAccessDataObjects())
+                .append("elementType", getElementType())
+                .append("name", getName())
+                .append("documentation", getDocumentation())
+                .append("specialization", getSpecialization())
+                .append("properties", getProperties())
+                .append("securityLabels", getSecurityLabels())
+                .append("objectID", getObjectID())
+                .append("metadata", getMetadata())
+                .append("id", getId())
+                .toString();
+    }
 }

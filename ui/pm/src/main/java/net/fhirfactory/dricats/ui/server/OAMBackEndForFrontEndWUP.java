@@ -22,7 +22,7 @@
 package net.fhirfactory.dricats.ui.server;
 
 import net.fhirfactory.dricats.internals.topology.implementation.layers.application.WorkUnitProcessor;
-import net.fhirfactory.dricats.platform.configuration.LocalConfigurationServer;
+import net.fhirfactory.dricats.datagrid.satellite.configurationgrid.LocalConfigurationServer;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.slf4j.Logger;
