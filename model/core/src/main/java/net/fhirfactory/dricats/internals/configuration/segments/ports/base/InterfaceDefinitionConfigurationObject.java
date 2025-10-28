@@ -21,10 +21,32 @@
  */
 package net.fhirfactory.dricats.internals.configuration.segments.ports.base;
 
-public class InterfaceDefinitionConfigurationObject {
+import java.io.Serial;
+import java.io.Serializable;
+import java.util.StringJoiner;
+
+public class InterfaceDefinitionConfigurationObject implements Serializable {
+    //
+     // Housekeeping
+    //
+    @Serial
+    private static final long serialVersionUID = 1L;
+
+    //
+     // Attributes
+    //
 
     String interfaceDefinitionName;
     String interfaceDefinitionVersion;
+
+    //
+     // Constructor(s)
+    //
+
+
+    //
+     // Bean Methods
+    //
 
     public String getInterfaceDefinitionName() {
         return interfaceDefinitionName;
@@ -42,11 +64,16 @@ public class InterfaceDefinitionConfigurationObject {
         this.interfaceDefinitionVersion = interfaceDefinitionVersion;
     }
 
+    //
+     // Standard Methods
+    //
+
+
     @Override
     public String toString() {
-        return "InterfaceDefinitionConfigurationObject{" +
-                "interfaceDefinitionName=" + interfaceDefinitionName +
-                ", interfaceDefinitionVersion=" + interfaceDefinitionVersion +
-                '}';
+        return new StringJoiner(", ", InterfaceDefinitionConfigurationObject.class.getSimpleName() + "[", "]")
+                .add("interfaceDefinitionName='" + getInterfaceDefinitionName() + "'")
+                .add("interfaceDefinitionVersion='" + getInterfaceDefinitionVersion() + "'")
+                .toString();
     }
 }

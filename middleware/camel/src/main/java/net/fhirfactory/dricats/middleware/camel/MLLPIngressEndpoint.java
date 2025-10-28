@@ -19,46 +19,23 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.fhirfactory.dricats.internals.audit.implementation;
+package net.fhirfactory.dricats.middleware.camel;
 
-import net.fhirfactory.dricats.internals.audit.valuesets.AuditEventGranularityEnum;
-import net.fhirfactory.dricats.reference.archimate.layers.application.ApplicationProcess;
-import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.io.Serial;
-import java.io.Serializable;
-
-public class ApplicationAuditEvent extends ApplicationProcess implements Serializable {
+public class MLLPIngressEndpoint extends BaseRouteBuilder {
     //
-    // Housekeeping
+     // Housekeeping
     //
-    @Serial
-    private static final long serialVersionUID = 1L;
+    private static final Logger LOG = LoggerFactory.getLogger(MLLPIngressEndpoint.class);
+
 
     //
-     // Attributes
-     //
-
-    private AuditEventGranularityEnum granularity;
-
+     // Business Methods
     //
-     // Constructor(s)
-    //
+    @Override
+    public void configure() throws Exception {
 
-    public ApplicationAuditEvent(){
-        super();
-        this.granularity = AuditEventGranularityEnum.SHALLOW_GRANULARITY;
-    }
-
-    //
-     // Bean Methods
-    //
-
-    public AuditEventGranularityEnum getGranularity() {
-        return granularity;
-    }
-
-    public void setGranularity(AuditEventGranularityEnum granularity) {
-        this.granularity = granularity;
     }
 }

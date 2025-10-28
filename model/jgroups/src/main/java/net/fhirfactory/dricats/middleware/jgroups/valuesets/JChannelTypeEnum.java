@@ -19,46 +19,26 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.fhirfactory.dricats.internals.audit.implementation;
+package net.fhirfactory.dricats.middleware.jgroups.valuesets;
 
-import net.fhirfactory.dricats.internals.audit.valuesets.AuditEventGranularityEnum;
-import net.fhirfactory.dricats.reference.archimate.layers.application.ApplicationProcess;
-import org.apache.commons.lang3.builder.ToStringBuilder;
+public enum JChannelTypeEnum {
+	JGROUPS_ENDPOINT_TYPE_MESSAGING("Messaging", "MessagingChannelConfig"),
+	JGROUPS_ENDPOINT_TYPE_TASKING("Tasking", "TaskingChannelConfig"),
+    JGROUPS_ENDPOINT_TYPE_METRICS("Metrics", "MetricsChannelConfig");
+	
+    private final String shortName;
+    private final String configObjectName;
 
-import java.io.Serial;
-import java.io.Serializable;
-
-public class ApplicationAuditEvent extends ApplicationProcess implements Serializable {
-    //
-    // Housekeeping
-    //
-    @Serial
-    private static final long serialVersionUID = 1L;
-
-    //
-     // Attributes
-     //
-
-    private AuditEventGranularityEnum granularity;
-
-    //
-     // Constructor(s)
-    //
-
-    public ApplicationAuditEvent(){
-        super();
-        this.granularity = AuditEventGranularityEnum.SHALLOW_GRANULARITY;
+    private JChannelTypeEnum(String endpointTypeName, String configObjectName) {
+        this.shortName = endpointTypeName;
+        this.configObjectName = configObjectName;
     }
 
-    //
-     // Bean Methods
-    //
-
-    public AuditEventGranularityEnum getGranularity() {
-        return granularity;
+    public String getEndpointTypeName() {
+        return shortName;
     }
 
-    public void setGranularity(AuditEventGranularityEnum granularity) {
-        this.granularity = granularity;
+    public String getConfigObjectName() {
+        return configObjectName;
     }
 }

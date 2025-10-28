@@ -16,7 +16,65 @@
 
     <dependencies>
 
+        <!--*******************************************************************************-->
+        <!-- Apache Camel Core Libraries                                                   -->
+        <!--*******************************************************************************-->
 
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-core</artifactId>
+            <version>${version-org.apache.camel}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-cdi</artifactId>
+            <version>${version-org.apache.camel}</version>
+        </dependency>
+
+        <!--*******************************************************************************-->
+        <!-- Apache Camel HL7 Libraries                                                    -->
+        <!--*******************************************************************************-->
+
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-hl7</artifactId>
+            <version>${version-org.apache.camel}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-mllp</artifactId>
+            <version>${version-org.apache.camel}</version>
+        </dependency>
+
+        <!--*******************************************************************************-->
+        <!-- HAPI HL7 v2 Libraries                                                         -->
+        <!--*******************************************************************************-->
+
+        <dependency>
+            <groupId>ca.uhn.hapi</groupId>
+            <artifactId>hapi-structures-v24</artifactId>
+            <version>${version-ca.uhn.hapi-hl7structures}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>ca.uhn.hapi</groupId>
+            <artifactId>hapi-structures-v231</artifactId>
+            <version>${version-ca.uhn.hapi-hl7structures}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>ca.uhn.hapi</groupId>
+            <artifactId>hapi-structures-v25</artifactId>
+            <version>${version-ca.uhn.hapi-hl7structures}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>ca.uhn.hapi</groupId>
+            <artifactId>hapi-structures-v251</artifactId>
+            <version>${version-ca.uhn.hapi-hl7structures}</version>
+        </dependency>
 
         <!--*******************************************************************************-->
         <!-- Jakarta Libraries                                                             -->
