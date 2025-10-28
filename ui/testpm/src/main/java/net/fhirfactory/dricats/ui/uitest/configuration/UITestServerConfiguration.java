@@ -22,7 +22,7 @@
 package net.fhirfactory.dricats.ui.uitest.configuration;
 
 import net.fhirfactory.dricats.internals.configuration.segments.ports.external.HTTPServerConfigurationObject;
-import net.fhirfactory.dricats.model.configuration.configurationfile.archetypes.BaseSubsystemConfigurationObject;
+import net.fhirfactory.dricats.model.configuration.configurationfile.base.BaseSubsystemConfigurationObject;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import java.io.Serializable;

@@ -24,7 +24,7 @@ package net.fhirfactory.dricats.datagrid.satellite.configurationgrid.factories.c
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
-import net.fhirfactory.dricats.model.configuration.configurationfile.archetypes.BaseSubsystemConfigurationObject;
+import net.fhirfactory.dricats.model.configuration.configurationfile.base.BaseSubsystemConfigurationObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -17,6 +17,7 @@
         <module>integration</module>
         <module>twin</module>
         <module>fhirserver</module>
+        <module>default-servers</module>
     </modules>
 
     <properties>

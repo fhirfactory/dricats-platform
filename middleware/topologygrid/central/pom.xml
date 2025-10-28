@@ -5,15 +5,48 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>net.fhirfactory.dricats</groupId>
-        <artifactId>dricats-middleware-oam</artifactId>
+        <artifactId>dricats-middleware-topologygrid</artifactId>
         <version>1.0.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>dricats-middleware-oam-central</artifactId>
-    <name>DRICaTS :: Middleware :: OAM :: Central</name>
+    <artifactId>dricats-middleware-topologygrid-central</artifactId>
+    <name>DRICaTS :: Middleware :: TopologyGrid :: Central</name>
     <packaging>jar</packaging>
 
     <dependencies>
+        <!--*******************************************************************************-->
+        <!-- JakartaEE (Wildfly) Libraries                                                 -->
+        <!--*******************************************************************************-->
+
+
+        <dependency>
+            <groupId>org.infinispan</groupId>
+            <artifactId>infinispan-core</artifactId>
+            <version>${version-org.infinispan}</version>
+        </dependency>
+
+
+        <dependency>
+            <groupId>jakarta.ws.rs</groupId>
+            <artifactId>jakarta.ws.rs-api</artifactId>
+            <!-- version managed by BOM: ${version-jakarta.ra-api} -->
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>jakarta.enterprise</groupId>
+            <artifactId>jakarta.enterprise.cdi-api</artifactId>
+            <version>4.0.1</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>jakarta.annotation</groupId>
+            <artifactId>jakarta.annotation-api</artifactId>
+            <version>2.1.1</version>
+            <scope>provided</scope>
+        </dependency>
+
         <dependency>
             <groupId>net.fhirfactory.dricats</groupId>
             <artifactId>dricats-middleware-jgroups</artifactId>
@@ -29,14 +62,7 @@
         <!-- OAM common repository interfaces/impls -->
         <dependency>
             <groupId>net.fhirfactory.dricats</groupId>
-            <artifactId>dricats-middleware-datagrid-common</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-
-        <!-- Access ApplicationComponentCacheClient from satellite module -->
-        <dependency>
-            <groupId>net.fhirfactory.dricats</groupId>
-            <artifactId>dricats-middleware-datagrid-satellite</artifactId>
+            <artifactId>dricats-middleware-topologygrid-common</artifactId>
             <version>${project.version}</version>
         </dependency>
 
@@ -91,15 +117,18 @@
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-cdi</artifactId>
+            <version>${version-org.apache.camel}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-rest</artifactId>
+            <version>${version-org.apache.camel}</version>
         </dependency>
 
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-undertow</artifactId>
+            <version>${version-org.apache.camel}</version>
         </dependency>
 
         <dependency>

@@ -41,11 +41,9 @@
             <version>${project.version}</version>
         </dependency>
 
-        <!-- DRICaTS Common DataGrid Services -->
-
         <dependency>
             <groupId>net.fhirfactory.dricats</groupId>
-            <artifactId>dricats-middleware-datagrid-common</artifactId>
+            <artifactId>dricats-middleware-topologygrid-common</artifactId>
             <version>${project.version}</version>
         </dependency>
 

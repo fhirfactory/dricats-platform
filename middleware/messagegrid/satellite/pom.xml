@@ -104,11 +104,6 @@
             <version>${project.version}</version>
         </dependency>
 
-        <dependency>
-            <groupId>net.fhirfactory.dricats</groupId>
-            <artifactId>dricats-middleware-datagrid-common</artifactId>
-            <version>${project.version}</version>
-        </dependency>
 
         <!-- Kafka clients for CentralMessageBroker client -->
         <dependency>

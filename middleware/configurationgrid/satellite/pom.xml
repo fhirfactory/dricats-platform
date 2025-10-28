@@ -36,6 +36,23 @@
             <version>2.1.1</version>
             <scope>provided</scope>
         </dependency>
+
+        <!--******************************************************************************-->
+        <!-- Infinispan Libraries                                                         -->
+        <!--******************************************************************************-->
+
+        <dependency>
+            <groupId>org.infinispan</groupId>
+            <artifactId>infinispan-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.infinispan</groupId>
+            <artifactId>infinispan-cachestore-jdbc</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.infinispan</groupId>
+            <artifactId>infinispan-cachestore-jdbc-common</artifactId>
+        </dependency>
     
      	<dependency>
             <groupId>net.fhirfactory.dricats</groupId>

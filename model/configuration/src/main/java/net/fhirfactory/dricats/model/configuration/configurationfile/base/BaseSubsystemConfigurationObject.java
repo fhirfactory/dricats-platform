@@ -19,7 +19,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.fhirfactory.dricats.model.configuration.configurationfile.archetypes;
+package net.fhirfactory.dricats.model.configuration.configurationfile.base;
 
 import net.fhirfactory.dricats.internals.configuration.segments.*;
 import org.apache.commons.lang3.builder.ToStringBuilder;

@@ -56,17 +56,6 @@
             <scope>compile</scope>
         </dependency>
 
-        <!-- OAM common repository interfaces/impls -->
-        <dependency>
-            <groupId>net.fhirfactory.dricats</groupId>
-            <artifactId>dricats-middleware-datagrid-common</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>net.fhirfactory.dricats</groupId>
-            <artifactId>dricats-middleware-datagrid-satellite</artifactId>
-            <version>${project.version}</version>
-        </dependency>
 
         <!--*******************************************************************************-->
         <!-- JakartaEE (Wildfly) Libraries                                                 -->

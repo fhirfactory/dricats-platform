@@ -26,20 +26,6 @@
             <version>${project.version}</version>
         </dependency>
 
-        <!-- OAM common repository interfaces/impls -->
-        <dependency>
-            <groupId>net.fhirfactory.dricats</groupId>
-            <artifactId>dricats-middleware-datagrid-common</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-
-        <!-- Access ApplicationComponentCacheClient from satellite module -->
-        <dependency>
-            <groupId>net.fhirfactory.dricats</groupId>
-            <artifactId>dricats-middleware-datagrid-satellite</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-
         <!-- Logging -->
 
         <dependency>

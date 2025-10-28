@@ -57,14 +57,10 @@
         </dependency>
 
         <!-- OAM common repository interfaces/impls -->
+
         <dependency>
             <groupId>net.fhirfactory.dricats</groupId>
-            <artifactId>dricats-middleware-datagrid-common</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>net.fhirfactory.dricats</groupId>
-            <artifactId>dricats-middleware-datagrid-satellite</artifactId>
+            <artifactId>dricats-middleware-topologygrid-common</artifactId>
             <version>${project.version}</version>
         </dependency>
 

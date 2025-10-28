@@ -1,0 +1,45 @@
+# DRICaTS MessageGrid Central default configuration (microk8s)
+solution:
+  name: dricats
+  version: 1.0.0
+application:
+  name: messagegrid-central
+  group: middleware
+applicationInstance:
+  instanceId: messagegrid-central-1
+  instanceName: messagegrid-central
+  namespace: dricats
+  replicas: 1
+deploymentMode:
+  site: SINGLE_SITE
+  enabled: true
+deploymentSites:
+  sites: []
+deploymentZone:
+  runtime: microk8s
+  zoneName: default
+subsystemImageProperties:
+  image: "ghcr.io/dricats/messagegrid-central:latest"
+  imagePullPolicy: IfNotPresent
+  imagePullSecrets: []
+# Container-based subsystem properties
+defaultServicePortLowerBound: 8082
+loadBalancer:
+  enabled: false
+  type: ClusterIP
+volumeMounts:
+  mounts: []
+debugProperties:
+  enabled: false
+  jvmDebugPort: 5005
+hapiAPIKey:
+  secretName: ""
+  keyRef: ""
+javaDeploymentParameters:
+  jvm:
+    initialMemory: "512m"
+    maximumMemory: "1024m"
+    options: ""
+  environment:
+    - name: JAVA_OPTS
+      value: "-Dquarkus.http.host=0.0.0.0"
