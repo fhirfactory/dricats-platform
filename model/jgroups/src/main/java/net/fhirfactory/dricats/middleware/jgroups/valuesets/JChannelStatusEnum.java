@@ -19,46 +19,27 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.fhirfactory.dricats.internals.audit.implementation;
+package net.fhirfactory.dricats.middleware.jgroups.valuesets;
 
-import net.fhirfactory.dricats.internals.audit.valuesets.AuditEventGranularityEnum;
-import net.fhirfactory.dricats.reference.archimate.layers.application.ApplicationProcess;
-import org.apache.commons.lang3.builder.ToStringBuilder;
+public enum JChannelStatusEnum {
+	JGROUPS_ENDPOINT_STATUS_UNINITIALISED("jgroups_endpoint.status.uninitialised"),
+	JGROUPS_ENDPOINT_STATUS_INITIALISED("jgroups_endpoint.status.initialised"),
+	JGROUPS_ENDPOINT_STATUS_SAME("jgroups_endpoint.status.same"),
+    JGROUPS_ENDPOINT_STATUS_DETECTED("jgroups_endpoint.status.detected"),
+    JGROUPS_ENDPOINT_STATUS_REACHABLE("jgroups_endpoint.status.reachable"),
+    JGROUPS_ENDPOINT_STATUS_UNREACHABLE("jgroups_endpoint.status.unreachable"),
+    JGROUPS_ENDPOINT_STATUS_STARTED("jgroups_endpoint.status.started"),
+    JGROUPS_ENDPOINT_STATUS_OPERATIONAL("jgroups_endpoint.status.operational"),
+    JGROUPS_ENDPOINT_STATUS_SUSPECT("jgroups_endpoint.status.suspect"),
+    JGROUPS_ENDPOINT_STATUS_FAILED("jgroups_endpoint.status.failed");
 
-import java.io.Serial;
-import java.io.Serializable;
+    private final String endpointStatus;
 
-public class ApplicationAuditEvent extends ApplicationProcess implements Serializable {
-    //
-    // Housekeeping
-    //
-    @Serial
-    private static final long serialVersionUID = 1L;
-
-    //
-     // Attributes
-     //
-
-    private AuditEventGranularityEnum granularity;
-
-    //
-     // Constructor(s)
-    //
-
-    public ApplicationAuditEvent(){
-        super();
-        this.granularity = AuditEventGranularityEnum.SHALLOW_GRANULARITY;
+    private JChannelStatusEnum(String status){
+        this.endpointStatus = status;
     }
 
-    //
-     // Bean Methods
-    //
-
-    public AuditEventGranularityEnum getGranularity() {
-        return granularity;
-    }
-
-    public void setGranularity(AuditEventGranularityEnum granularity) {
-        this.granularity = granularity;
+    public String getEndpointStatus() {
+        return endpointStatus;
     }
 }

@@ -19,46 +19,64 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.fhirfactory.dricats.internals.audit.implementation;
-
-import net.fhirfactory.dricats.internals.audit.valuesets.AuditEventGranularityEnum;
-import net.fhirfactory.dricats.reference.archimate.layers.application.ApplicationProcess;
-import org.apache.commons.lang3.builder.ToStringBuilder;
+package net.fhirfactory.dricats.middleware.jgroups.configuration;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.net.InetSocketAddress;
+import java.util.List;
 
-public class ApplicationAuditEvent extends ApplicationProcess implements Serializable {
+public class JChannelTCPConfiguration extends JChannelConfiguration implements Serializable {
     //
     // Housekeeping
     //
     @Serial
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 3403310129096773387L;
 
     //
-     // Attributes
-     //
+    // Attributes
+    //
+    private String endpointHost;
+    private int endpointPort;
+    private int portRange;
+    private List<InetSocketAddress> initialHostList;
 
-    private AuditEventGranularityEnum granularity;
+
 
     //
-     // Constructor(s)
+    // Bean Methods
     //
 
-    public ApplicationAuditEvent(){
-        super();
-        this.granularity = AuditEventGranularityEnum.SHALLOW_GRANULARITY;
+    public String getEndpointHost() {
+        return endpointHost;
     }
 
-    //
-     // Bean Methods
-    //
-
-    public AuditEventGranularityEnum getGranularity() {
-        return granularity;
+    public void setEndpointHost(String endpointHost) {
+        this.endpointHost = endpointHost;
     }
 
-    public void setGranularity(AuditEventGranularityEnum granularity) {
-        this.granularity = granularity;
+    public int getEndpointPort() {
+        return endpointPort;
     }
+
+    public void setEndpointPort(int endpointPort) {
+        this.endpointPort = endpointPort;
+    }
+
+    public int getPortRange() {
+        return portRange;
+    }
+
+    public void setPortRange(int portRange) {
+        this.portRange = portRange;
+    }
+
+    public List<InetSocketAddress> getInitialHostList() {
+        return initialHostList;
+    }
+
+    public void setInitialHostList(List<InetSocketAddress> initialHostList) {
+        this.initialHostList = initialHostList;
+    }
+
 }

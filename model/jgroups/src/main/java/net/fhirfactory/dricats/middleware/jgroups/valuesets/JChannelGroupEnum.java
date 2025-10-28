@@ -19,46 +19,20 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.fhirfactory.dricats.internals.audit.implementation;
+package net.fhirfactory.dricats.middleware.jgroups.valuesets;
 
-import net.fhirfactory.dricats.internals.audit.valuesets.AuditEventGranularityEnum;
-import net.fhirfactory.dricats.reference.archimate.layers.application.ApplicationProcess;
-import org.apache.commons.lang3.builder.ToStringBuilder;
+public enum JChannelGroupEnum {
+    JGROUPS_ENDPOINT_GROUP_TASK_MANAGEMENT("TaskManagement"),
+    JGROUPS_ENDPOINT_GROUP_AUDIT("Audit"),
+    JGROUPS_ENDPOINT_GROUP_OAM("OAM");
 
-import java.io.Serial;
-import java.io.Serializable;
+    private String endpointGroup;
 
-public class ApplicationAuditEvent extends ApplicationProcess implements Serializable {
-    //
-    // Housekeeping
-    //
-    @Serial
-    private static final long serialVersionUID = 1L;
-
-    //
-     // Attributes
-     //
-
-    private AuditEventGranularityEnum granularity;
-
-    //
-     // Constructor(s)
-    //
-
-    public ApplicationAuditEvent(){
-        super();
-        this.granularity = AuditEventGranularityEnum.SHALLOW_GRANULARITY;
+    private JChannelGroupEnum(String endpointGroup){
+        this.endpointGroup = endpointGroup;
     }
 
-    //
-     // Bean Methods
-    //
-
-    public AuditEventGranularityEnum getGranularity() {
-        return granularity;
-    }
-
-    public void setGranularity(AuditEventGranularityEnum granularity) {
-        this.granularity = granularity;
+    public String getEndpointGroupName() {
+        return endpointGroup;
     }
 }

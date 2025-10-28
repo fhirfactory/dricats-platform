@@ -19,46 +19,36 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.fhirfactory.dricats.internals.audit.implementation;
+package net.fhirfactory.dricats.middleware.camel;
 
-import net.fhirfactory.dricats.internals.audit.valuesets.AuditEventGranularityEnum;
-import net.fhirfactory.dricats.reference.archimate.layers.application.ApplicationProcess;
-import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.camel.CamelContext;
+import org.apache.camel.LoggingLevel;
+import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.model.RouteDefinition;
 
-import java.io.Serial;
-import java.io.Serializable;
-
-public class ApplicationAuditEvent extends ApplicationProcess implements Serializable {
-    //
-    // Housekeeping
-    //
-    @Serial
-    private static final long serialVersionUID = 1L;
-
-    //
-     // Attributes
-     //
-
-    private AuditEventGranularityEnum granularity;
-
-    //
-     // Constructor(s)
-    //
-
-    public ApplicationAuditEvent(){
+public abstract class BaseRouteBuilder extends RouteBuilder {
+    public BaseRouteBuilder() {
         super();
-        this.granularity = AuditEventGranularityEnum.SHALLOW_GRANULARITY;
     }
 
-    //
-     // Bean Methods
-    //
-
-    public AuditEventGranularityEnum getGranularity() {
-        return granularity;
+    public BaseRouteBuilder(CamelContext context) {
+        super(context);
+        context.setUseMDCLogging(true);
+        context.setUseBreadcrumb(true);
     }
 
-    public void setGranularity(AuditEventGranularityEnum granularity) {
-        this.granularity = granularity;
+    /**
+     * @param uri
+     * @return the RouteBuilder.from(uri) with all exceptions logged but not handled
+     */
+    protected RouteDefinition fromWithStandardExceptionHandling(String uri) {
+        RouteDefinition route = from(uri);
+        route
+            .onException(Exception.class)
+            .log(LoggingLevel.ERROR, getClass().getName() + ":: Exception occurred ${exception.class.name} ${exception.message}, Body=${body}")
+            .handled(false)
+            .logStackTrace(true)
+        .end();
+        return route;
     }
 }
