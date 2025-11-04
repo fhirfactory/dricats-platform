@@ -101,19 +101,23 @@ public class TopologyResourceHandler extends BaseHandler {
     //
 
     public String listComponentsAsJSON() {
-        LOG.debug("listComponents() invoked");
+        LOG.debug(".listComponentsAsJSON(): Entry");
         List<ApplicationComponentSummary> list = testComponentServices.getComponents().values().stream()
                 .filter(v -> v instanceof ApplicationComponentSummary)
                 .map(v -> (ApplicationComponentSummary) v)
                 .collect(Collectors.toList());
-        LOG.info("Returning {} components", list.size());
+        LOG.trace(".listComponentsAsJSON(): Found {} components", list.size());
+
         ApplicationComponentSummaryList resultList = new ApplicationComponentSummaryList();
         for (ApplicationComponentSummary currentListItem : list) {
             if(currentListItem instanceof net.fhirfactory.dricats.internals.oam.topology.SubsystemSummary) {
-                resultList.getElementList().add(currentListItem);
+               resultList.getElementList().add(currentListItem);
             }
         }
-        return(convertToJson(resultList));
+        LOG.trace(".listComponentsAsJSON(): Converting List to JSON");
+        String result = convertToJson(resultList);
+        LOG.debug(".listComponentsAsJSON(): Exit, Returning {} components", list.size());
+        return(result);
     }
 
     public ApplicationComponentSummary getComponent(String id) {

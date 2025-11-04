@@ -280,7 +280,7 @@ public class TopologyTabController {
         String title = "Supported Content Filters";
         String header = (name == null || name.isBlank()) ? "Egress Interface" : name;
         java.util.List<net.fhirfactory.dricats.internals.pubsub.content.ContentFilter> subs = null;
-        try { subs = egress.getSubscriptionFilters(); } catch (Exception ignored) {}
+        try { subs = egress.getContentFilters(); } catch (Exception ignored) {}
 
         // Build table rows
         javafx.collections.ObservableList<ContentFilterRow> rows = javafx.collections.FXCollections.observableArrayList();

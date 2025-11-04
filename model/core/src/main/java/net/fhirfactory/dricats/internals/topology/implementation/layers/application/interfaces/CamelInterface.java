@@ -22,7 +22,6 @@
 package net.fhirfactory.dricats.internals.topology.implementation.layers.application.interfaces;
 
 import net.fhirfactory.dricats.internals.common.DistributableObjectId;
-import net.fhirfactory.dricats.internals.configuration.segments.ports.internal.JGroupsInterfaceConfigurationObject;
 import net.fhirfactory.dricats.internals.oam.metrics.base.CommonComponentMetricsData;
 import net.fhirfactory.dricats.internals.oam.metrics.interfaces.IMetricsExtractionService;
 import net.fhirfactory.dricats.internals.topology.implementation.layers.application.interfaces.base.InterfaceImplementationBase;
@@ -33,7 +32,7 @@ import org.slf4j.LoggerFactory;
 import java.io.Serial;
 import java.net.URI;
 
-abstract public class InternalInterface extends InterfaceImplementationBase implements IMetricsExtractionService {
+abstract public class CamelInterface extends InterfaceImplementationBase implements IMetricsExtractionService {
 
     //
     // Housekeeping
@@ -41,13 +40,13 @@ abstract public class InternalInterface extends InterfaceImplementationBase impl
 
     @Serial
     private static final long serialVersionUID = -12345678900053L;
-    private static final Logger LOG = LoggerFactory.getLogger(InternalInterface.class);
+    private static final Logger LOG = LoggerFactory.getLogger(CamelInterface.class);
 
     //
     // Constants
     //
-    private static final String INTERFACE_MLLP_SERVER = "MLLP_SERVER";
-    private static final String INTERFACE_MLLP_CLIENT = "MLLP_CLIENT";
+    private static final String INTERNAL_CAMEL_CONSUMER = "INTERNAL_CAMEL_CONSUMER";
+    private static final String INTERNAL_CAMEL_PRODUCER = "INTERNAL_CAMEL_PRODUCER";
 
     //
     // Attributes
@@ -59,22 +58,22 @@ abstract public class InternalInterface extends InterfaceImplementationBase impl
     // Constructor(s)
     //
 
-    public InternalInterface(){
+    public CamelInterface(){
         super();
         getLogger().trace("InternalInterface(): constructed");
     }
 
-    public InternalInterface(String name, String documentation, String interfaceSpecialisation){
+    public CamelInterface(String name, String documentation, String interfaceSpecialisation){
         super(name,documentation,interfaceSpecialisation);
         getLogger().trace("InternalInterface(name, documentation, interfaceSpecialisation): constructed");
     }
 
-    public InternalInterface(DistributableObjectId parent, String name, String documentation, String interfaceSpecialisation){
+    public CamelInterface(DistributableObjectId parent, String name, String documentation, String interfaceSpecialisation){
         super(parent, name, documentation, interfaceSpecialisation);
         getLogger().trace("InternalInterface(parent, name, documentation, interfaceSpecialisation): constructed");
     }
 
-    public InternalInterface(DistributableObjectId parent, String name, String documentation, String interfaceSpecialisation, URI uri) {
+    public CamelInterface(DistributableObjectId parent, String name, String documentation, String interfaceSpecialisation, URI uri) {
         super(parent, name, documentation, interfaceSpecialisation, uri);
         getLogger().trace("InternalInterface(parent, name, documentation, specialization, uri): constructed");
     }

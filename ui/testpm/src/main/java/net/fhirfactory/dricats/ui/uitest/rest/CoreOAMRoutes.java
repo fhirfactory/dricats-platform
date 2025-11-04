@@ -63,16 +63,16 @@ public class CoreOAMRoutes extends RouteBuilder {
     @PostConstruct
     public void initialize(){
         if(!initialized){
-            LOG.info("UitestOamRestRoute:initialize(): Initialising");
+            LOG.info("CoreOAMRoutes:initialize(): Initialising");
             topologyHandler.initialise();
             topologyTestResourceSetBuilder.initialise();
             initialized = true;
-            LOG.info("UitestOamRestRoute:initialize(): Initialising.... Done!");
+            LOG.info("CoreOAMRoutes:initialize(): Initialising.... Done!");
         }
     }
 
     private void forceEagerInitialization(@Observes Startup startup) {
-        LOG.info("UitestOamRestRoute:forceEagerInitialization(): !!!");
+        LOG.info("CoreOAMRoutess:forceEagerInitialization(): !!!");
     }
 
     //
@@ -89,51 +89,51 @@ public class CoreOAMRoutes extends RouteBuilder {
         // Global exception logging for the uitest REST routes
         onException(Exception.class)
                 .handled(true)
-                .log("[UITEST] Exception handled: ${exception.class} - ${exception.message}")
+                .log("[CoreOAMRoutess] Exception handled: ${exception.class} - ${exception.message}")
                 .setHeader(Exchange.HTTP_RESPONSE_CODE, constant(500))
                 .setHeader(Exchange.CONTENT_TYPE, constant("text/plain"))
                 .logStackTrace(true);
 
         from("direct:uitest-list-components").routeId("uitest-list-components")
-                .log("[UITEST] Listing all application components. headers=${headers}")
+                .log("[CoreOAMRoutess] Listing all application components. headers=${headers}")
                 .bean(topologyHandler, "listComponentsAsJSON")
                 .setHeader(Exchange.CONTENT_TYPE, constant("application/json"))
-                .log("[UITEST] Components returned");
+                .log("[CoreOAMRoutess] Components returned");
 
         from("direct:uitest-get-component").routeId("uitest-get-component")
-                .log("[UITEST] Get component by id='${header.id}'")
+                .log("[CoreOAMRoutess] Get component by id='${header.id}'")
                 .bean(topologyHandler, "getComponentAsJSON(${header.id})")
                 .setHeader(Exchange.CONTENT_TYPE, constant("application/json"))
-                .log("[UITEST] Component lookup completed");
+                .log("[CoreOAMRoutess] Component lookup completed");
 
         from("direct:uitest-get-subcomponents").routeId("uitest-get-subcomponents")
-                .log("[UITEST] Get subcomponents for id='${header.id}'")
+                .log("[CoreOAMRoutess] Get subcomponents for id='${header.id}'")
                 .bean(topologyHandler, "getSubComponentsAsJSON(${header.id})")
                 .setHeader(Exchange.CONTENT_TYPE, constant("application/json"))
-                .log("[UITEST] Subcomponents lookup completed");
+                .log("[CoreOAMRoutess] Subcomponents lookup completed");
 
             from("direct:uitest-get-ingress-interfaces").routeId("uitest-get-ingress-interfaces")
-                .log("[UITEST] Get interfaces for id='${header.id}'")
+                .log("[CoreOAMRoutess] Get interfaces for id='${header.id}'")
                 .bean(topologyHandler, "getIngressInterfacesAsJSON(${header.id})")
                 .setHeader(Exchange.CONTENT_TYPE, constant("application/json"))
-                .log("[UITEST] Interfaces lookup completed");
+                .log("[CoreOAMRoutess] Interfaces lookup completed");
 
         from("direct:uitest-get-egress-interfaces").routeId("uitest-get-egress-interfaces")
-                .log("[UITEST] Get interfaces for id='${header.id}'")
+                .log("[CoreOAMRoutess] Get interfaces for id='${header.id}'")
                 .bean(topologyHandler, "getEgressInterfacesAsJSON(${header.id})")
                 .setHeader(Exchange.CONTENT_TYPE, constant("application/json"))
-                .log("[UITEST] Interfaces lookup completed");
+                .log("[CoreOAMRoutess] Interfaces lookup completed");
 
         from("direct:uitest-get-metrics-range").routeId("uitest-get-metrics-range")
-                .log("[UITEST] Get metrics range start='${header.start}' end='${header.end}'")
+                .log("[CoreOAMRoutess] Get metrics range start='${header.start}' end='${header.end}'")
                 .bean(topologyHandler, "getMetricsInRangeAsJSON(${header.start}, ${header.end})")
                 .setHeader(Exchange.CONTENT_TYPE, constant("application/json"))
-                .log("[UITEST] Metrics range lookup completed");
+                .log("[CoreOAMRoutess] Metrics range lookup completed");
 
         from("direct:uitest-get-metrics-latest").routeId("uitest-get-metrics-latest")
-                .log("[UITEST] Get latest metrics for id='${header.id}'")
+                .log("[CoreOAMRoutess] Get latest metrics for id='${header.id}'")
                 .bean(topologyHandler, "getLatestMetricsForComponentAsJSON(${header.id})")
                 .setHeader(Exchange.CONTENT_TYPE, constant("application/json"))
-                .log("[UITEST] Latest metrics lookup completed");
+                .log("[CoreOAMRoutess] Latest metrics lookup completed");
     }
 }

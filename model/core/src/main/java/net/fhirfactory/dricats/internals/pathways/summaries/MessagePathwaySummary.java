@@ -21,6 +21,7 @@
  */
 package net.fhirfactory.dricats.internals.pathways.summaries;
 
+import net.fhirfactory.dricats.reference.archimate.common.SimpleElementBase;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,25 +31,25 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-public class MessageProcessingPathwaySummary extends ProcessingPathwaySegmentSummary implements Serializable {
+public class MessagePathwaySummary extends SimpleElementBase implements Serializable {
     //
     // Housekeeping
     //
     @Serial
     private static final long serialVersionUID = 1L;
-    private static final Logger LOG = LoggerFactory.getLogger(MessageProcessingPathwaySummary.class);
+    private static final Logger LOG = LoggerFactory.getLogger(MessagePathwaySummary.class);
 
     //
     // Attributes
     //
 
-    private Map<Integer, ProcessingPathwaySegmentSummary> pathwaySequencedSegments;
+    private Map<Integer, PathwayElementSummary> pathwaySequencedSegments;
 
     //
     // Constructor(s)
     //
 
-    public MessageProcessingPathwaySummary() {
+    public MessagePathwaySummary() {
         super();
         pathwaySequencedSegments = new HashMap<>();
     }
@@ -57,11 +58,11 @@ public class MessageProcessingPathwaySummary extends ProcessingPathwaySegmentSum
      // Bean Methods
     //
 
-    public Map<Integer, ProcessingPathwaySegmentSummary> getPathwaySequencedSegments() {
+    public Map<Integer, PathwayElementSummary> getPathwaySequencedSegments() {
         return pathwaySequencedSegments;
     }
 
-    public void setPathwaySequencedSegments(Map<Integer, ProcessingPathwaySegmentSummary> pathwaySequencedSegments) {
+    public void setPathwaySequencedSegments(Map<Integer, PathwayElementSummary> pathwaySequencedSegments) {
         this.pathwaySequencedSegments = pathwaySequencedSegments;
     }
 

@@ -45,8 +45,8 @@
 
         <dependency>
             <groupId>net.fhirfactory.dricats</groupId>
-            <artifactId>dricats-middleware-configserver</artifactId>
-            <version>${project.version}</version>
+            <artifactId>dricats-middleware-configurationgrid-satellite</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
         </dependency>
 
         <dependency>

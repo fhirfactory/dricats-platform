@@ -21,6 +21,7 @@
         <module>workflow</module>
         <module>ehr</module>
         <module>auditing</module>
+        <module>camel</module>
 	    <module>configurationgrid</module>
         <module>topologygrid</module>
         <module>metricsgrid</module>

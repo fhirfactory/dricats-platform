@@ -44,8 +44,8 @@ public class HTTPInterface extends InterfaceImplementationBase implements Serial
     //
     // Constants
     //
-    private static final String INTERFACE_HTTP_SERVER = "HTTP_SERVER";
-    private static final String INTERFACE_HTTP_CLIENT = "HTTP_CLIENT";
+    private static final String EXTERNAL_HTTP_SERVER = "HTTP_SERVER";
+    private static final String EXTERNAL_HTTP_CLIENT = "HTTP_CLIENT";
 
     //
     // Constructor(s)
@@ -77,7 +77,7 @@ public class HTTPInterface extends InterfaceImplementationBase implements Serial
 
     @JsonIgnore
     public boolean isServer() {
-        if (getSpecialization().contentEquals(INTERFACE_HTTP_SERVER)) {
+        if (getSpecialization().contentEquals(EXTERNAL_HTTP_SERVER)) {
             return (true);
         }
         return (false);
@@ -89,7 +89,7 @@ public class HTTPInterface extends InterfaceImplementationBase implements Serial
 
     @JsonIgnore
     public boolean isClient() {
-        if (getSpecialization().contentEquals(INTERFACE_HTTP_CLIENT)) {
+        if (getSpecialization().contentEquals(EXTERNAL_HTTP_CLIENT)) {
             return (true);
         }
         return (false);

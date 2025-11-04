@@ -40,16 +40,18 @@ abstract public class BaseHandler {
     // Business Methods
     //
     protected String convertToJson(Object obj)  {
+        getLogger().debug(".convertToJson(): Entry");
         ObjectMapper om = new ObjectMapper();
         om.registerModule(new JavaTimeModule());
         om.enable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+        om.enable(SerializationFeature.INDENT_OUTPUT);
         try{
             String result = om.writeValueAsString(obj);
+            getLogger().debug(".convertToJson(): Exit, Returning result --> {}", result);
             return(result);
         } catch (JsonProcessingException e){
             getLogger().error("Failed to serialize component list: {}", e.getMessage());
             return null;
         }
-
     }
 }

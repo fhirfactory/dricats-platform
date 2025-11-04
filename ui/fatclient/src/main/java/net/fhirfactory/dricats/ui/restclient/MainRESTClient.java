@@ -38,8 +38,8 @@ import net.fhirfactory.dricats.internals.pathways.PathwayRouteSegment;
 import net.fhirfactory.dricats.internals.pathways.PathwayElement;
 import net.fhirfactory.dricats.internals.common.naming.IdToken;
 import net.fhirfactory.dricats.internals.common.DistributableObjectId;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import java.io.IOException;
 import java.net.URI;
@@ -57,7 +57,47 @@ public class MainRESTClient {
     //
     // Housekeeping
     //
-    private static final Logger LOG = LoggerFactory.getLogger(MainRESTClient.class);
+    private static final JulLogger LOG = new JulLogger(MainRESTClient.class);
+
+    // Simple adapter to support SLF4J-like `{}` formatting with java.util.logging
+    private static final class JulLogger {
+        private final Logger logger;
+        JulLogger(Class<?> cls) { this.logger = Logger.getLogger(cls.getName()); }
+        void info(String msg, Object... args) {
+            if (logger.isLoggable(Level.INFO)) { logger.log(Level.INFO, format(msg, args)); }
+        }
+        void warn(String msg, Object... args) {
+            if (logger.isLoggable(Level.WARNING)) { logger.log(Level.WARNING, format(msg, args)); }
+        }
+        void error(String msg, Object... args) {
+            if (logger.isLoggable(Level.SEVERE)) { logger.log(Level.SEVERE, format(msg, args)); }
+        }
+        private String format(String msg, Object... args) {
+            if (msg == null || args == null || args.length == 0) { return msg; }
+            StringBuilder sb = new StringBuilder();
+            int idx = 0;
+            int ai = 0;
+            while (idx < msg.length()) {
+                int p = msg.indexOf("{}", idx);
+                if (p < 0) { sb.append(msg.substring(idx)); break; }
+                sb.append(msg, idx, p);
+                if (ai < args.length) {
+                    sb.append(String.valueOf(args[ai++]));
+                } else {
+                    sb.append("{}");
+                }
+                idx = p + 2;
+            }
+            if (ai < args.length) {
+                sb.append(" ");
+                for (int i = ai; i < args.length; i++) {
+                    if (i > ai) { sb.append(", "); }
+                    sb.append(String.valueOf(args[i]));
+                }
+            }
+            return sb.toString();
+        }
+    }
 
     //
     // Attributes

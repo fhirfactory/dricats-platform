@@ -97,11 +97,11 @@ public class EgressInterfaceComponentSummary extends InterfaceComponentSummary i
     //
      // Bean Methods
     //
-    public List<ContentFilter> getSubscriptionFilters() {
+    public List<ContentFilter> getContentFilters() {
         return contentFilters;
     }
 
-    public void setSubscriptionFilters(List<ContentFilter> contentFilters) {
+    public void setContentFilters(List<ContentFilter> contentFilters) {
         this.contentFilters = contentFilters;
     }
 
@@ -117,7 +117,7 @@ public class EgressInterfaceComponentSummary extends InterfaceComponentSummary i
     @Override
     public String toString() {
         return new ToStringBuilder(this)
-                .append("subscriptionFilters", getSubscriptionFilters())
+                .append("subscriptionFilters", getContentFilters())
                 .append("parent", getParent())
                 .append("componentStatus", getComponentStatus())
                 .append("elementType", getElementType())

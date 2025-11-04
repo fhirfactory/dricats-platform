@@ -24,7 +24,6 @@ package net.fhirfactory.dricats.internals.topology.implementation.layers.applica
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import net.fhirfactory.dricats.internals.common.DistributableObjectId;
 import net.fhirfactory.dricats.internals.oam.metrics.ApplicationInterfaceMetricsData;
-import net.fhirfactory.dricats.internals.pubsub.content.ContentFilter;
 import net.fhirfactory.dricats.reference.archimate.layers.application.ApplicationInterface;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.slf4j.Logger;
@@ -33,8 +32,6 @@ import org.slf4j.LoggerFactory;
 import java.io.Serial;
 import java.io.Serializable;
 import java.net.URI;
-import java.util.ArrayList;
-import java.util.List;
 
 public class InterfaceImplementationBase extends ApplicationInterface implements Serializable {
     //
@@ -55,7 +52,10 @@ public class InterfaceImplementationBase extends ApplicationInterface implements
     //
 
     private ApplicationInterfaceMetricsData metricsData;
-    private List<ContentFilter> contentFilters;
+    private EgressInterfaceRole egressInterfaceRole;
+    private IngressInterfaceRole ingressInterfaceRole;
+    private InterfaceRoleEnum interfaceRole;
+
 
     //
     // Constructor(s)
@@ -64,21 +64,21 @@ public class InterfaceImplementationBase extends ApplicationInterface implements
     public InterfaceImplementationBase() {
         super();
         setMetricsData(new ApplicationInterfaceMetricsData());
-        contentFilters = new ArrayList<>();
+        this.interfaceRole = InterfaceRoleEnum.BOTH;
         getLogger().trace("ApplicationInterface(): constructed");
     }
 
     public InterfaceImplementationBase(String name, String documentation, String interfaceSpecialisation) {
         super(name, documentation, interfaceSpecialisation);
         setMetricsData(new ApplicationInterfaceMetricsData());
-        contentFilters = new ArrayList<>();
+        this.interfaceRole = InterfaceRoleEnum.BOTH;
         getLogger().trace("ApplicationInterface(name, documentation, interfaceSpecialisation): constructed");
     }
 
     public InterfaceImplementationBase(DistributableObjectId parent, String name, String documentation, String interfaceSpecialisation) {
         super(parent, name, documentation, interfaceSpecialisation);
         setMetricsData(new ApplicationInterfaceMetricsData());
-        contentFilters = new ArrayList<>();
+        this.interfaceRole = InterfaceRoleEnum.BOTH;
         getLogger().trace("ApplicationInterface(parent, name, documentation, interfaceSpecialisation): constructed");
     }
 
@@ -88,7 +88,7 @@ public class InterfaceImplementationBase extends ApplicationInterface implements
         if (uri != null) {
             setURI(uri);
         }
-        contentFilters = new ArrayList<>();
+        this.interfaceRole = InterfaceRoleEnum.BOTH;
         setMetricsData(new ApplicationInterfaceMetricsData());
         getLogger().trace("ApplicationInterface(parent, name, documentation, specialization, uri): constructed");
     }
@@ -101,7 +101,7 @@ public class InterfaceImplementationBase extends ApplicationInterface implements
             String interfaceSpecialisation ) {
         super(parent, name, documentation, interfaceSpecialisation);
         setURI(endpointURI);
-        contentFilters = new ArrayList<>();
+        this.interfaceRole = InterfaceRoleEnum.BOTH;
         setMetricsData(new ApplicationInterfaceMetricsData());
         getLogger().trace("ApplicationInterface(parent, name, documentation, specialization, uri): constructed");
     }
@@ -110,13 +110,6 @@ public class InterfaceImplementationBase extends ApplicationInterface implements
     // Bean Methods
     //
 
-    public List<ContentFilter> getContentFilters() {
-        return contentFilters;
-    }
-
-    public void setContentFilters(List<ContentFilter> contentFilters) {
-        this.contentFilters = contentFilters;
-    }
 
     public ApplicationInterfaceMetricsData getMetricsData() {
         return metricsData;
@@ -142,6 +135,29 @@ public class InterfaceImplementationBase extends ApplicationInterface implements
         return (uri);
     }
 
+    public EgressInterfaceRole getEgressInterfaceRole() {
+        return egressInterfaceRole;
+    }
+
+    public void setEgressInterfaceRole(EgressInterfaceRole egressInterfaceRole) {
+        this.egressInterfaceRole = egressInterfaceRole;
+    }
+
+    public IngressInterfaceRole getIngressInterfaceRole() {
+        return ingressInterfaceRole;
+    }
+
+    public void setIngressInterfaceRole(IngressInterfaceRole ingressInterfaceRole) {
+        this.ingressInterfaceRole = ingressInterfaceRole;
+    }
+
+    public InterfaceRoleEnum getInterfaceRole() {
+        return interfaceRole;
+    }
+    public void setInterfaceRole(InterfaceRoleEnum interfaceRole) {
+        this.interfaceRole = interfaceRole;
+    }
+
     //
     // Utility Methods
     //
@@ -149,8 +165,32 @@ public class InterfaceImplementationBase extends ApplicationInterface implements
     @Override
     public String toString() {
         return new ToStringBuilder(this)
-                .append("metricsData", metricsData)
-                .append("contentFilters", contentFilters)
+                .append("metricsData", getMetricsData())
+                .append("owner", getOwner())
+                .append("services", getServices())
+                .append("elementType", getElementType())
+                .append("name", getName())
+                .append("documentation", getDocumentation())
+                .append("specialization", getSpecialization())
+                .append("properties", getProperties())
+                .append("securityLabels", getSecurityLabels())
+                .append("objectID", getObjectID())
+                .append("metadata", getMetadata())
+                .append("id", getId())
+                .append("uri", getURI())
+                .append("egressInterfaceRole", getEgressInterfaceRole())
+                .append("ingressInterfaceRole", getIngressInterfaceRole())
+                .append("interfaceRole", getInterfaceRole())
                 .toString();
+    }
+
+    //
+     // Private Class
+    //
+
+    public enum InterfaceRoleEnum {
+        INGRESS,
+        EGRESS,
+        BOTH
     }
 }

@@ -24,7 +24,6 @@ package net.fhirfactory.dricats.ui.uitest.testdata;
 import jakarta.annotation.PostConstruct;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-import jakarta.ws.rs.core.MediaType;
 
 import net.fhirfactory.dricats.internals.common.DistributableObjectId;
 import net.fhirfactory.dricats.internals.common.naming.QualifiedName;
@@ -224,12 +223,10 @@ public class TopologyTestResourceSetBuilder {
         addChild(applicationInstance, externalHL7v2Block);
         ApplicationComponentSummary adtReceiver = createApplicationComponent(externalHL7v2Block.getObjectID(), "ADTReceiver", "ADT Trigger Event MLLP Message Receiver", SoftwareComponentTypeEnum.SUBSYSTEM_APPLICATION_WORK_UNIT_PROCESSOR);
         addChild(externalHL7v2Block, adtReceiver);
-        addEgressInterfaceComponent(adtReceiver, "v24InternalBroadcast", "HL7v24 Internal Broadcast Interface", InterfaceComponentTypeEnum.INTERNAL_CAMEL_SENDER_INTERFACE, createContentFilter());
-        addInternalInterfaceComponent(adtReceiver, "PAS-ADTAxx-EventReceiver", "HL7v24 ADT Trigger Event Receiver MLLP Interface", InterfaceComponentTypeEnum.MLLP_RECEIVER_INTERFACE);
+        addExternalIngressInterfaceComponent(adtReceiver, "PAS-ADTAxx-EventReceiver", "HL7v24 ADT Trigger Event Receiver MLLP Interface", InterfaceComponentTypeEnum.MLLP_RECEIVER_INTERFACE);
         ApplicationComponentSummary adtSender = createApplicationComponent(externalHL7v2Block.getObjectID(), "ADTSender", "ADT Trigger Event MLLP Message Sender", SoftwareComponentTypeEnum.SUBSYSTEM_APPLICATION_WORK_UNIT_PROCESSOR);
         addChild(externalHL7v2Block, adtSender);
-        addInternalInterfaceComponent(adtSender, "PAS-ADTAxx-EventSender", "HL7v24 ADT Trigger Event Sender MLLP Interface", InterfaceComponentTypeEnum.MLLP_SENDER_INTERFACE);
-        addInternalInterfaceComponent(adtSender, "v24InternalReceiver", "HL7v24 Internal Incoming Interface");
+        addExternalEgressInterfaceComponent(adtSender, "PAS-ADTAxx-EventSender", "HL7v24 ADT Trigger Event Sender MLLP Interface", InterfaceComponentTypeEnum.MLLP_SENDER_INTERFACE);
         LOG.info(".populateComponentMap(): Adding ADT Sender WUP to Component Map -> key {}", adtSender.resolveKey());
 
 
@@ -261,7 +258,7 @@ public class TopologyTestResourceSetBuilder {
         return newFilter;
     }
 
-    protected void addEgressInterfaceComponent(ApplicationComponentSummary parent, String name, String doc, InterfaceComponentTypeEnum componentType, ContentFilter filter){
+    protected void addEgressInterfaceComponent(ApplicationComponentSummary parent, String name, String doc, InterfaceComponentTypeEnum componentType){
         InterfaceComponentSummary child = createInterfaceComponent(parent.getObjectID(), name, doc, componentType);
         switch (componentType) {
             case MLLP_SENDER_INTERFACE:
@@ -269,7 +266,7 @@ public class TopologyTestResourceSetBuilder {
             case HTTP_CLIENT_INTERFACE:
             case JGROUPS_MESSAGING_INTERFACE:
                 EgressInterfaceComponentSummary egress = (EgressInterfaceComponentSummary) child;
-                egress.getSubscriptionFilters().add(filter);
+                egress.getContentFilters().add(createContentFilter());
                 ((WUPSummary) parent).getEgressInterfaces().add(child.getObjectID());
                 break;
             default:
@@ -320,6 +317,34 @@ public class TopologyTestResourceSetBuilder {
         return child;
     }
 
+    protected void addExternalIngressInterfaceComponent(ApplicationComponentSummary parent, String name, String doc, InterfaceComponentTypeEnum componentType){
+        InterfaceComponentSummary receiver = createInterfaceComponent(parent.getObjectID(), name, doc, componentType);
+        InterfaceComponentSummary createdInternalSender = createInterfaceComponent(parent.getObjectID(), name + "Sender", doc, InterfaceComponentTypeEnum.INTERNAL_CAMEL_SENDER_INTERFACE);
+        if(parent instanceof WUPSummary){
+            ((WUPSummary) parent).getIngressInterfaces().add(receiver.getObjectID());
+            ((WUPSummary) parent).getEgressInterfaces().add(createdInternalSender.getObjectID());
+        }
+        getTestComponentServices().getComponents().put(receiver.resolveKey(), receiver);
+        getTestComponentServices().getComponents().put(createdInternalSender.resolveKey(), createdInternalSender);
+        LOG.info(".addExternalIngressInterfaceComponent(): Adding Ingress Interface to Component Map -> key {}", receiver.resolveKey());
+        LOG.info(".addExternalIngressInterfaceComponent(): Adding Internal Sender Interface to Component Map -> key {}", createdInternalSender.resolveKey());
+    }
+
+    protected void addExternalEgressInterfaceComponent(ApplicationComponentSummary parent, String name, String doc, InterfaceComponentTypeEnum componentType){
+        InterfaceComponentSummary createdInterface = createInterfaceComponent(parent.getObjectID(), name, doc, componentType);
+        ((EgressInterfaceComponentSummary)createdInterface).getContentFilters().add(createContentFilter());
+        InterfaceComponentSummary createdInternalReceiver = createInterfaceComponent(parent.getObjectID(), name + "Receiver", doc, InterfaceComponentTypeEnum.INTERNAL_CAMEL_RECEIVER_INTERFACE);
+        if(parent instanceof WUPSummary){
+            ((WUPSummary) parent).getEgressInterfaces().add(createdInterface.getObjectID());
+            ((WUPSummary) parent).getIngressInterfaces().add(createdInternalReceiver.getObjectID());
+        }
+        getTestComponentServices().getComponents().put(createdInterface.resolveKey(), createdInterface);
+        getTestComponentServices().getComponents().put(createdInternalReceiver.resolveKey(), createdInternalReceiver);
+        LOG.info(".addExternalEgressInterfaceComponent(): Adding Egress Interface to Component Map -> key {}", createdInterface.resolveKey());
+        LOG.info(".addExternalEgressInterfaceComponent(): Adding Internal Receiver Interface to Component Map -> key {}", createdInternalReceiver.resolveKey());
+    }
+
+
     protected void addInternalInterfaceComponent(ApplicationComponentSummary parent, String name, String doc){
         InterfaceComponentSummary receiver = createInterfaceComponent(parent.getObjectID(), name, doc, InterfaceComponentTypeEnum.INTERNAL_CAMEL_RECEIVER_INTERFACE);
         if(parent instanceof WUPSummary){
@@ -332,6 +357,7 @@ public class TopologyTestResourceSetBuilder {
         getTestComponentServices().getComponents().put(receiver.resolveKey(), receiver);
         LOG.info(".populateComponentMap(): Adding Internal Receiver Interface to Component Map -> key {}", receiver.resolveKey());
     }
+
     protected void addInternalInterfaceComponent(ApplicationComponentSummary parent, String name, String doc, InterfaceComponentTypeEnum componentType){
         InterfaceComponentSummary createdInterface = createInterfaceComponent(parent.getObjectID(), name, doc, componentType);
         if(parent instanceof WUPSummary){

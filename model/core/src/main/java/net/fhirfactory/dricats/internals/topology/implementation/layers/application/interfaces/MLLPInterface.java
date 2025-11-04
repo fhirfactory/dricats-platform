@@ -46,8 +46,8 @@ abstract public class MLLPInterface extends InterfaceImplementationBase implemen
     //
     // Constants
     //
-    private static final String INTERFACE_MLLP_SERVER = "MLLP_SERVER";
-    private static final String INTERFACE_MLLP_CLIENT = "MLLP_CLIENT";
+    private static final String EXTERNAL_MLLP_SERVER = "MLLP_SERVER";
+    private static final String EXTERNAL_MLLP_CLIENT = "MLLP_CLIENT";
 
     //
     // Attributes

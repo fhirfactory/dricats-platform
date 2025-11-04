@@ -67,11 +67,11 @@ public class CorePathwayRoutes extends RouteBuilder {
     @PostConstruct
     public void initialize(){
         if(!initialized){
-            LOG.info("UitestOamRestRoute:initialize(): Initialising");
+            LOG.info("CorePathwayRoutes:initialize(): Initialising");
             pathwayResourceHandler.initialise();
             pathwayTestResourceSetBuilder.initialise();
             initialized = true;
-            LOG.info("UitestOamRestRoute:initialize(): Initialising.... Done!");
+            LOG.info("CorePathwayRoutes:initialize(): Initialising.... Done!");
         }
     }
 

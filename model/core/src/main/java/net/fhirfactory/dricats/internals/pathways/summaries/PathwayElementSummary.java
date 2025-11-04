@@ -24,6 +24,7 @@ package net.fhirfactory.dricats.internals.pathways.summaries;
 import net.fhirfactory.dricats.internals.common.DistributableObject;
 import net.fhirfactory.dricats.internals.common.DistributableObjectId;
 import net.fhirfactory.dricats.internals.pubsub.messages.MessageSubscription;
+import net.fhirfactory.dricats.reference.archimate.common.SimpleElementBase;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,13 +34,13 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ProcessingPathwaySegmentSummary extends DistributableObject implements Serializable {
+public class PathwayElementSummary extends SimpleElementBase implements Serializable {
     //
     // Housekeeping
     //
     @Serial
     private static final long serialVersionUID = 1L;
-    private static final Logger LOG = LoggerFactory.getLogger(ProcessingPathwaySegmentSummary.class);
+    private static final Logger LOG = LoggerFactory.getLogger(PathwayElementSummary.class);
 
     private DistributableObjectId sourceApplicationInterface;
     private DistributableObjectId targetApplicationInterface;
@@ -49,7 +50,7 @@ public class ProcessingPathwaySegmentSummary extends DistributableObject impleme
     // Constructor(s)
     //
 
-    public ProcessingPathwaySegmentSummary() {
+    public PathwayElementSummary() {
         super();
         sourceApplicationInterface = null;
         targetApplicationInterface = null;

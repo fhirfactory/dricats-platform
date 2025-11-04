@@ -1,12 +1,31 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.*?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.fxml.FXML?>
 
 <AnchorPane xmlns:fx="http://javafx.com/fxml/1" prefWidth="1100.0" prefHeight="600.0"
             fx:controller="net.fhirfactory.dricats.ui.MainViewController">
     <children>
         <TabPane fx:id="tabPane" tabClosingPolicy="UNAVAILABLE"
                  AnchorPane.topAnchor="0.0" AnchorPane.bottomAnchor="0.0"
-                 AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" />
+                 AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
+            <tabs>
+                <Tab text="Topology" closable="false">
+                    <content>
+                        <fx:include source="TopologyTab.fxml" fx:id="topologyTab" />
+                    </content>
+                </Tab>
+                <Tab text="Tasking" closable="false">
+                    <content>
+                        <fx:include source="TaskingTab.fxml" fx:id="taskingTab" />
+                    </content>
+                </Tab>
+                <Tab text="Routes" closable="false">
+                    <content>
+                        <fx:include source="RoutesTab.fxml" fx:id="routesTab" />
+                    </content>
+                </Tab>
+            </tabs>
+        </TabPane>
     </children>
 </AnchorPane>
