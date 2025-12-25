@@ -21,8 +21,9 @@
  */
 package net.fhirfactory.dricats.internals.topics;
 
-import net.fhirfactory.dricats.internals.common.SerialisableObject;
-import net.fhirfactory.dricats.internals.common.naming.QualifiedName;
+import net.fhirfactory.dricats.internals.common.object.SerialisableObject;
+import net.fhirfactory.dricats.internals.common.naming.FullyDistinguishedName;
+import net.fhirfactory.dricats.internals.common.id.ObjectId;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.slf4j.Logger;
 
@@ -41,7 +42,7 @@ public class Topic extends SerialisableObject implements Serializable {
     //
     // Attributes
     //
-    private QualifiedName topicName;
+    private FullyDistinguishedName topicName;
     private String topicDescription;
 
     //
@@ -52,14 +53,14 @@ public class Topic extends SerialisableObject implements Serializable {
         super();
     }
 
-    public Topic(QualifiedName topicName){
-        setId(topicName.getCommonName());
+    public Topic(FullyDistinguishedName topicName){
+        setLocalId(new ObjectId(topicName));
         topicDescription = "No description available";
         setTopicName(topicName);
     }
 
-    public Topic(QualifiedName topicName, String description){
-        setId(topicName.getCommonName());
+    public Topic(FullyDistinguishedName topicName, String description){
+        setLocalId(new ObjectId(topicName));
         topicDescription = description;
         setTopicName(topicName);
     }
@@ -68,11 +69,11 @@ public class Topic extends SerialisableObject implements Serializable {
     // Getters and Setters
     //
 
-    public QualifiedName getTopicName() {
+    public FullyDistinguishedName getTopicName() {
         return topicName;
     }
 
-    public void setTopicName(QualifiedName topicName) {
+    public void setTopicName(FullyDistinguishedName topicName) {
         this.topicName = topicName;
     }
 

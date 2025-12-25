@@ -18,6 +18,7 @@
         <module>testpm</module>
         <module>pm</module>
         <module>serverside</module>
+        <module>model</module>
         <!--module>pm</module-->
     </modules>
 </project>

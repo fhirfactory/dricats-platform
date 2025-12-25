@@ -21,18 +21,16 @@
  */
 package net.fhirfactory.dricats.internals.oam.metrics;
 
-import java.io.Serial;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import net.fhirfactory.dricats.internals.common.id.ObjectId;
+import net.fhirfactory.dricats.internals.oam.metrics.base.CommonComponentMetricsData;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
-import net.fhirfactory.dricats.internals.common.DistributableObjectId;
-import net.fhirfactory.dricats.internals.oam.metrics.base.CommonComponentMetricsData;
+import java.io.Serial;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class ApplicationInterfaceMetricsData extends CommonComponentMetricsData{
 	//
@@ -70,7 +68,7 @@ public class ApplicationInterfaceMetricsData extends CommonComponentMetricsData{
         this.remoteProcedureCallResponsesMap = new ConcurrentHashMap<>();
     }
 
-    public ApplicationInterfaceMetricsData(DistributableObjectId componentId){
+    public ApplicationInterfaceMetricsData(ObjectId componentId){
         super(componentId);
         this.nodeIngresQueueSize = 0;
         this.egressSendAttemptCount = 0;

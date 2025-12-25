@@ -25,20 +25,17 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import net.fhirfactory.dricats.common.DateUtility;
 import net.fhirfactory.dricats.deployment.contants.DefaultDeploymentConstants;
-import net.fhirfactory.dricats.internals.common.DistributableObjectId;
-import net.fhirfactory.dricats.internals.common.SerialisableObject;
+import net.fhirfactory.dricats.internals.common.object.SerialisableObject;
+import net.fhirfactory.dricats.internals.common.id.ObjectId;
 import net.fhirfactory.dricats.internals.oam.metrics.datatypes.ComponentMessagingStatistics;
 import net.fhirfactory.dricats.internals.oam.metrics.datatypes.ComponentNotificationStatistics;
 import net.fhirfactory.dricats.internals.oam.metrics.datatypes.ComponentTaskProcessingStatistics;
-import net.fhirfactory.dricats.internals.topology.implementation.layers.application.valuesets.SoftwareComponentTypeEnum;
-import org.apache.commons.lang3.StringUtils;
+import net.fhirfactory.dricats.internals.topology.implementation.layers.application.valuesets.ApplicationComponentSpecialisationEnum;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.Serial;
 import java.time.Instant;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Objects;
 
 public class CommonComponentMetricsData extends SerialisableObject{
@@ -54,9 +51,9 @@ public class CommonComponentMetricsData extends SerialisableObject{
 	// Attributes
 	//
 	
-	private DistributableObjectId componentID;
+	private ObjectId componentID;
     private String participantName;
-    private SoftwareComponentTypeEnum componentType;
+    private ApplicationComponentSpecialisationEnum componentType;
     @JsonFormat(pattern = DateUtility.DEFAULT_JSON_FORMAT,  timezone = DefaultDeploymentConstants.DEPLOYMENT_TIMEZONE)
     private Instant lastActivityInstant;
     @JsonFormat(pattern = DateUtility.DEFAULT_JSON_FORMAT,  timezone = DefaultDeploymentConstants.DEPLOYMENT_TIMEZONE)
@@ -85,7 +82,7 @@ public class CommonComponentMetricsData extends SerialisableObject{
         this.messagingStatistics = new ComponentMessagingStatistics();
     }
 
-    public CommonComponentMetricsData(DistributableObjectId componentId){
+    public CommonComponentMetricsData(ObjectId componentId){
         this.componentID = componentId;
         this.componentType = null;
         this.lastActivityInstant = null;
@@ -106,19 +103,19 @@ public class CommonComponentMetricsData extends SerialisableObject{
 
 
 
-    public DistributableObjectId getComponentID() {
+    public ObjectId getComponentID() {
         return componentID;
     }
 
-    public void setComponentID(DistributableObjectId componentID) {
+    public void setComponentID(ObjectId componentID) {
         this.componentID = componentID;
     }
 
-    public SoftwareComponentTypeEnum getComponentType() {
+    public ApplicationComponentSpecialisationEnum getComponentType() {
         return componentType;
     }
 
-    public void setComponentType(SoftwareComponentTypeEnum componentType) {
+    public void setComponentType(ApplicationComponentSpecialisationEnum componentType) {
         this.componentType = componentType;
     }
 

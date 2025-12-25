@@ -25,11 +25,11 @@ import javafx.geometry.Insets;
 import javafx.scene.control.Tab;
 import javafx.scene.layout.BorderPane;
 import net.fhirfactory.dricats.internals.common.DistributableObjectId;
-import net.fhirfactory.dricats.internals.common.naming.QualifiedName;
-import net.fhirfactory.dricats.internals.common.naming.UnqualifiedName;
+import net.fhirfactory.dricats.internals.common.naming.FullyDistinguishedName;
+import net.fhirfactory.dricats.internals.common.naming.RelativeDistinguishedName;
 import net.fhirfactory.dricats.internals.pathways.Pathway;
-import net.fhirfactory.dricats.internals.pathways.PathwayRoute;
 import net.fhirfactory.dricats.internals.pathways.PathwayElement;
+import net.fhirfactory.dricats.internals.pathways.PathwayRoute;
 import net.fhirfactory.dricats.internals.pathways.PathwayRouteSegment;
 import net.fhirfactory.dricats.internals.pathways.valuesets.PathwayRouteSelectionCriteriaEnum;
 import net.fhirfactory.dricats.ui.restclient.MainRESTClient;
@@ -324,14 +324,14 @@ public class RoutesTab extends Tab {
         }
         flowNameValue.setText(nz(flow.getName()));
         flowDocValue.setText(nz(flow.getDocumentation()));
-        flowSourceValue.setText(idToString(flow.getSource()));
-        flowTargetValue.setText(idToString(flow.getTarget()));
-        flowServiceValue.setText(idToString(flow.getUtilisedApplicationService()));
+        flowSourceValue.setText(idToString(flow.getSource().getLocalObjectId()));
+        flowTargetValue.setText(idToString(flow.getTarget().getLocalObjectId()));
+        flowServiceValue.setText(idToString(flow.getUtilisedApplicationService().getLocalObjectId()));
     }
 
     private static String idToString(DistributableObjectId id){
         if(id==null){ return ""; }
-        try { return String.valueOf(id.getIdToken()); } catch (Throwable t){ return String.valueOf(id); }
+        try { return String.valueOf(id.getCommonId()); } catch (Throwable t){ return String.valueOf(id); }
     }
 
     private static String nz(String s){ return s==null? "" : s; }
@@ -370,8 +370,8 @@ public class RoutesTab extends Tab {
         p.setDocumentation(documentation);
         // default selection criteria
         p.setRouteSelectionCriteria(PathwayRouteSelectionCriteriaEnum.DISTRIBUTE_RANDOM);
-        QualifiedName qn = new QualifiedName();
-        qn.appendUnqualifiedName(new UnqualifiedName("Pathway", name));
+        FullyDistinguishedName qn = new FullyDistinguishedName();
+        qn.appendUnqualifiedName(new RelativeDistinguishedName("Pathway", name));
         p.setObjectID(new DistributableObjectId(qn));
         Pathway created = client.createPathway(p);
         loadPathways();
@@ -392,8 +392,8 @@ public class RoutesTab extends Tab {
         // Build route with ID based on parent pathway qualified name
         Pathway parent = client.getPathway(pwId);
         if(parent==null || parent.getObjectID()==null){ return; }
-        QualifiedName rq = new QualifiedName(parent.getObjectID().getQualifiedName());
-        rq.appendUnqualifiedName(new UnqualifiedName("Segment", label));
+        FullyDistinguishedName rq = new FullyDistinguishedName(parent.getObjectID().getQualifiedName());
+        rq.appendUnqualifiedName(new RelativeDistinguishedName("Segment", label));
         PathwayRoute route = new PathwayRoute();
         route.setObjectID(new DistributableObjectId(rq));
         PathwayRoute created = client.createPathwayRoute(pwId, route);
@@ -412,9 +412,9 @@ public class RoutesTab extends Tab {
         if(res.isEmpty()){ return; }
         SegmentEditorDialog.Result r = res.get();
         // Build segment
-        QualifiedName base = new QualifiedName(route.getObjectID().getQualifiedName());
+        FullyDistinguishedName base = new FullyDistinguishedName(route.getObjectID().getQualifiedName());
         String label = r.label==null||r.label.isBlank()? ("Path-"+System.currentTimeMillis()) : r.label.trim();
-        base.appendUnqualifiedName(new UnqualifiedName("Path", label));
+        base.appendUnqualifiedName(new RelativeDistinguishedName("Path", label));
         PathwayRouteSegment seg = new PathwayRouteSegment();
         seg.setObjectID(new DistributableObjectId(base));
         int i=1;
@@ -462,12 +462,12 @@ public class RoutesTab extends Tab {
         if(res.isEmpty()){ return; }
         SegmentEditorDialog.Result r = res.get();
         // Update existing object (may change name/doc/elements; keep same ObjectID unless label changed)
-        QualifiedName qn = new QualifiedName(existing.getObjectID().getQualifiedName());
+        FullyDistinguishedName qn = new FullyDistinguishedName(existing.getObjectID().getQualifiedName());
         if(r.label!=null && !r.label.isBlank()){
             // Rebuild tail to use provided label
             // Remove last component by reconstructing from route base and appending Path/label
-            QualifiedName base = new QualifiedName(route.getObjectID().getQualifiedName());
-            base.appendUnqualifiedName(new UnqualifiedName("Path", r.label.trim()));
+            FullyDistinguishedName base = new FullyDistinguishedName(route.getObjectID().getQualifiedName());
+            base.appendUnqualifiedName(new RelativeDistinguishedName("Path", r.label.trim()));
             existing.setObjectID(new DistributableObjectId(base));
         }
         existing.getPathwayElementSequence().clear();
@@ -534,9 +534,9 @@ public class RoutesTab extends Tab {
         FlowRow(PathwayElement flow){
             this.flow = flow;
             this.name.set(nz(flow.getName()));
-            this.source.set(idToString(flow.getSource()));
-            this.target.set(idToString(flow.getTarget()));
-            this.service.set(idToString(flow.getUtilisedApplicationService()));
+            this.source.set(idToString(flow.getSource().getLocalObjectId()));
+            this.target.set(idToString(flow.getTarget().getLocalObjectId()));
+            this.service.set(idToString(flow.getUtilisedApplicationService().getLocalObjectId()));
         }
         public javafx.beans.property.StringProperty nameProperty(){ return name; }
         public javafx.beans.property.StringProperty sourceProperty(){ return source; }

@@ -3,14 +3,15 @@
  */
 package net.fhirfactory.dricats.reference.archimate.layers.business;
 
-import net.fhirfactory.dricats.internals.common.DistributableObjectId;
-import net.fhirfactory.dricats.reference.archimate.common.SimpleElementBase;
+import net.fhirfactory.dricats.internals.common.identifiers.ElementReference;
+import net.fhirfactory.dricats.reference.archimate.common.ElementBase;
 import net.fhirfactory.dricats.reference.archimate.common.valuesets.ElementTypeEnum;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import java.io.Serial;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -21,13 +22,13 @@ import java.util.Objects;
  * - owner: reference to owning role/actor/collaboration exposing the interface
  * - services: references to BusinessService(s) exposed via this interface
  */
-public class BusinessInterface extends SimpleElementBase {
+public class BusinessInterface extends ElementBase implements Serializable {
     @Serial private static final long serialVersionUID = -12345678920104L;
     private static final Logger LOG = LoggerFactory.getLogger(BusinessInterface.class);
 
     // Element-specific attributes (by reference IDs)
-    private DistributableObjectId owner;
-    private List<DistributableObjectId> services;
+    private ElementReference owner;
+    private List<ElementReference> services;
 
     public BusinessInterface(){
         super();
@@ -35,12 +36,12 @@ public class BusinessInterface extends SimpleElementBase {
         this.services = new ArrayList<>();
     }
 
-    public DistributableObjectId getOwner() { return owner; }
-    public void setOwner(DistributableObjectId owner) { this.owner = owner; }
+    public ElementReference getOwner() { return owner; }
+    public void setOwner(ElementReference owner) { this.owner = owner; }
 
-    public List<DistributableObjectId> getServices() { return services; }
-    public void setServices(List<DistributableObjectId> services) { this.services = services == null ? new ArrayList<>() : services; }
-    public void addService(DistributableObjectId service){ if(service == null){ return; } if(this.services == null){ this.services = new ArrayList<>(); } this.services.add(service); }
+    public List<ElementReference> getServices() { return services; }
+    public void setServices(List<ElementReference> services) { this.services = services == null ? new ArrayList<>() : services; }
+    public void addService(ElementReference service){ if(service == null){ return; } if(this.services == null){ this.services = new ArrayList<>(); } this.services.add(service); }
     public void clearServices(){ if(this.services != null){ this.services.clear(); } }
 
     @Override

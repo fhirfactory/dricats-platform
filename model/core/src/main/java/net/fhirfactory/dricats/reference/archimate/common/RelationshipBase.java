@@ -3,9 +3,9 @@
  */
 package net.fhirfactory.dricats.reference.archimate.common;
 
-import net.fhirfactory.dricats.internals.common.DistributableObject;
-import net.fhirfactory.dricats.internals.common.DistributableObjectId;
-import net.fhirfactory.dricats.reference.archimate.relationships.valuesets.RelationshipType;
+import net.fhirfactory.dricats.internals.common.object.DistributableObject;
+import net.fhirfactory.dricats.internals.common.identifiers.ElementReference;
+import net.fhirfactory.dricats.reference.archimate.relationships.valuesets.RelationshipTypeEnum;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,9 +34,9 @@ public abstract class RelationshipBase extends DistributableObject implements Se
     private String specialization;
     private Map<String, String> properties;
 
-    private RelationshipType type;
-    private DistributableObjectId source;
-    private DistributableObjectId target;
+    private RelationshipTypeEnum type;
+    private ElementReference source;
+    private ElementReference target;
 
     //
     // Constructor(s)
@@ -59,7 +59,7 @@ public abstract class RelationshipBase extends DistributableObject implements Se
         getLogger().trace("RelationshipBase(ori): constructed");
     }
 
-    public RelationshipBase(String name, String documentation, String specialization, Map<String, String> properties, RelationshipType type, DistributableObjectId source, DistributableObjectId target) {
+    public RelationshipBase(String name, String documentation, String specialization, Map<String, String> properties, RelationshipTypeEnum type, ElementReference source, ElementReference target) {
         super();
         this.name = name;
         this.documentation = documentation;
@@ -71,7 +71,7 @@ public abstract class RelationshipBase extends DistributableObject implements Se
         getLogger().trace("RelationshipBase(source, target): constructed");
     }
 
-    public RelationshipBase(DistributableObjectId source, DistributableObjectId target) {
+    public RelationshipBase(ElementReference source, ElementReference target) {
         super();
         this.source = source;
         this.target = target;
@@ -79,7 +79,7 @@ public abstract class RelationshipBase extends DistributableObject implements Se
         getLogger().trace("RelationshipBase(source, target): constructed");
     }
 
-    public RelationshipBase(String name, DistributableObjectId source, DistributableObjectId target) {
+    public RelationshipBase(String name, ElementReference source, ElementReference target) {
         super();
         this.name = name;
         this.source = source;
@@ -88,7 +88,7 @@ public abstract class RelationshipBase extends DistributableObject implements Se
         getLogger().trace("RelationshipBase(source, target): constructed");
     }
 
-    public RelationshipBase(String name, String documentation, DistributableObjectId source, DistributableObjectId target) {
+    public RelationshipBase(String name, String documentation, ElementReference source, ElementReference target) {
         super();
         this.name = name;
         this.documentation = documentation;
@@ -106,14 +106,14 @@ public abstract class RelationshipBase extends DistributableObject implements Se
         return LOG;
     }
 
-    public RelationshipType getType() { return type; }
-    public void setType(RelationshipType type) { this.type = type; }
+    public RelationshipTypeEnum getType() { return type; }
+    public void setType(RelationshipTypeEnum type) { this.type = type; }
 
-    public DistributableObjectId getSource() { return source; }
-    public void setSource(DistributableObjectId source) { this.source = source; }
+    public ElementReference getSource() { return source; }
+    public void setSource(ElementReference source) { this.source = source; }
 
-    public DistributableObjectId getTarget() { return target; }
-    public void setTarget(DistributableObjectId target) { this.target = target; }
+    public ElementReference getTarget() { return target; }
+    public void setTarget(ElementReference target) { this.target = target; }
 
     public String getName() { return name; }
     public void setName(String name) { this.name = name; }
@@ -139,12 +139,12 @@ public abstract class RelationshipBase extends DistributableObject implements Se
                 Objects.equals(properties, that.properties) &&
                 Objects.equals(source, that.source) &&
                 Objects.equals(target, that.target) &&
-                Objects.equals(getObjectID(), that.getObjectID());
+                Objects.equals(getLocalId(), that.getLocalId());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(type, name, documentation, specialization, properties, source, target, getObjectID());
+        return Objects.hash(type, name, documentation, specialization, properties, source, target, getLocalId());
     }
 
     @Override
@@ -157,7 +157,7 @@ public abstract class RelationshipBase extends DistributableObject implements Se
                 ", properties="+properties+
                 ", sourceRef='"+ source +'\''+
                 ", targetRef='"+ target +'\''+
-                ", objectID="+getObjectID()+
+                ", id="+ getLocalId()+
                 ", identifiers="+getIdentifiers()+
                 ", metadata="+getMetadata()+
                 ", securityLabels="+getSecurityLabels()+

@@ -3,8 +3,8 @@
  */
 package net.fhirfactory.dricats.reference.archimate.layers.application;
 
-import net.fhirfactory.dricats.internals.common.DistributableObjectId;
-import net.fhirfactory.dricats.reference.archimate.common.SimpleElementBase;
+import net.fhirfactory.dricats.internals.common.identifiers.ElementReference;
+import net.fhirfactory.dricats.reference.archimate.common.ElementBase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class ApplicationInteraction extends SimpleElementBase {
+public class ApplicationInteraction extends ElementBase {
     @Serial private static final long serialVersionUID = -12345678910106L;
     private static final Logger LOG = LoggerFactory.getLogger(ApplicationInteraction.class);
 
@@ -23,10 +23,10 @@ public class ApplicationInteraction extends SimpleElementBase {
     // - usedServices: references to ApplicationService(s) used by this interaction
     // - accessDataObjects: references to ApplicationDataObject(s) accessed by this interaction
 
-    private DistributableObjectId collaboration;
-    private List<DistributableObjectId> participants;
-    private List<DistributableObjectId> usedServices;
-    private List<DistributableObjectId> accessDataObjects;
+    private ElementReference collaboration;
+    private List<ElementReference> participants;
+    private List<ElementReference> usedServices;
+    private List<ElementReference> accessDataObjects;
 
     public ApplicationInteraction() {
         super();
@@ -40,51 +40,51 @@ public class ApplicationInteraction extends SimpleElementBase {
         return LOG;
     }
 
-    public DistributableObjectId getCollaboration() {
+    public ElementReference getCollaboration() {
         return collaboration;
     }
 
-    public void setCollaboration(DistributableObjectId collaboration) {
+    public void setCollaboration(ElementReference collaboration) {
         this.collaboration = collaboration;
     }
 
-    public List<DistributableObjectId> getParticipants() {
+    public List<ElementReference> getParticipants() {
         return participants;
     }
 
-    public void setParticipants(List<DistributableObjectId> participants) {
+    public void setParticipants(List<ElementReference> participants) {
         this.participants = participants == null ? new ArrayList<>() : participants;
     }
 
-    public void addParticipant(DistributableObjectId participantId) {
+    public void addParticipant(ElementReference participantId) {
         if (participantId == null) { return; }
         if (this.participants == null) { this.participants = new ArrayList<>(); }
         this.participants.add(participantId);
     }
 
-    public List<DistributableObjectId> getUsedServices() {
+    public List<ElementReference> getUsedServices() {
         return usedServices;
     }
 
-    public void setUsedServices(List<DistributableObjectId> usedServices) {
+    public void setUsedServices(List<ElementReference> usedServices) {
         this.usedServices = usedServices == null ? new ArrayList<>() : usedServices;
     }
 
-    public void addUsedService(DistributableObjectId serviceId) {
+    public void addUsedService(ElementReference serviceId) {
         if (serviceId == null) { return; }
         if (this.usedServices == null) { this.usedServices = new ArrayList<>(); }
         this.usedServices.add(serviceId);
     }
 
-    public List<DistributableObjectId> getAccessDataObjects() {
+    public List<ElementReference> getAccessDataObjects() {
         return accessDataObjects;
     }
 
-    public void setAccessDataObjects(List<DistributableObjectId> accessDataObjects) {
+    public void setAccessDataObjects(List<ElementReference> accessDataObjects) {
         this.accessDataObjects = accessDataObjects == null ? new ArrayList<>() : accessDataObjects;
     }
 
-    public void addAccessDataObject(DistributableObjectId dataObjectId) {
+    public void addAccessDataObject(ElementReference dataObjectId) {
         if (dataObjectId == null) { return; }
         if (this.accessDataObjects == null) { this.accessDataObjects = new ArrayList<>(); }
         this.accessDataObjects.add(dataObjectId);
@@ -117,8 +117,8 @@ public class ApplicationInteraction extends SimpleElementBase {
                 ", accessDataObjectsCount="+(accessDataObjects==null?0:accessDataObjects.size())+
                 ", documentation='"+getDocumentation()+'\''+
                 ", specialization='"+getSpecialization()+'\''+
-                ", properties="+getProperties()+
-                ", objectID="+getObjectID()+
+                ", extensions="+getExtensions()+
+                ", id="+ getLocalId()+
                 ", metadata="+getMetadata()+
                 '}';
     }

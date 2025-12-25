@@ -182,7 +182,7 @@ CentralMessageBroker {
             throw new IllegalArgumentException("MessageObject cannot be null");
         }
         byte[] payload = serialize(message);
-        String key = (message.getId() != null ? message.getId().getValue() : null);
+        String key = (message.getLocalId() != null ? message.getLocalId().getValue() : null);
 
         // Persist before sending (best-effort) so we can retry later if needed
         String pid = null;

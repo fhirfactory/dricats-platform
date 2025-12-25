@@ -306,7 +306,7 @@ public class DistributedPathwayElementCacheWithStore {
         }
         if (key == null) {
             try {
-                CommonName cn = item.getId();
+                CommonName cn = item.getLocalId();
                 if (cn != null && cn.getValue() != null && !cn.getValue().isEmpty()) {
                     key = cn.getValue();
                 }
@@ -317,7 +317,7 @@ public class DistributedPathwayElementCacheWithStore {
         if (key == null) {
             key = UUID.randomUUID().toString();
             try {
-                item.setId(new CommonName(key));
+                item.setLocalId(new CommonName(key));
             } catch (Exception e) {
                 LOG.debug("resolveKey(PathwayElement): unable to set generated id on item", e);
             }

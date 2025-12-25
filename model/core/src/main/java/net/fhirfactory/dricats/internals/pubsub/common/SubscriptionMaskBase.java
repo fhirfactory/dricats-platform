@@ -21,9 +21,9 @@
  */
 package net.fhirfactory.dricats.internals.pubsub.common;
 
-import net.fhirfactory.dricats.internals.common.DistributableObjectId;
-import net.fhirfactory.dricats.internals.common.datatypes.EffectiveDate;
-import net.fhirfactory.dricats.internals.pubsub.TopicSubscription;
+import net.fhirfactory.dricats.internals.common.identifiers.ElementReference;
+import net.fhirfactory.dricats.internals.datatypes.EffectiveDate;
+import net.fhirfactory.dricats.internals.pubsub.topics.TopicSubscription;
 import net.fhirfactory.dricats.internals.topics.Topic;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.slf4j.Logger;
@@ -209,7 +209,7 @@ abstract public class SubscriptionMaskBase implements Serializable {
         return(temporalWindowTestOutcome);
     }
 
-    public Boolean filterInternalEventSource(DistributableObjectId testComponentId){
+    public Boolean filterInternalEventSource(ElementReference testComponentId){
         getLogger().trace("filterInternalEventSource(): Entry, testComponentId -> {}", testComponentId);
         if(testComponentId == null){
             getLogger().trace("filterInternalEventSource(): Exit, testComponentId is null, returning false");
@@ -220,13 +220,13 @@ abstract public class SubscriptionMaskBase implements Serializable {
             return(false);
         }
         else{
-            Boolean qualifiedNameFilterOutcome = getInternalEventSource().getComponentIdMask().filter(testComponentId.getQualifiedName());
+            Boolean qualifiedNameFilterOutcome = getInternalEventSource().getComponentIdMask().filter(testComponentId.getLocalObjectId().getFullyDistinguishedName());
             getLogger().trace("filterInternalEventSource(): Exit, qualifiedNameFilterOutcome -> {}", qualifiedNameFilterOutcome);
             return(qualifiedNameFilterOutcome);
         }
     }
 
-    public Boolean filterInternalEventTarget(DistributableObjectId testComponentId){
+    public Boolean filterInternalEventTarget(ElementReference testComponentId){
         getLogger().trace("filterInternalEventTarget(): Entry, testComponentId -> {}", testComponentId);
         if(testComponentId == null){
             getLogger().trace("filterInternalEventTarget(): Exit, testComponentId is null, returning false");
@@ -237,7 +237,7 @@ abstract public class SubscriptionMaskBase implements Serializable {
             return(false);
         }
         else{
-            Boolean qualifiedNameFilterOutcome = getInternalEventTarget().getComponentIdMask().filter(testComponentId.getQualifiedName());
+            Boolean qualifiedNameFilterOutcome = getInternalEventTarget().getComponentIdMask().filter(testComponentId.getLocalObjectId().getFullyDistinguishedName());
             getLogger().trace("filterInternalEventTarget(): Exit, qualifiedNameFilterOutcome -> {}", qualifiedNameFilterOutcome);
             return(qualifiedNameFilterOutcome);
         }

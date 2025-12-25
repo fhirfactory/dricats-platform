@@ -21,7 +21,7 @@
  */
 package net.fhirfactory.dricats.internals.configuration.segments;
 
-import net.fhirfactory.dricats.internals.common.DistributableObjectIdentifierType;
+import net.fhirfactory.dricats.internals.common.identifiers.datatypes.ElementIdentifierType;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import java.io.Serial;
@@ -46,7 +46,7 @@ public class SolutionConfigurationObject implements Serializable{
     private String solutionName;
     private String solutionGroup;
     private String solutionDescription;
-	private DistributableObjectIdentifierType defaultObjectIdentifierType;
+	private ElementIdentifierType defaultObjectIdentifierType;
     private boolean encryptedAtRestRequired;
     private boolean encryptedAtTransitRequired;
 
@@ -79,11 +79,11 @@ public class SolutionConfigurationObject implements Serializable{
 		this.solutionDescription = solutionDescription;
 	}
 
-	public DistributableObjectIdentifierType getDefaultObjectIdentifierType() {
+	public ElementIdentifierType getDefaultObjectIdentifierType() {
 		return defaultObjectIdentifierType;
 	}
 
-	public void setDefaultObjectIdentifierType(DistributableObjectIdentifierType defaultObjectIdentifierType) {
+	public void setDefaultObjectIdentifierType(ElementIdentifierType defaultObjectIdentifierType) {
 		this.defaultObjectIdentifierType = defaultObjectIdentifierType;
 	}
 

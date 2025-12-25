@@ -31,18 +31,18 @@ public enum NetworkSecurityZoneEnum {
 	    INTERNET("Internet","pegacorn.fhir.device.metadata.network-security-zone.internet","Internet (unrestricted, hostile)");
 
 
-	    private String token;
+	    private String name;
 	    private String displayName;
 	    private String displayText;
 
 	    private NetworkSecurityZoneEnum(String name, String token, String text) {
-	        this.token = token;
+	        this.name = token;
 	        this.displayName = name;
 	        this.displayText = text;
 	    }
 
-	    public String getToken(){
-	        return(this.token);
+	    public String getName(){
+	        return(this.name);
 	    }
 
 	    public String getDisplayName(){
@@ -62,9 +62,9 @@ public enum NetworkSecurityZoneEnum {
 	        return null;
 	    }
 
-	    public static NetworkSecurityZoneEnum fromSecurityZoneCamelCaseString(String zoneCamelCaseString){
+	    public static NetworkSecurityZoneEnum fromName(String zoneCamelCaseString){
 	        for (NetworkSecurityZoneEnum b : NetworkSecurityZoneEnum.values()) {
-	            if (b.getDisplayName().equalsIgnoreCase(zoneCamelCaseString)) {
+	            if (b.getName().equalsIgnoreCase(zoneCamelCaseString)) {
 	                return b;
 	            }
 	        }

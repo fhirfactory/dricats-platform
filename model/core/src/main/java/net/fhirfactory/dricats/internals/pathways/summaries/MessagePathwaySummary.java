@@ -21,7 +21,7 @@
  */
 package net.fhirfactory.dricats.internals.pathways.summaries;
 
-import net.fhirfactory.dricats.reference.archimate.common.SimpleElementBase;
+import net.fhirfactory.dricats.reference.archimate.common.ElementBase;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,7 +31,7 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-public class MessagePathwaySummary extends SimpleElementBase implements Serializable {
+public class MessagePathwaySummary extends ElementBase implements Serializable {
     //
     // Housekeeping
     //

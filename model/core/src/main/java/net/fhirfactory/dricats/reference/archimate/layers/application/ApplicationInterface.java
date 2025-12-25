@@ -3,11 +3,14 @@
  */
 package net.fhirfactory.dricats.reference.archimate.layers.application;
 
-import net.fhirfactory.dricats.internals.common.naming.UnqualifiedName;
-import net.fhirfactory.dricats.internals.common.DistributableObjectId;
-import net.fhirfactory.dricats.reference.archimate.common.SimpleElementBase;
+import net.fhirfactory.dricats.internals.common.identifiers.ElementReference;
+import net.fhirfactory.dricats.internals.common.naming.FullyDistinguishedName;
+import net.fhirfactory.dricats.internals.common.id.ObjectId;
+import net.fhirfactory.dricats.internals.common.naming.RelativeDistinguishedName;
+import net.fhirfactory.dricats.reference.archimate.common.ElementBase;
 import net.fhirfactory.dricats.reference.archimate.common.valuesets.ElementTypeEnum;
 import org.apache.commons.lang3.SerializationUtils;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,7 +25,7 @@ import java.util.Objects;
  * An Application Interface represents a point of access where application services
  * are made available to a user, another application component, or a node.
  */
-public class ApplicationInterface extends SimpleElementBase {
+public class ApplicationInterface extends ElementBase {
     //
     // Housekeeping
     //
@@ -38,8 +41,8 @@ public class ApplicationInterface extends SimpleElementBase {
     // - owner: reference to owning element (typically an ApplicationComponent)
     // - services: references to ApplicationService(s) exposed/required by this interface
 
-    private DistributableObjectId owner;
-    private List<DistributableObjectId> services;
+    private ElementReference owner;
+    private List<ElementReference> services;
     private List<ApplicationDataObject> supportedDataObjects;
 
 
@@ -63,17 +66,17 @@ public class ApplicationInterface extends SimpleElementBase {
         getLogger().trace("ApplicationInterface(name, documentation, specialization): constructed");
     }
 
-    public ApplicationInterface(DistributableObjectId parent, String name, String documentation, String specialization) {
+    public ApplicationInterface(ElementReference parent, String name, String documentation, String specialization) {
         super();
         setOwner(parent);
         setName(name);
-        UnqualifiedName unqualifiedName = new UnqualifiedName();
+        RelativeDistinguishedName unqualifiedName = new RelativeDistinguishedName();
         unqualifiedName.setQualifier(specialization);
         unqualifiedName.setValue(name);
-        DistributableObjectId distributableObjectId = SerializationUtils.clone(parent);
-        distributableObjectId.getQualifiedName().appendUnqualifiedName(unqualifiedName);
-        setObjectID(distributableObjectId);
-        setId(distributableObjectId.getQualifiedName().getCommonName());
+        ElementReference reference = SerializationUtils.clone(parent);
+        FullyDistinguishedName newName = reference.getLocalObjectId().getFullyDistinguishedName();
+        newName.appendUnqualifiedName(unqualifiedName);
+        setLocalId(new ObjectId(newName));
         setDocumentation(documentation);
         setSpecialization(specialization);
         this.services = new ArrayList<>();
@@ -81,7 +84,7 @@ public class ApplicationInterface extends SimpleElementBase {
         getLogger().trace("ApplicationInterface(parent, name, documentation, specialization): constructed");
     }
 
-    public ApplicationInterface(DistributableObjectId parent, String name, String documentation, String specialization, URI uri) {
+    public ApplicationInterface(ElementReference parent, String name, String documentation, String specialization, URI uri) {
         this(parent, name, documentation,specialization);
         String uriString = uri.toString();
         getLogger().trace("ApplicationInterface(parent, name, documentation, specialization, uri): constructed");
@@ -94,30 +97,36 @@ public class ApplicationInterface extends SimpleElementBase {
         return LOG;
     }
 
-    public DistributableObjectId getOwner() {
+    public ElementReference getOwner() {
         return owner;
     }
 
-    public void setOwner(DistributableObjectId owner) {
+    public void setOwner(ElementReference owner) {
         this.owner = owner;
     }
 
-    public List<DistributableObjectId> getServices() {
+    public List<ElementReference> getServices() {
         return services;
     }
 
-    public void setServices(List<DistributableObjectId> services) {
+    public void setServices(List<ElementReference> services) {
         this.services = services == null ? new ArrayList<>() : services;
     }
 
+    public List<ApplicationDataObject> getSupportedDataObjects() {
+        return supportedDataObjects;
+    }
 
+    public void setSupportedDataObjects(List<ApplicationDataObject> supportedDataObjects) {
+        this.supportedDataObjects = supportedDataObjects == null ? new ArrayList<>() : supportedDataObjects;
+    }
 
 
     //
     // Business Methods
     //
 
-    public void addService(DistributableObjectId serviceId) {
+    public void addService(ElementReference serviceId) {
         if (serviceId == null) { return; }
         if (this.services == null) { this.services = new ArrayList<>(); }
         this.services.add(serviceId);
@@ -143,15 +152,18 @@ public class ApplicationInterface extends SimpleElementBase {
 
     @Override
     public String toString() {
-        return getClass().getSimpleName()+"{"+
-                "name='"+getName()+'\''+
-                ", ownerRef="+(owner==null?"null":owner)+
-                ", servicesCount="+(services==null?0:services.size())+
-                ", documentation='"+getDocumentation()+'\''+
-                ", specialization='"+getSpecialization()+'\''+
-                ", properties="+getProperties()+
-                ", objectID="+getObjectID()+
-                ", metadata="+getMetadata()+
-                '}';
+        return new ToStringBuilder(this)
+                .append("owner", getOwner())
+                .append("services", getServices())
+                .append("supportedDataObjects", getSupportedDataObjects())
+                .append("elementType", getElementType())
+                .append("name", getName())
+                .append("documentation", getDocumentation())
+                .append("specialization", getSpecialization())
+                .append("extensions", getExtensions())
+                .append("securityLabels", getSecurityLabels())
+                .append("metadata", getMetadata())
+                .append("id", getLocalId())
+                .toString();
     }
 }

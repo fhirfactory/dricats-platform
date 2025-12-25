@@ -88,12 +88,12 @@ public class CommunicateOrganization extends Organisation {
                 .append("name", getName())
                 .append("documentation", getDocumentation())
                 .append("specialization", getSpecialization())
-                .append("properties", getProperties())
+                .append("properties", getExtensions())
                 .append("identifiers", getIdentifiers())
                 .append("securityLabels", getSecurityLabels())
                 .append("objectID", getObjectID())
                 .append("metadata", getMetadata())
-                .append("id", getId())
+                .append("id", getLocalId())
                 .toString();
     }
 

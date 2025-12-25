@@ -23,13 +23,13 @@ class ElementBaseTest {
         a.setElementType(ElementTypeEnum.APPLICATION_COMPONENT);
         HashMap<String,String> props = new HashMap<>();
         props.put("k","v");
-        a.setProperties(props);
+        a.setExtensions(props);
 
         assertEquals("n", a.getName());
         assertEquals("d", a.getDocumentation());
         assertEquals("s", a.getSpecialization());
         assertEquals(ElementTypeEnum.APPLICATION_COMPONENT, a.getElementType());
-        assertEquals("v", a.getProperties().get("k"));
+        assertEquals("v", a.getExtensions().get("k"));
 
         assertNotEquals(a, b);
         assertNotEquals(a.hashCode(), b.hashCode());

@@ -21,7 +21,7 @@
  */
 package net.fhirfactory.dricats.internals.data;
 
-import net.fhirfactory.dricats.internals.common.SerialisableObject;
+import net.fhirfactory.dricats.internals.common.object.SerialisableObject;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -75,7 +75,7 @@ public class PayloadSecurityStatus extends SerialisableObject implements Seriali
         return "PayloadSecurityStatus{" +
                 "securityStatus='" + securityStatus + '\'' +
                 ", securityStatusDescription='" + securityStatusDescription + '\'' +
-                ", id = '" + getId() + '\'' +
+                ", id = '" + getLocalId() + '\'' +
                 '}';
     }
 

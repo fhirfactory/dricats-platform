@@ -3,7 +3,7 @@
  */
 package net.fhirfactory.dricats.reference.archimate.layers.business;
 
-import net.fhirfactory.dricats.internals.common.DistributableObjectId;
+import net.fhirfactory.dricats.internals.common.id.ObjectId;
 import net.fhirfactory.dricats.reference.archimate.common.ElementBase;
 import net.fhirfactory.dricats.reference.archimate.common.valuesets.ElementTypeEnum;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -24,8 +24,8 @@ public class BusinessRole extends ElementBase {
     // - actors: references to BusinessActor(s) that realize this role
     // - owner: owning organizational entity (e.g., actor/collaboration)
     private List<String> responsibilities;
-    private List<DistributableObjectId> actors;
-    private DistributableObjectId owner;
+    private List<ObjectId> actors;
+    private ObjectId owner;
 
     public BusinessRole(){
         super();
@@ -37,11 +37,11 @@ public class BusinessRole extends ElementBase {
     public List<String> getResponsibilities() { return responsibilities; }
     public void setResponsibilities(List<String> responsibilities) { this.responsibilities = responsibilities; }
 
-    public List<DistributableObjectId> getActors() { return actors; }
-    public void setActors(List<DistributableObjectId> actors) { this.actors = actors; }
+    public List<ObjectId> getActors() { return actors; }
+    public void setActors(List<ObjectId> actors) { this.actors = actors; }
 
-    public DistributableObjectId getOwner() { return owner; }
-    public void setOwner(DistributableObjectId owner) { this.owner = owner; }
+    public ObjectId getOwner() { return owner; }
+    public void setOwner(ObjectId owner) { this.owner = owner; }
 
     @Override
     protected Logger getLogger(){ return LOG; }

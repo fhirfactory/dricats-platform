@@ -22,12 +22,12 @@
 package net.fhirfactory.dricats.datagrid.satellite.notificationgrid;
 
 import net.fhirfactory.dricats.internals.common.DistributableObjectId;
-import net.fhirfactory.dricats.internals.common.naming.QualifiedName;
-import net.fhirfactory.dricats.internals.common.naming.IdToken;
+import net.fhirfactory.dricats.internals.common.naming.FullyDistinguishedName;
+import net.fhirfactory.dricats.internals.common.id.ObjectToken;
 import net.fhirfactory.dricats.internals.events.notifications.NotificationObject;
 import net.fhirfactory.dricats.internals.events.notifications.NotificationSet;
 import net.fhirfactory.dricats.internals.events.interfaces.ILocalNotificationService;
-import net.fhirfactory.dricats.internals.topology.implementation.layers.application.valuesets.SoftwareComponentTypeEnum;
+import net.fhirfactory.dricats.internals.topology.implementation.layers.application.valuesets.ApplicationComponentSpecialisationEnum;
 import net.fhirfactory.dricats.internals.topology.interfaces.ISubsystem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,7 +50,7 @@ public class LocalNotificationCache implements ILocalNotificationService {
     // Attributes
     //
 
-    private Map<IdToken, Queue<NotificationObject>> incomingQueueCache ;
+    private Map<ObjectToken, Queue<NotificationObject>> incomingQueueCache ;
     private Queue<NotificationObject> outgoingQueueCache ;
 
     @Inject
@@ -73,7 +73,7 @@ public class LocalNotificationCache implements ILocalNotificationService {
         return LOG;
     }
 
-    protected Map<IdToken, Queue<NotificationObject>> getIncomingQueueCache() {
+    protected Map<ObjectToken, Queue<NotificationObject>> getIncomingQueueCache() {
         return incomingQueueCache;
     }
 
@@ -99,25 +99,25 @@ public class LocalNotificationCache implements ILocalNotificationService {
             getLogger().warn(".queueMessage(): Exit, Message target is null");
             return;
         }
-        IdToken idToken = NotificationObject.getTarget().getQualifiedName().getIdToken();
-        if(!getIncomingQueueCache().containsKey(idToken)){
+        ObjectToken objectToken = NotificationObject.getTarget().getLocalObjectId().getCommonId();
+        if(!getIncomingQueueCache().containsKey(objectToken)){
             Queue<NotificationObject> incomingMessageQueue = new ConcurrentLinkedQueue<>();
             incomingMessageQueue.add(NotificationObject);
-            getIncomingQueueCache().put(idToken, incomingMessageQueue);
+            getIncomingQueueCache().put(objectToken, incomingMessageQueue);
         } else {
-            getIncomingQueueCache().get(idToken).add(NotificationObject);
+            getIncomingQueueCache().get(objectToken).add(NotificationObject);
         }
         getLogger().debug(".queueMessage(): Exit");
     }
 
     @Override
-    public NotificationObject peekNextNotification( IdToken consumerIdToken){
-        if(consumerIdToken == null){
+    public NotificationObject peekNextNotification( ObjectToken consumerObjectToken){
+        if(consumerObjectToken == null){
             getLogger().debug(".peekNextNotification(): Exit, consumerIdToken is null");
             return(null);
         }
-        if(getIncomingQueueCache().containsKey(consumerIdToken)){
-            NotificationObject peek = getIncomingQueueCache().get(consumerIdToken).peek();
+        if(getIncomingQueueCache().containsKey(consumerObjectToken)){
+            NotificationObject peek = getIncomingQueueCache().get(consumerObjectToken).peek();
             getLogger().debug(".peekNextNotification(): Exit, returning ->{}", peek);
             return(peek);
         }
@@ -126,14 +126,14 @@ public class LocalNotificationCache implements ILocalNotificationService {
     }
 
     @Override
-    public NotificationObject pollNextNotification( IdToken consumerIdToken){
-        getLogger().debug(".pollNextNotification(): Entry, consumerIdToken -> {}", consumerIdToken);
-        if(consumerIdToken == null){
+    public NotificationObject pollNextNotification( ObjectToken consumerObjectToken){
+        getLogger().debug(".pollNextNotification(): Entry, consumerIdToken -> {}", consumerObjectToken);
+        if(consumerObjectToken == null){
             getLogger().debug(".pollNextNotification(): Exit, consumerIdToken is null");
             return(null);
         }
-        if(getIncomingQueueCache().containsKey(consumerIdToken)){
-            NotificationObject poll = getIncomingQueueCache().get(consumerIdToken).poll();
+        if(getIncomingQueueCache().containsKey(consumerObjectToken)){
+            NotificationObject poll = getIncomingQueueCache().get(consumerObjectToken).poll();
             getLogger().debug(".pollNextNotification(): Exit, returning ->{}", poll);
             return(poll);
         }
@@ -142,7 +142,7 @@ public class LocalNotificationCache implements ILocalNotificationService {
     }
 
     @Override
-    public NotificationSet pollNextNotification(IdToken consumer, Integer size) {
+    public NotificationSet pollNextNotification(ObjectToken consumer, Integer size) {
         getLogger().debug(".pollNextNotification(): Entry, consumerIdToken -> {}, size -> {}", consumer, size);
         NotificationSet notificationSet = new NotificationSet();
         if(consumer == null){
@@ -198,13 +198,13 @@ public class LocalNotificationCache implements ILocalNotificationService {
             getLogger().debug(".postNotification(): Exit, nothing to post, return -> {}", messagePostedInstant);
             return(messagePostedInstant);
         }
-        DistributableObjectId messageTarget = message.getTarget();
+        DistributableObjectId messageTarget = message.getTarget().getLocalObjectId();
         if(messageTarget == null){
             getLogger().debug(".postNotification(): Exit, no target, return -> {}", messagePostedInstant);
             return(messagePostedInstant);
         }
-        QualifiedName targetSubsystemQualifiedName = messageTarget.getQualifiedName().extractQualifiedNameForQualifier(SoftwareComponentTypeEnum.SUBSYSTEM_APPLICATION_INSTANCE.getType());
-        QualifiedName localSubsystemQualifiedName = getSubsystem().getSubsystem().getObjectID().getQualifiedName();
+        FullyDistinguishedName targetSubsystemQualifiedName = messageTarget.getQualifiedName().extractQualifiedNameForQualifier(ApplicationComponentSpecialisationEnum.SUBSYSTEM_APPLICATION_INSTANCE.getType());
+        FullyDistinguishedName localSubsystemQualifiedName = getSubsystem().getSubsystem().getObjectID().getQualifiedName();
         String targetSubsystemName = targetSubsystemQualifiedName.getUnqualifiedName().getValue();
         String localSubsystemName = localSubsystemQualifiedName.getUnqualifiedName().getValue();
         if(targetSubsystemName.contentEquals(localSubsystemName)){

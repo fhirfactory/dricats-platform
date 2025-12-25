@@ -4,10 +4,18 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
+import net.fhirfactory.dricats.internals.common.naming.datatypes.DistinguishedNameEntry;
 import net.fhirfactory.dricats.internals.data.valuesets.MimeTypeEnum;
 import net.fhirfactory.dricats.internals.oam.metrics.ApplicationComponentMetricsData;
 import net.fhirfactory.dricats.internals.oam.metrics.datatypes.ComponentMessagingStatistics;
-import net.fhirfactory.dricats.internals.oam.topology.base.ApplicationComponentSummary;
+import net.fhirfactory.dricats.internals.pubsub.content.ContentFilter;
+import net.fhirfactory.dricats.internals.pubsub.content.ContentSubscription;
+import net.fhirfactory.dricats.internals.pubsub.topics.TopicFilter;
+import net.fhirfactory.dricats.internals.pubsub.topics.TopicSubscription;
+import net.fhirfactory.dricats.internals.topology.implementation.layers.application.interfaces.EgressApplicationInterface;
+import net.fhirfactory.dricats.internals.topology.implementation.layers.application.interfaces.IngresApplicationInterface;
+import net.fhirfactory.dricats.internals.topology.implementation.layers.application.interfaces.base.WUPInterfaceBase;
+import net.fhirfactory.dricats.reference.archimate.layers.application.ApplicationComponent;
 import net.fhirfactory.dricats.ui.restclient.MainRESTClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -55,7 +63,7 @@ public class TopologyTabController {
 
     @FXML
     private void initialize() {
-        // Tree cell factory for ApplicationComponentSummary
+        // Tree cell factory for ApplicationComponent
         if (treeView != null) {
             treeView.setShowRoot(false);
             treeView.setCellFactory(tv -> new TreeCell<Object>() {
@@ -65,24 +73,24 @@ public class TopologyTabController {
                     if (empty || item == null) {
                         setText(null);
                         setStyle("");
-                    } else if (item instanceof ApplicationComponentSummary) {
-                        ApplicationComponentSummary acs = (ApplicationComponentSummary) item;
+                    } else if (item instanceof ApplicationComponent) {
+                        ApplicationComponent acs = (ApplicationComponent) item;
                         String label = acs.getName();
                         if (label == null || label.isBlank()) {
                             label = net.fhirfactory.dricats.ui.restclient.MainRESTClient.resolveKey(acs);
                         }
                         setText(label);
                         setStyle("");
-                    } else if (item instanceof net.fhirfactory.dricats.internals.oam.topology.IngressInterfaceComponentSummary) {
-                        net.fhirfactory.dricats.internals.oam.topology.IngressInterfaceComponentSummary ifs = (net.fhirfactory.dricats.internals.oam.topology.IngressInterfaceComponentSummary) item;
+                    } else if (item instanceof IngresApplicationInterface) {
+                        IngresApplicationInterface ifs = (IngresApplicationInterface) item;
                         String label = ifs.getName();
                         if (label == null || label.isBlank()) {
                             label = ifs.resolveKey();
                         }
                         setText("[IN] " + label);
                         setStyle("-fx-text-fill: #2a7fff;");
-                    } else if (item instanceof net.fhirfactory.dricats.internals.oam.topology.EgressInterfaceComponentSummary) {
-                        net.fhirfactory.dricats.internals.oam.topology.EgressInterfaceComponentSummary ifs = (net.fhirfactory.dricats.internals.oam.topology.EgressInterfaceComponentSummary) item;
+                    } else if (item instanceof EgressApplicationInterface) {
+                        EgressApplicationInterface ifs = (EgressApplicationInterface) item;
                         String label = ifs.getName();
                         if (label == null || label.isBlank()) {
                             label = ifs.resolveKey();
@@ -99,7 +107,7 @@ public class TopologyTabController {
             treeView.getSelectionModel().selectedItemProperty().addListener((obs, oldSel, newSel) -> {
                 if (newSel != null) {
                     Object v = newSel.getValue();
-                    if (v instanceof ApplicationComponentSummary s) {
+                    if (v instanceof ApplicationComponent s) {
                         String id = net.fhirfactory.dricats.ui.restclient.MainRESTClient.resolveKey(s);
                         LOG.info("[UI] Tree selection changed to: {}", id);
                         loadChildrenIfNeeded(newSel);
@@ -107,9 +115,9 @@ public class TopologyTabController {
                         refreshUniqueName(s);
                         refreshMetrics(s);
                         refreshInterfaceDetails(s);
-                    } else if (v instanceof net.fhirfactory.dricats.internals.oam.topology.IngressInterfaceComponentSummary ifIn) {
+                    } else if (v instanceof IngresApplicationInterface ifIn) {
                         LOG.info("[UI] Ingress Interface selected: {}", ifIn.resolveKey());
-                    } else if (v instanceof net.fhirfactory.dricats.internals.oam.topology.EgressInterfaceComponentSummary ifOut) {
+                    } else if (v instanceof EgressApplicationInterface ifOut) {
                         LOG.info("[UI] Egress Interface selected: {}", ifOut.resolveKey());
                     } else {
                         LOG.info("[UI] Tree selection is other node");
@@ -129,10 +137,10 @@ public class TopologyTabController {
                     TreeItem<Object> sel = treeView.getSelectionModel().getSelectedItem();
                     if (sel != null) {
                         Object val = sel.getValue();
-                        if (val instanceof net.fhirfactory.dricats.internals.oam.topology.IngressInterfaceComponentSummary ingress) {
+                        if (val instanceof IngresApplicationInterface ingress) {
                             showIngressSubscriptionsDialog(ingress);
                             event.consume();
-                        } else if (val instanceof net.fhirfactory.dricats.internals.oam.topology.EgressInterfaceComponentSummary egress) {
+                        } else if (val instanceof EgressApplicationInterface egress) {
                             showEgressSubscriptionsDialog(egress);
                             event.consume();
                         }
@@ -191,7 +199,7 @@ public class TopologyTabController {
             refreshMetricsBtn.setOnAction(e -> {
                 TreeItem<Object> sel = treeView.getSelectionModel().getSelectedItem();
                 Object v = sel==null? null : sel.getValue();
-                refreshMetrics(v instanceof ApplicationComponentSummary s ? s : null);
+                refreshMetrics(v instanceof ApplicationComponent s ? s : null);
             });
         }
         if (refreshMenuItem != null) {
@@ -199,7 +207,7 @@ public class TopologyTabController {
                 LOG.info("[UI] Refresh requested.");
                 loadRoots();
                 TreeItem<Object> sel = treeView.getSelectionModel().getSelectedItem();
-                if (sel != null && sel.getValue() instanceof ApplicationComponentSummary s) {
+                if (sel != null && sel.getValue() instanceof ApplicationComponent s) {
                     refreshDetails(s);
                     refreshUniqueName(s);
                     refreshMetrics(s);
@@ -214,7 +222,7 @@ public class TopologyTabController {
         }
     }
     
-    private void showIngressSubscriptionsDialog(net.fhirfactory.dricats.internals.oam.topology.IngressInterfaceComponentSummary ingress) {
+    private void showIngressSubscriptionsDialog(IngresApplicationInterface ingress) {
         String name = null;
         try { name = ingress.getName(); } catch (Exception ignored) {}
         if (name == null || name.isBlank()) {
@@ -222,32 +230,32 @@ public class TopologyTabController {
         }
         String title = "Supported Content Subscriptions";
         String header = (name == null || name.isBlank()) ? "Ingress Interface" : name;
-        java.util.List<net.fhirfactory.dricats.internals.pubsub.content.ContentSubscription> subs = null;
-        try { subs = ingress.getSubscriptionFilters(); } catch (Exception ignored) {}
+        java.util.List<ContentSubscription> subs = null;
+        try { subs = ingress.getSubscriptions().getContentSubscriptions(); } catch (Exception ignored) {}
 
         StringBuilder sb = new StringBuilder();
         if (subs == null || subs.isEmpty()) {
             sb.append("No ContentSubscriptions defined for this ingress interface.");
         } else {
             int i = 1;
-            for (net.fhirfactory.dricats.internals.pubsub.content.ContentSubscription cs : subs) {
+            for (ContentSubscription cs : subs) {
                 if (cs == null) { continue; }
                 sb.append("#").append(i++).append("\n");
-                try { sb.append("  Source: ").append(java.util.Objects.toString(cs.getInternalEventSource().getComponentIdMask().prettyPrint(), "")).append("\n"); } catch (Exception ignored) {}
-                try { sb.append("  Target: ").append(java.util.Objects.toString(cs.getInternalEventTarget().getComponentIdMask().prettyPrint(), "")).append("\n"); } catch (Exception ignored) {}
+                try { sb.append("  Source: ").append(java.util.Objects.toString(cs.getContentSubscriptionMask().getInternalEventSource().getComponentIdMask().prettyPrint(), "")).append("\n"); } catch (Exception ignored) {}
+                try { sb.append("  Target: ").append(java.util.Objects.toString(cs.getContentSubscriptionMask().getInternalEventTarget().getComponentIdMask().prettyPrint(), "")).append("\n"); } catch (Exception ignored) {}
                 try { 
-                    java.util.List<net.fhirfactory.dricats.internals.pubsub.TopicSubscription> topics = cs.getEventTopicSubscriptions();
+                    java.util.List<TopicSubscription> topics = cs.getContentSubscriptionMask().getEventTopicSubscriptions();
                     if (topics != null && !topics.isEmpty()) {
                         sb.append("  Topics:");
-                        for (net.fhirfactory.dricats.internals.pubsub.TopicSubscription t : topics) {
+                        for (TopicSubscription t : topics) {
                             sb.append("\n    - ").append(t.prettyPrint());
                         }
                         sb.append("\n");
                     }
                 } catch (Exception ignored) {}
-                try { sb.append("  Origin: ").append(java.util.Objects.toString(cs.getEventOrigin(), "")).append("\n"); } catch (Exception ignored) {}
-                try { sb.append("  Final Destination: ").append(java.util.Objects.toString(cs.getEventFinalDestination(), "")).append("\n"); } catch (Exception ignored) {}
-                try { sb.append("  Temporal Window: ").append(java.util.Objects.toString(cs.getTemporalWindow().prettyPrint(), "")).append("\n"); } catch (Exception ignored) {}
+                try { sb.append("  Origin: ").append(java.util.Objects.toString(cs.getContentSubscriptionMask().getEventOrigin(), "")).append("\n"); } catch (Exception ignored) {}
+                try { sb.append("  Final Destination: ").append(java.util.Objects.toString(cs.getContentSubscriptionMask().getEventFinalDestination(), "")).append("\n"); } catch (Exception ignored) {}
+                try { sb.append("  Temporal Window: ").append(java.util.Objects.toString(cs.getContentSubscriptionMask().getTemporalWindow().prettyPrint(), "")).append("\n"); } catch (Exception ignored) {}
                 sb.append("\n");
             }
         }
@@ -271,7 +279,7 @@ public class TopologyTabController {
         dlg.showAndWait();
     }
 
-    private void showEgressSubscriptionsDialog(net.fhirfactory.dricats.internals.oam.topology.EgressInterfaceComponentSummary egress) {
+    private void showEgressSubscriptionsDialog(EgressApplicationInterface egress) {
         String name = null;
         try { name = egress.getName(); } catch (Exception ignored) {}
         if (name == null || name.isBlank()) {
@@ -279,34 +287,34 @@ public class TopologyTabController {
         }
         String title = "Supported Content Filters";
         String header = (name == null || name.isBlank()) ? "Egress Interface" : name;
-        java.util.List<net.fhirfactory.dricats.internals.pubsub.content.ContentFilter> subs = null;
-        try { subs = egress.getContentFilters(); } catch (Exception ignored) {}
+        java.util.List<ContentFilter> subs = null;
+        try { subs = egress.getPublishedContent().getContentFilters(); } catch (Exception ignored) {}
 
         // Build table rows
         javafx.collections.ObservableList<ContentFilterRow> rows = javafx.collections.FXCollections.observableArrayList();
         if (subs != null) {
             int idx = 1;
-            for (net.fhirfactory.dricats.internals.pubsub.content.ContentFilter cf : subs) {
+            for (ContentFilter cf : subs) {
                 if (cf == null) { continue; }
-                String source = ""; try { source = java.util.Objects.toString(cf.getInternalEventSource().getComponentIdMask().prettyPrint(), ""); } catch (Exception ignored) {}
-                String target = ""; try { target = java.util.Objects.toString(cf.getInternalEventTarget().getComponentIdMask().prettyPrint(), ""); } catch (Exception ignored) {}
+                String source = ""; try { source = java.util.Objects.toString(cf.getContentFilterMask().getInternalEventSource().getComponentIdMask().prettyPrint(), ""); } catch (Exception ignored) {}
+                String target = ""; try { target = java.util.Objects.toString(cf.getContentFilterMask().getInternalEventTarget().getComponentIdMask().prettyPrint(), ""); } catch (Exception ignored) {}
                 String topicsStr = "";
                 try {
-                    java.util.List<net.fhirfactory.dricats.internals.pubsub.TopicSubscription> topics = cf.getEventTopicSubscriptions();
+                    java.util.List<TopicFilter> topics = cf.getContentFilterMask().getEventTopicFilters();;
                     if (topics != null && !topics.isEmpty()) {
                         java.util.List<String> topicTexts = new java.util.ArrayList<>();
-                        for (net.fhirfactory.dricats.internals.pubsub.TopicSubscription t : topics) {
+                        for (TopicFilter t : topics) {
                             if (t != null) topicTexts.add(t.prettyPrint());
                         }
                         topicsStr = String.join("; ", topicTexts);
                     }
                 } catch (Exception ignored) {}
-                String origin = ""; try { origin = java.util.Objects.toString(cf.getEventOrigin(), ""); } catch (Exception ignored) {}
-                String finalDest = ""; try { finalDest = java.util.Objects.toString(cf.getEventFinalDestination(), ""); } catch (Exception ignored) {}
-                String temporal = ""; try { temporal = java.util.Objects.toString(cf.getTemporalWindow().prettyPrint(), ""); } catch (Exception ignored) {}
+                String origin = ""; try { origin = java.util.Objects.toString(cf.getContentFilterMask().getEventOrigin(), ""); } catch (Exception ignored) {}
+                String finalDest = ""; try { finalDest = java.util.Objects.toString(cf.getContentFilterMask().getEventFinalDestination(), ""); } catch (Exception ignored) {}
+                String temporal = ""; try { temporal = java.util.Objects.toString(cf.getContentFilterMask().getTemporalWindow().prettyPrint(), ""); } catch (Exception ignored) {}
                 String mediaTypes = "";
                 try {
-                    java.util.List<MimeTypeEnum> mts = cf.getSupportedMediaTypes();
+                    java.util.List<MimeTypeEnum> mts = cf.getContentFilterMask().getSupportedMediaTypes();
                     if (mts != null && !mts.isEmpty()) {
                         java.util.List<String> mtTexts = new java.util.ArrayList<>();
                         for (MimeTypeEnum mt : mts) {
@@ -374,7 +382,7 @@ public class TopologyTabController {
         dlg.showAndWait();
     }
 
-    private void refreshDetails(ApplicationComponentSummary summary) {
+    private void refreshDetails(ApplicationComponent summary) {
         if (detailsTable == null) return;
         javafx.collections.ObservableList<KVRow> rows = javafx.collections.FXCollections.observableArrayList();
         if (summary == null) {
@@ -384,19 +392,19 @@ public class TopologyTabController {
         }
         try { rows.add(new KVRow("Name", Objects.toString(summary.getName(), ""))); } catch (Exception ignored) {}
         try {
-            if (summary.getId() != null && summary.getId().getValue() != null)
-                rows.add(new KVRow("ID", summary.getId().getValue()));
+            if (summary.getLocalId() != null && summary.getLocalId().getValue() != null)
+                rows.add(new KVRow("ID", summary.getLocalId().getValue()));
         } catch (Exception ignored) {}
         try {
             if (summary.getObjectID() != null)
-                rows.add(new KVRow("ObjectID", Objects.toString(summary.getObjectID().getIdToken(), "")));
+                rows.add(new KVRow("ObjectID", Objects.toString(summary.getObjectID().getCommonName().getValue(), "")));
         } catch (Exception ignored) {}
         try { rows.add(new KVRow("Element Type", Objects.toString(summary.getElementType(), ""))); } catch (Exception ignored) {}
         try { rows.add(new KVRow("Specialization", Objects.toString(summary.getSpecialization(), ""))); } catch (Exception ignored) {}
         try { rows.add(new KVRow("Documentation", Objects.toString(summary.getDocumentation(), ""))); } catch (Exception ignored) {}
         try {
             if (summary.getParent() != null)
-                rows.add(new KVRow("Parent", Objects.toString(summary.getParent().getQualifiedName().getCommonName().getValue(), "")));
+                rows.add(new KVRow("Parent", Objects.toString(summary.getParent().getLocalObjectId().getCommonName().getValue(), "")));
         } catch (Exception ignored) {}
         try {
             int count = summary.getSubComponents() == null ? 0 : summary.getSubComponents().size();
@@ -418,7 +426,7 @@ public class TopologyTabController {
         detailsTable.setItems(rows);
     }
 
-    private void refreshUniqueName(ApplicationComponentSummary summary) {
+    private void refreshUniqueName(ApplicationComponent summary) {
         if (uniqueNameTree == null) return;
         TreeItem<String> root = new TreeItem<>("UniqueName");
         root.setExpanded(true);
@@ -426,7 +434,7 @@ public class TopologyTabController {
             if (summary == null || summary.getObjectID() == null || summary.getObjectID().getQualifiedName() == null) {
                 root.getChildren().add(new TreeItem<>("No selection"));
             } else {
-                java.util.Map<Integer, net.fhirfactory.dricats.internals.common.naming.UnqualifiedNameEntry> entries =
+                java.util.Map<Integer, DistinguishedNameEntry> entries =
                         summary.getObjectID().getQualifiedName().getUnqualifiedNameEntries();
                 if (entries == null || entries.isEmpty()) {
                     root.getChildren().add(new TreeItem<>("<empty>"));
@@ -434,7 +442,7 @@ public class TopologyTabController {
                     java.util.List<Integer> keys = new java.util.ArrayList<>(entries.keySet());
                     java.util.Collections.sort(keys);
                     for (Integer k : keys) {
-                        net.fhirfactory.dricats.internals.common.naming.UnqualifiedNameEntry e = entries.get(k);
+                        DistinguishedNameEntry e = entries.get(k);
                         String qual = e == null ? "" : java.util.Objects.toString(e.getQualifier(), "");
                         String val = e == null ? "" : java.util.Objects.toString(e.getValue(), "");
                         TreeItem<String> child = new TreeItem<>(qual + " = " + val);
@@ -448,7 +456,7 @@ public class TopologyTabController {
         uniqueNameTree.setRoot(root);
     }
 
-    private void refreshMetrics(ApplicationComponentSummary summary) {
+    private void refreshMetrics(ApplicationComponent summary) {
         if (metricsTable == null) return;
         javafx.collections.ObservableList<KVRow> rows = javafx.collections.FXCollections.observableArrayList();
         if (summary == null) {
@@ -485,9 +493,9 @@ public class TopologyTabController {
         if (treeView == null) return;
         TreeItem<Object> hiddenRoot = new TreeItem<>();
         treeView.setRoot(hiddenRoot);
-        List<ApplicationComponentSummary> roots = null;
+        List<ApplicationComponent> roots = null;
         try {
-            roots = client == null ? null : client.listComponents().getElementList();
+            roots = client == null ? null : client.listComponents();
         } catch (Exception e) {
             LOG.warn("[UI] Failed to fetch component list: {}", e.toString());
         }
@@ -497,14 +505,14 @@ public class TopologyTabController {
         }
         LOG.info("[UI] Loaded {} components", roots.size());
         hiddenRoot.getChildren().clear();
-        for (ApplicationComponentSummary s : roots) {
+        for (ApplicationComponent s : roots) {
             if (s != null) {
                 hiddenRoot.getChildren().add(createTreeItem(s));
             }
         }
     }
 
-    private TreeItem<Object> createTreeItem(ApplicationComponentSummary s) {
+    private TreeItem<Object> createTreeItem(ApplicationComponent s) {
         TreeItem<Object> item = new TreeItem<>(s);
         // placeholder child to show expansion arrow
         item.getChildren().add(new TreeItem<>());
@@ -515,25 +523,25 @@ public class TopologyTabController {
     }
 
     private void loadChildrenIfNeeded(TreeItem<Object> parentItem) {
-        if (parentItem == null || !(parentItem.getValue() instanceof ApplicationComponentSummary)) return;
+        if (parentItem == null || !(parentItem.getValue() instanceof ApplicationComponent)) return;
         if (!hasPlaceholder(parentItem)) return;
         parentItem.getChildren().clear();
-        ApplicationComponentSummary s = (ApplicationComponentSummary) parentItem.getValue();
+        ApplicationComponent s = (ApplicationComponent) parentItem.getValue();
         String id = MainRESTClient.resolveKey(s);
-        List<ApplicationComponentSummary> kids = null;
+        List<ApplicationComponent> kids = null;
         try {
             kids = client == null ? null : client.listSubcomponents(id);
         } catch (Exception e) {
             LOG.warn("[UI] Failed to fetch subcomponents for {}: {}", id, e.toString());
         }
         if (kids != null) {
-            for (ApplicationComponentSummary k : kids) {
+            for (ApplicationComponent k : kids) {
                 if (k != null) parentItem.getChildren().add(createTreeItem(k));
             }
         }
         // also add interfaces
         try {
-            java.util.List<? extends net.fhirfactory.dricats.internals.oam.topology.base.InterfaceComponentSummary> ifaces = client == null ? null : client.listInterfaces(id);
+            java.util.List<? extends WUPInterfaceBase> ifaces = client == null ? null : client.listInterfaces(id);
             if (ifaces != null) {
                 for (Object iface : ifaces) {
                     // Some backends may wrap results in arrays; handle both single and array values
@@ -541,13 +549,13 @@ public class TopologyTabController {
                         int len = java.lang.reflect.Array.getLength(iface);
                         for (int i = 0; i < len; i++) {
                             Object elem = java.lang.reflect.Array.get(iface, i);
-                            if (elem instanceof net.fhirfactory.dricats.internals.oam.topology.IngressInterfaceComponentSummary ||
-                                elem instanceof net.fhirfactory.dricats.internals.oam.topology.EgressInterfaceComponentSummary) {
+                            if (elem instanceof IngresApplicationInterface ||
+                                elem instanceof EgressApplicationInterface) {
                                 parentItem.getChildren().add(new TreeItem<>(elem));
                             }
                         }
-                    } else if (iface instanceof net.fhirfactory.dricats.internals.oam.topology.IngressInterfaceComponentSummary ||
-                               iface instanceof net.fhirfactory.dricats.internals.oam.topology.EgressInterfaceComponentSummary) {
+                    } else if (iface instanceof IngresApplicationInterface ||
+                               iface instanceof EgressApplicationInterface) {
                         parentItem.getChildren().add(new TreeItem<>(iface));
                     }
                 }
@@ -561,7 +569,7 @@ public class TopologyTabController {
         return item.getChildren().size() == 1 && item.getChildren().get(0).getValue() == null;
     }
 
-    private void refreshInterfaceDetails(ApplicationComponentSummary summary) {
+    private void refreshInterfaceDetails(ApplicationComponent summary) {
         // Prepare empty observable lists
         javafx.collections.ObservableList<KVRow> ingressRows = javafx.collections.FXCollections.observableArrayList();
         javafx.collections.ObservableList<KVRow> egressRows = javafx.collections.FXCollections.observableArrayList();
@@ -573,14 +581,14 @@ public class TopologyTabController {
             return;
         }
         String id = net.fhirfactory.dricats.ui.restclient.MainRESTClient.resolveKey(summary);
-        java.util.List<? extends net.fhirfactory.dricats.internals.oam.topology.base.InterfaceComponentSummary> interfaces = java.util.Collections.emptyList();
+        List<? extends WUPInterfaceBase> interfaces = java.util.Collections.emptyList();
         try {
             interfaces = client == null ? java.util.Collections.emptyList() : client.listInterfaces(id);
         } catch (Exception e) {
             LOG.warn("[UI] Failed to fetch interfaces for {}: {}", id, e.toString());
         }
-        java.util.List<net.fhirfactory.dricats.internals.oam.topology.IngressInterfaceComponentSummary> ingressList = new java.util.ArrayList<>();
-        java.util.List<net.fhirfactory.dricats.internals.oam.topology.EgressInterfaceComponentSummary> egressList = new java.util.ArrayList<>();
+        java.util.List<IngresApplicationInterface> ingressList = new java.util.ArrayList<>();
+        java.util.List<EgressApplicationInterface> egressList = new java.util.ArrayList<>();
         if (interfaces != null) {
             for (Object o : interfaces) {
                 if (o == null) continue;
@@ -588,16 +596,16 @@ public class TopologyTabController {
                     int len = java.lang.reflect.Array.getLength(o);
                     for (int i = 0; i < len; i++) {
                         Object elem = java.lang.reflect.Array.get(o, i);
-                        if (elem instanceof net.fhirfactory.dricats.internals.oam.topology.IngressInterfaceComponentSummary) {
-                            ingressList.add((net.fhirfactory.dricats.internals.oam.topology.IngressInterfaceComponentSummary) elem);
-                        } else if (elem instanceof net.fhirfactory.dricats.internals.oam.topology.EgressInterfaceComponentSummary) {
-                            egressList.add((net.fhirfactory.dricats.internals.oam.topology.EgressInterfaceComponentSummary) elem);
+                        if (elem instanceof IngresApplicationInterface) {
+                            ingressList.add((IngresApplicationInterface) elem);
+                        } else if (elem instanceof EgressApplicationInterface) {
+                            egressList.add((EgressApplicationInterface) elem);
                         }
                     }
-                } else if (o instanceof net.fhirfactory.dricats.internals.oam.topology.IngressInterfaceComponentSummary) {
-                    ingressList.add((net.fhirfactory.dricats.internals.oam.topology.IngressInterfaceComponentSummary) o);
-                } else if (o instanceof net.fhirfactory.dricats.internals.oam.topology.EgressInterfaceComponentSummary) {
-                    egressList.add((net.fhirfactory.dricats.internals.oam.topology.EgressInterfaceComponentSummary) o);
+                } else if (o instanceof IngresApplicationInterface) {
+                    ingressList.add((IngresApplicationInterface) o);
+                } else if (o instanceof EgressApplicationInterface) {
+                    egressList.add((EgressApplicationInterface) o);
                 }
             }
         }
@@ -606,17 +614,17 @@ public class TopologyTabController {
             ingressRows.add(new KVRow("Info", "No Ingress Interface present"));
         } else {
             int idx = 1;
-            for (net.fhirfactory.dricats.internals.oam.topology.IngressInterfaceComponentSummary ingress : ingressList) {
+            for (IngresApplicationInterface ingress : ingressList) {
                 // Section header
                 String header = ingress.getName();
                 if (header == null || header.isBlank()) header = ingress.resolveKey();
                 ingressRows.add(new KVRow("Ingress #" + idx, header));
-                try { if (ingress.getId() != null && ingress.getId().getValue() != null) ingressRows.add(new KVRow("ID", ingress.getId().getValue())); } catch (Exception ignored) {}
-                try { if (ingress.getObjectID() != null) ingressRows.add(new KVRow("ObjectID", java.util.Objects.toString(ingress.getObjectID().getIdToken(), ""))); } catch (Exception ignored) {}
+                try { if (ingress.getLocalId() != null && ingress.getLocalId().getValue() != null) ingressRows.add(new KVRow("ID", ingress.getLocalId().getValue())); } catch (Exception ignored) {}
+                try { if (ingress.getObjectID() != null) ingressRows.add(new KVRow("ObjectID", java.util.Objects.toString(ingress.getObjectID().getCommonName().getValue(), ""))); } catch (Exception ignored) {}
                 try { ingressRows.add(new KVRow("Element Type", java.util.Objects.toString(ingress.getElementType(), ""))); } catch (Exception ignored) {}
                 try { ingressRows.add(new KVRow("Specialization", java.util.Objects.toString(ingress.getSpecialization(), ""))); } catch (Exception ignored) {}
                 try { ingressRows.add(new KVRow("Documentation", java.util.Objects.toString(ingress.getDocumentation(), ""))); } catch (Exception ignored) {}
-                try { if (ingress.getParent() != null) ingressRows.add(new KVRow("Parent", java.util.Objects.toString(ingress.getParent().getQualifiedName().getCommonName().getValue(), ""))); } catch (Exception ignored) {}
+                try { if (ingress.getOwner() != null) ingressRows.add(new KVRow("Parent", java.util.Objects.toString(ingress.getOwner().getLocalObjectId().getCommonName().getValue(), ""))); } catch (Exception ignored) {}
                 try {
                     if (ingress.getComponentStatus() != null) {
                         ingressRows.add(new KVRow("Status", java.util.Objects.toString(ingress.getComponentStatus().getComponentStatus(), "")));
@@ -636,16 +644,16 @@ public class TopologyTabController {
             egressRows.add(new KVRow("Info", "No Egress Interface present"));
         } else {
             int idx = 1;
-            for (net.fhirfactory.dricats.internals.oam.topology.EgressInterfaceComponentSummary egress : egressList) {
+            for (EgressApplicationInterface egress : egressList) {
                 String header = egress.getName();
                 if (header == null || header.isBlank()) header = egress.resolveKey();
                 egressRows.add(new KVRow("Egress #" + idx, header));
-                try { if (egress.getId() != null && egress.getId().getValue() != null) egressRows.add(new KVRow("ID", egress.getId().getValue())); } catch (Exception ignored) {}
-                try { if (egress.getObjectID() != null) egressRows.add(new KVRow("ObjectID", java.util.Objects.toString(egress.getObjectID().getIdToken(), ""))); } catch (Exception ignored) {}
+                try { if (egress.getLocalId() != null && egress.getLocalId().getValue() != null) egressRows.add(new KVRow("ID", egress.getLocalId().getValue())); } catch (Exception ignored) {}
+                try { if (egress.getObjectID() != null) egressRows.add(new KVRow("ObjectID", Objects.toString(egress.getObjectID().getCommonName().getValue(), ""))); } catch (Exception ignored) {}
                 try { egressRows.add(new KVRow("Element Type", java.util.Objects.toString(egress.getElementType(), ""))); } catch (Exception ignored) {}
                 try { egressRows.add(new KVRow("Specialization", java.util.Objects.toString(egress.getSpecialization(), ""))); } catch (Exception ignored) {}
                 try { egressRows.add(new KVRow("Documentation", java.util.Objects.toString(egress.getDocumentation(), ""))); } catch (Exception ignored) {}
-                try { if (egress.getParent() != null) egressRows.add(new KVRow("Parent", java.util.Objects.toString(egress.getParent().getQualifiedName().getCommonName().getValue(), ""))); } catch (Exception ignored) {}
+                try { if (egress.getOwner() != null) egressRows.add(new KVRow("Parent", java.util.Objects.toString(egress.getOwner().getLocalObjectId().getQualifiedName().getCommonName().getValue(), ""))); } catch (Exception ignored) {}
                 try {
                     if (egress.getComponentStatus() != null) {
                         egressRows.add(new KVRow("Status", java.util.Objects.toString(egress.getComponentStatus().getComponentStatus(), "")));

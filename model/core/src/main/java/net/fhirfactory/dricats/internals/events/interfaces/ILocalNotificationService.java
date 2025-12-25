@@ -21,7 +21,7 @@
  */
 package net.fhirfactory.dricats.internals.events.interfaces;
 
-import net.fhirfactory.dricats.internals.common.naming.IdToken;
+import net.fhirfactory.dricats.internals.common.id.ObjectToken;
 import net.fhirfactory.dricats.internals.events.notifications.NotificationObject;
 import net.fhirfactory.dricats.internals.events.notifications.NotificationSet;
 
@@ -29,7 +29,7 @@ import java.time.LocalDateTime;
 
 public interface ILocalNotificationService {
     public LocalDateTime postNotification(NotificationObject notification);
-    public NotificationObject peekNextNotification(IdToken consumer);
-    public NotificationObject pollNextNotification(IdToken consumer);
-    public NotificationSet pollNextNotification(IdToken consumer, Integer size);
+    public NotificationObject peekNextNotification(ObjectToken consumer);
+    public NotificationObject pollNextNotification(ObjectToken consumer);
+    public NotificationSet pollNextNotification(ObjectToken consumer, Integer size);
 }

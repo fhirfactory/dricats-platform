@@ -21,8 +21,8 @@
  */
 package net.fhirfactory.dricats.resources.entities;
 
-import net.fhirfactory.dricats.internals.common.datatypes.Address;
-import net.fhirfactory.dricats.internals.common.datatypes.GlobalPosition;
+import net.fhirfactory.dricats.internals.datatypes.Address;
+import net.fhirfactory.dricats.internals.datatypes.GlobalPosition;
 import net.fhirfactory.dricats.reference.archimate.layers.business.BusinessActor;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
@@ -132,12 +132,11 @@ public class Location extends BusinessActor implements Serializable {
                 .append("name", getName())
                 .append("documentation", getDocumentation())
                 .append("specialization", getSpecialization())
-                .append("properties", getProperties())
+                .append("properties", getExtensions())
                 .append("identifiers", getIdentifiers())
                 .append("securityLabels", getSecurityLabels())
-                .append("objectID", getObjectID())
                 .append("metadata", getMetadata())
-                .append("id", getId())
+                .append("id", getLocalId())
                 .toString();
     }
 

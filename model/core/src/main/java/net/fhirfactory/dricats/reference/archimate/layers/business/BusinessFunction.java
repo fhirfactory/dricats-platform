@@ -3,19 +3,20 @@
  */
 package net.fhirfactory.dricats.reference.archimate.layers.business;
 
-import net.fhirfactory.dricats.internals.common.DistributableObjectId;
-import net.fhirfactory.dricats.reference.archimate.common.SimpleElementBase;
+import net.fhirfactory.dricats.internals.common.identifiers.ElementReference;
+import net.fhirfactory.dricats.reference.archimate.common.ElementBase;
 import net.fhirfactory.dricats.reference.archimate.common.valuesets.ElementTypeEnum;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.Serial;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class BusinessFunction extends SimpleElementBase {
+public class BusinessFunction extends ElementBase implements Serializable {
     @Serial private static final long serialVersionUID = -12345678920106L;
     private static final Logger LOG = LoggerFactory.getLogger(BusinessFunction.class);
 
@@ -23,9 +24,9 @@ public class BusinessFunction extends SimpleElementBase {
     // - businessServices: references to BusinessService(s) realized by this function
     // - businessObjects: references to BusinessObject(s) used by this function
     // - owner: owning actor/role
-    private List<DistributableObjectId> businessServices;
-    private List<DistributableObjectId> businessObjects;
-    private DistributableObjectId owner;
+    private List<ElementReference> businessServices;
+    private List<ElementReference> businessObjects;
+    private ElementReference owner;
 
     public BusinessFunction(){
         super();
@@ -34,14 +35,14 @@ public class BusinessFunction extends SimpleElementBase {
         this.businessObjects = new ArrayList<>();
     }
 
-    public List<DistributableObjectId> getBusinessServices() { return businessServices; }
-    public void setBusinessServices(List<DistributableObjectId> businessServices) { this.businessServices = businessServices; }
+    public List<ElementReference> getBusinessServices() { return businessServices; }
+    public void setBusinessServices(List<ElementReference> businessServices) { this.businessServices = businessServices; }
 
-    public List<DistributableObjectId> getBusinessObjects() { return businessObjects; }
-    public void setBusinessObjects(List<DistributableObjectId> businessObjects) { this.businessObjects = businessObjects; }
+    public List<ElementReference> getBusinessObjects() { return businessObjects; }
+    public void setBusinessObjects(List<ElementReference> businessObjects) { this.businessObjects = businessObjects; }
 
-    public DistributableObjectId getOwner() { return owner; }
-    public void setOwner(DistributableObjectId owner) { this.owner = owner; }
+    public ElementReference getOwner() { return owner; }
+    public void setOwner(ElementReference owner) { this.owner = owner; }
 
     @Override
     protected Logger getLogger(){ return LOG; }

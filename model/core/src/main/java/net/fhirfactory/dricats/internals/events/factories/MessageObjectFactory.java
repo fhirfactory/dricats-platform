@@ -21,6 +21,8 @@
  */
 package net.fhirfactory.dricats.internals.events.factories;
 
+import net.fhirfactory.dricats.internals.common.naming.FullyDistinguishedName;
+import net.fhirfactory.dricats.internals.common.id.ObjectId;
 import net.fhirfactory.dricats.internals.events.messages.MessageObject;
 import org.apache.commons.lang3.SerializationUtils;
 
@@ -32,14 +34,16 @@ public class MessageObjectFactory extends EventBaseFactory{
         if(messageObject == null){
             return null;
         }
-        if(messageObject.getObjectID() == null){
+        if(messageObject.getLocalId() == null){
             return null;
         }
         MessageObject newMessageObject = new MessageObject(messageObject);
-        newMessageObject.setObjectID(SerializationUtils.clone(messageObject.getObjectID()));
-        newMessageObject.getObjectID().getQualifiedName().getUnqualifiedName().setValue(UUID.randomUUID().toString());
-        newMessageObject.setId(newMessageObject.getObjectID().getQualifiedName().getCommonName());
-        newMessageObject.getHistory().put(messageObject.getHistory().size()+1, messageObject.getObjectID());
+        FullyDistinguishedName newName = SerializationUtils.clone(messageObject.getLocalId().getFullyDistinguishedName());
+        newName.getUnqualifiedName().setValue(UUID.randomUUID().toString());
+
+        newMessageObject.setLocalId(new ObjectId(newName));
+
+        newMessageObject.getHistory().put(messageObject.getHistory().size()+1, messageObject.getLocalId());
         return newMessageObject;
     }
 }

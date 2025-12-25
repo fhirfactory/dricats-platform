@@ -34,7 +34,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 
 import net.fhirfactory.dricats.common.DateUtility;
 import net.fhirfactory.dricats.deployment.contants.DefaultDeploymentConstants;
-import net.fhirfactory.dricats.internals.common.DistributableObjectReference;
+import net.fhirfactory.dricats.internals.common.identifiers.ElementReference;
 
 public class InternalTaskProvenance implements Serializable {
     //
@@ -49,8 +49,8 @@ public class InternalTaskProvenance implements Serializable {
     // Attributes
     //
 
-    private Map<Integer, DistributableObjectReference> taskHistory;
-    private Map<Integer, DistributableObjectReference> softwareComponentHistory;
+    private Map<Integer, ElementReference> taskHistory;
+    private Map<Integer, ElementReference> softwareComponentHistory;
     @JsonFormat(pattern = DateUtility.DEFAULT_JSON_FORMAT,  timezone = DefaultDeploymentConstants.DEPLOYMENT_TIMEZONE)
     private LocalDateTime taskOriginDate;
 
@@ -67,19 +67,19 @@ public class InternalTaskProvenance implements Serializable {
     // Bean Methods
     //
 
-    public Map<Integer, DistributableObjectReference> getTaskHistory() {
+    public Map<Integer, ElementReference> getTaskHistory() {
         return taskHistory;
     }
 
-    public void setTaskHistory(Map<Integer, DistributableObjectReference> taskHistory) {
+    public void setTaskHistory(Map<Integer, ElementReference> taskHistory) {
         this.taskHistory = taskHistory;
     }
 
-    public Map<Integer, DistributableObjectReference> getSoftwareComponentHistory() {
+    public Map<Integer, ElementReference> getSoftwareComponentHistory() {
         return softwareComponentHistory;
     }
 
-    public void setSoftwareComponentHistory(Map<Integer, DistributableObjectReference> softwareComponentHistory) {
+    public void setSoftwareComponentHistory(Map<Integer, ElementReference> softwareComponentHistory) {
         this.softwareComponentHistory = softwareComponentHistory;
     }
 

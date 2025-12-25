@@ -26,10 +26,10 @@ import jakarta.inject.Inject;
 import net.fhirfactory.dricats.datagrid.satellite.DataGridServicesGroup;
 import net.fhirfactory.dricats.deployment.valuesets.SubsystemInternalServiceNamesEnum;
 import net.fhirfactory.dricats.internals.common.DistributableObjectId;
-import net.fhirfactory.dricats.internals.common.naming.QualifiedName;
-import net.fhirfactory.dricats.internals.common.naming.UnqualifiedName;
+import net.fhirfactory.dricats.internals.common.naming.FullyDistinguishedName;
+import net.fhirfactory.dricats.internals.common.naming.RelativeDistinguishedName;
 import net.fhirfactory.dricats.internals.events.interfaces.ILocalMessageService;
-import net.fhirfactory.dricats.internals.topology.implementation.layers.application.valuesets.SoftwareComponentTypeEnum;
+import net.fhirfactory.dricats.internals.topology.implementation.layers.application.valuesets.ApplicationComponentSpecialisationEnum;
 import net.fhirfactory.dricats.middleware.jgroups.JChannelInterface;
 import net.fhirfactory.dricats.middleware.jgroups.JGroupsTransactionResult;
 import net.fhirfactory.dricats.middleware.jgroups.datatypes.JGroupsNetworkAddress;
@@ -92,11 +92,11 @@ public class MessageDistributionService extends JChannelControllerBase {
     protected void populateIdentityDetails(){
         getLogger().debug(".buildObjectId(): Entry");
         DistributableObjectId databusServiceGroupId = getDataBusServicesGroup().getObjectID();
-        QualifiedName myQualifiedName = new QualifiedName(databusServiceGroupId.getQualifiedName());
-        myQualifiedName.appendUnqualifiedName(new UnqualifiedName(SoftwareComponentTypeEnum.SUBSYSTEM_APPLICATION_WORK_UNIT_PROCESSOR.getType(), "MessageDistributionService"));
+        FullyDistinguishedName myQualifiedName = new FullyDistinguishedName(databusServiceGroupId.getQualifiedName());
+        myQualifiedName.appendUnqualifiedName(new RelativeDistinguishedName(ApplicationComponentSpecialisationEnum.SUBSYSTEM_APPLICATION_WORK_UNIT_PROCESSOR.getType(), "MessageDistributionService"));
         DistributableObjectId myId = new DistributableObjectId(myQualifiedName);
         setObjectID(myId);
-        setParent(getDataBusServicesGroup().getObjectID());
+        setParent(getDataBusServicesGroup().getReference());
         getLogger().debug(".buildObjectId(): Exit");
     }
 

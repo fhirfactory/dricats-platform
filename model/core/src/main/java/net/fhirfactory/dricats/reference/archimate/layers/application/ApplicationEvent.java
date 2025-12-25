@@ -3,8 +3,8 @@
  */
 package net.fhirfactory.dricats.reference.archimate.layers.application;
 
-import net.fhirfactory.dricats.internals.common.DistributableObjectId;
-import net.fhirfactory.dricats.reference.archimate.common.SimpleElementBase;
+import net.fhirfactory.dricats.internals.common.identifiers.ElementReference;
+import net.fhirfactory.dricats.reference.archimate.common.ElementBase;
 import org.apache.commons.lang3.SerializationUtils;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.slf4j.Logger;
@@ -14,7 +14,7 @@ import java.io.Serial;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ApplicationEvent extends SimpleElementBase {
+public class ApplicationEvent extends ElementBase {
     //
     // Housekeeping
     //
@@ -28,7 +28,7 @@ public class ApplicationEvent extends SimpleElementBase {
     private List<ApplicationFunction> triggeringFunctions;
     private List<ApplicationFunction> triggeredFunctions;
     private List<ApplicationDataObject> associatedData;
-    private DistributableObjectId source;
+    private ElementReference source;
 
     //
      // Constructor(s)
@@ -83,11 +83,11 @@ public class ApplicationEvent extends SimpleElementBase {
         this.associatedData = associatedData;
     }
 
-    public DistributableObjectId getSource() {
+    public ElementReference getSource() {
         return source;
     }
 
-    public void setSource(DistributableObjectId source) {
+    public void setSource(ElementReference source) {
         this.source = source;
     }
 

@@ -3,7 +3,7 @@ package net.fhirfactory.dricats.middleware.jgroups;
 import net.fhirfactory.dricats.internals.events.interfaces.ILocalMessageService;
 import net.fhirfactory.dricats.internals.oam.metrics.interfaces.ILocalMetricsServerInterface;
 import net.fhirfactory.dricats.internals.tasking.interfaces.LocalTaskServerInterface;
-import net.fhirfactory.dricats.internals.topology.implementation.layers.application.interfaces.JGroupsInterface;
+import net.fhirfactory.dricats.internals.topology.implementation.layers.application.interfaces.adapters.JGroupsAdapter;
 import net.fhirfactory.dricats.internals.topology.interfaces.MiddlewareComponentInterface;
 import net.fhirfactory.dricats.internals.topology.interfaces.SolutionConfigurationInterface;
 import net.fhirfactory.dricats.internals.topology.interfaces.ISubsystem;
@@ -36,7 +36,7 @@ public class JGroupsNodeManager {
     private JChannelInterface rpcChannel;
     private boolean initialized;
     private LocalDateTime startupInstant;
-    private JGroupsInterface applicationComponent;
+    private JGroupsAdapter applicationComponent;
 
 
     //
@@ -74,7 +74,7 @@ public class JGroupsNodeManager {
     // Build My TopologyComponent
     //
 
-    protected JGroupsInterface createTopologyComponent() {
+    protected JGroupsAdapter createTopologyComponent() {
         // TODO: implement proper topology component build
         // Placeholder implementation to keep compilation passing
         return applicationComponent;

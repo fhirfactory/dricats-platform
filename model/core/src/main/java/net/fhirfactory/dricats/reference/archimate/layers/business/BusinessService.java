@@ -3,8 +3,8 @@
  */
 package net.fhirfactory.dricats.reference.archimate.layers.business;
 
-import net.fhirfactory.dricats.internals.common.DistributableObjectId;
-import net.fhirfactory.dricats.reference.archimate.common.SimpleElementBase;
+import net.fhirfactory.dricats.internals.common.id.ObjectId;
+import net.fhirfactory.dricats.reference.archimate.common.ElementBase;
 import net.fhirfactory.dricats.reference.archimate.common.valuesets.ElementTypeEnum;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.slf4j.Logger;
@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class BusinessService extends SimpleElementBase {
+public class BusinessService extends ElementBase {
     @Serial private static final long serialVersionUID = -12345678920109L;
     private static final Logger LOG = LoggerFactory.getLogger(BusinessService.class);
 
@@ -27,9 +27,9 @@ public class BusinessService extends SimpleElementBase {
     // - owner: actor/role that owns the service
     private boolean external;
     private String serviceLevel;
-    private List<DistributableObjectId> interfaces;
-    private List<DistributableObjectId> contracts;
-    private DistributableObjectId owner;
+    private List<ObjectId> interfaces;
+    private List<ObjectId> contracts;
+    private ObjectId owner;
 
     public BusinessService(){
         super();
@@ -44,14 +44,14 @@ public class BusinessService extends SimpleElementBase {
     public String getServiceLevel() { return serviceLevel; }
     public void setServiceLevel(String serviceLevel) { this.serviceLevel = serviceLevel; }
 
-    public List<DistributableObjectId> getInterfaces() { return interfaces; }
-    public void setInterfaces(List<DistributableObjectId> interfaces) { this.interfaces = interfaces; }
+    public List<ObjectId> getInterfaces() { return interfaces; }
+    public void setInterfaces(List<ObjectId> interfaces) { this.interfaces = interfaces; }
 
-    public List<DistributableObjectId> getContracts() { return contracts; }
-    public void setContracts(List<DistributableObjectId> contracts) { this.contracts = contracts; }
+    public List<ObjectId> getContracts() { return contracts; }
+    public void setContracts(List<ObjectId> contracts) { this.contracts = contracts; }
 
-    public DistributableObjectId getOwner() { return owner; }
-    public void setOwner(DistributableObjectId owner) { this.owner = owner; }
+    public ObjectId getOwner() { return owner; }
+    public void setOwner(ObjectId owner) { this.owner = owner; }
 
     @Override
     protected Logger getLogger(){ return LOG; }

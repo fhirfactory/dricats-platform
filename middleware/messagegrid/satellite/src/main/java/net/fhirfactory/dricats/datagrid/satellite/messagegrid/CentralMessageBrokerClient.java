@@ -99,7 +99,7 @@ public class CentralMessageBrokerClient {
             throw new IllegalArgumentException("MessageObject cannot be null");
         }
         byte[] payload = serialize(message);
-        String key = (message.getId() != null ? message.getId().getValue() : null);
+        String key = (message.getLocalId() != null ? message.getLocalId().getValue() : null);
         ProducerRecord<String, byte[]> record = new ProducerRecord<>(topicName, key, payload);
         LOG.debug("CentralMessageBrokerClient: Publishing id={} to topic={}", key, topicName);
         producer.send(record, (md, ex) -> {

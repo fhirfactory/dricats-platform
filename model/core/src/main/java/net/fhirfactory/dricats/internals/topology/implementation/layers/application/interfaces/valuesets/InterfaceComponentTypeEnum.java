@@ -1,7 +1,7 @@
 package net.fhirfactory.dricats.internals.topology.implementation.layers.application.interfaces.valuesets;
 
-import net.fhirfactory.dricats.internals.common.datatypes.CodeableConcept;
-import net.fhirfactory.dricats.internals.common.datatypes.CodeableConceptCode;
+import net.fhirfactory.dricats.internals.datatypes.CodeableConcept;
+import net.fhirfactory.dricats.internals.datatypes.CodeableConceptCode;
 
 import java.net.URI;
 

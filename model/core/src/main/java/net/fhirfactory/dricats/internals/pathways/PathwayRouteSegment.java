@@ -21,9 +21,9 @@
  */
 package net.fhirfactory.dricats.internals.pathways;
 
-import net.fhirfactory.dricats.internals.common.DistributableObjectId;
-import net.fhirfactory.dricats.internals.common.SimpleDistributableObject;
-import net.fhirfactory.dricats.internals.common.naming.QualifiedName;
+import net.fhirfactory.dricats.internals.common.object.SimpleDistributableObject;
+import net.fhirfactory.dricats.internals.common.naming.FullyDistinguishedName;
+import net.fhirfactory.dricats.internals.common.id.ObjectId;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,7 +45,7 @@ public class PathwayRouteSegment extends SimpleDistributableObject implements Se
     // Attributes
     //
      // Map<Sequence Number, PathwayElement ID>
-    private Map<Integer, DistributableObjectId> pathwayElementSequence;
+    private Map<Integer, ObjectId> pathwayElementSequence;
 
     //
     // Constructor(s)
@@ -55,7 +55,7 @@ public class PathwayRouteSegment extends SimpleDistributableObject implements Se
         pathwayElementSequence = new HashMap<>()      ;
     }
 
-    public PathwayRouteSegment(QualifiedName qualifiedName){
+    public PathwayRouteSegment(FullyDistinguishedName qualifiedName){
         super(qualifiedName);
         pathwayElementSequence = new HashMap<>()      ;
     }
@@ -63,11 +63,11 @@ public class PathwayRouteSegment extends SimpleDistributableObject implements Se
     //
     // Getters and Setters
     //
-    public Map<Integer, DistributableObjectId> getPathwayElementSequence() {
+    public Map<Integer, ObjectId> getPathwayElementSequence() {
         return pathwayElementSequence;
     }
 
-    public void setPathwayElementSequence(Map<Integer, DistributableObjectId> pathwayElementSequence) {
+    public void setPathwayElementSequence(Map<Integer, ObjectId> pathwayElementSequence) {
         this.pathwayElementSequence = pathwayElementSequence;
     }
 

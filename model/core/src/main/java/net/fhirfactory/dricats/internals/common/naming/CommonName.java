@@ -21,10 +21,11 @@
  */
 package net.fhirfactory.dricats.internals.common.naming;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonValue;
-import org.apache.commons.lang3.SerializationUtils;
+import net.fhirfactory.dricats.internals.common.id.ObjectId;
+import net.fhirfactory.dricats.internals.common.id.ObjectToken;
+import net.fhirfactory.dricats.internals.common.naming.common.DotSeparatedName;
+import net.fhirfactory.dricats.internals.common.naming.datatypes.DistinguishedNameEntry;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.Serial;
@@ -32,7 +33,7 @@ import java.io.Serializable;
 import java.util.Map;
 import java.util.Objects;
 
-public class CommonName implements Serializable {
+public class CommonName extends DotSeparatedName implements Serializable {
     //
     // housekeeping
     //
@@ -40,75 +41,70 @@ public class CommonName implements Serializable {
     private static final long serialVersionUID = 1L;
 
     //
-    // Member Variables
-    //
-
-    public static String DEFAULT_NAME = "UNNAMED";
-
-    private String value;
-
-    //
     // Constructor(s)
     //
 
     public CommonName() {
-        value = DEFAULT_NAME;
+        super();
     }
 
     @JsonCreator
     public CommonName(String value) {
-        this.value = SerializationUtils.clone(value);
+        super(value);
     }
 
     public CommonName(CommonName ori) {
-        this.value = SerializationUtils.clone(ori.getValue());
+        super(ori);
     }
 
-    public CommonName(QualifiedName qualifiedName) {
-        QualifiedName tempQualifiedName = new QualifiedName(qualifiedName);
+    public CommonName(FullyDistinguishedName qualifiedName) {
+        FullyDistinguishedName tempQualifiedName = new FullyDistinguishedName(qualifiedName);
         StringBuilder nameContentBuilder = new StringBuilder();
-        Map<Integer, UnqualifiedNameEntry> unqualifiedNameSet = tempQualifiedName.getUnqualifiedNameEntries();
+        Map<Integer, DistinguishedNameEntry> unqualifiedNameSet = tempQualifiedName.getUnqualifiedNameEntries();
         int setSize = unqualifiedNameSet.size();
         for (int counter = 0; counter < setSize; counter++) {
-            UnqualifiedName currentUnqualifiedName = unqualifiedNameSet.get(counter);
+            RelativeDistinguishedName currentUnqualifiedName = unqualifiedNameSet.get(counter);
             nameContentBuilder.append(currentUnqualifiedName.getValue());
             if (counter < (setSize - 1)) {
                 nameContentBuilder.append(".");
             }
         }
-        value = nameContentBuilder.toString();
+        setValue(nameContentBuilder.toString());
     }
 
-    public CommonName(IdToken token) {
-        QualifiedName tempQualifiedName = new QualifiedName(token);
+    public CommonName(ObjectToken token) {
+        FullyDistinguishedName tempQualifiedName = new FullyDistinguishedName(token);
         StringBuilder nameContentBuilder = new StringBuilder();
-        Map<Integer, UnqualifiedNameEntry> unqualifiedNameSet = tempQualifiedName.getUnqualifiedNameEntries();
+        Map<Integer, DistinguishedNameEntry> unqualifiedNameSet = tempQualifiedName.getUnqualifiedNameEntries();
         int setSize = unqualifiedNameSet.size();
         for (int counter = 0; counter < setSize; counter++) {
-            UnqualifiedName currentUnqualifiedName = unqualifiedNameSet.get(counter);
+            RelativeDistinguishedName currentUnqualifiedName = unqualifiedNameSet.get(counter);
             nameContentBuilder.append(currentUnqualifiedName.getValue());
             if (counter < (setSize - 1)) {
                 nameContentBuilder.append(".");
             }
         }
+        setValue(nameContentBuilder.toString());
     }
 
     //
     // Accessor(s)
     //
-    @JsonValue
-    public String getValue() {
-        return (this.value);
-    }
 
-    public void setValue(String tokenContent) {
-        this.value = new String(tokenContent);
-    }
+    //
+    // Factory Methods
+    //
 
-    @JsonIgnore
-    public boolean isUnnamed() {
-        boolean test = StringUtils.isEmpty(this.value) || DEFAULT_NAME.equals(this.value);
-        return (test);
+    public static CommonName fromIdValueString(String idValue){
+        if(StringUtils.isEmpty(idValue)){
+            return(null);
+        }
+        String[] idValueComponents = idValue.split(ObjectId.ID_QUALIFIER_NAME_SEPARATOR);
+        if(idValueComponents.length < 2){
+            return(null);
+        }
+        CommonName name = new CommonName(idValueComponents[1]);
+        return(name);
     }
 
     //
@@ -117,7 +113,7 @@ public class CommonName implements Serializable {
     @Override
     public String toString() {
         return "CommonName{" +
-                "value=" + value +
+                "value=" + getValue() +
                 '}';
     }
 

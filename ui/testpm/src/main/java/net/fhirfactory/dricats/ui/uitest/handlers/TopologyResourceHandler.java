@@ -27,11 +27,12 @@ import jakarta.inject.Inject;
 import net.fhirfactory.dricats.internals.oam.metrics.ApplicationComponentMetricsData;
 import net.fhirfactory.dricats.internals.oam.topology.EgressInterfaceComponentSummary;
 import net.fhirfactory.dricats.internals.oam.topology.IngressInterfaceComponentSummary;
-import net.fhirfactory.dricats.internals.oam.topology.base.ApplicationComponentSummary;
-import net.fhirfactory.dricats.internals.oam.topology.base.ApplicationComponentSummaryList;
+import net.fhirfactory.dricats.internals.oam.topology.SubsystemSummary;
 import net.fhirfactory.dricats.reference.archimate.common.SimpleElementBase;
-import net.fhirfactory.dricats.ui.serverside.metrics.UIMetricsCacheService;
-import net.fhirfactory.dricats.ui.serverside.topology.UITopologyCacheService;
+import net.fhirfactory.dricats.ui.model.topology.base.ApplicationComponentSummary;
+import net.fhirfactory.dricats.ui.model.topology.base.ApplicationComponentSummaryList;
+import net.fhirfactory.dricats.ui.serverside.caches.metrics.UIMetricsCacheService;
+import net.fhirfactory.dricats.ui.serverside.caches.topology.UITopologyCacheService;
 import net.fhirfactory.dricats.ui.uitest.handlers.common.BaseHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -110,7 +111,7 @@ public class TopologyResourceHandler extends BaseHandler {
 
         ApplicationComponentSummaryList resultList = new ApplicationComponentSummaryList();
         for (ApplicationComponentSummary currentListItem : list) {
-            if(currentListItem instanceof net.fhirfactory.dricats.internals.oam.topology.SubsystemSummary) {
+            if(currentListItem instanceof SubsystemSummary) {
                resultList.getElementList().add(currentListItem);
             }
         }

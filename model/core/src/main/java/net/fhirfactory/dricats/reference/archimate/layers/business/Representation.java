@@ -3,15 +3,16 @@
  */
 package net.fhirfactory.dricats.reference.archimate.layers.business;
 
-import net.fhirfactory.dricats.internals.common.DistributableObjectId;
-import net.fhirfactory.dricats.internals.common.datatypes.CodeableConcept;
-import net.fhirfactory.dricats.reference.archimate.common.SimpleElementBase;
+import net.fhirfactory.dricats.internals.datatypes.CodeableConcept;
+import net.fhirfactory.dricats.internals.common.id.ObjectId;
+import net.fhirfactory.dricats.reference.archimate.common.ElementBase;
 import net.fhirfactory.dricats.reference.archimate.common.valuesets.ElementTypeEnum;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.Serial;
+import java.io.Serializable;
 import java.util.Objects;
 
 /**
@@ -20,12 +21,18 @@ import java.util.Objects;
  * - format: representation format (e.g., PDF, HL7 v2, UML)
  * - subject: reference to the thing being represented (e.g., product, data object)
  */
-public class Representation extends SimpleElementBase {
-    @Serial private static final long serialVersionUID = -12345678920112L;
+public class Representation extends ElementBase implements Serializable {
+    //
+     // Housekeeping
+    //
+    @Serial
+    private static final long serialVersionUID = -12345678920112L;
     private static final Logger LOG = LoggerFactory.getLogger(Representation.class);
 
+    //
+
     private CodeableConcept format;
-    private DistributableObjectId subject;
+    private ObjectId subject;
 
     public Representation(){
         super();
@@ -42,8 +49,8 @@ public class Representation extends SimpleElementBase {
     public CodeableConcept getFormat() { return format; }
     public void setFormat(CodeableConcept format) { this.format = format; }
 
-    public DistributableObjectId getSubject() { return subject; }
-    public void setSubject(DistributableObjectId subject) { this.subject = subject; }
+    public ObjectId getSubject() { return subject; }
+    public void setSubject(ObjectId subject) { this.subject = subject; }
 
     @Override
     protected Logger getLogger(){ return LOG; }

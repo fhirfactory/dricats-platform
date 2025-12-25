@@ -31,7 +31,7 @@ import java.util.StringJoiner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import net.fhirfactory.dricats.internals.common.datatypes.CodeableConcept;
+import net.fhirfactory.dricats.internals.datatypes.CodeableConcept;
 
 public class SecurityLabels implements Serializable {
     //

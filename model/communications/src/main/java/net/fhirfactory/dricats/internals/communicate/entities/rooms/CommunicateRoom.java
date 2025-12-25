@@ -41,7 +41,7 @@ import net.fhirfactory.dricats.internals.communicate.entities.rooms.datatypes.Co
 import net.fhirfactory.dricats.internals.communicate.entities.rooms.datatypes.CommunicateRoomStatus;
 import net.fhirfactory.dricats.internals.communicate.entities.rooms.valuesets.CommunicateRoomJoinRuleEnum;
 import net.fhirfactory.dricats.internals.communicate.entities.rooms.valuesets.CommunicateRoomTypeEnum;
-import net.fhirfactory.dricats.internals.common.datatypes.EffectiveDate;
+import net.fhirfactory.dricats.internals.datatypes.EffectiveDate;
 
 public class CommunicateRoom  {
     //

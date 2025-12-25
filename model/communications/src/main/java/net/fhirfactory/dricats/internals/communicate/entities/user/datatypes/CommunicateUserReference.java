@@ -24,9 +24,9 @@ package net.fhirfactory.dricats.internals.communicate.entities.user.datatypes;
 import java.io.Serial;
 
 import net.fhirfactory.dricats.internals.communicate.entities.user.valuesets.CommunicateUserTypeEnum;
-import net.fhirfactory.dricats.internals.common.DistributableObjectReference;
+import net.fhirfactory.dricats.internals.common.identifiers.ElementReference;
 
-public class CommunicateUserReference extends DistributableObjectReference {
+public class CommunicateUserReference extends ElementReference {
 	//
 	// Housekeeping
 	//
@@ -71,11 +71,11 @@ public class CommunicateUserReference extends DistributableObjectReference {
 		builder.append(", getUserType()=");
 		builder.append(getUserType());
 		builder.append(", getTargetObjectIdentifier()=");
-		builder.append(getTargetObjectIdentifier());
+		builder.append(getElementIdentifier());
 		builder.append(", getReferenceDescription()=");
 		builder.append(getReferenceDescription());
 		builder.append(", getTargetObjectType()=");
-		builder.append(getTargetObjectType());
+		builder.append(getObjectType());
 		builder.append("]");
 		return builder.toString();
 	}

@@ -3,7 +3,7 @@ package net.fhirfactory.dricats.datagrid.central.metricsgrid;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import net.fhirfactory.dricats.internals.oam.metrics.ApplicationComponentMetricsData;
-import net.fhirfactory.dricats.internals.oam.topology.base.ApplicationComponentSummary;
+import net.fhirfactory.dricats.internals.topology.implementation.layers.application.valuesets.ApplicationComponentSpecialisationEnum;
 import net.fhirfactory.dricats.reference.archimate.layers.application.ApplicationComponent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -129,51 +129,7 @@ public class H2MetricsRepository {
         }
     }
 
-    private Long ensureComponentRow(ApplicationComponent component, ApplicationComponentMetricsData md) {
-        String commonName = null;
-        if (component != null && component.getObjectID() != null && component.getObjectID().getQualifiedName() != null && component.getObjectID().getQualifiedName().getCommonName() != null) {
-            commonName = component.getObjectID().getQualifiedName().getCommonName().getValue();
-        }
-        String typeStr = (md != null && md.getComponentType() != null) ? md.getComponentType().name() : null;
-        String doiJson = toJsonGeneral(component != null ? component.getObjectID() : null);
-        if (commonName == null && doiJson == null && typeStr == null) {
-            return null; // nothing to store
-        }
-        try (Connection conn = getConnection()) {
-            // Try find existing
-            try (PreparedStatement sel = conn.prepareStatement("SELECT id, distributable_object_id, component_type FROM application_components WHERE object_id_common_name = ?")) {
-                sel.setString(1, commonName);
-                try (ResultSet rs = sel.executeQuery()) {
-                    if (rs.next()) {
-                        long id = rs.getLong(1);
-                        // Optionally update details
-                        try (PreparedStatement up = conn.prepareStatement("UPDATE application_components SET distributable_object_id = COALESCE(?, distributable_object_id), component_type = COALESCE(?, component_type) WHERE id = ?")) {
-                            if (doiJson != null) { up.setString(1, doiJson); } else { up.setNull(1, Types.CLOB); }
-                            if (typeStr != null) { up.setString(2, typeStr); } else { up.setNull(2, Types.VARCHAR); }
-                            up.setLong(3, id);
-                            up.executeUpdate();
-                        }
-                        return id;
-                    }
-                }
-            }
-            // Insert new
-            try (PreparedStatement ins = conn.prepareStatement("INSERT INTO application_components (object_id_common_name, distributable_object_id, component_type) VALUES (?,?,?)", Statement.RETURN_GENERATED_KEYS)) {
-                ins.setString(1, commonName);
-                if (doiJson != null) { ins.setString(2, doiJson); } else { ins.setNull(2, Types.CLOB); }
-                if (typeStr != null) { ins.setString(3, typeStr); } else { ins.setNull(3, Types.VARCHAR); }
-                ins.executeUpdate();
-                try (ResultSet gk = ins.getGeneratedKeys()) {
-                    if (gk.next()) {
-                        return gk.getLong(1);
-                    }
-                }
-            }
-        } catch (SQLException e) {
-            LOG.warn("ensureComponentRow: failed to upsert component '{}': {}", commonName, e.getMessage());
-        }
-        return null;
-    }
+
 
     private String toJsonGeneral(Object obj) {
         if (obj == null) return null;
@@ -182,23 +138,6 @@ public class H2MetricsRepository {
         } catch (JsonProcessingException e) {
             return null;
         }
-    }
-
-    public ApplicationComponentMetricsData fetchLatestForComponent(ApplicationComponent component) {
-        String componentId = (component.getObjectID()!=null && component.getObjectID().getQualifiedName()!=null && component.getObjectID().getQualifiedName().getCommonName()!=null)
-                ? component.getObjectID().getQualifiedName().getCommonName().getValue() : null;
-        String sql = "SELECT mr.* FROM metrics_records mr JOIN application_components ac ON mr.component_fk = ac.id WHERE ac.object_id_common_name = ? ORDER BY mr.last_activity DESC NULLS LAST, mr.id DESC LIMIT 1";
-        try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setString(1, componentId);
-            try (ResultSet rs = ps.executeQuery()) {
-                if (rs.next()) {
-                    return mapMetrics(rs);
-                }
-            }
-        } catch (SQLException e) {
-            LOG.error("Failed to fetch latest metrics for component={}", componentId, e);
-        }
-        return null;
     }
 
     public List<ApplicationComponentMetricsData> fetchByTimeRange(LocalDateTime start, LocalDateTime end) {
@@ -267,31 +206,13 @@ public class H2MetricsRepository {
         }
     }
 
-    public void insertFailure(ApplicationComponent component, String description) {
-        Long compFk = ensureComponentRow(component, null);
-        String sql = "INSERT INTO component_failures (component_fk, component_id, component_name, participant_name, failure_description, failure_time) VALUES (?,?,?,?,?,?)";
-        try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
-            if (compFk != null) { ps.setLong(1, compFk); } else { ps.setNull(1, Types.BIGINT); }
-            // Backwards-compatibility removed: do not populate legacy component_id/component_name columns
-            ps.setNull(2, Types.VARCHAR);
-            ps.setNull(3, Types.VARCHAR);
-            // participant name can be found on metrics usually; we leave null here
-            ps.setString(4, null);
-            ps.setString(5, description);
-            ps.setTimestamp(6, new Timestamp(System.currentTimeMillis()));
-            ps.executeUpdate();
-        } catch (SQLException e) {
-            LOG.error("Failed to insert component failure", e);
-        }
-    }
-
     private ApplicationComponentMetricsData mapMetrics(ResultSet rs) throws SQLException {
         ApplicationComponentMetricsData md = new ApplicationComponentMetricsData();
         md.setParticipantName(rs.getString("participant_name"));
         String componentType = rs.getString("component_type");
         if (componentType != null) {
             try {
-                md.setComponentType(net.fhirfactory.dricats.internals.topology.implementation.layers.application.valuesets.SoftwareComponentTypeEnum.valueOf(componentType));
+                md.setComponentType(ApplicationComponentSpecialisationEnum.valueOf(componentType));
             } catch (IllegalArgumentException iae) {
                 // ignore unknown
             }
@@ -333,40 +254,7 @@ public class H2MetricsRepository {
         }
     }
 
-    // --- Overloads using ApplicationComponentSummary ---------------------------------
-    public void insertMetrics(ApplicationComponentSummary component,
-                              ApplicationComponentMetricsData md) {
-        Long compFk = ensureComponentRow(component, md);
-        String sql = "INSERT INTO metrics_records (component_fk, component_id, component_name, participant_name, component_type, last_activity, startup_instant, component_status, ingres_count, egress_attempt, egress_success, egress_failure, internal_distributed, internal_received, internal_distribution_map) " +
-                "VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
-        try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
-            if (compFk != null) {
-                ps.setLong(1, compFk);
-            } else {
-                ps.setNull(1, Types.BIGINT);
-            }
-            // legacy columns removed
-            ps.setNull(2, Types.VARCHAR);
-            ps.setNull(3, Types.VARCHAR);
-            ps.setString(4, md.getParticipantName());
-            ps.setString(5, md.getComponentType() != null ? md.getComponentType().name() : null);
-            ps.setTimestamp(6, toTimestamp(md.getLastActivityInstant()));
-            ps.setTimestamp(7, toTimestamp(md.getComponentStartupInstant()));
-            ps.setString(8, md.getComponentStatus());
-            ps.setInt(9, md.getMessagingStatistics() != null ? md.getMessagingStatistics().getIngresMessageCount() : 0);
-            ps.setInt(10, md.getMessagingStatistics() != null ? md.getMessagingStatistics().getEgressMessageAttemptCount() : 0);
-            ps.setInt(11, md.getMessagingStatistics() != null ? md.getMessagingStatistics().getEgressMessageSuccessCount() : 0);
-            ps.setInt(12, md.getMessagingStatistics() != null ? md.getMessagingStatistics().getEgressMessageFailureCount() : 0);
-            ps.setInt(13, md.getMessagingStatistics() != null ? md.getMessagingStatistics().getInternalDistributedMessageCount() : 0);
-            ps.setInt(14, md.getMessagingStatistics() != null ? md.getMessagingStatistics().getInternalReceivedMessageCount() : 0);
-            ps.setString(15, toJson(md.getMessagingStatistics() != null ? md.getMessagingStatistics().getInternalDistributionCountMap() : null));
-            ps.executeUpdate();
-        } catch (SQLException e) {
-            LOG.error("Failed to insert metrics (summary)", e);
-        }
-    }
-
-    private Long ensureComponentRow(ApplicationComponentSummary component,
+    private Long ensureComponentRow(ApplicationComponent component,
                                     ApplicationComponentMetricsData md) {
         String commonName = null;
         if (component != null && component.getObjectID() != null && component.getObjectID().getQualifiedName() != null && component.getObjectID().getQualifiedName().getCommonName() != null) {
@@ -413,7 +301,7 @@ public class H2MetricsRepository {
         return null;
     }
 
-    public ApplicationComponentMetricsData fetchLatestForComponent(ApplicationComponentSummary component) {
+    public ApplicationComponentMetricsData fetchLatestForComponent(ApplicationComponent component) {
         String componentId = (component != null && component.getObjectID()!=null && component.getObjectID().getQualifiedName()!=null && component.getObjectID().getQualifiedName().getCommonName()!=null)
                 ? component.getObjectID().getQualifiedName().getCommonName().getValue() : null;
         String sql = "SELECT mr.* FROM metrics_records mr JOIN application_components ac ON mr.component_fk = ac.id WHERE ac.object_id_common_name = ? ORDER BY mr.last_activity DESC NULLS LAST, mr.id DESC LIMIT 1";
@@ -430,7 +318,7 @@ public class H2MetricsRepository {
         return null;
     }
 
-    public void insertFailure(ApplicationComponentSummary component, String description) {
+    public void insertFailure(ApplicationComponent component, String description) {
         Long compFk = ensureComponentRow(component, null);
         String sql = "INSERT INTO component_failures (component_fk, component_id, component_name, participant_name, failure_description, failure_time) VALUES (?,?,?,?,?,?)";
         try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {

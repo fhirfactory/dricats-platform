@@ -21,9 +21,9 @@
  */
 package net.fhirfactory.dricats.internals.pathways;
 
-import net.fhirfactory.dricats.internals.common.DistributableObjectId;
-import net.fhirfactory.dricats.internals.common.SimpleDistributableObject;
-import net.fhirfactory.dricats.internals.common.naming.QualifiedName;
+import net.fhirfactory.dricats.internals.common.object.SimpleDistributableObject;
+import net.fhirfactory.dricats.internals.common.naming.FullyDistinguishedName;
+import net.fhirfactory.dricats.internals.common.id.ObjectId;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,7 +45,7 @@ public class PathwayRoute extends SimpleDistributableObject implements Serializa
     // Attributes
     //
      // Map<priority, PathwayRouteSegment id>
-    private Map<Integer, DistributableObjectId> routeSegmentSequence;
+    private Map<Integer, ObjectId> routeSegmentSequence;
 
     //
     // Constructor(s)
@@ -55,17 +55,17 @@ public class PathwayRoute extends SimpleDistributableObject implements Serializa
         routeSegmentSequence = new HashMap<>();
     }
 
-    public PathwayRoute(QualifiedName qualifiedName){
+    public PathwayRoute(FullyDistinguishedName qualifiedName){
         super(qualifiedName);
         routeSegmentSequence = new HashMap<>();
     }
 
     //
-    public Map<Integer, DistributableObjectId> getRouteSegmentSequence() {
+    public Map<Integer, ObjectId> getRouteSegmentSequence() {
         return routeSegmentSequence;
     }
 
-    public void setRouteSegmentSequence(Map<Integer, DistributableObjectId> routeSegmentSequence) {
+    public void setRouteSegmentSequence(Map<Integer, ObjectId> routeSegmentSequence) {
         this.routeSegmentSequence = routeSegmentSequence;
     }
 

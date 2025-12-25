@@ -24,12 +24,12 @@ package net.fhirfactory.dricats.datagrid.satellite.messagegrid;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import net.fhirfactory.dricats.internals.common.DistributableObjectId;
-import net.fhirfactory.dricats.internals.common.naming.QualifiedName;
-import net.fhirfactory.dricats.internals.common.naming.IdToken;
+import net.fhirfactory.dricats.internals.common.naming.FullyDistinguishedName;
+import net.fhirfactory.dricats.internals.common.id.ObjectToken;
 import net.fhirfactory.dricats.internals.events.messages.MessageObject;
 import net.fhirfactory.dricats.internals.events.messages.MessageSet;
 import net.fhirfactory.dricats.internals.events.interfaces.ILocalMessageService;
-import net.fhirfactory.dricats.internals.topology.implementation.layers.application.valuesets.SoftwareComponentTypeEnum;
+import net.fhirfactory.dricats.internals.topology.implementation.layers.application.valuesets.ApplicationComponentSpecialisationEnum;
 import net.fhirfactory.dricats.internals.topology.interfaces.ISubsystem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,7 +52,7 @@ public class LocalMessageCache implements ILocalMessageService {
     // Attributes
     //
 
-    private Map<IdToken, Queue<MessageObject>> incomingQueueCache ;
+    private Map<ObjectToken, Queue<MessageObject>> incomingQueueCache ;
     private Queue<MessageObject> outgoingQueueCache ;
 
     @Inject
@@ -75,7 +75,7 @@ public class LocalMessageCache implements ILocalMessageService {
         return LOG;
     }
 
-    protected Map<IdToken, Queue<MessageObject>> getIncomingQueueCache() {
+    protected Map<ObjectToken, Queue<MessageObject>> getIncomingQueueCache() {
         return incomingQueueCache;
     }
 
@@ -101,25 +101,25 @@ public class LocalMessageCache implements ILocalMessageService {
             getLogger().warn(".queueMessage(): Exit, Message target is null");
             return;
         }
-        IdToken idToken = messageObject.getTarget().getQualifiedName().getIdToken();
-        if(!getIncomingQueueCache().containsKey(idToken)){
+        ObjectToken objectToken = messageObject.getTarget().getLocalObjectId().getCommonId();
+        if(!getIncomingQueueCache().containsKey(objectToken)){
             Queue<MessageObject> incomingMessageQueue = new ConcurrentLinkedQueue<>();
             incomingMessageQueue.add(messageObject);
-            getIncomingQueueCache().put(idToken, incomingMessageQueue);
+            getIncomingQueueCache().put(objectToken, incomingMessageQueue);
         } else {
-            getIncomingQueueCache().get(idToken).add(messageObject);
+            getIncomingQueueCache().get(objectToken).add(messageObject);
         }
         getLogger().debug(".queueMessage(): Exit");
     }
 
     @Override
-    public MessageObject peekNextMessage( IdToken consumerIdToken){
-        if(consumerIdToken == null){
+    public MessageObject peekNextMessage( ObjectToken consumerObjectToken){
+        if(consumerObjectToken == null){
             getLogger().debug(".peekIncomingMessage(): Exit, consumerIdToken is null");
             return(null);
         }
-        if(getIncomingQueueCache().containsKey(consumerIdToken)){
-            MessageObject peek = getIncomingQueueCache().get(consumerIdToken).peek();
+        if(getIncomingQueueCache().containsKey(consumerObjectToken)){
+            MessageObject peek = getIncomingQueueCache().get(consumerObjectToken).peek();
             getLogger().debug(".peekIncomingMessage(): Exit, returning ->{}", peek);
             return(peek);
         }
@@ -128,14 +128,14 @@ public class LocalMessageCache implements ILocalMessageService {
     }
 
     @Override
-    public MessageObject pollNextMessage( IdToken consumerIdToken){
-        getLogger().debug(".pollNextMessage(): Entry, consumerIdToken -> {}", consumerIdToken);
-        if(consumerIdToken == null){
+    public MessageObject pollNextMessage( ObjectToken consumerObjectToken){
+        getLogger().debug(".pollNextMessage(): Entry, consumerIdToken -> {}", consumerObjectToken);
+        if(consumerObjectToken == null){
             getLogger().debug(".pollNextMessage(): Exit, consumerIdToken is null");
             return(null);
         }
-        if(getIncomingQueueCache().containsKey(consumerIdToken)){
-            MessageObject poll = getIncomingQueueCache().get(consumerIdToken).poll();
+        if(getIncomingQueueCache().containsKey(consumerObjectToken)){
+            MessageObject poll = getIncomingQueueCache().get(consumerObjectToken).poll();
             getLogger().debug(".pollNextMessage(): Exit, returning ->{}", poll);
             return(poll);
         }
@@ -175,13 +175,13 @@ public class LocalMessageCache implements ILocalMessageService {
             getLogger().debug(".postMessage(): Exit, nothing to post, return -> {}", messagePostedInstant);
             return(messagePostedInstant);
         }
-        DistributableObjectId messageTarget = message.getTarget();
+        DistributableObjectId messageTarget = message.getTarget().getLocalObjectId();
         if(messageTarget == null){
             getLogger().debug(".postMessage(): Exit, no target, return -> {}", messagePostedInstant);
             return(messagePostedInstant);
         }
-        QualifiedName targetSubsystemQualifiedName = messageTarget.getQualifiedName().extractQualifiedNameForQualifier(SoftwareComponentTypeEnum.SUBSYSTEM_APPLICATION_INSTANCE.getType());
-        QualifiedName localSubsystemQualifiedName = getSubsystem().getSubsystem().getObjectID().getQualifiedName();
+        FullyDistinguishedName targetSubsystemQualifiedName = messageTarget.getQualifiedName().extractQualifiedNameForQualifier(ApplicationComponentSpecialisationEnum.SUBSYSTEM_APPLICATION_INSTANCE.getType());
+        FullyDistinguishedName localSubsystemQualifiedName = getSubsystem().getSubsystem().getObjectID().getQualifiedName();
         String targetSubsystemName = targetSubsystemQualifiedName.getUnqualifiedName().getValue();
         String localSubsystemName = localSubsystemQualifiedName.getUnqualifiedName().getValue();
         if(targetSubsystemName.contentEquals(localSubsystemName)){
@@ -196,7 +196,7 @@ public class LocalMessageCache implements ILocalMessageService {
     }
 
     @Override
-    public MessageSet pollNextMessage(IdToken consumerId, Integer size) {
+    public MessageSet pollNextMessage(ObjectToken consumerId, Integer size) {
         getLogger().debug(".pollNextMessage(): Entry, consumerIdToken -> {}, size -> {}", consumerId, size);
         MessageSet messageSet = new MessageSet();
         if(consumerId == null){

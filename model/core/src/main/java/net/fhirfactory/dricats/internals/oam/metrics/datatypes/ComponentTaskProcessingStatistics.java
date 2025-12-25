@@ -25,13 +25,10 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import net.fhirfactory.dricats.common.DateUtility;
 import net.fhirfactory.dricats.deployment.contants.DefaultDeploymentConstants;
-import org.apache.commons.lang3.StringUtils;
 
 import java.io.Serial;
 import java.io.Serializable;
 import java.time.Instant;
-import java.util.HashMap;
-import java.util.Map;
 
 public class ComponentTaskProcessingStatistics implements Serializable {
     //

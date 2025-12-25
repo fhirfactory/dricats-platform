@@ -27,8 +27,6 @@ import jakarta.annotation.PreDestroy;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.Instance;
 import jakarta.inject.Inject;
-import net.fhirfactory.dricats.internals.common.DistributableObjectId;
-import net.fhirfactory.dricats.internals.common.naming.CommonName;
 import net.fhirfactory.dricats.internals.tasking.InternalTask;
 import net.fhirfactory.dricats.datagrid.central.taskgrid.spi.ITaskPersistenceService;
 import org.infinispan.Cache;
@@ -48,7 +46,6 @@ import org.slf4j.LoggerFactory;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 /**

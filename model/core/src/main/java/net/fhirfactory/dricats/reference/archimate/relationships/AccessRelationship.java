@@ -3,9 +3,9 @@
  */
 package net.fhirfactory.dricats.reference.archimate.relationships;
 
-import net.fhirfactory.dricats.internals.common.DistributableObjectId;
+import net.fhirfactory.dricats.internals.common.identifiers.ElementReference;
 import net.fhirfactory.dricats.reference.archimate.common.RelationshipBase;
-import net.fhirfactory.dricats.reference.archimate.relationships.valuesets.RelationshipType;
+import net.fhirfactory.dricats.reference.archimate.relationships.valuesets.RelationshipTypeEnum;
 
 import java.io.Serial;
 
@@ -49,7 +49,7 @@ public class AccessRelationship extends RelationshipBase {
      */
     public AccessRelationship(){
         super();
-        setType(RelationshipType.ACCESS);
+        setType(RelationshipTypeEnum.ACCESS);
     }
 
     /**
@@ -58,9 +58,9 @@ public class AccessRelationship extends RelationshipBase {
      * @param sourceId The ID of the source element (the behavior element)
      * @param targetId The ID of the target element (the data object)
      */
-    public AccessRelationship(DistributableObjectId sourceId, DistributableObjectId targetId) {
+    public AccessRelationship(ElementReference sourceId, ElementReference targetId) {
         super(sourceId, targetId);
-        setType(RelationshipType.ACCESS);
+        setType(RelationshipTypeEnum.ACCESS);
         this.accessType = AccessType.READ;
     }
 
@@ -71,10 +71,10 @@ public class AccessRelationship extends RelationshipBase {
      * @param targetId The ID of the target element (the data object)
      * @param accessType The type of access (READ, WRITE, READ_WRITE)
      */
-    public AccessRelationship(DistributableObjectId sourceId, DistributableObjectId targetId, AccessType accessType) {
+    public AccessRelationship(ElementReference sourceId, ElementReference targetId, AccessType accessType) {
         super(sourceId, targetId);
         this.accessType = accessType;
-        setType(RelationshipType.ACCESS);
+        setType(RelationshipTypeEnum.ACCESS);
     }
 
     /**
@@ -84,10 +84,10 @@ public class AccessRelationship extends RelationshipBase {
      * @param sourceId The ID of the source element (the behavior element)
      * @param targetId The ID of the target element (the data object)
      */
-    public AccessRelationship(String name, DistributableObjectId sourceId, DistributableObjectId targetId) {
+    public AccessRelationship(String name, ElementReference sourceId, ElementReference targetId) {
         super(name, sourceId, targetId);
         this.accessType = AccessType.READ;
-        setType(RelationshipType.ACCESS);
+        setType(RelationshipTypeEnum.ACCESS);
     }
 
     /**
@@ -98,10 +98,10 @@ public class AccessRelationship extends RelationshipBase {
      * @param targetId The ID of the target element (the data object)
      * @param accessType The type of access (READ, WRITE, READ_WRITE)
      */
-    public AccessRelationship(String name, DistributableObjectId sourceId, DistributableObjectId targetId, AccessType accessType) {
+    public AccessRelationship(String name, ElementReference sourceId, ElementReference targetId, AccessType accessType) {
         super(name, sourceId, targetId);
         this.accessType = accessType;
-        setType(RelationshipType.ACCESS);
+        setType(RelationshipTypeEnum.ACCESS);
     }
 
     /**
@@ -112,10 +112,10 @@ public class AccessRelationship extends RelationshipBase {
      * @param sourceId The ID of the source element (the behavior element)
      * @param targetId The ID of the target element (the data object)
      */
-    public AccessRelationship(String name, String description, DistributableObjectId sourceId, DistributableObjectId targetId) {
+    public AccessRelationship(String name, String description, ElementReference sourceId, ElementReference targetId) {
         super(name, description, sourceId, targetId);
         this.accessType = AccessType.READ;
-        setType(RelationshipType.ACCESS);
+        setType(RelationshipTypeEnum.ACCESS);
     }
 
     /**
@@ -127,10 +127,10 @@ public class AccessRelationship extends RelationshipBase {
      * @param targetId The ID of the target element (the data object)
      * @param accessType The type of access (READ, WRITE, READ_WRITE)
      */
-    public AccessRelationship(String name, String description, DistributableObjectId sourceId, DistributableObjectId targetId, AccessType accessType) {
+    public AccessRelationship(String name, String description, ElementReference sourceId, ElementReference targetId, AccessType accessType) {
         super(name, description, sourceId, targetId);
         this.accessType = accessType;
-        setType(RelationshipType.ACCESS);
+        setType(RelationshipTypeEnum.ACCESS);
     }
 
     /**

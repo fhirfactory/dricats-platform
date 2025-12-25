@@ -21,6 +21,8 @@
  */
 package net.fhirfactory.dricats.internals.events.factories;
 
+import net.fhirfactory.dricats.internals.common.naming.FullyDistinguishedName;
+import net.fhirfactory.dricats.internals.common.id.ObjectId;
 import net.fhirfactory.dricats.internals.events.notifications.NotificationObject;
 import org.apache.commons.lang3.SerializationUtils;
 
@@ -32,14 +34,14 @@ public class NotificationObjectFactory extends EventBaseFactory{
         if(notificationObject == null){
             return null;
         }
-        if(notificationObject.getObjectID() == null){
+        if(notificationObject.getLocalId() == null){
             return null;
         }
         NotificationObject newNotificationObject = new NotificationObject(notificationObject);
-        newNotificationObject.setObjectID(SerializationUtils.clone(notificationObject.getObjectID()));
-        newNotificationObject.getObjectID().getQualifiedName().getUnqualifiedName().setValue(UUID.randomUUID().toString());
-        newNotificationObject.setId(newNotificationObject.getObjectID().getQualifiedName().getCommonName());
-        newNotificationObject.getHistory().put(notificationObject.getHistory().size()+1, notificationObject.getObjectID());
+        FullyDistinguishedName newName = SerializationUtils.clone(notificationObject.getLocalId().getFullyDistinguishedName());
+        newName.getUnqualifiedName().setValue(UUID.randomUUID().toString());
+        newNotificationObject.setLocalId(new ObjectId(newName));
+        newNotificationObject.getHistory().put(notificationObject.getHistory().size()+1, notificationObject.getLocalId());
         return newNotificationObject;
     }
 }

@@ -22,11 +22,10 @@
 package net.fhirfactory.dricats.internals.events.common;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import jdk.jfr.Event;
 import net.fhirfactory.dricats.common.DateUtility;
 import net.fhirfactory.dricats.deployment.contants.DefaultDeploymentConstants;
-import net.fhirfactory.dricats.internals.common.DistributableObjectId;
+import net.fhirfactory.dricats.internals.common.identifiers.ElementReference;
+import net.fhirfactory.dricats.internals.common.id.ObjectId;
 import net.fhirfactory.dricats.reference.archimate.layers.application.ApplicationEvent;
 import org.apache.commons.lang3.SerializationUtils;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -36,7 +35,6 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.UUID;
 
 public class EventBase extends ApplicationEvent implements Serializable {
     //
@@ -49,12 +47,12 @@ public class EventBase extends ApplicationEvent implements Serializable {
     // Attributes
     //
 
-    private DistributableObjectId target;
+    private ElementReference target;
     @JsonFormat(pattern = DateUtility.DEFAULT_JSON_FORMAT, timezone = DefaultDeploymentConstants.DEPLOYMENT_TIMEZONE)
     private LocalDateTime eventSendDate;
     @JsonFormat(pattern = DateUtility.DEFAULT_JSON_FORMAT, timezone = DefaultDeploymentConstants.DEPLOYMENT_TIMEZONE)
     private LocalDateTime eventReceiveDate;
-    private Map<Integer, DistributableObjectId> history;
+    private Map<Integer, ObjectId> history;
 
 
     //
@@ -78,11 +76,11 @@ public class EventBase extends ApplicationEvent implements Serializable {
                       // Accessors
                       //
 
-    public DistributableObjectId getTarget(){
+    public ElementReference getTarget(){
         return target;
     }
 
-    public void setTarget(DistributableObjectId targetObjectID) {
+    public void setTarget(ElementReference targetObjectID) {
         this.target = targetObjectID;
     }
 
@@ -102,11 +100,11 @@ public class EventBase extends ApplicationEvent implements Serializable {
         this.eventReceiveDate = eventReceiveDate;
     }
 
-    public Map<Integer, DistributableObjectId> getHistory() {
+    public Map<Integer, ObjectId> getHistory() {
         return history;
     }
 
-    public void setHistory(Map<Integer, DistributableObjectId> history) {
+    public void setHistory(Map<Integer, ObjectId> history) {
         this.history = history;
     }
 
@@ -134,11 +132,10 @@ public class EventBase extends ApplicationEvent implements Serializable {
                 .append("name", getName())
                 .append("documentation", getDocumentation())
                 .append("specialization", getSpecialization())
-                .append("properties", getProperties())
+                .append("extensions", getExtensions())
                 .append("securityLabels", getSecurityLabels())
-                .append("objectID", getObjectID())
                 .append("metadata", getMetadata())
-                .append("id", getId())
+                .append("id", getLocalId())
                 .toString();
     }
 }

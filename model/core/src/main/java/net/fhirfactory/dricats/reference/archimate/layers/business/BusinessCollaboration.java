@@ -3,8 +3,8 @@
  */
 package net.fhirfactory.dricats.reference.archimate.layers.business;
 
-import net.fhirfactory.dricats.internals.common.DistributableObjectId;
-import net.fhirfactory.dricats.reference.archimate.common.SimpleElementBase;
+import net.fhirfactory.dricats.internals.common.id.ObjectId;
+import net.fhirfactory.dricats.reference.archimate.common.ElementBase;
 import net.fhirfactory.dricats.reference.archimate.common.valuesets.ElementTypeEnum;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.slf4j.Logger;
@@ -20,12 +20,12 @@ import java.util.Objects;
  * Element-specific attributes added in addition to SimpleElementBase:
  * - participants: references to participating roles/actors (DistributableObjectId)
  */
-public class BusinessCollaboration extends SimpleElementBase {
+public class BusinessCollaboration extends ElementBase {
     @Serial private static final long serialVersionUID = -12345678920103L;
     private static final Logger LOG = LoggerFactory.getLogger(BusinessCollaboration.class);
 
     // Element-specific attributes
-    private List<DistributableObjectId> participants;
+    private List<ObjectId> participants;
 
     public BusinessCollaboration(){
         super();
@@ -41,9 +41,9 @@ public class BusinessCollaboration extends SimpleElementBase {
         }
     }
 
-    public List<DistributableObjectId> getParticipants() { return participants; }
-    public void setParticipants(List<DistributableObjectId> participants) { this.participants = participants; }
-    public void addParticipant(DistributableObjectId participant){ if(this.participants == null){ this.participants = new ArrayList<>(); } this.participants.add(participant); }
+    public List<ObjectId> getParticipants() { return participants; }
+    public void setParticipants(List<ObjectId> participants) { this.participants = participants; }
+    public void addParticipant(ObjectId participant){ if(this.participants == null){ this.participants = new ArrayList<>(); } this.participants.add(participant); }
     public void clearParticipants(){ if(this.participants != null){ this.participants.clear(); } }
 
     @Override

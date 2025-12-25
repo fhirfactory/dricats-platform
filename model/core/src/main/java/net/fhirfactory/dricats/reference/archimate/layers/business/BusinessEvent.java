@@ -3,8 +3,8 @@
  */
 package net.fhirfactory.dricats.reference.archimate.layers.business;
 
-import net.fhirfactory.dricats.internals.common.DistributableObjectId;
-import net.fhirfactory.dricats.reference.archimate.common.SimpleElementBase;
+import net.fhirfactory.dricats.internals.common.identifiers.ElementReference;
+import net.fhirfactory.dricats.reference.archimate.common.ElementBase;
 import net.fhirfactory.dricats.reference.archimate.common.valuesets.ElementTypeEnum;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.slf4j.Logger;
@@ -24,15 +24,15 @@ import java.util.Objects;
  * - source: optional reference to the origin of the event (actor/role/object/etc.)
  * - interrupting: whether the event interrupts an ongoing behavior
  */
-public class BusinessEvent extends SimpleElementBase {
+public class BusinessEvent extends ElementBase {
     @Serial private static final long serialVersionUID = -12345678920108L;
     private static final Logger LOG = LoggerFactory.getLogger(BusinessEvent.class);
 
     // Element-specific attributes (by reference IDs)
-    private List<DistributableObjectId> triggeringBehaviors;
-    private List<DistributableObjectId> triggeredBehaviors;
-    private List<DistributableObjectId> associatedBusinessObjects;
-    private DistributableObjectId source;
+    private List<ElementReference> triggeringBehaviors;
+    private List<ElementReference> triggeredBehaviors;
+    private List<ElementReference> associatedBusinessObjects;
+    private ElementReference source;
     private boolean interrupting;
 
     public BusinessEvent(){
@@ -57,23 +57,23 @@ public class BusinessEvent extends SimpleElementBase {
         this.interrupting = ori != null && ori.isInterrupting();
     }
 
-    public List<DistributableObjectId> getTriggeringBehaviors() { return triggeringBehaviors; }
-    public void setTriggeringBehaviors(List<DistributableObjectId> triggeringBehaviors) { this.triggeringBehaviors = triggeringBehaviors == null ? new ArrayList<>() : triggeringBehaviors; }
-    public void addTriggeringBehavior(DistributableObjectId behavior){ if(behavior == null){ return; } if(this.triggeringBehaviors == null){ this.triggeringBehaviors = new ArrayList<>(); } this.triggeringBehaviors.add(behavior); }
+    public List<ElementReference> getTriggeringBehaviors() { return triggeringBehaviors; }
+    public void setTriggeringBehaviors(List<ElementReference> triggeringBehaviors) { this.triggeringBehaviors = triggeringBehaviors == null ? new ArrayList<>() : triggeringBehaviors; }
+    public void addTriggeringBehavior(ElementReference behavior){ if(behavior == null){ return; } if(this.triggeringBehaviors == null){ this.triggeringBehaviors = new ArrayList<>(); } this.triggeringBehaviors.add(behavior); }
     public void clearTriggeringBehaviors(){ if(this.triggeringBehaviors != null){ this.triggeringBehaviors.clear(); } }
 
-    public List<DistributableObjectId> getTriggeredBehaviors() { return triggeredBehaviors; }
-    public void setTriggeredBehaviors(List<DistributableObjectId> triggeredBehaviors) { this.triggeredBehaviors = triggeredBehaviors == null ? new ArrayList<>() : triggeredBehaviors; }
-    public void addTriggeredBehavior(DistributableObjectId behavior){ if(behavior == null){ return; } if(this.triggeredBehaviors == null){ this.triggeredBehaviors = new ArrayList<>(); } this.triggeredBehaviors.add(behavior); }
+    public List<ElementReference> getTriggeredBehaviors() { return triggeredBehaviors; }
+    public void setTriggeredBehaviors(List<ElementReference> triggeredBehaviors) { this.triggeredBehaviors = triggeredBehaviors == null ? new ArrayList<>() : triggeredBehaviors; }
+    public void addTriggeredBehavior(ElementReference behavior){ if(behavior == null){ return; } if(this.triggeredBehaviors == null){ this.triggeredBehaviors = new ArrayList<>(); } this.triggeredBehaviors.add(behavior); }
     public void clearTriggeredBehaviors(){ if(this.triggeredBehaviors != null){ this.triggeredBehaviors.clear(); } }
 
-    public List<DistributableObjectId> getAssociatedBusinessObjects() { return associatedBusinessObjects; }
-    public void setAssociatedBusinessObjects(List<DistributableObjectId> associatedBusinessObjects) { this.associatedBusinessObjects = associatedBusinessObjects == null ? new ArrayList<>() : associatedBusinessObjects; }
-    public void addAssociatedBusinessObject(DistributableObjectId businessObject){ if(businessObject == null){ return; } if(this.associatedBusinessObjects == null){ this.associatedBusinessObjects = new ArrayList<>(); } this.associatedBusinessObjects.add(businessObject); }
+    public List<ElementReference> getAssociatedBusinessObjects() { return associatedBusinessObjects; }
+    public void setAssociatedBusinessObjects(List<ElementReference> associatedBusinessObjects) { this.associatedBusinessObjects = associatedBusinessObjects == null ? new ArrayList<>() : associatedBusinessObjects; }
+    public void addAssociatedBusinessObject(ElementReference businessObject){ if(businessObject == null){ return; } if(this.associatedBusinessObjects == null){ this.associatedBusinessObjects = new ArrayList<>(); } this.associatedBusinessObjects.add(businessObject); }
     public void clearAssociatedBusinessObjects(){ if(this.associatedBusinessObjects != null){ this.associatedBusinessObjects.clear(); } }
 
-    public DistributableObjectId getSource() { return source; }
-    public void setSource(DistributableObjectId source) { this.source = source; }
+    public ElementReference getSource() { return source; }
+    public void setSource(ElementReference source) { this.source = source; }
 
     public boolean isInterrupting() { return interrupting; }
     public void setInterrupting(boolean interrupting) { this.interrupting = interrupting; }

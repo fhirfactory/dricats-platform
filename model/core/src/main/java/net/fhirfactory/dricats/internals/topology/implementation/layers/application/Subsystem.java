@@ -22,8 +22,10 @@
 package net.fhirfactory.dricats.internals.topology.implementation.layers.application;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import net.fhirfactory.dricats.internals.common.DistributableObjectId;
-import net.fhirfactory.dricats.internals.common.DistributableObjectIdentifier;
+import net.fhirfactory.dricats.internals.common.identifiers.ElementIdentifier;
+import net.fhirfactory.dricats.internals.common.id.ObjectId;
+import net.fhirfactory.dricats.internals.topology.implementation.common.valuesets.TopologyExtensionTypeValueSet;
+import net.fhirfactory.dricats.internals.topology.implementation.layers.application.valuesets.ApplicationComponentSpecialisationEnum;
 import net.fhirfactory.dricats.internals.topology.implementation.layers.technology.valuesets.NetworkSecurityZoneEnum;
 import net.fhirfactory.dricats.internals.topology.interfaces.ISubsystem;
 import net.fhirfactory.dricats.reference.archimate.layers.application.ApplicationComponent;
@@ -47,21 +49,21 @@ public abstract class Subsystem extends ApplicationComponent implements ISubsyst
     // Attributes
     //
 
-    NetworkSecurityZoneEnum networkSecurityZone;
-
     //
     // Constructor(s)
     //
 
     public Subsystem(){
         super();
+        setSpecialization(ApplicationComponentSpecialisationEnum.SUBSYSTEM.getType());
+
     }
 
     //
     // abstract methods
     //
 
-    protected abstract DistributableObjectIdentifier specifySubsystemIdentifier();
+    protected abstract ElementIdentifier specifySubsystemIdentifier();
 
     //
     // Interface Implementation
@@ -75,18 +77,27 @@ public abstract class Subsystem extends ApplicationComponent implements ISubsyst
     // Getters and Setters
     //
     
-    
+    @JsonIgnore
 	public NetworkSecurityZoneEnum getNetworkSecurityZone() {
-		return networkSecurityZone;
+        String securityZone = getExtensionValue(TopologyExtensionTypeValueSet.EXTENSION_NETWORK_SECURITY_ZONE.getExtensionName());
+        if(securityZone != null){
+            NetworkSecurityZoneEnum securityZoneEnum = NetworkSecurityZoneEnum.fromName(securityZone);
+            return(securityZoneEnum);
+        }
+		return NetworkSecurityZoneEnum.INTERNET;
 	}
 
+    @JsonIgnore
 	public void setNetworkSecurityZone(NetworkSecurityZoneEnum networkSecurityZone) {
-		this.networkSecurityZone = networkSecurityZone;
+        if(networkSecurityZone == null){
+            networkSecurityZone = NetworkSecurityZoneEnum.INTERNET;
+        }
+        setExtensionValue(TopologyExtensionTypeValueSet.EXTENSION_NETWORK_SECURITY_ZONE.getExtensionName(), networkSecurityZone.getName());
 	}
 
 	@JsonIgnore
-	public Map<DistributableObjectId, SubsystemCluster> getApplicationCluster(){
-		HashMap<DistributableObjectId, SubsystemCluster> applicationClusterSet = new HashMap<DistributableObjectId, SubsystemCluster>();
+	public Map<ObjectId, SubsystemCluster> getApplicationCluster(){
+		HashMap<ObjectId, SubsystemCluster> applicationClusterSet = new HashMap<ObjectId, SubsystemCluster>();
 		// TODO add code to extract subsystem application cluster instances.
 		return(applicationClusterSet);
 	}
@@ -94,6 +105,7 @@ public abstract class Subsystem extends ApplicationComponent implements ISubsyst
     //
     // Utility Methods
     //
+
 
     protected Logger getLogger(){
         return(LOG);

@@ -2,8 +2,8 @@ package net.fhirfactory.dricats.datagrid.satellite.metricsgrid;
 
 import net.fhirfactory.dricats.internals.oam.metrics.ApplicationComponentMetricsData;
 import net.fhirfactory.dricats.internals.oam.metrics.interfaces.ILocalMetricsServerInterface;
-import net.fhirfactory.dricats.internals.oam.topology.base.ApplicationComponentSummary;
 import net.fhirfactory.dricats.middleware.jgroups.jchannel.JChannelMetricsService;
+import net.fhirfactory.dricats.reference.archimate.layers.application.ApplicationComponent;
 import org.jgroups.Message;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,7 +31,7 @@ public class SatelliteMetricsPublisher extends JChannelMetricsService {
      * participates in the OAM JGroups channel. This call ensures our endpoint metrics reflect activity and
      * stores the metrics into the local metrics server so it is available for collection by the channel/watchdog.
      */
-    public void publishMetrics(ApplicationComponentSummary component, ApplicationComponentMetricsData metrics){
+    public void publishMetrics(ApplicationComponent component, ApplicationComponentMetricsData metrics){
         LOG.debug("[OAM-SAT] publishMetrics: component={}, metrics.lastActivity={}", component, metrics.getLastActivityInstant());
         // Record locally
         localMetricsServer.addMetrics(component, metrics);

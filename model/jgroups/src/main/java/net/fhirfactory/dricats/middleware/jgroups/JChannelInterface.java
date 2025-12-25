@@ -22,7 +22,8 @@
 package net.fhirfactory.dricats.middleware.jgroups;
 
 import net.fhirfactory.dricats.internals.common.DistributableObjectId;
-import net.fhirfactory.dricats.internals.topology.implementation.layers.application.interfaces.JGroupsInterface;
+import net.fhirfactory.dricats.internals.common.identifiers.ElementReference;
+import net.fhirfactory.dricats.internals.topology.implementation.layers.application.interfaces.adapters.JGroupsAdapter;
 import net.fhirfactory.dricats.internals.topology.interfaces.ISubsystem;
 import net.fhirfactory.dricats.middleware.jgroups.configuration.JChannelConfiguration;
 import net.fhirfactory.dricats.middleware.jgroups.valuesets.JChannelStatusEnum;
@@ -31,7 +32,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.Serial;
 
-public class JChannelInterface extends JGroupsInterface {
+public class JChannelInterface extends JGroupsAdapter {
 
 	//
 	// Housekeeping
@@ -61,10 +62,10 @@ public class JChannelInterface extends JGroupsInterface {
     */
 
     public JChannelInterface(
-            DistributableObjectId ownerComponent,
+            ElementReference ownerComponent,
             JChannelConfiguration configurationObject,
             ISubsystem subsystemInterface) {
-    	super(ownerComponent, configurationObject.getId(), "JGroups Endpoint", JGroupsInterface.INTERFACE_JGROUPS_RMI, configurationObject );
+    	super(ownerComponent, configurationObject.getId(), "JGroups Endpoint", configurationObject );
     	setEndpointStatus(JChannelStatusEnum.JGROUPS_ENDPOINT_STATUS_UNINITIALISED);
     }
 

@@ -21,7 +21,7 @@
  */
 package net.fhirfactory.dricats.internals.topology.implementation.layers.technology;
 
-import net.fhirfactory.dricats.internals.common.DistributableObjectIdentifier;
+import net.fhirfactory.dricats.internals.common.identifiers.ElementIdentifier;
 import net.fhirfactory.dricats.reference.archimate.layers.technology.Device;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,7 +56,7 @@ public abstract class Platform extends Device {
     // abstract methods
     //
 
-    abstract DistributableObjectIdentifier specifySubsystemIdentifier();
+    abstract ElementIdentifier specifySubsystemIdentifier();
 
     //
     // Getters and Setters

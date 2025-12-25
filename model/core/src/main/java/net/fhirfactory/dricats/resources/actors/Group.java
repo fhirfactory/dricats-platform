@@ -24,10 +24,8 @@ package net.fhirfactory.dricats.resources.actors;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import net.fhirfactory.dricats.common.DateUtility;
 import net.fhirfactory.dricats.deployment.contants.DefaultDeploymentConstants;
-import net.fhirfactory.dricats.internals.common.DistributableObject;
-import net.fhirfactory.dricats.internals.common.DistributableObjectIdentifier;
-import net.fhirfactory.dricats.internals.common.datatypes.GroupMembership;
-import net.fhirfactory.dricats.reference.archimate.layers.business.BusinessActor;
+import net.fhirfactory.dricats.internals.common.identifiers.ElementIdentifier;
+import net.fhirfactory.dricats.internals.datatypes.GroupMembership;
 import net.fhirfactory.dricats.reference.archimate.layers.business.BusinessCollaboration;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
@@ -36,7 +34,6 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.StringJoiner;
 
 public class Group extends BusinessCollaboration implements Serializable {
     //
@@ -51,7 +48,7 @@ public class Group extends BusinessCollaboration implements Serializable {
 
     private List<GroupMembership> membership;
     private String groupType;
-    private DistributableObjectIdentifier managingOrganization;
+    private ElementIdentifier managingOrganization;
     private boolean active;
     @JsonFormat(pattern = DateUtility.DEFAULT_JSON_FORMAT,  timezone = DefaultDeploymentConstants.DEPLOYMENT_TIMEZONE)
     private LocalDateTime modificationDate;
@@ -81,10 +78,10 @@ public class Group extends BusinessCollaboration implements Serializable {
     public void setGroupType(String groupType) {
         this.groupType = groupType;
     }
-    public DistributableObjectIdentifier getManagingOrganization() {
+    public ElementIdentifier getManagingOrganization() {
         return managingOrganization;
     }
-    public void setManagingOrganization(DistributableObjectIdentifier managingOrganization) {
+    public void setManagingOrganization(ElementIdentifier managingOrganization) {
         this.managingOrganization = managingOrganization;
     }
     public boolean isActive() {
@@ -132,11 +129,10 @@ public class Group extends BusinessCollaboration implements Serializable {
                 .append("name", getName())
                 .append("documentation", getDocumentation())
                 .append("specialization", getSpecialization())
-                .append("properties", getProperties())
+                .append("extensions", getExtensions())
                 .append("securityLabels", getSecurityLabels())
-                .append("objectID", getObjectID())
                 .append("metadata", getMetadata())
-                .append("id", getId())
+                .append("id", getLocalId())
                 .append("membership", getMembership())
                 .toString();
     }

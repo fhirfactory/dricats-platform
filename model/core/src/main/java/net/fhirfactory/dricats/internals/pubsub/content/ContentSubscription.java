@@ -21,69 +21,61 @@
  */
 package net.fhirfactory.dricats.internals.pubsub.content;
 
-import net.fhirfactory.dricats.internals.pubsub.TopicSubscription;
-import net.fhirfactory.dricats.internals.pubsub.common.ApplicationComponentIdMask;
-import net.fhirfactory.dricats.internals.pubsub.common.EventTemporalWindow;
-import net.fhirfactory.dricats.internals.pubsub.common.SubscriptionMaskBase;
+import net.fhirfactory.dricats.internals.pubsub.common.SubscriptionBase;
 import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.Serial;
 import java.io.Serializable;
-import java.util.List;
 
-public class ContentSubscription extends SubscriptionMaskBase implements Serializable {
+public class ContentSubscription extends SubscriptionBase implements Serializable {
     //
     // Housekeeping
     //
     @Serial
-    private static final long serialVersionUID = -12345678200051L;
-    private static final Logger LOG = LoggerFactory.getLogger(ContentSubscription.class);
+    private static final long serialVersionUID = 1L;
 
     //
     // Attributes
     //
 
+    private ContentSubscriptionMask contentSubscriptionMask;
+
     //
-    // Constructors
+    // Constructor(s)
     //
-    public ContentSubscription() {
+    public ContentSubscription(){
         super();
     }
 
-    public ContentSubscription(ApplicationComponentIdMask internalEventSource, ApplicationComponentIdMask internalEventTarget, List<TopicSubscription> eventTopicSubscriptions, String eventOrigin, String eventFinalDestination, EventTemporalWindow temporalWindow ){
-        super(internalEventSource, internalEventTarget, eventTopicSubscriptions, eventOrigin, eventFinalDestination, temporalWindow);
+    public ContentSubscription(ContentSubscriptionMask contentSubscriptionMask){
+        super();
+        this.contentSubscriptionMask = contentSubscriptionMask;
     }
 
     //
     // Getters and Setters
     //
-
-    @Override
-    protected Logger getLogger(){
-        return LOG;
+    public ContentSubscriptionMask getContentSubscriptionMask() {
+        return contentSubscriptionMask;
     }
-
-    //
-    // Business Methods
-    //
+    public void setContentSubscriptionMask(ContentSubscriptionMask contentSubscriptionMask) {
+        this.contentSubscriptionMask = contentSubscriptionMask;
+    }
 
     //
     // Standard Methods
     //
 
-
     @Override
     public String toString() {
         return new ToStringBuilder(this)
-                .append("internalEventSource", internalEventSource)
-                .append("internalEventTarget", internalEventTarget)
-                .append("eventTopicSubscriptions", eventTopicSubscriptions)
-                .append("eventOrigin", eventOrigin)
-                .append("eventFinalDestination", eventFinalDestination)
-                .append("temporalWindow", temporalWindow)
-                .appendSuper(super.toString())
+                .append("contentSubscriptionMask", getContentSubscriptionMask())
+                .append("subscriberFunction", getSubscriberFunction())
+                .append("subscriberInstance", getSubscriberInstance())
+                .append("identifiers", getIdentifiers())
+                .append("securityLabels", getSecurityLabels())
+                .append("metadata", getMetadata())
+                .append("id", getLocalId())
                 .toString();
     }
 }

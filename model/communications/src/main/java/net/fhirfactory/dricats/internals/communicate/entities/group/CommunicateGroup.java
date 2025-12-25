@@ -30,7 +30,6 @@ import org.slf4j.LoggerFactory;
 
 import java.io.Serial;
 import java.util.Objects;
-import java.util.StringJoiner;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class CommunicateGroup extends Group {
@@ -104,11 +103,11 @@ public class CommunicateGroup extends Group {
                 .append("name", getName())
                 .append("documentation", getDocumentation())
                 .append("specialization", getSpecialization())
-                .append("properties", getProperties())
+                .append("extensions", getExtensions())
                 .append("securityLabels", getSecurityLabels())
                 .append("objectID", getObjectID())
                 .append("metadata", getMetadata())
-                .append("id", getId())
+                .append("id", getLocalId())
                 .toString();
     }
 

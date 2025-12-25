@@ -132,7 +132,7 @@ public class CommunicateMessage extends MessageObject {
         sb.append(", messageTarget=").append(getTarget());
         sb.append(", messageSendDate=").append(getEventSendDate());
         sb.append(", messageReceiveDate=").append(getEventReceiveDate());
-        sb.append(", messageId='").append(getId()).append('\'');
+        sb.append(", messageId='").append(getLocalId()).append('\'');
         sb.append(", messageSequenceNumber=").append(getMessageSequenceNumber());
         sb.append(", messagePayload=").append(getMessagePayload());
         sb.append('}');

@@ -21,7 +21,7 @@
  */
 package net.fhirfactory.dricats.datagrid.central.topologygrid.spi;
 
-import net.fhirfactory.dricats.internals.oam.topology.base.ApplicationComponentSummary;
+import net.fhirfactory.dricats.reference.archimate.layers.application.ApplicationComponent;
 
 import java.util.Optional;
 
@@ -30,7 +30,7 @@ import java.util.Optional;
  * Provide an @ApplicationScoped implementation to persist to H2 or other stores.
  */
 public interface IApplicationComponentPersistenceService {
-    Optional<ApplicationComponentSummary> load(String key);
-    void save(String key, ApplicationComponentSummary component);
+    Optional<ApplicationComponent> load(String key);
+    void save(String key, ApplicationComponent component);
     void delete(String key);
 }

@@ -21,10 +21,11 @@
  */
 package net.fhirfactory.dricats.internals.pubsub.common;
 
-import net.fhirfactory.dricats.internals.common.DistributableObject;
-import net.fhirfactory.dricats.internals.common.DistributableObjectId;
-import net.fhirfactory.dricats.internals.common.naming.QualifiedName;
-import net.fhirfactory.dricats.internals.common.naming.UnqualifiedName;
+import net.fhirfactory.dricats.internals.common.object.DistributableObject;
+import net.fhirfactory.dricats.internals.common.identifiers.ElementReference;
+import net.fhirfactory.dricats.internals.common.naming.FullyDistinguishedName;
+import net.fhirfactory.dricats.internals.common.id.ObjectId;
+import net.fhirfactory.dricats.internals.common.naming.RelativeDistinguishedName;
 import net.fhirfactory.dricats.reference.archimate.layers.application.ApplicationFunction;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
@@ -44,7 +45,7 @@ public class SubscriptionBase extends DistributableObject implements Serializabl
     //
 
     private ApplicationFunction subscriberFunction;
-    private DistributableObjectId subscriberInstance;
+    private ElementReference subscriberInstance;
 
     //
     // Constructor(s)
@@ -55,15 +56,14 @@ public class SubscriptionBase extends DistributableObject implements Serializabl
         this.subscriberInstance = null;
     }
 
-    public SubscriptionBase(DistributableObjectId subscriber, ApplicationFunction subscriberFunction, String subscriptionEventType) {
+    public SubscriptionBase(ElementReference subscriber, ApplicationFunction subscriberFunction, String subscriptionEventType) {
         super();
         this.subscriberInstance = subscriber;
-        QualifiedName qualifiedName = subscriber.getQualifiedName();
-        UnqualifiedName unqualifiedName = new UnqualifiedName(subscriptionEventType, UUID.randomUUID().toString());
+        FullyDistinguishedName qualifiedName = subscriber.getLocalObjectId().getFullyDistinguishedName();
+        RelativeDistinguishedName unqualifiedName = new RelativeDistinguishedName(subscriptionEventType, UUID.randomUUID().toString());
         qualifiedName.appendUnqualifiedName(unqualifiedName);
-        DistributableObjectId subscriptionId = new DistributableObjectId(qualifiedName);
-        setObjectID(subscriptionId);
-        setId(subscriptionId.getQualifiedName().getCommonName());
+        ObjectId subscriptionId = new ObjectId(qualifiedName);
+        setLocalId(subscriptionId);
         this.subscriberFunction = subscriberFunction;
     }
 
@@ -79,11 +79,11 @@ public class SubscriptionBase extends DistributableObject implements Serializabl
         this.subscriberFunction = subscriberFunction;
     }
 
-    public DistributableObjectId getSubscriberInstance() {
+    public ElementReference getSubscriberInstance() {
         return subscriberInstance;
     }
 
-    public void setSubscriberInstance(DistributableObjectId subscriberInstance) {
+    public void setSubscriberInstance(ElementReference subscriberInstance) {
         this.subscriberInstance = subscriberInstance;
     }
 

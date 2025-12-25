@@ -31,7 +31,7 @@ import net.fhirfactory.dricats.internals.pathways.Pathway;
 import net.fhirfactory.dricats.internals.pathways.PathwayElement;
 import net.fhirfactory.dricats.internals.pathways.PathwayRoute;
 import net.fhirfactory.dricats.internals.pathways.PathwayRouteSegment;
-import net.fhirfactory.dricats.ui.serverside.pathways.UIPathwayCacheService;
+import net.fhirfactory.dricats.ui.serverside.caches.pathways.UIPathwayCacheService;
 import net.fhirfactory.dricats.ui.uitest.handlers.common.BaseHandler;
 import net.fhirfactory.dricats.ui.uitest.testdata.PathwayTestResourceSetBuilder;
 import org.apache.commons.lang3.StringUtils;

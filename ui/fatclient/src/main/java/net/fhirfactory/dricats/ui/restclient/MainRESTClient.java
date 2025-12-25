@@ -26,20 +26,17 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import net.fhirfactory.dricats.internals.common.DistributableObjectId;
+import net.fhirfactory.dricats.internals.common.id.ObjectToken;
 import net.fhirfactory.dricats.internals.oam.metrics.ApplicationComponentMetricsData;
-import net.fhirfactory.dricats.internals.oam.topology.EgressInterfaceComponentSummary;
-import net.fhirfactory.dricats.internals.oam.topology.IngressInterfaceComponentSummary;
-import net.fhirfactory.dricats.internals.oam.topology.base.ApplicationComponentSummary;
-import net.fhirfactory.dricats.internals.oam.topology.base.ApplicationComponentSummaryList;
-import net.fhirfactory.dricats.internals.oam.topology.base.InterfaceComponentSummary;
 import net.fhirfactory.dricats.internals.pathways.Pathway;
+import net.fhirfactory.dricats.internals.pathways.PathwayElement;
 import net.fhirfactory.dricats.internals.pathways.PathwayRoute;
 import net.fhirfactory.dricats.internals.pathways.PathwayRouteSegment;
-import net.fhirfactory.dricats.internals.pathways.PathwayElement;
-import net.fhirfactory.dricats.internals.common.naming.IdToken;
-import net.fhirfactory.dricats.internals.common.DistributableObjectId;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import net.fhirfactory.dricats.internals.topology.implementation.layers.application.interfaces.EgressApplicationInterface;
+import net.fhirfactory.dricats.internals.topology.implementation.layers.application.interfaces.IngresApplicationInterface;
+import net.fhirfactory.dricats.internals.topology.implementation.layers.application.interfaces.base.WUPInterfaceBase;
+import net.fhirfactory.dricats.reference.archimate.layers.application.ApplicationComponent;
 
 import java.io.IOException;
 import java.net.URI;
@@ -52,6 +49,8 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class MainRESTClient {
     //
@@ -129,7 +128,7 @@ public class MainRESTClient {
      // Business Methods
     //
 
-    public ApplicationComponentSummaryList listComponents() {
+    public List<ApplicationComponent> listComponents() {
         String url = normalize(baseUrl) + "/oam/applicationcomponent";
         HttpRequest req = HttpRequest.newBuilder().uri(URI.create(url)).GET().build();
         Instant start = Instant.now();
@@ -139,17 +138,17 @@ public class MainRESTClient {
             Duration d = Duration.between(start, Instant.now());
             LOG.info("[UI] GET {} - status={} duration={}ms bytes={}, body={}", url, resp.statusCode(), d.toMillis(), resp.body() == null ? 0 : resp.body().length(), resp.body());
             if (resp.statusCode() >= 200 && resp.statusCode() < 300) {
-                return mapper.readValue(resp.body(), new TypeReference<ApplicationComponentSummaryList>(){});
+                return mapper.readValue(resp.body(), new TypeReference<List<ApplicationComponent>>(){});
             } else {
                 LOG.warn("[UI] GET {} returned non-success status {}", url, resp.statusCode());
             }
         } catch (Exception e) {
             LOG.error("[UI] GET {} failed: {}", url, e.toString());
         }
-        return new ApplicationComponentSummaryList();
+        return Collections.emptyList();
     }
 
-    public List<ApplicationComponentSummary> listSubcomponents(String id) {
+    public List<ApplicationComponent> listSubcomponents(String id) {
         String url;
         try {
             url = normalize(baseUrl) + "/oam/applicationcomponent/" + urlEncode(id) + "/subcomponents";
@@ -165,7 +164,7 @@ public class MainRESTClient {
             Duration d = Duration.between(start, Instant.now());
             LOG.info("[UI] GET {} - status={} duration={}ms bytes={}", url, resp.statusCode(), d.toMillis(), resp.body() == null ? 0 : resp.body().length());
             if (resp.statusCode() >= 200 && resp.statusCode() < 300) {
-                return mapper.readValue(resp.body(), new TypeReference<List<ApplicationComponentSummary>>(){});
+                return mapper.readValue(resp.body(), new TypeReference<List<ApplicationComponent>>(){});
             } else {
                 LOG.warn("[UI] GET {} returned non-success status {}", url, resp.statusCode());
             }
@@ -480,7 +479,7 @@ public class MainRESTClient {
         return null;
     }
 
-    public static String resolveKey(ApplicationComponentSummary s) {
+    public static String resolveKey(ApplicationComponent s) {
         String key = s.resolveKey();
         return(key);
     }
@@ -501,43 +500,43 @@ public class MainRESTClient {
         }
     }
 
-    public List<ApplicationComponentSummary> listSubcomponents(IdToken id) {
-        if (id == null || id.getContent() == null || id.getContent().isBlank()) { return Collections.emptyList(); }
-        return listSubcomponents(id.getContent());
+    public List<ApplicationComponent> listSubcomponents(ObjectToken id) {
+        if (id == null || id.getToken() == null || id.getToken().isBlank()) { return Collections.emptyList(); }
+        return listSubcomponents(id.getToken());
     }
 
-    public ApplicationComponentMetricsData getLatestMetrics(IdToken id) {
-        if (id == null || id.getContent() == null || id.getContent().isBlank()) { return null; }
-        return getLatestMetrics(id.getContent());
+    public ApplicationComponentMetricsData getLatestMetrics(ObjectToken id) {
+        if (id == null || id.getToken() == null || id.getToken().isBlank()) { return null; }
+        return getLatestMetrics(id.getToken());
     }
 
-    public Pathway getPathway(IdToken id) {
-        if (id == null || id.getContent() == null || id.getContent().isBlank()) { return null; }
-        return getPathway(id.getContent());
+    public Pathway getPathway(ObjectToken id) {
+        if (id == null || id.getToken() == null || id.getToken().isBlank()) { return null; }
+        return getPathway(id.getToken());
     }
 
-    public java.util.Map<Integer, PathwayRoute> getPathwaySegments(IdToken id) {
-        if (id == null || id.getContent() == null || id.getContent().isBlank()) { return java.util.Collections.emptyMap(); }
-        return getPathwaySegments(id.getContent());
+    public java.util.Map<Integer, PathwayRoute> getPathwaySegments(ObjectToken id) {
+        if (id == null || id.getToken() == null || id.getToken().isBlank()) { return java.util.Collections.emptyMap(); }
+        return getPathwaySegments(id.getToken());
     }
 
-    public PathwayRoute getSegmentById(IdToken id) {
-        if (id == null || id.getContent() == null || id.getContent().isBlank()) { return null; }
-        return getSegmentById(id.getContent());
+    public PathwayRoute getSegmentById(ObjectToken id) {
+        if (id == null || id.getToken() == null || id.getToken().isBlank()) { return null; }
+        return getSegmentById(id.getToken());
     }
 
-    public PathwayRouteSegment getPathById(IdToken id) {
-        if (id == null || id.getContent() == null || id.getContent().isBlank()) { return null; }
-        return getPathById(id.getContent());
+    public PathwayRouteSegment getPathById(ObjectToken id) {
+        if (id == null || id.getToken() == null || id.getToken().isBlank()) { return null; }
+        return getPathById(id.getToken());
     }
 
-    public PathwayElement getFlowById(IdToken id) {
-        if (id == null || id.getContent() == null || id.getContent().isBlank()) { return null; }
-        return getFlowById(id.getContent());
+    public PathwayElement getFlowById(ObjectToken id) {
+        if (id == null || id.getToken() == null || id.getToken().isBlank()) { return null; }
+        return getFlowById(id.getToken());
     }
 
     // Overloads that accept DistributableObjectId and use CommonName as REST key
-    public List<ApplicationComponentSummary> listSubcomponents(DistributableObjectId id) {
+    public List<ApplicationComponent> listSubcomponents(DistributableObjectId id) {
         String key = resolveRestKey(id);
         if (key == null || key.isBlank()) { return Collections.emptyList(); }
         return listSubcomponents(key);
@@ -634,14 +633,14 @@ public class MainRESTClient {
     }
 
     // --- Interfaces for a component ---
-    public java.util.List<InterfaceComponentSummary> listInterfaces(String id) {
-        List<InterfaceComponentSummary> interfaceList = new ArrayList<>();
+    public List<WUPInterfaceBase> listInterfaces(String id) {
+        List<WUPInterfaceBase> interfaceList = new ArrayList<>();
         interfaceList.addAll(listIngressInterfaces(id));
         interfaceList.addAll(listEgressInterfaces(id));
         return interfaceList;
     }
 
-    public List<IngressInterfaceComponentSummary> listIngressInterfaces(String id) {
+    public List<IngresApplicationInterface> listIngressInterfaces(String id) {
         String url;
         try {
             url = normalize(baseUrl) + "/oam/applicationcomponent/" + urlEncode(id) + "/ingressinterfaces";
@@ -657,7 +656,7 @@ public class MainRESTClient {
             Duration d = Duration.between(start, Instant.now());
             LOG.info("[UI] GET {} - status={} duration={}ms bytes={}", url, resp.statusCode(), d.toMillis(), resp.body() == null ? 0 : resp.body().length());
             if (resp.statusCode() >= 200 && resp.statusCode() < 300) {
-                List<IngressInterfaceComponentSummary> ingressInterfaces = mapper.readValue(resp.body(), new TypeReference<java.util.List<IngressInterfaceComponentSummary>>(){});
+                List<IngresApplicationInterface> ingressInterfaces = mapper.readValue(resp.body(), new TypeReference<java.util.List<IngresApplicationInterface>>(){});
                 return ingressInterfaces;
             } else {
                 LOG.warn("[UI] GET {} returned non-success status {}", url, resp.statusCode());
@@ -668,7 +667,7 @@ public class MainRESTClient {
         return java.util.Collections.emptyList();
     }
 
-    public List<EgressInterfaceComponentSummary> listEgressInterfaces(String id) {
+    public List<EgressApplicationInterface> listEgressInterfaces(String id) {
         String url;
         try {
             url = normalize(baseUrl) + "/oam/applicationcomponent/" + urlEncode(id) + "/egressinterfaces";
@@ -684,7 +683,7 @@ public class MainRESTClient {
             Duration d = Duration.between(start, Instant.now());
             LOG.info("[UI] GET {} - status={} duration={}ms bytes={}", url, resp.statusCode(), d.toMillis(), resp.body() == null ? 0 : resp.body().length());
             if (resp.statusCode() >= 200 && resp.statusCode() < 300) {
-                List<EgressInterfaceComponentSummary> egressInterfaces = mapper.readValue(resp.body(), new TypeReference<java.util.List<EgressInterfaceComponentSummary>>(){});
+                List<EgressApplicationInterface> egressInterfaces = mapper.readValue(resp.body(), new TypeReference<java.util.List<EgressApplicationInterface>>(){});
                 return egressInterfaces;
             } else {
                 LOG.warn("[UI] GET {} returned non-success status {}", url, resp.statusCode());
@@ -695,12 +694,12 @@ public class MainRESTClient {
         return java.util.Collections.emptyList();
     }
 
-    public java.util.List<InterfaceComponentSummary> listInterfaces(IdToken id){
-        if (id == null || id.getContent() == null || id.getContent().isBlank()) { return java.util.Collections.emptyList(); }
-        return listInterfaces(id.getContent());
+    public List<WUPInterfaceBase> listInterfaces(ObjectToken id){
+        if (id == null || id.getToken() == null || id.getToken().isBlank()) { return java.util.Collections.emptyList(); }
+        return listInterfaces(id.getToken());
     }
 
-    public java.util.List<InterfaceComponentSummary> listInterfaces(DistributableObjectId id){
+    public List<WUPInterfaceBase> listInterfaces(DistributableObjectId id){
         String key = resolveRestKey(id);
         if (key == null || key.isBlank()) { return java.util.Collections.emptyList(); }
         return listInterfaces(key);

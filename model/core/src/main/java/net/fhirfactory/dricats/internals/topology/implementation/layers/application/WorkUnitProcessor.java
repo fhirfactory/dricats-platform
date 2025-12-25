@@ -22,7 +22,12 @@
 package net.fhirfactory.dricats.internals.topology.implementation.layers.application;
 
 import java.io.Serial;
+import java.util.ArrayList;
+import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import net.fhirfactory.dricats.internals.common.identifiers.ElementReference;
+import net.fhirfactory.dricats.internals.topology.implementation.layers.application.valuesets.ApplicationComponentSpecialisationEnum;
 import net.fhirfactory.dricats.reference.archimate.layers.application.ApplicationComponent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,6 +41,67 @@ public class WorkUnitProcessor extends ApplicationComponent {
     private static final long serialVersionUID = -123456789032191L;
     private static final Logger LOG = LoggerFactory.getLogger(WorkUnitProcessor.class);
 
+
+    //
+     // Constructor(s)
+    //
+
+    public WorkUnitProcessor() {
+        super();
+        setSpecialization(ApplicationComponentSpecialisationEnum.SUBSYSTEM_APPLICATION_WORK_UNIT_PROCESSOR.getType());
+    }
+
+    //
+    // "bean" methods
+    //
+
+    @JsonIgnore
+    public List<ElementReference> getIngresInterfaces(){
+        ArrayList<ElementReference> ingresInterfaces = new ArrayList<>();
+        for(ElementReference reference : getInterfaces()){
+            String specialisation = reference.getObjectSpecialisation();
+            ApplicationComponentSpecialisationEnum specialisationEnum = ApplicationComponentSpecialisationEnum.fromCode(specialisation);
+            if(specialisationEnum == ApplicationComponentSpecialisationEnum.SUBSYSTEM_APPLICATION_WUP_INTERFACE_INGRES ){
+                ingresInterfaces.add(reference);
+            }
+        }
+        return(ingresInterfaces);
+    }
+
+    @JsonIgnore
+    public void setIngresInterfaces(List<ElementReference> ingresInterfaces){
+        for(ElementReference reference : ingresInterfaces){
+            String specialisation = reference.getObjectSpecialisation();
+            ApplicationComponentSpecialisationEnum specialisationEnum = ApplicationComponentSpecialisationEnum.fromCode(specialisation);
+            if(specialisationEnum == ApplicationComponentSpecialisationEnum.SUBSYSTEM_APPLICATION_WUP_INTERFACE_INGRES ){
+                getInterfaces().add(reference);
+            }
+        }
+    }
+
+    @JsonIgnore
+    public List<ElementReference> getEgressInterfaces(){
+        ArrayList<ElementReference> egressInterfaces = new ArrayList<>();
+        for(ElementReference reference : getInterfaces()){
+            String specialisation = reference.getObjectSpecialisation();
+            ApplicationComponentSpecialisationEnum specialisationEnum = ApplicationComponentSpecialisationEnum.fromCode(specialisation);
+            if(specialisationEnum == ApplicationComponentSpecialisationEnum.SUBSYSTEM_APPLICATION_WUP_INTERFACE_EGRESS ){
+                egressInterfaces.add(reference);
+            }
+        }
+        return(egressInterfaces);
+    }
+
+    @JsonIgnore
+    public void setEgresInterfaces(List<ElementReference> egresInterfaces){
+        for(ElementReference reference : egresInterfaces){
+            String specialisation = reference.getObjectSpecialisation();
+            ApplicationComponentSpecialisationEnum specialisationEnum = ApplicationComponentSpecialisationEnum.fromCode(specialisation);
+            if(specialisationEnum == ApplicationComponentSpecialisationEnum.SUBSYSTEM_APPLICATION_WUP_INTERFACE_EGRESS ){
+                getInterfaces().add(reference);
+            }
+        }
+    }
 
     //
     // Utility Methods

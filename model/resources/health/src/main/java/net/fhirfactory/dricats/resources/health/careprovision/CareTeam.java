@@ -21,7 +21,7 @@
  */
 package net.fhirfactory.dricats.resources.health.careprovision;
 
-import net.fhirfactory.dricats.internals.common.DistributableObjectReference;
+import net.fhirfactory.dricats.internals.common.identifiers.ElementReference;
 import net.fhirfactory.dricats.resources.actors.Team;
 
 import java.io.Serial;
@@ -42,7 +42,7 @@ public class CareTeam extends Team implements Serializable {
     private String reasonCode;
     private String reasonReference;
     private String category;
-    private DistributableObjectReference subject;
+    private ElementReference subject;
 
     //
     // Constructor(s)
@@ -54,7 +54,7 @@ public class CareTeam extends Team implements Serializable {
         reasonCode = "";
         reasonReference = "";
         category = "";
-        subject = new DistributableObjectReference();
+        subject = new ElementReference();
     }
 
     //
@@ -95,11 +95,11 @@ public class CareTeam extends Team implements Serializable {
         this.category = category;
     }
 
-    public DistributableObjectReference getSubject() {
+    public ElementReference getSubject() {
         return subject;
     }
 
-    public void setSubject(DistributableObjectReference subject) {
+    public void setSubject(ElementReference subject) {
         this.subject = subject;
     }
 
@@ -122,7 +122,7 @@ public class CareTeam extends Team implements Serializable {
                 .add("objectID=" + getObjectID())
                 .add("securityLabels=" + getSecurityLabels())
                 .add("metadata=" + getMetadata())
-                .add("id=" + getId())
+                .add("id=" + getLocalId())
                 .toString();
     }
 

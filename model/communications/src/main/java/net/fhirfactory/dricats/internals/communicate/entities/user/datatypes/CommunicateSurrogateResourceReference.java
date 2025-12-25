@@ -21,20 +21,20 @@
  */
 package net.fhirfactory.dricats.internals.communicate.entities.user.datatypes;
 
-import net.fhirfactory.dricats.internals.common.DistributableObjectReference;
-import net.fhirfactory.dricats.internals.common.datatypes.UserLogin;
+import net.fhirfactory.dricats.internals.common.identifiers.ElementReference;
+import net.fhirfactory.dricats.internals.datatypes.UserLogin;
 
 
 public class CommunicateSurrogateResourceReference {
-    private DistributableObjectReference realResourceID;
+    private ElementReference realResourceID;
     private String realResourceType;
     private UserLogin surrogateUserID;
 
-    public DistributableObjectReference getRealResourceID() {
+    public ElementReference getRealResourceID() {
         return realResourceID;
     }
 
-    public void setRealResourceID(DistributableObjectReference realResourceID) {
+    public void setRealResourceID(ElementReference realResourceID) {
         this.realResourceID = realResourceID;
     }
 

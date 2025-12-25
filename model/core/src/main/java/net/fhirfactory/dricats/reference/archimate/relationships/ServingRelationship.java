@@ -3,9 +3,9 @@
  */
 package net.fhirfactory.dricats.reference.archimate.relationships;
 
-import net.fhirfactory.dricats.internals.common.DistributableObjectId;
+import net.fhirfactory.dricats.internals.common.identifiers.ElementReference;
 import net.fhirfactory.dricats.reference.archimate.common.RelationshipBase;
-import net.fhirfactory.dricats.reference.archimate.relationships.valuesets.RelationshipType;
+import net.fhirfactory.dricats.reference.archimate.relationships.valuesets.RelationshipTypeEnum;
 
 import java.io.Serial;
 
@@ -23,7 +23,7 @@ public class ServingRelationship extends RelationshipBase {
      */
     public ServingRelationship() {
         super();
-        setType(RelationshipType.SERVING);
+        setType(RelationshipTypeEnum.SERVING);
     }
 
     /**
@@ -32,9 +32,9 @@ public class ServingRelationship extends RelationshipBase {
      * @param sourceId The ID of the source element (the serving element)
      * @param targetId The ID of the target element (the element being served)
      */
-    public ServingRelationship(DistributableObjectId sourceId, DistributableObjectId targetId) {
+    public ServingRelationship(ElementReference sourceId, ElementReference targetId) {
         super(sourceId, targetId);
-        setType(RelationshipType.SERVING);
+        setType(RelationshipTypeEnum.SERVING);
     }
 
     /**
@@ -44,9 +44,9 @@ public class ServingRelationship extends RelationshipBase {
      * @param sourceId The ID of the source element (the serving element)
      * @param targetId The ID of the target element (the element being served)
      */
-    public ServingRelationship(String name, DistributableObjectId sourceId, DistributableObjectId targetId) {
+    public ServingRelationship(String name, ElementReference sourceId, ElementReference targetId) {
         super(name, sourceId, targetId);
-        setType(RelationshipType.SERVING);
+        setType(RelationshipTypeEnum.SERVING);
     }
 
     /**
@@ -57,8 +57,8 @@ public class ServingRelationship extends RelationshipBase {
      * @param sourceId The ID of the source element (the serving element)
      * @param targetId The ID of the target element (the element being served)
      */
-    public ServingRelationship(String name, String description, DistributableObjectId sourceId, DistributableObjectId targetId) {
+    public ServingRelationship(String name, String description, ElementReference sourceId, ElementReference targetId) {
         super(name, description, sourceId, targetId);
-        setType(RelationshipType.SERVING);
+        setType(RelationshipTypeEnum.SERVING);
     }
 }

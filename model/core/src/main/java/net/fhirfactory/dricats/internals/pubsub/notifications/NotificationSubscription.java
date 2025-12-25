@@ -21,7 +21,7 @@
  */
 package net.fhirfactory.dricats.internals.pubsub.notifications;
 
-import net.fhirfactory.dricats.internals.common.DistributableObjectId;
+import net.fhirfactory.dricats.internals.common.identifiers.ElementReference;
 import net.fhirfactory.dricats.internals.events.notifications.NotificationObject;
 import net.fhirfactory.dricats.internals.pubsub.common.SubscriptionBase;
 import net.fhirfactory.dricats.reference.archimate.layers.application.ApplicationFunction;
@@ -55,11 +55,11 @@ public class NotificationSubscription extends SubscriptionBase implements Serial
         super();
     }
 
-    public NotificationSubscription(DistributableObjectId subscriber, ApplicationFunction subscriberFunction) {
+    public NotificationSubscription(ElementReference subscriber, ApplicationFunction subscriberFunction) {
         super(subscriber, subscriberFunction, "Notification");
     }
 
-    public NotificationSubscription(DistributableObjectId subscriber, ApplicationFunction subscriberFunction, NotificationSubscriptionMask subscriptionMask) {
+    public NotificationSubscription(ElementReference subscriber, ApplicationFunction subscriberFunction, NotificationSubscriptionMask subscriptionMask) {
         super(subscriber, subscriberFunction, "Notification");
         this.notificationSubscriptionMask = subscriptionMask;
     }

@@ -25,7 +25,7 @@ import net.fhirfactory.dricats.internals.communicate.entities.rooms.datatypes.Co
 import net.fhirfactory.dricats.internals.communicate.entities.session.datatypes.CommunicateSessionID;
 import net.fhirfactory.dricats.internals.communicate.entities.session.datatypes.CommunicateSessionParticipant;
 import net.fhirfactory.dricats.internals.communicate.entities.session.valuesets.CommunicateSessionTypeEnum;
-import net.fhirfactory.dricats.internals.common.DistributableObject;
+import net.fhirfactory.dricats.internals.common.object.DistributableObject;
 
 import java.io.Serial;
 import java.util.ArrayList;

@@ -33,6 +33,20 @@
             <scope>compile</scope>
         </dependency>
 
+        <dependency>
+            <groupId>net.fhirfactory.dricats</groupId>
+            <artifactId>dricats-middleware-topologygrid-common</artifactId>
+            <version>${project.version}</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>net.fhirfactory.dricats</groupId>
+            <artifactId>dricats-middleware-topologygrid-satellite</artifactId>
+            <version>${project.version}</version>
+            <scope>compile</scope>
+        </dependency>
+
         <!--*******************************************************************************-->
         <!-- JakartaEE (Wildfly) Libraries                                                 -->
         <!--*******************************************************************************-->
@@ -105,7 +119,30 @@
             <scope>compile</scope>
         </dependency>
 
+        <!--*******************************************************************************-->
+        <!-- Apache Camel                                                                  -->
+        <!--*******************************************************************************-->
 
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-core</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-api</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-rest</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jgroups</groupId>
+            <artifactId>jgroups</artifactId>
+            <version>${version-org.jgroups-jgroups}</version>
+        </dependency>
 
     </dependencies>
 

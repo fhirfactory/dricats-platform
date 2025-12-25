@@ -21,12 +21,12 @@
  */
 package net.fhirfactory.dricats.ui.server;
 
-import net.fhirfactory.dricats.datagrid.topology.IApplicationComponentCacheClient;
+import net.fhirfactory.dricats.datagrid.common.topologygrid.IApplicationComponentCacheClient;
 import net.fhirfactory.dricats.internals.common.DistributableObjectId;
-import net.fhirfactory.dricats.internals.common.naming.QualifiedName;
+import net.fhirfactory.dricats.internals.common.naming.FullyDistinguishedName;
 import net.fhirfactory.dricats.internals.oam.metrics.ApplicationComponentMetricsData;
 import net.fhirfactory.dricats.internals.oam.metrics.interfaces.ILocalMetricsServerInterface;
-import net.fhirfactory.dricats.internals.oam.topology.base.ApplicationComponentSummary;
+import net.fhirfactory.dricats.ui.model.topology.base.ApplicationComponentSummary;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -104,7 +104,7 @@ public class OAMBackEndForFrontEndHandler {
     private String extractKey(DistributableObjectId id) {
         if (id == null) { return null; }
         try {
-            QualifiedName qn = id.getQualifiedName();
+            FullyDistinguishedName qn = id.getQualifiedName();
             if (qn != null && qn.getCommonName() != null && qn.getCommonName().getValue() != null) {
                 return qn.getCommonName().getValue();
             }

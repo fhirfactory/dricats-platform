@@ -21,7 +21,7 @@
  */
 package net.fhirfactory.dricats.internals.pubsub.messages;
 
-import net.fhirfactory.dricats.internals.common.DistributableObjectId;
+import net.fhirfactory.dricats.internals.common.identifiers.ElementReference;
 import net.fhirfactory.dricats.internals.events.messages.MessageObject;
 import net.fhirfactory.dricats.internals.pubsub.common.SubscriptionBase;
 import net.fhirfactory.dricats.reference.archimate.layers.application.ApplicationFunction;
@@ -54,11 +54,11 @@ public class MessageSubscription extends SubscriptionBase implements Serializabl
         super();
     }
 
-    public MessageSubscription(DistributableObjectId subscriber, ApplicationFunction subscriberFunction) {
+    public MessageSubscription(ElementReference subscriber, ApplicationFunction subscriberFunction) {
         super(subscriber, subscriberFunction, "Message");
     }
 
-    public MessageSubscription(DistributableObjectId subscriber, ApplicationFunction subscriberFunction, MessageSubscriptionMask subscriptionMask) {
+    public MessageSubscription(ElementReference subscriber, ApplicationFunction subscriberFunction, MessageSubscriptionMask subscriptionMask) {
         super(subscriber, subscriberFunction, "Message");
         this.messageSubscriptionMask = subscriptionMask;
     }

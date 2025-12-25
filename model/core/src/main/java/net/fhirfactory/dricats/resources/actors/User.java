@@ -22,7 +22,7 @@
 package net.fhirfactory.dricats.resources.actors;
 
 
-import net.fhirfactory.dricats.internals.common.datatypes.UserLogin;
+import net.fhirfactory.dricats.internals.datatypes.UserLogin;
 import net.fhirfactory.dricats.reference.archimate.layers.business.BusinessRole;
 
 import java.io.Serial;
@@ -80,11 +80,10 @@ public class User extends BusinessRole implements Serializable {
                 .add("logins=" + getLogins())
                 .add("status='" + getStatus() + "'")
                 .add("name=" + getName())
-                .add("objectID=" + getObjectID())
                 .add("securityLabels=" + getSecurityLabels())
                 .add("metadata=" + getMetadata())
                 .add("identifiers=" + getIdentifiers())
-                .add("id=" + getId())
+                .add("id=" + getLocalId())
                 .toString();
     }
 

@@ -4,11 +4,11 @@
 package net.fhirfactory.dricats.reference.archimate.relationships;
 
 import net.fhirfactory.dricats.reference.archimate.common.RelationshipBase;
-import net.fhirfactory.dricats.reference.archimate.relationships.valuesets.RelationshipType;
+import net.fhirfactory.dricats.reference.archimate.relationships.valuesets.RelationshipTypeEnum;
 
 import java.io.Serial;
 
 public class AggregationRelationshipBase extends RelationshipBase {
     @Serial private static final long serialVersionUID = -730450129990210L;
-    public AggregationRelationshipBase(){ setType(RelationshipType.AGGREGATION); }
+    public AggregationRelationshipBase(){ setType(RelationshipTypeEnum.AGGREGATION); }
 }

@@ -21,104 +21,63 @@
  */
 package net.fhirfactory.dricats.internals.pubsub.content;
 
-import jakarta.ws.rs.core.MediaType;
-import net.fhirfactory.dricats.internals.data.valuesets.MimeTypeEnum;
-import net.fhirfactory.dricats.internals.pubsub.TopicSubscription;
-import net.fhirfactory.dricats.internals.pubsub.common.SubscriptionMaskBase;
-import net.fhirfactory.dricats.internals.topics.Topic;
+import net.fhirfactory.dricats.internals.pubsub.common.FilterBase;
 import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.Serial;
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
 
-public class ContentFilter extends SubscriptionMaskBase implements Serializable {
+public class ContentFilter extends FilterBase implements Serializable {
     //
     // Housekeeping
     //
     @Serial
-    private static final long serialVersionUID = -12345678900001L;
-    private static final Logger LOG = LoggerFactory.getLogger(ContentFilter.class);
+    private static final long serialVersionUID = 1L;
 
     //
-     // Attributes
+    // Attributes
     //
-    private List<MimeTypeEnum> supportedMediaTypes;
+
+    private ContentFilterMask contentFilterMask;
 
     //
-    // Constructor(s)
+     // Constructor(s)
     //
-    public ContentFilter() {
+
+    public ContentFilter(){
         super();
-        this.supportedMediaTypes = new ArrayList<>();
+    }
+
+    public ContentFilter(ContentFilterMask contentFilterMask){
+        super();
+        this.contentFilterMask = contentFilterMask;
     }
 
     //
     // Getters and Setters
     //
-    public List<MimeTypeEnum> getSupportedMediaTypes() {
-        return supportedMediaTypes;
+    public ContentFilterMask getContentFilterMask() {
+        return contentFilterMask;
     }
 
-    public void setMediaType(List<MimeTypeEnum> mediaTypes) {
-        this.supportedMediaTypes = mediaTypes;
-    }
-
-    protected Logger getLogger() {
-        return LOG;
+    public void setContentFilterMask(ContentFilterMask contentFilterMask) {
+        this.contentFilterMask = contentFilterMask;
     }
 
     //
-    // Business Methods
-    //
-    public boolean filter(Topic contentTopic, MimeTypeEnum messageMediaType){
-        getLogger().debug(".filter(Topic, MediaType): Entry, contentTopic -> {}, messageMediaType -> {}", contentTopic, messageMediaType);
-        boolean mediaTypeTestOutcome = false;
-        for(MimeTypeEnum currentMediaType : getSupportedMediaTypes()){
-            if(currentMediaType.equals(messageMediaType)){
-                mediaTypeTestOutcome = true;
-                break;
-            }
-        }
-        if(!mediaTypeTestOutcome){
-            getLogger().debug(".filter(): Exit, message media type does not match filter, returning false");
-            return(false);
-        }
-        boolean topicCheckOutcome = filter(contentTopic);
-        getLogger().debug(".filter(Topic, MediaType): Exit, topicCheckOutcome -> {}", topicCheckOutcome);
-        return(topicCheckOutcome);
-    }
-
-    public boolean filter(Topic contentTopic){
-        getLogger().debug(".filter(Topic): Entry, contentTopic -> {}", contentTopic);
-        Boolean outcome = false;
-        for(TopicSubscription currentTopicSubscription : getEventTopicSubscriptions()){
-            if(currentTopicSubscription.filter(contentTopic.getTopicName())){
-                outcome = true;
-                break;
-            }
-        }
-        getLogger().debug(".filter(Topic): Exit, outcome -> {}", outcome);
-        return(outcome);
-    }
-
-    //
-     // Standard Methods
+    // Standard Methods
     //
 
     @Override
     public String toString() {
         return new ToStringBuilder(this)
-                .append("supportedMediaTypes", supportedMediaTypes)
-                .append("internalEventSource", internalEventSource)
-                .append("internalEventTarget", internalEventTarget)
-                .append("eventTopicSubscriptions", eventTopicSubscriptions)
-                .append("eventOrigin", eventOrigin)
-                .append("eventFinalDestination", eventFinalDestination)
-                .append("temporalWindow", temporalWindow)
+                .append("contentFilterMask", getContentFilterMask())
+                .append("publisherFunction", getPublisherFunction())
+                .append("publisherInstance", getPublisherInstance())
+                .append("identifiers", getIdentifiers())
+                .append("securityLabels", getSecurityLabels())
+                .append("metadata", getMetadata())
+                .append("id", getLocalId())
                 .toString();
     }
 }

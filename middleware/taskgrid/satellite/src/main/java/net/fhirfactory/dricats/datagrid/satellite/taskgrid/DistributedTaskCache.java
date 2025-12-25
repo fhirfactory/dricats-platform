@@ -24,8 +24,6 @@ package net.fhirfactory.dricats.datagrid.satellite.taskgrid;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
 import jakarta.enterprise.context.ApplicationScoped;
-import net.fhirfactory.dricats.internals.common.DistributableObjectId;
-import net.fhirfactory.dricats.internals.common.naming.CommonName;
 import net.fhirfactory.dricats.internals.tasking.InternalTask;
 import org.infinispan.Cache;
 import org.infinispan.configuration.cache.CacheMode;
@@ -36,7 +34,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Optional;
-import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 /**

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024 Mark A. Hunter
+ * Copyright (c) 2025 Mark A. Hunter
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this applications and associated documentation files (the "Software"), to deal
@@ -27,9 +27,12 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.Instance;
 import jakarta.inject.Inject;
 import net.fhirfactory.dricats.datagrid.central.topologygrid.spi.IApplicationComponentPersistenceService;
-import net.fhirfactory.dricats.datagrid.central.topologygrid.spi.IInterfaceComponentPersistenceService;
-import net.fhirfactory.dricats.internals.oam.topology.base.ApplicationComponentSummary;
-import net.fhirfactory.dricats.internals.oam.topology.base.InterfaceComponentSummary;
+import net.fhirfactory.dricats.datagrid.common.topologygrid.IApplicationComponentCacheClient;
+import net.fhirfactory.dricats.internals.common.DistributableObjectId;
+import net.fhirfactory.dricats.internals.common.identifiers.ElementReference;
+import net.fhirfactory.dricats.internals.topology.implementation.layers.application.valuesets.ApplicationComponentSpecialisationEnum;
+import net.fhirfactory.dricats.reference.archimate.common.valuesets.ElementTypeEnum;
+import net.fhirfactory.dricats.reference.archimate.layers.application.ApplicationComponent;
 import org.infinispan.Cache;
 import org.infinispan.configuration.cache.CacheMode;
 import org.infinispan.configuration.cache.ConfigurationBuilder;
@@ -44,43 +47,50 @@ import org.infinispan.notifications.cachelistener.event.CacheEntryEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * Persistent Infinispan cache for ApplicationComponentSummary resources with H2-backed JDBC store.
- *
+ * <p>
  * This cache joins an Infinispan cluster and persists entries to an embedded H2 database using
  * the JDBC String-Based Store. A small replicated cache is used for load requests so that store
  * nodes can trigger read-through loads from the JDBC store when a client requests a missing key.
  */
 @ApplicationScoped
-public class DistributedApplicationComponentCacheWithStore {
+public class DistributedApplicationComponentCacheWithStore implements IApplicationComponentCacheClient {
+    //
+    // Housekeeping
+    //
     private static final Logger LOG = LoggerFactory.getLogger(DistributedApplicationComponentCacheWithStore.class);
 
+    //
+    // Constants
+    //
     public static final String DEFAULT_CACHE_NAME = "ApplicationComponentCache";
     public static final String DEFAULT_LOAD_REQUEST_CACHE_NAME = "ApplicationComponentLoadRequests";
-    public static final String DEFAULT_INTERFACE_CACHE_NAME = "InterfaceComponentCache";
-    public static final String DEFAULT_INTERFACE_LOAD_REQUEST_CACHE_NAME = "InterfaceComponentLoadRequests";
 
+    //
+    // Attributes
+    //
     private DefaultCacheManager cacheManager;
-    private Cache<String, ApplicationComponentSummary> cache;
+    private Cache<String, ApplicationComponent> cache;
     private Cache<String, String> loadRequestCache;
-    private Cache<String, InterfaceComponentSummary> interfaceCache;
-    private Cache<String, String> interfaceLoadRequestCache;
     private final List<Object> registeredListeners = new ArrayList<>();
+    private final AtomicLong changeVersion = new AtomicLong(0);
 
     @Inject
     private Instance<IApplicationComponentPersistenceService> persistenceServiceInstance;
-    @Inject
-    private Instance<IInterfaceComponentPersistenceService> interfacePersistenceServiceInstance;
+
+    //
+    // Lifecycle
+    //
 
     @PostConstruct
     public void start() {
         try {
-            LOG.info("Starting ApplicationComponentInfinispanPersistentStore (clustered, persistent H2)...");
+            getLogger().info("Starting ApplicationComponentInfinispanPersistentStore (clustered, persistent H2)...");
             String clusterName = System.getProperty("application.component.store.cluster.name", "dricats-application-component-cluster");
             String nodeName = System.getProperty("application.component.store.node.name");
 
@@ -96,9 +106,9 @@ public class DistributedApplicationComponentCacheWithStore {
                 if (jgroupsStack != null && !jgroupsStack.isEmpty()) {
                     global.transport().addProperty("stack", jgroupsStack);
                 }
-                LOG.info("ApplicationComponentInfinispanPersistentStore: Using custom JGroups config file='{}' stack='{}'", jgroupsConfig, jgroupsStack);
+                getLogger().info("ApplicationComponentInfinispanPersistentStore: Using custom JGroups config file='{}' stack='{}'", jgroupsConfig, jgroupsStack);
             } else {
-                LOG.info("ApplicationComponentInfinispanPersistentStore: Using default JGroups transport (no custom config provided)");
+                getLogger().info("ApplicationComponentInfinispanPersistentStore: Using default JGroups transport (no custom config provided)");
             }
 
             this.cacheManager = new DefaultCacheManager(global.build());
@@ -119,7 +129,7 @@ public class DistributedApplicationComponentCacheWithStore {
             String cacheName = System.getProperty("application.component.store.cache.name", DEFAULT_CACHE_NAME);
             this.cacheManager.defineConfiguration(cacheName, base.build());
             this.cache = this.cacheManager.getCache(cacheName);
-            LOG.info("ApplicationComponentInfinispanPersistentStore: cache={} ready in cluster='{}' node='{}' mode='{}' owners={}",
+            getLogger().info("ApplicationComponentInfinispanPersistentStore: cache={} ready in cluster='{}' node='{}' mode='{}' owners={}",
                     cacheName, clusterName, nodeName, cacheModeProp, owners);
 
             // Replicated short-lived load request cache
@@ -130,70 +140,46 @@ public class DistributedApplicationComponentCacheWithStore {
             reqCfg.expiration().lifespan(ttlMs, TimeUnit.MILLISECONDS);
             this.cacheManager.defineConfiguration(reqCacheName, reqCfg.build());
             this.loadRequestCache = this.cacheManager.getCache(reqCacheName);
-            LOG.info("ApplicationComponentInfinispanPersistentStore: load-request cache={} ready (ttlMs={})", reqCacheName, ttlMs);
+            getLogger().info("ApplicationComponentInfinispanPersistentStore: load-request cache={} ready (ttlMs={})", reqCacheName, ttlMs);
 
-            // Interface component cache
-            String ifCacheName = System.getProperty("application.interface.store.cache.name", DEFAULT_INTERFACE_CACHE_NAME);
-            this.cacheManager.defineConfiguration(ifCacheName, base.build());
-            this.interfaceCache = this.cacheManager.getCache(ifCacheName);
-            LOG.info("ApplicationComponentInfinispanPersistentStore: interface cache={} ready in cluster='{}'", ifCacheName, clusterName);
-
-            // Interface load request cache
-            String ifReqCacheName = System.getProperty("application.interface.store.load.request.cache.name", DEFAULT_INTERFACE_LOAD_REQUEST_CACHE_NAME);
-            ConfigurationBuilder ifReqCfg = new ConfigurationBuilder();
-            ifReqCfg.clustering().cacheMode(CacheMode.REPL_SYNC);
-            long ifTtlMs = Long.getLong("application.interface.store.load.request.ttl.ms", 60_000L);
-            ifReqCfg.expiration().lifespan(ifTtlMs, TimeUnit.MILLISECONDS);
-            this.cacheManager.defineConfiguration(ifReqCacheName, ifReqCfg.build());
-            this.interfaceLoadRequestCache = this.cacheManager.getCache(ifReqCacheName);
-            LOG.info("ApplicationComponentInfinispanPersistentStore: interface load-request cache={} ready (ttlMs={})", ifReqCacheName, ifTtlMs);
 
             // Register listeners
             registerClusteredPersistenceListener(cacheName, this.cache);
             registerLoadRequestListener(reqCacheName, this.loadRequestCache);
-            registerInterfaceClusteredPersistenceListener(ifCacheName, this.interfaceCache);
-            registerInterfaceLoadRequestListener(ifReqCacheName, this.interfaceLoadRequestCache);
 
             boolean bootstrapPersistAll = Boolean.parseBoolean(System.getProperty("application.component.store.persist.bootstrap", "true"));
             if (bootstrapPersistAll) {
                 try {
                     bootstrapPersistAll(this.cache);
                 } catch (Exception ex) {
-                    LOG.warn("ApplicationComponentInfinispanPersistentStore: bootstrap persistence failed", ex);
-                }
-            }
-            boolean ifBootstrapPersistAll = Boolean.parseBoolean(System.getProperty("application.interface.store.persist.bootstrap", "true"));
-            if (ifBootstrapPersistAll) {
-                try {
-                    bootstrapInterfacePersistAll(this.interfaceCache);
-                } catch (Exception ex) {
-                    LOG.warn("ApplicationComponentInfinispanPersistentStore: interface bootstrap persistence failed", ex);
+                    getLogger().warn("ApplicationComponentInfinispanPersistentStore: bootstrap persistence failed", ex);
                 }
             }
         } catch (Exception e) {
-            LOG.error("Failed to start ApplicationComponentInfinispanPersistentStore", e);
+            getLogger().error("Failed to start ApplicationComponentInfinispanPersistentStore", e);
             throw new RuntimeException("Failed to start ApplicationComponentInfinispanPersistentStore", e);
         }
     }
 
     @PreDestroy
     public void stop() {
-        LOG.info("Stopping ApplicationComponentInfinispanPersistentStore...");
+        getLogger().info("Stopping ApplicationComponentInfinispanPersistentStore...");
         try {
             if (cache != null) {
                 cache.stop();
-            }
-            if (interfaceCache != null) {
-                interfaceCache.stop();
             }
             if (cacheManager != null) {
                 cacheManager.stop();
             }
         } catch (Exception e) {
-            LOG.warn("Error while stopping ApplicationComponentInfinispanPersistentStore", e);
+            getLogger().warn("Error while stopping ApplicationComponentInfinispanPersistentStore", e);
         }
-        LOG.info("ApplicationComponentInfinispanPersistentStore stopped");
+        getLogger().info("ApplicationComponentInfinispanPersistentStore stopped");
     }
+
+    //
+    // Business Methods
+    //
 
     protected Optional<IApplicationComponentPersistenceService> persistence() {
         if (persistenceServiceInstance == null) {
@@ -204,12 +190,12 @@ public class DistributedApplicationComponentCacheWithStore {
                 return Optional.ofNullable(persistenceServiceInstance.get());
             }
         } catch (Exception e) {
-            LOG.debug("persistence(): unable to resolve provider", e);
+            getLogger().debug("persistence(): unable to resolve provider", e);
         }
         return Optional.empty();
     }
 
-    protected void registerClusteredPersistenceListener(String cacheName, Cache<String, ApplicationComponentSummary> cache) {
+    protected void registerClusteredPersistenceListener(String cacheName, Cache<String, ApplicationComponent> cache) {
         ClusteredPersistenceListener listener = new ClusteredPersistenceListener(cacheName);
         cache.addListener(listener);
         registeredListeners.add(listener);
@@ -221,75 +207,86 @@ public class DistributedApplicationComponentCacheWithStore {
         registeredListeners.add(listener);
     }
 
-    protected void bootstrapPersistAll(Cache<String, ApplicationComponentSummary> cache) {
+    protected void bootstrapPersistAll(Cache<String, ApplicationComponent> cache) {
         Optional<IApplicationComponentPersistenceService> ps = persistence();
-        if (ps.isEmpty()) { return; }
-        cache.forEach((k, v) -> {
-            try { ps.get().save(k, v); } catch (Exception ex) { LOG.debug("bootstrapPersistAll: save failed for key={}", k, ex); }
-        });
-    }
-
-    protected Optional<IInterfaceComponentPersistenceService> interfacePersistence() {
-        if (interfacePersistenceServiceInstance == null) {
-            return Optional.empty();
+        if (ps.isEmpty()) {
+            return;
         }
-        try {
-            if (interfacePersistenceServiceInstance.isResolvable()) {
-                return Optional.ofNullable(interfacePersistenceServiceInstance.get());
+        cache.forEach((k, v) -> {
+            try {
+                ps.get().save(k, v);
+            } catch (Exception ex) {
+                getLogger().debug("bootstrapPersistAll: save failed for key={}", k, ex);
             }
-        } catch (Exception e) {
-            LOG.debug("interfacePersistence(): unable to resolve provider", e);
-        }
-        return Optional.empty();
-    }
-
-    protected void registerInterfaceClusteredPersistenceListener(String cacheName, Cache<String, InterfaceComponentSummary> cache) {
-        InterfaceClusteredPersistenceListener listener = new InterfaceClusteredPersistenceListener(cacheName);
-        cache.addListener(listener);
-        registeredListeners.add(listener);
-    }
-
-    protected void registerInterfaceLoadRequestListener(String cacheName, Cache<String, String> cache) {
-        InterfaceLoadRequestListener listener = new InterfaceLoadRequestListener(cacheName);
-        cache.addListener(listener);
-        registeredListeners.add(listener);
-    }
-
-    protected void bootstrapInterfacePersistAll(Cache<String, InterfaceComponentSummary> cache) {
-        Optional<IInterfaceComponentPersistenceService> ps = interfacePersistence();
-        if (ps.isEmpty()) { return; }
-        cache.forEach((k, v) -> {
-            try { ps.get().save(k, v); } catch (Exception ex) { LOG.debug("bootstrapInterfacePersistAll: save failed for key={}", k, ex); }
         });
     }
+
 
     @Listener(clustered = true, observation = Listener.Observation.POST)
     private class ClusteredPersistenceListener {
         private final String cacheName;
-        ClusteredPersistenceListener(String cacheName) { this.cacheName = cacheName; }
+
+        ClusteredPersistenceListener(String cacheName) {
+            this.cacheName = cacheName;
+        }
 
         @CacheEntryCreated
-        public void onCreated(CacheEntryEvent<String, ApplicationComponentSummary> e) {
+        public void onCreated(CacheEntryEvent<String, ApplicationComponent> e) {
             if (!e.isPre()) {
-                persistence().ifPresent(ps -> { try { ps.save(e.getKey(), e.getValue()); LOG.trace("Listener[{}]: create key={}", cacheName, e.getKey()); } catch (Exception ex) { LOG.debug("Listener[{}]: save failed for key={}", cacheName, e.getKey(), ex); } });
+                changeVersion.incrementAndGet();
+                persistence().ifPresent(ps -> {
+                    try {
+                        ps.save(e.getKey(), e.getValue());
+                        getLogger().trace("Listener[{}]: create key={}", cacheName, e.getKey());
+                    } catch (Exception ex) {
+                        getLogger().debug("Listener[{}]: save failed for key={}", cacheName, e.getKey(), ex);
+                    }
+                });
             }
         }
+
         @CacheEntryModified
-        public void onModified(CacheEntryEvent<String, ApplicationComponentSummary> e) {
+        public void onModified(CacheEntryEvent<String, ApplicationComponent> e) {
             if (!e.isPre()) {
-                persistence().ifPresent(ps -> { try { ps.save(e.getKey(), e.getValue()); LOG.trace("Listener[{}]: modify key={}", cacheName, e.getKey()); } catch (Exception ex) { LOG.debug("Listener[{}]: save failed for key={}", cacheName, e.getKey(), ex); } });
+                changeVersion.incrementAndGet();
+                persistence().ifPresent(ps -> {
+                    try {
+                        ps.save(e.getKey(), e.getValue());
+                        getLogger().trace("Listener[{}]: modify key={}", cacheName, e.getKey());
+                    } catch (Exception ex) {
+                        getLogger().debug("Listener[{}]: save failed for key={}", cacheName, e.getKey(), ex);
+                    }
+                });
             }
         }
+
         @CacheEntryRemoved
-        public void onRemoved(CacheEntryEvent<String, ApplicationComponentSummary> e) {
+        public void onRemoved(CacheEntryEvent<String, ApplicationComponent> e) {
             if (!e.isPre()) {
-                persistence().ifPresent(ps -> { try { ps.delete(e.getKey()); LOG.trace("Listener[{}]: remove key={}", cacheName, e.getKey()); } catch (Exception ex) { LOG.debug("Listener[{}]: delete failed for key={}", cacheName, e.getKey(), ex); } });
+                changeVersion.incrementAndGet();
+                persistence().ifPresent(ps -> {
+                    try {
+                        ps.delete(e.getKey());
+                        getLogger().trace("Listener[{}]: remove key={}", cacheName, e.getKey());
+                    } catch (Exception ex) {
+                        getLogger().debug("Listener[{}]: delete failed for key={}", cacheName, e.getKey(), ex);
+                    }
+                });
             }
         }
+
         @CacheEntryExpired
-        public void onExpired(CacheEntryEvent<String, ApplicationComponentSummary> e) {
+        public void onExpired(CacheEntryEvent<String, ApplicationComponent> e) {
             if (!e.isPre()) {
-                persistence().ifPresent(ps -> { try { ps.delete(e.getKey()); LOG.trace("Listener[{}]: expire key={}", cacheName, e.getKey()); } catch (Exception ex) { LOG.debug("Listener[{}]: expire-delete failed for key={}", cacheName, e.getKey(), ex); } });
+                changeVersion.incrementAndGet();
+                persistence().ifPresent(ps -> {
+                    try {
+                        ps.delete(e.getKey());
+                        getLogger().trace("Listener[{}]: expire key={}", cacheName, e.getKey());
+                    } catch (Exception ex) {
+                        getLogger().debug("Listener[{}]: expire-delete failed for key={}", cacheName, e.getKey(), ex);
+                    }
+                });
             }
         }
     }
@@ -297,84 +294,157 @@ public class DistributedApplicationComponentCacheWithStore {
     @Listener(clustered = true, observation = Listener.Observation.POST)
     private class LoadRequestListener {
         private final String cacheName;
-        LoadRequestListener(String cacheName) { this.cacheName = cacheName; }
+
+        LoadRequestListener(String cacheName) {
+            this.cacheName = cacheName;
+        }
 
         @CacheEntryCreated
         public void onCreated(CacheEntryEvent<String, String> e) {
-            if (e.isPre()) { return; }
+            if (e.isPre()) {
+                return;
+            }
             String key = e.getKey();
             Optional<IApplicationComponentPersistenceService> ps = persistence();
-            if (ps.isEmpty()) { return; }
+            if (ps.isEmpty()) {
+                return;
+            }
             try {
-                Optional<ApplicationComponentSummary> loaded = ps.get().load(key);
+                Optional<ApplicationComponent> loaded = ps.get().load(key);
                 loaded.ifPresent(v -> cache.put(key, v));
                 if (loaded.isPresent()) {
-                    LOG.info("LoadRequest[{}]: loaded and cached key={}", cacheName, key);
+                    getLogger().info("LoadRequest[{}]: loaded and cached key={}", cacheName, key);
                 } else {
-                    LOG.debug("LoadRequest[{}]: no result for key={}", cacheName, key);
+                    getLogger().debug("LoadRequest[{}]: no result for key={}", cacheName, key);
                 }
             } catch (Exception ex) {
-                LOG.debug("LoadRequest[{}]: failed to load key={}", cacheName, key, ex);
+                getLogger().debug("LoadRequest[{}]: failed to load key={}", cacheName, key, ex);
             }
         }
     }
 
-    @Listener(clustered = true, observation = Listener.Observation.POST)
-    private class InterfaceClusteredPersistenceListener {
-        private final String cacheName;
-        InterfaceClusteredPersistenceListener(String cacheName) { this.cacheName = cacheName; }
-
-        @CacheEntryCreated
-        public void onCreated(CacheEntryEvent<String, InterfaceComponentSummary> e) {
-            if (!e.isPre()) {
-                interfacePersistence().ifPresent(ps -> { try { ps.save(e.getKey(), e.getValue()); LOG.trace("IF Listener[{}]: create key={}", cacheName, e.getKey()); } catch (Exception ex) { LOG.debug("IF Listener[{}]: save failed for key={}", cacheName, e.getKey(), ex); } });
-            }
-        }
-        @CacheEntryModified
-        public void onModified(CacheEntryEvent<String, InterfaceComponentSummary> e) {
-            if (!e.isPre()) {
-                interfacePersistence().ifPresent(ps -> { try { ps.save(e.getKey(), e.getValue()); LOG.trace("IF Listener[{}]: modify key={}", cacheName, e.getKey()); } catch (Exception ex) { LOG.debug("IF Listener[{}]: save failed for key={}", cacheName, e.getKey(), ex); } });
-            }
-        }
-        @CacheEntryRemoved
-        public void onRemoved(CacheEntryEvent<String, InterfaceComponentSummary> e) {
-            if (!e.isPre()) {
-                interfacePersistence().ifPresent(ps -> { try { ps.delete(e.getKey()); LOG.trace("IF Listener[{}]: remove key={}", cacheName, e.getKey()); } catch (Exception ex) { LOG.debug("IF Listener[{}]: delete failed for key={}", cacheName, e.getKey(), ex); } });
-            }
-        }
-        @CacheEntryExpired
-        public void onExpired(CacheEntryEvent<String, InterfaceComponentSummary> e) {
-            if (!e.isPre()) {
-                interfacePersistence().ifPresent(ps -> { try { ps.delete(e.getKey()); LOG.trace("IF Listener[{}]: expire key={}", cacheName, e.getKey()); } catch (Exception ex) { LOG.debug("IF Listener[{}]: expire-delete failed for key={}", cacheName, e.getKey(), ex); } });
-            }
-        }
+    @Override
+    public void put(ApplicationComponent item) {
+        String key = resolveKey(item);
+        cache.put(key, item);
+        changeVersion.incrementAndGet();
     }
 
-    @Listener(clustered = true, observation = Listener.Observation.POST)
-    private class InterfaceLoadRequestListener {
-        private final String cacheName;
-        InterfaceLoadRequestListener(String cacheName) { this.cacheName = cacheName; }
-
-        @CacheEntryCreated
-        public void onCreated(CacheEntryEvent<String, String> e) {
-            if (e.isPre()) { return; }
-            String key = e.getKey();
-            Optional<IInterfaceComponentPersistenceService> ps = interfacePersistence();
-            if (ps.isEmpty()) { return; }
-            try {
-                Optional<InterfaceComponentSummary> loaded = ps.get().load(key);
-                loaded.ifPresent(v -> interfaceCache.put(key, v));
-                if (loaded.isPresent()) {
-                    LOG.info("IF LoadRequest[{}]: loaded and cached key={}", cacheName, key);
-                } else {
-                    LOG.debug("IF LoadRequest[{}]: no result for key={}", cacheName, key);
-                }
-            } catch (Exception ex) {
-                LOG.debug("IF LoadRequest[{}]: failed to load key={}", cacheName, key, ex);
-            }
+    @Override
+    public ApplicationComponent get(String key) {
+        ApplicationComponent existing = cache.get(key);
+        if (existing != null) {
+            return existing;
         }
+        containsOrLoad(key);
+        return cache.get(key);
     }
 
-    public Optional<Cache<String, ApplicationComponentSummary>> getCache() { return Optional.ofNullable(cache); }
-    public Optional<Cache<String, String>> getLoadRequestCache() { return Optional.ofNullable(loadRequestCache); }
+    @Override
+    public ApplicationComponent remove(String key) {
+        ApplicationComponent removed = cache.remove(key);
+        if (removed != null) {
+            changeVersion.incrementAndGet();
+        }
+        return removed;
+    }
+
+    @Override
+    public boolean contains(String key) {
+        return cache.containsKey(key);
+    }
+
+    @Override
+    public boolean containsOrLoad(String key) {
+        if (contains(key)) {
+            return true;
+        }
+        try {
+            loadRequestCache.putIfAbsent(key, "REQ");
+        } catch (Exception ex) {
+            getLogger().debug("containsOrLoad: failed to enqueue load request for key={}", key, ex);
+        }
+        return false;
+    }
+
+    @Override
+    public String resolveKey(ApplicationComponent item) {
+        String key = item.resolveKey();
+        return key;
+    }
+
+    @Override
+    public List<ApplicationComponent> getSubcomponents(DistributableObjectId parentObjectId, ApplicationComponentSpecialisationEnum componentType) {
+        getLogger().debug(".getContainedComponents(): Entry, parentObjectId={}, componentType={}", parentObjectId, componentType);
+        String key = null;
+        if (parentObjectId != null && parentObjectId.getQualifiedName() != null && parentObjectId.getQualifiedName().getCommonName().getValue() != null && !parentObjectId.getQualifiedName().getCommonName().getValue().isEmpty()) {
+            key = parentObjectId.getQualifiedName().getCommonName().getValue();
+        }
+        if (key == null)
+            return Collections.emptyList();
+        ApplicationComponent parent = get(key);
+
+        if (parent == null) {
+            getLogger().info(".getContainedComponents(): Exit, No subcomponents for id={} (component missing)", parentObjectId);
+            return Collections.emptyList();
+        }
+        if (parent.getElementType() != ElementTypeEnum.APPLICATION_COMPONENT) {
+            getLogger().info(".getContainedComponents(): Exit, No subcomponents for id={} (component is not a ApplicationComponent)", parentObjectId);
+            return Collections.emptyList();
+        }
+        List<ApplicationComponent> resultList = new ArrayList<>();
+
+        for (ElementReference childReference : parent.getSubComponents()) {
+            String currentKey = childReference.getLocalObjectId().getQualifiedName().getCommonName().getValue();
+            ApplicationComponent child = get(currentKey);
+            if (child != null) {
+                resultList.add(child);
+            } else {
+                getLogger().warn(".getContainedComponents(): No child component found for currentKey={}", currentKey);
+            }
+        }
+
+        getLogger().info(".getContainedComponents(): Exit, Returning {} subcomponents for parentObjectId={}", resultList.size(), parentObjectId);
+        return resultList;
+    }
+
+    @Override
+    public ApplicationComponent getSolutionComponent() {
+        return null;
+    }
+
+    @Override
+    public boolean hasChangesSince(long sinceVersion) {
+        getLogger().debug(".hasChangesSince(): Entry, sinceVersion={}", sinceVersion);
+        if (sinceVersion < 0) {
+            return true;
+        }
+        boolean changed = changeVersion.get() > sinceVersion;
+        getLogger().debug(".hasChangesSince(): Exit, changed={}", changed);
+        return (changed);
+    }
+
+    @Override
+    public List<ApplicationComponent> getChangedApplicationComponents(Long start, Long size) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    //
+    // Accessors
+    //
+    protected Logger getLogger() {
+        return LOG;
+    }
+    
+    public Optional<Cache<String, ApplicationComponent>> getCache() {
+        return Optional.ofNullable(cache);
+    }
+
+    public Optional<Cache<String, String>> getLoadRequestCache() {
+        return Optional.ofNullable(loadRequestCache);
+    }
+
+    public long getChangeVersion() {
+        return changeVersion.get();
+    }
 }

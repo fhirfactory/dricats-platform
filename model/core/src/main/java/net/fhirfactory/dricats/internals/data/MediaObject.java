@@ -21,7 +21,7 @@
  */
 package net.fhirfactory.dricats.internals.data;
 
-import net.fhirfactory.dricats.internals.common.DistributableObject;
+import net.fhirfactory.dricats.internals.common.object.DistributableObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -114,7 +114,7 @@ public class MediaObject extends DistributableObject{
         sb.append(", securityLabels=").append(getSecurityLabels());
         sb.append(", metadata=").append(getMetadata());
         sb.append(", identifiers=").append(getIdentifiers());
-        sb.append(", objectID='").append(getObjectID()).append('\'');
+        sb.append(", id='").append(getLocalId()).append('\'');
         sb.append('}');
         return sb.toString();
     }

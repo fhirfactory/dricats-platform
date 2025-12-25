@@ -24,24 +24,33 @@ package net.fhirfactory.dricats.datagrid.satellite.topologygrid;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
 import jakarta.enterprise.context.ApplicationScoped;
+import net.fhirfactory.dricats.datagrid.common.topologygrid.IApplicationComponentCacheClient;
 import net.fhirfactory.dricats.internals.common.DistributableObjectId;
-import net.fhirfactory.dricats.internals.oam.topology.base.ApplicationComponentSummary;
-import net.fhirfactory.dricats.datagrid.topology.IApplicationComponentCacheClient;
+import net.fhirfactory.dricats.internals.common.identifiers.ElementReference;
+import net.fhirfactory.dricats.internals.topology.implementation.layers.application.valuesets.ApplicationComponentSpecialisationEnum;
 import net.fhirfactory.dricats.reference.archimate.common.valuesets.ElementTypeEnum;
-import net.fhirfactory.dricats.internals.topology.implementation.layers.application.valuesets.SoftwareComponentTypeEnum;
+import net.fhirfactory.dricats.reference.archimate.layers.application.ApplicationComponent;
 import org.infinispan.Cache;
 import org.infinispan.configuration.cache.CacheMode;
 import org.infinispan.configuration.cache.ConfigurationBuilder;
 import org.infinispan.configuration.global.GlobalConfigurationBuilder;
 import org.infinispan.manager.DefaultCacheManager;
+import org.infinispan.notifications.Listener;
+import org.infinispan.notifications.cachelistener.annotation.CacheEntryCreated;
+import org.infinispan.notifications.cachelistener.annotation.CacheEntryExpired;
+import org.infinispan.notifications.cachelistener.annotation.CacheEntryModified;
+import org.infinispan.notifications.cachelistener.annotation.CacheEntryRemoved;
+import org.infinispan.notifications.cachelistener.event.CacheEntryCreatedEvent;
+import org.infinispan.notifications.cachelistener.event.CacheEntryExpiredEvent;
+import org.infinispan.notifications.cachelistener.event.CacheEntryModifiedEvent;
+import org.infinispan.notifications.cachelistener.event.CacheEntryRemovedEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.time.LocalDateTime;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * Non-store peer/client for ApplicationComponentSummary cache. Joins the same Infinispan cluster
@@ -50,15 +59,37 @@ import java.util.concurrent.TimeUnit;
  */
 @ApplicationScoped
 public class TopologyCacheClient implements IApplicationComponentCacheClient {
+    //
+    // Housekeeping
+    //
     private static final Logger LOG = LoggerFactory.getLogger(TopologyCacheClient.class);
 
+    //
+    // Constants
+    //
     public static final String DEFAULT_CACHE_NAME = "ApplicationComponentCache";
     public static final String DEFAULT_LOAD_REQUEST_CACHE_NAME = "ApplicationComponentLoadRequests";
 
+    //
+    // Attributes
+    //
     private DefaultCacheManager cacheManager;
-    private Cache<String, ApplicationComponentSummary> cache;
+    private Cache<String, ApplicationComponent> cache;
     private Cache<String, String> loadRequestCache;
+    private HashMap<Long, ChangeLogEntry> changeMap;
+    private final AtomicLong changeVersion = new AtomicLong(0);
 
+    //
+    // Constructors
+    //
+    public TopologyCacheClient() {
+        super();
+        this.changeMap = new HashMap<>();
+    }
+
+    //
+    // Lifecycle
+    //
     @PostConstruct
     public void start() {
         try {
@@ -97,6 +128,12 @@ public class TopologyCacheClient implements IApplicationComponentCacheClient {
             String cacheName = System.getProperty("application.component.store.cache.name", DEFAULT_CACHE_NAME);
             this.cacheManager.defineConfiguration(cacheName, base.build());
             this.cache = this.cacheManager.getCache(cacheName);
+            // Register change tracking listener to bump version on create/modify/remove/expire
+            try {
+                this.cache.addListener(new ChangeTrackingListener(cacheName));
+            } catch (Exception ex) {
+                LOG.debug("ApplicationComponentCacheClient: failed to register change listener for cache={}", cacheName, ex);
+            }
             LOG.info("ApplicationComponentCacheClient: cache={} ready in cluster='{}' node='{}' mode='{}' owners={}",
                     cacheName, clusterName, nodeName, cacheModeProp, owners);
 
@@ -130,15 +167,61 @@ public class TopologyCacheClient implements IApplicationComponentCacheClient {
         LOG.info("ApplicationComponentCacheClient stopped");
     }
 
-    @Override
-    public void put(ApplicationComponentSummary item) {
-        String key = resolveKey(item);
-        cache.put(key, item);
+    @Listener(clustered = true, observation = Listener.Observation.POST)
+    private class ChangeTrackingListener {
+        private final String cacheName;
+
+        ChangeTrackingListener(String cacheName) {
+            this.cacheName = cacheName;
+        }
+
+        @CacheEntryCreated
+        public void onCreated(CacheEntryCreatedEvent<String, ApplicationComponent> e) {
+            if (!e.isPre()) {
+                changeVersion.incrementAndGet();
+                addApplicationComponentChangeLogEntry(changeVersion.get(), e.getKey());
+                LOG.trace("ChangeTracking[{}]: created {}", cacheName, e.getKey());
+            }
+        }
+
+        @CacheEntryModified
+        public void onModified(CacheEntryModifiedEvent<String, ApplicationComponent> e) {
+            if (!e.isPre()) {
+                changeVersion.incrementAndGet();
+                addApplicationComponentChangeLogEntry(changeVersion.get(), e.getKey());
+                LOG.trace("ChangeTracking[{}]: modified {}", cacheName, e.getKey());
+            }
+        }
+
+        @CacheEntryRemoved
+        public void onRemoved(CacheEntryRemovedEvent<String, ApplicationComponent> e) {
+            if (!e.isPre()) {
+                changeVersion.incrementAndGet();
+                addApplicationComponentChangeLogEntry(changeVersion.get(), e.getKey());
+                LOG.trace("ChangeTracking[{}]: removed {}", cacheName, e.getKey());
+            }
+        }
+
+        @CacheEntryExpired
+        public void onExpired(CacheEntryExpiredEvent<String, ApplicationComponent> e) {
+            if (!e.isPre()) {
+                changeVersion.incrementAndGet();
+                addApplicationComponentChangeLogEntry(changeVersion.get(), e.getKey());
+                LOG.trace("ChangeTracking[{}]: expired {}", cacheName, e.getKey());
+            }
+        }
     }
 
     @Override
-    public ApplicationComponentSummary get(String key) {
-        ApplicationComponentSummary existing = cache.get(key);
+    public void put(ApplicationComponent item) {
+        String key = resolveKey(item);
+        cache.put(key, item);
+        changeVersion.incrementAndGet();
+    }
+
+    @Override
+    public ApplicationComponent get(String key) {
+        ApplicationComponent existing = cache.get(key);
         if (existing != null) {
             return existing;
         }
@@ -147,14 +230,24 @@ public class TopologyCacheClient implements IApplicationComponentCacheClient {
     }
 
     @Override
-    public ApplicationComponentSummary remove(String key) { return cache.remove(key); }
+    public ApplicationComponent remove(String key) {
+        ApplicationComponent removed = cache.remove(key);
+        if (removed != null) {
+            changeVersion.incrementAndGet();
+        }
+        return removed;
+    }
 
     @Override
-    public boolean contains(String key) { return cache.containsKey(key); }
+    public boolean contains(String key) {
+        return cache.containsKey(key);
+    }
 
     @Override
     public boolean containsOrLoad(String key) {
-        if (contains(key)) { return true; }
+        if (contains(key)) {
+            return true;
+        }
         try {
             loadRequestCache.putIfAbsent(key, "REQ");
         } catch (Exception ex) {
@@ -164,106 +257,127 @@ public class TopologyCacheClient implements IApplicationComponentCacheClient {
     }
 
     @Override
-    public String resolveKey(ApplicationComponentSummary item) {
+    public String resolveKey(ApplicationComponent item) {
         String key = item.resolveKey();
         return key;
     }
 
-    public Optional<Cache<String, ApplicationComponentSummary>> getCache() { return Optional.ofNullable(cache); }
+    public Optional<Cache<String, ApplicationComponent>> getCache() {
+        return Optional.ofNullable(cache);
+    }
 
-    public ApplicationComponentSummary getSolutionComponent() {
+    public ApplicationComponent getSolutionComponent() {
         throw new UnsupportedOperationException("Not implemented yet");
     }
 
-    public List<ApplicationComponentSummary> getContainedComponents(DistributableObjectId parentObjectId, SoftwareComponentTypeEnum componentType) {
+    public long getChangeVersion() {
+        return changeVersion.get();
+    }
+
+    protected Map<Long, ChangeLogEntry> getChangeMap() {
+        if (changeMap == null) {
+            changeMap = new HashMap<>();
+        }
+        return changeMap;
+    }
+
+    protected void addApplicationComponentChangeLogEntry(long version, String key) {
+        if(version < 0){
+            return;
+        }
+        if(key == null || key.isEmpty()){
+            return;
+        }
+        ChangeLogEntry entry = new ChangeLogEntry(version, key);
+        getChangeMap().put(version, entry);
+    }
+
+    protected List<ChangeLogEntry> getApplicationComponentChangeMapKeys(Long start, Long size) {
+        List<ChangeLogEntry> result = new ArrayList<>();
+        if(start == null || start < 0){
+            return(result);
+        }
+        if(size == null || size < 0){
+            size = 10L;
+        }
+        for(long counter = start; counter < start + size; counter++){
+            ChangeLogEntry key = getChangeMap().get(counter);
+            if(key != null){
+                result.add(key);
+                getChangeMap().remove(counter);
+            }
+        }
+        return (result);
+    }
+
+    public List<ApplicationComponent> getChangedApplicationComponents(Long start, Long size) {
+        List<ChangeLogEntry> keys = getApplicationComponentChangeMapKeys(start, size);
+        List<ApplicationComponent> result = new ArrayList<>();
+        for(ChangeLogEntry key : keys){
+            ApplicationComponent item = get(key.getKey());
+            if(item != null){
+                result.add(item);
+            }
+        }
+        return(result);
+    }
+
+    public List<ApplicationComponent> getSubcomponents(DistributableObjectId parentObjectId, ApplicationComponentSpecialisationEnum componentType) {
         LOG.debug(".getContainedComponents(): Entry, parentObjectId={}, componentType={}", parentObjectId, componentType);
         String key = null;
         if (parentObjectId != null && parentObjectId.getQualifiedName() != null && parentObjectId.getQualifiedName().getCommonName().getValue() != null && !parentObjectId.getQualifiedName().getCommonName().getValue().isEmpty()) {
             key = parentObjectId.getQualifiedName().getCommonName().getValue();
         }
-        if(key == null)
+        if (key == null)
             return Collections.emptyList();
-        ApplicationComponentSummary parent = get(key);
+        ApplicationComponent parent = get(key);
 
-        if(parent == null){
+        if (parent == null) {
             LOG.info(".getContainedComponents(): Exit, No subcomponents for id={} (component missing)", parentObjectId);
             return Collections.emptyList();
         }
-        if(parent.getElementType() != ElementTypeEnum.APPLICATION_COMPONENT){
+        if (parent.getElementType() != ElementTypeEnum.APPLICATION_COMPONENT) {
             LOG.info(".getContainedComponents(): Exit, No subcomponents for id={} (component is not a ApplicationComponent)", parentObjectId);
             return Collections.emptyList();
         }
-        List<ApplicationComponentSummary> result = new ArrayList<>();
-        // Determine child list based on the specific summary subtype
-        if (parent instanceof net.fhirfactory.dricats.internals.oam.topology.SubsystemSummary) {
-            net.fhirfactory.dricats.internals.oam.topology.SubsystemSummary subs = (net.fhirfactory.dricats.internals.oam.topology.SubsystemSummary) parent;
-            if (subs.getApplicationClusters() != null) {
-                for (DistributableObjectId childId : subs.getApplicationClusters()) {
-                    String currentKey = childId.getQualifiedName().getCommonName().getValue();
-                    ApplicationComponentSummary child = get(currentKey);
-                    if (child != null) {
-                        result.add((ApplicationComponentSummary) child);
-                    } else {
-                        LOG.warn(".getContainedComponents(): No child component found for currentKey={}", currentKey);
-                    }
-                }
-            }
-            if (subs.getApplicationInstances() != null) {
-                for (DistributableObjectId childId : subs.getApplicationInstances()) {
-                    String currentKey = childId.getQualifiedName().getCommonName().getValue();
-                    ApplicationComponentSummary child = get(currentKey);
-                    if (child != null) {
-                        result.add( child);
-                    } else {
-                        LOG.warn(".getContainedComponents(): No child component found for childId={}", childId);
-                    }
-                }
-            }
-        } else if (parent instanceof net.fhirfactory.dricats.internals.oam.topology.ApplicationClusterSummary) {
-            net.fhirfactory.dricats.internals.oam.topology.ApplicationClusterSummary cluster = (net.fhirfactory.dricats.internals.oam.topology.ApplicationClusterSummary) parent;
-            if (cluster.getApplicationInstances() != null) {
-                for (DistributableObjectId childId : cluster.getApplicationInstances()) {
-                    String currentKey = childId.getQualifiedName().getCommonName().getValue();
-                    ApplicationComponentSummary child = get(currentKey);
-                    if (child != null) {
-                        result.add(child);
-                    } else {
-                        LOG.warn(".getContainedComponents(): No child component found for childId={}", childId);
-                    }
-                }
-            }
-        } else if (parent instanceof net.fhirfactory.dricats.internals.oam.topology.ApplicationInstanceSummary) {
-            net.fhirfactory.dricats.internals.oam.topology.ApplicationInstanceSummary instance = (net.fhirfactory.dricats.internals.oam.topology.ApplicationInstanceSummary) parent;
-            if (instance.getWupGroups() != null) {
-                for (DistributableObjectId childId : instance.getWupGroups()) {
-                    String childKey = childId.getQualifiedName().getCommonName().getValue();
-                    ApplicationComponentSummary child = get(childKey);
-                    if (child != null) {
-                        result.add(child);
-                    } else {
-                        LOG.warn(".getContainedComponents(): No child component found for childKey={}", childKey);
-                    }
-                }
-            }
-        } else if (parent instanceof net.fhirfactory.dricats.internals.oam.topology.WUPGroupSummary) {
-            net.fhirfactory.dricats.internals.oam.topology.WUPGroupSummary group = (net.fhirfactory.dricats.internals.oam.topology.WUPGroupSummary) parent;
-            if (group.getWorkUnitProcessors() != null) {
-                for (DistributableObjectId childId : group.getWorkUnitProcessors()) {
-                    String childKey = childId.getQualifiedName().getCommonName().getValue();
-                    ApplicationComponentSummary child = get(childKey);
-                    if (child != null) {
-                        result.add( child);
-                    } else {
-                        LOG.warn(".getContainedComponents(): No child component found for childKey={}", childKey);
-                    }
-                }
+        List<ApplicationComponent> resultList = new ArrayList<>();
+
+        for (ElementReference childReference : parent.getSubComponents()) {
+            String currentKey = childReference.getLocalObjectId().getQualifiedName().getCommonName().getValue();
+            ApplicationComponent child = get(currentKey);
+            if (child != null) {
+                resultList.add(child);
+            } else {
+                LOG.warn(".getContainedComponents(): No child component found for currentKey={}", currentKey);
             }
         }
-        LOG.info(".getContainedComponents(): Exit, Returning {} subcomponents for parentObjectId={}", result.size(), parentObjectId);
-        return result;
 
+        LOG.info(".getContainedComponents(): Exit, Returning {} subcomponents for parentObjectId={}", resultList.size(), parentObjectId);
+        return resultList;
+    }
 
+    public class ChangeLogEntry {
+        private final long version;
+        private final String key;
+        private LocalDateTime timestamp;
 
+        public ChangeLogEntry(long version, String key) {
+            this.version = version;
+            this.key = key;
+            this.timestamp = LocalDateTime.now();
+        }
+
+        public long getVersion() {
+            return version;
+        }
+
+        public String getKey() {
+            return key;
+        }
+
+        public LocalDateTime getTimestamp() {
+            return timestamp;
+        }
     }
 
 }

@@ -21,7 +21,7 @@
  */
 package net.fhirfactory.dricats.internals.pathways;
 
-import net.fhirfactory.dricats.internals.common.DistributableObjectId;
+import net.fhirfactory.dricats.internals.common.id.ObjectId;
 import net.fhirfactory.dricats.internals.pathways.valuesets.PathwayRouteSelectionCriteriaEnum;
 import net.fhirfactory.dricats.reference.archimate.layers.application.ApplicationProcess;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -44,7 +44,7 @@ public class Pathway extends ApplicationProcess {
      // Attributes
     //
      // Map<Priority, PathwayRoute ID>
-    private Map<Integer, DistributableObjectId> possiblePathwayRoutes;
+    private Map<Integer, ObjectId> possiblePathwayRoutes;
     private PathwayRouteSelectionCriteriaEnum routeSelectionCriteria;
 
     //
@@ -61,11 +61,11 @@ public class Pathway extends ApplicationProcess {
     // Getters and Setters
     //
 
-    public Map<Integer, DistributableObjectId> getPossiblePathwayRoutes() {
+    public Map<Integer, ObjectId> getPossiblePathwayRoutes() {
         return possiblePathwayRoutes;
     }
 
-    public void setPossiblePathwayRoutes(Map<Integer, DistributableObjectId> possiblePathwayRoutes) {
+    public void setPossiblePathwayRoutes(Map<Integer, ObjectId> possiblePathwayRoutes) {
         this.possiblePathwayRoutes = possiblePathwayRoutes;
     }
 

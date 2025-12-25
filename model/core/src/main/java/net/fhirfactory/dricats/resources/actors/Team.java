@@ -21,8 +21,8 @@
  */
 package net.fhirfactory.dricats.resources.actors;
 
-import net.fhirfactory.dricats.internals.common.datatypes.ContactPoint;
-import net.fhirfactory.dricats.internals.common.datatypes.TeamMembership;
+import net.fhirfactory.dricats.internals.datatypes.ContactPoint;
+import net.fhirfactory.dricats.internals.datatypes.TeamMembership;
 import net.fhirfactory.dricats.reference.archimate.layers.business.BusinessCollaboration;
 import org.apache.commons.lang3.SerializationUtils;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -117,11 +117,10 @@ public class Team extends BusinessCollaboration implements Serializable {
                 .append("name", getName())
                 .append("documentation", getDocumentation())
                 .append("specialization", getSpecialization())
-                .append("properties", getProperties())
+                .append("extensions", getExtensions())
                 .append("securityLabels", getSecurityLabels())
-                .append("objectID", getObjectID())
                 .append("metadata", getMetadata())
-                .append("id", getId())
+                .append("id", getLocalId())
                 .toString();
     }
 

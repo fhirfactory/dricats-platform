@@ -21,23 +21,19 @@
  */
 package net.fhirfactory.dricats.internals.events.notifications;
 
-import java.io.Serial;
-import java.time.LocalDateTime;
-import java.util.UUID;
-
-import net.fhirfactory.dricats.internals.common.DistributableObject;
-import net.fhirfactory.dricats.internals.common.DistributableObjectId;
-import net.fhirfactory.dricats.internals.common.naming.CommonName;
-import net.fhirfactory.dricats.internals.common.naming.QualifiedName;
-import net.fhirfactory.dricats.internals.common.naming.UnqualifiedName;
+import net.fhirfactory.dricats.internals.common.identifiers.ElementReference;
+import net.fhirfactory.dricats.internals.common.naming.FullyDistinguishedName;
+import net.fhirfactory.dricats.internals.common.id.ObjectId;
+import net.fhirfactory.dricats.internals.common.naming.RelativeDistinguishedName;
 import net.fhirfactory.dricats.internals.events.common.EventBase;
-import net.fhirfactory.dricats.internals.events.messages.MessagePayload;
 import org.apache.commons.lang3.SerializationUtils;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
+import java.io.Serial;
+import java.time.LocalDateTime;
+import java.util.UUID;
 
 public class NotificationObject extends EventBase {
     //
@@ -60,11 +56,10 @@ public class NotificationObject extends EventBase {
 
     public NotificationObject(){
         super();
-        UnqualifiedName unqualifiedName = new UnqualifiedName("Notification", UUID.randomUUID().toString());
-        QualifiedName qualifiedName = new QualifiedName();
+        RelativeDistinguishedName unqualifiedName = new RelativeDistinguishedName("Notification", UUID.randomUUID().toString());
+        FullyDistinguishedName qualifiedName = new FullyDistinguishedName();
         qualifiedName.appendUnqualifiedName(unqualifiedName);
-        this.setObjectID(new DistributableObjectId(qualifiedName));
-        this.setId(getObjectID().getQualifiedName().getCommonName());
+        this.setLocalId(new ObjectId(qualifiedName));
         setNotificationPayload(new NotificationPayload());
     }
 
@@ -73,18 +68,17 @@ public class NotificationObject extends EventBase {
         this.notificationPayload = SerializationUtils.clone(notificationObject.getNotificationPayload());
     }
 
-    public NotificationObject(DistributableObjectId source, DistributableObjectId target, LocalDateTime sendDate, NotificationPayload payload){
+    public NotificationObject(ElementReference source, ElementReference target, LocalDateTime sendDate, NotificationPayload payload){
         super();
         setEventReceiveDate(LocalDateTime.now());
         setEventSendDate(sendDate);
         setSource(source);
         setTarget(target);
         setNotificationPayload(payload);
-        UnqualifiedName unqualifiedName = new UnqualifiedName("Notification", UUID.randomUUID().toString());
-        QualifiedName qualifiedName = new QualifiedName();
+        RelativeDistinguishedName unqualifiedName = new RelativeDistinguishedName("Notification", UUID.randomUUID().toString());
+        FullyDistinguishedName qualifiedName = new FullyDistinguishedName();
         qualifiedName.appendUnqualifiedName(unqualifiedName);
-        this.setObjectID(new DistributableObjectId(qualifiedName));
-        this.setId(getObjectID().getQualifiedName().getCommonName());
+        this.setLocalId(new ObjectId(qualifiedName));
     }
 
     //

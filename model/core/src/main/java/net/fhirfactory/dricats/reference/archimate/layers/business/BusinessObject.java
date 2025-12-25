@@ -3,8 +3,8 @@
  */
 package net.fhirfactory.dricats.reference.archimate.layers.business;
 
-import net.fhirfactory.dricats.internals.common.DistributableObjectId;
-import net.fhirfactory.dricats.internals.common.datatypes.CodeableConcept;
+import net.fhirfactory.dricats.internals.datatypes.CodeableConcept;
+import net.fhirfactory.dricats.internals.common.id.ObjectId;
 import net.fhirfactory.dricats.reference.archimate.common.ElementBase;
 import net.fhirfactory.dricats.reference.archimate.common.valuesets.ElementTypeEnum;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -31,11 +31,11 @@ public class BusinessObject extends ElementBase {
     private static final Logger LOG = LoggerFactory.getLogger(BusinessObject.class);
 
     // Element-specific attributes
-    private DistributableObjectId owner;
+    private ObjectId owner;
     private CodeableConcept state;
     private CodeableConcept dataType;
     private String version;
-    private List<DistributableObjectId> representations;
+    private List<ObjectId> representations;
     private boolean composite;
 
     public BusinessObject(){
@@ -57,8 +57,8 @@ public class BusinessObject extends ElementBase {
     }
 
     // Getters/Setters
-    public DistributableObjectId getOwner() { return owner; }
-    public void setOwner(DistributableObjectId owner) { this.owner = owner; }
+    public ObjectId getOwner() { return owner; }
+    public void setOwner(ObjectId owner) { this.owner = owner; }
 
     public CodeableConcept getState() { return state; }
     public void setState(CodeableConcept state) { this.state = state; }
@@ -69,9 +69,9 @@ public class BusinessObject extends ElementBase {
     public String getVersion() { return version; }
     public void setVersion(String version) { this.version = version; }
 
-    public List<DistributableObjectId> getRepresentations() { return representations; }
-    public void setRepresentations(List<DistributableObjectId> representations) { this.representations = representations; }
-    public void addRepresentation(DistributableObjectId representation) { if(this.representations == null){ this.representations = new ArrayList<>(); } this.representations.add(representation); }
+    public List<ObjectId> getRepresentations() { return representations; }
+    public void setRepresentations(List<ObjectId> representations) { this.representations = representations; }
+    public void addRepresentation(ObjectId representation) { if(this.representations == null){ this.representations = new ArrayList<>(); } this.representations.add(representation); }
     public void clearRepresentations(){ if(this.representations != null){ this.representations.clear(); } }
 
     public boolean isComposite() { return composite; }

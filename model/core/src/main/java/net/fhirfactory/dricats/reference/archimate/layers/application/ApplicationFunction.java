@@ -3,19 +3,20 @@
  */
 package net.fhirfactory.dricats.reference.archimate.layers.application;
 
-import net.fhirfactory.dricats.internals.common.DistributableObjectId;
-import net.fhirfactory.dricats.reference.archimate.common.SimpleElementBase;
+import net.fhirfactory.dricats.internals.common.identifiers.ElementReference;
+import net.fhirfactory.dricats.reference.archimate.common.ElementBase;
 import net.fhirfactory.dricats.reference.archimate.common.valuesets.ElementTypeEnum;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class ApplicationFunction extends SimpleElementBase implements Serializable {
+public class ApplicationFunction extends ElementBase implements Serializable {
     //
     // Housekeeping
     //
@@ -26,9 +27,9 @@ public class ApplicationFunction extends SimpleElementBase implements Serializab
      // Attributes
     //
 
-    private List<DistributableObjectId> applicationServices;
-    private List<DistributableObjectId> applicationDataObjects;
-    private DistributableObjectId owner;
+    private List<ElementReference> applicationServices;
+    private List<ElementReference> applicationDataObjects;
+    private ElementReference owner;
 
     //
      // Constructor(s)
@@ -48,7 +49,7 @@ public class ApplicationFunction extends SimpleElementBase implements Serializab
         setSpecialization(specialization);
     }
 
-    public ApplicationFunction(DistributableObjectId parent, String name, String documentation, String specialization) {
+    public ApplicationFunction(ElementReference parent, String name, String documentation, String specialization) {
         super(name, documentation, specialization, ElementTypeEnum.APPLICATION_FUNCTION);
         this.owner = parent;
         this.applicationServices = new ArrayList<>();
@@ -62,27 +63,27 @@ public class ApplicationFunction extends SimpleElementBase implements Serializab
     //
     protected Logger getLogger(){ return LOG; }
 
-    public List<DistributableObjectId> getApplicationServices() {
+    public List<ElementReference> getApplicationServices() {
         return applicationServices;
     }
 
-    public void setApplicationServices(List<DistributableObjectId> applicationServices) {
+    public void setApplicationServices(List<ElementReference> applicationServices) {
         this.applicationServices = applicationServices;
     }
 
-    public List<DistributableObjectId> getApplicationDataObjects() {
+    public List<ElementReference> getApplicationDataObjects() {
         return applicationDataObjects;
     }
 
-    public void setApplicationDataObjects(List<DistributableObjectId> applicationDataObjects) {
+    public void setApplicationDataObjects(List<ElementReference> applicationDataObjects) {
         this.applicationDataObjects = applicationDataObjects;
     }
 
-    public DistributableObjectId getOwner() {
+    public ElementReference getOwner() {
         return owner;
     }
 
-    public void setOwner(DistributableObjectId owner) {
+    public void setOwner(ElementReference owner) {
         this.owner = owner;
     }
 

@@ -1,16 +1,17 @@
 package net.fhirfactory.dricats.model.topology.implementation.layers.application.interfaces.base;
 
-import net.fhirfactory.dricats.internals.common.DistributableObjectId;
-import net.fhirfactory.dricats.internals.topology.implementation.layers.application.interfaces.base.InterfaceImplementationBase;
+import net.fhirfactory.dricats.internals.common.identifiers.ElementReference;
+import net.fhirfactory.dricats.internals.topology.implementation.layers.application.interfaces.base.WUPInterfaceBase;
 import org.junit.jupiter.api.Test;
 
 import java.net.URI;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 class InterfaceImplementationBaseTest {
 
-    static class TestInterface extends InterfaceImplementationBase { }
+    static class TestInterface extends WUPInterfaceBase { }
 
     @Test
     void constructorsAndURI() {
@@ -25,7 +26,7 @@ class InterfaceImplementationBaseTest {
         assertEquals("d", b.getDocumentation());
         assertEquals("spec", b.getSpecialization());
 
-        DistributableObjectId parent = new DistributableObjectId();
+        ElementReference parent = new ElementReference();
         TestInterface c = new TestInterface();
         c.setOwner(parent);
         c.setName("x");

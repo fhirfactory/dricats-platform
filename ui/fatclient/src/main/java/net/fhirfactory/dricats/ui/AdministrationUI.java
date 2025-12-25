@@ -26,9 +26,10 @@ import javafx.application.Platform;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
+import net.fhirfactory.dricats.internals.common.naming.datatypes.DistinguishedNameEntry;
 import net.fhirfactory.dricats.internals.oam.metrics.ApplicationComponentMetricsData;
 import net.fhirfactory.dricats.internals.oam.metrics.datatypes.ComponentMessagingStatistics;
-import net.fhirfactory.dricats.internals.oam.topology.base.ApplicationComponentSummary;
+import net.fhirfactory.dricats.reference.archimate.layers.application.ApplicationComponent;
 import net.fhirfactory.dricats.ui.restclient.MainRESTClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,7 +42,7 @@ public class AdministrationUI extends Application {
     private static final Logger LOG = LoggerFactory.getLogger(AdministrationUI.class);
 
     private MainRESTClient client;
-    private TreeView<ApplicationComponentSummary> treeView;
+    private TreeView<ApplicationComponent> treeView;
     private TableView<KVRow> metricsTable;
     private TableView<KVRow> detailsTable;
     private TreeView<String> uniqueNameTree;
@@ -92,7 +93,7 @@ public class AdministrationUI extends Application {
         return;
     }
 
-    private void refreshDetails(ApplicationComponentSummary summary) {
+    private void refreshDetails(ApplicationComponent summary) {
         if (detailsTable == null) return;
         javafx.collections.ObservableList<KVRow> rows = javafx.collections.FXCollections.observableArrayList();
         if (summary == null) {
@@ -102,19 +103,19 @@ public class AdministrationUI extends Application {
         }
         try { rows.add(new KVRow("Name", Objects.toString(summary.getName(), ""))); } catch (Exception ignored) {}
         try {
-            if (summary.getId() != null && summary.getId().getValue() != null)
-                rows.add(new KVRow("ID", summary.getId().getValue()));
+            if (summary.getLocalId() != null && summary.getLocalId().getValue() != null)
+                rows.add(new KVRow("ID", summary.getLocalId().getValue()));
         } catch (Exception ignored) {}
         try {
             if (summary.getObjectID() != null)
-                rows.add(new KVRow("ObjectID", Objects.toString(summary.getObjectID().getIdToken(), "")));
+                rows.add(new KVRow("ObjectID", Objects.toString(summary.getObjectID().getCommonName().getValue(), "")));
         } catch (Exception ignored) {}
         try { rows.add(new KVRow("Element Type", Objects.toString(summary.getElementType(), ""))); } catch (Exception ignored) {}
         try { rows.add(new KVRow("Specialization", Objects.toString(summary.getSpecialization(), ""))); } catch (Exception ignored) {}
         try { rows.add(new KVRow("Documentation", Objects.toString(summary.getDocumentation(), ""))); } catch (Exception ignored) {}
         try {
             if (summary.getParent() != null)
-                rows.add(new KVRow("Parent", Objects.toString(summary.getParent().getQualifiedName().getCommonName().getValue(), "")));
+                rows.add(new KVRow("Parent", Objects.toString(summary.getParent().getLocalObjectId().getQualifiedName().getCommonName().getValue(), "")));
         } catch (Exception ignored) {}
         try {
             int count = summary.getSubComponents() == null ? 0 : summary.getSubComponents().size();
@@ -136,7 +137,7 @@ public class AdministrationUI extends Application {
         detailsTable.setItems(rows);
     }
 
-    private void refreshUniqueName(ApplicationComponentSummary summary) {
+    private void refreshUniqueName(ApplicationComponent summary) {
         if (uniqueNameTree == null) return;
         TreeItem<String> root = new TreeItem<>("UniqueName");
         root.setExpanded(true);
@@ -144,7 +145,7 @@ public class AdministrationUI extends Application {
             if (summary == null || summary.getObjectID() == null || summary.getObjectID().getQualifiedName() == null) {
                 root.getChildren().add(new TreeItem<>("No selection"));
             } else {
-                java.util.Map<Integer, net.fhirfactory.dricats.internals.common.naming.UnqualifiedNameEntry> entries =
+                java.util.Map<Integer, DistinguishedNameEntry> entries =
                         summary.getObjectID().getQualifiedName().getUnqualifiedNameEntries();
                 if (entries == null || entries.isEmpty()) {
                     root.getChildren().add(new TreeItem<>("<empty>"));
@@ -152,7 +153,7 @@ public class AdministrationUI extends Application {
                     java.util.List<Integer> keys = new java.util.ArrayList<>(entries.keySet());
                     java.util.Collections.sort(keys);
                     for (Integer k : keys) {
-                        net.fhirfactory.dricats.internals.common.naming.UnqualifiedNameEntry e = entries.get(k);
+                        DistinguishedNameEntry e = entries.get(k);
                         String qual = e == null ? "" : java.util.Objects.toString(e.getQualifier(), "");
                         String val = e == null ? "" : java.util.Objects.toString(e.getValue(), "");
                         TreeItem<String> child = new TreeItem<>(qual + " = " + val);
@@ -166,7 +167,7 @@ public class AdministrationUI extends Application {
         uniqueNameTree.setRoot(root);
     }
 
-    private void refreshMetrics(ApplicationComponentSummary summary) {
+    private void refreshMetrics(ApplicationComponent summary) {
         if (metricsTable == null) return;
         javafx.collections.ObservableList<KVRow> rows = javafx.collections.FXCollections.observableArrayList();
         if (summary == null) {
@@ -224,11 +225,11 @@ public class AdministrationUI extends Application {
     }
 
     private void loadRoots() {
-        TreeItem<ApplicationComponentSummary> hiddenRoot = new TreeItem<>();
+        TreeItem<ApplicationComponent> hiddenRoot = new TreeItem<>();
         treeView.setRoot(hiddenRoot);
-        List<ApplicationComponentSummary> roots = null;
+        List<ApplicationComponent> roots = null;
         try {
-            roots = client.listComponents().getElementList();
+            roots = client.listComponents();
         } catch (Exception e) {
             LOG.warn("[UI] Failed to fetch component list: {}", e.toString());
         }
@@ -238,15 +239,15 @@ public class AdministrationUI extends Application {
         }
         LOG.info("[UI] Loaded {} components", roots.size());
         hiddenRoot.getChildren().clear();
-        for (ApplicationComponentSummary s : roots) {
+        for (ApplicationComponent s : roots) {
             if (s != null) {
                 hiddenRoot.getChildren().add(createTreeItem(s));
             }
         }
     }
 
-    private TreeItem<ApplicationComponentSummary> createTreeItem(ApplicationComponentSummary s) {
-        TreeItem<ApplicationComponentSummary> item = new TreeItem<>(s);
+    private TreeItem<ApplicationComponent> createTreeItem(ApplicationComponent s) {
+        TreeItem<ApplicationComponent> item = new TreeItem<>(s);
         // Add a dummy child to show expandable arrow; real children loaded on demand
         item.getChildren().add(new TreeItem<>());
         item.expandedProperty().addListener((obs, o, n) -> {
@@ -255,24 +256,24 @@ public class AdministrationUI extends Application {
         return item;
     }
 
-    private void loadChildrenIfNeeded(TreeItem<ApplicationComponentSummary> parentItem) {
+    private void loadChildrenIfNeeded(TreeItem<ApplicationComponent> parentItem) {
         if (parentItem == null || parentItem.getValue() == null) return;
         // If already loaded (no placeholder), skip
         if (!hasPlaceholder(parentItem)) return;
         parentItem.getChildren().clear();
 
         String id = MainRESTClient.resolveKey(parentItem.getValue());
-        List<ApplicationComponentSummary> kids = client.listSubcomponents(id);
+        List<ApplicationComponent> kids = client.listSubcomponents(id);
         if (kids.isEmpty()) {
             // keep no children
             return;
         }
-        for (ApplicationComponentSummary child : kids) {
+        for (ApplicationComponent child : kids) {
             parentItem.getChildren().add(createTreeItem(child));
         }
     }
 
-    private boolean hasPlaceholder(TreeItem<ApplicationComponentSummary> item) {
+    private boolean hasPlaceholder(TreeItem<ApplicationComponent> item) {
         return item.getChildren().size() == 1 && item.getChildren().get(0).getValue() == null;
     }
 

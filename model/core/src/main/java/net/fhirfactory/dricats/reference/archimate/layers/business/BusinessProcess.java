@@ -3,14 +3,15 @@
  */
 package net.fhirfactory.dricats.reference.archimate.layers.business;
 
-import net.fhirfactory.dricats.internals.common.DistributableObjectId;
-import net.fhirfactory.dricats.reference.archimate.common.SimpleElementBase;
+import net.fhirfactory.dricats.internals.common.identifiers.ElementReference;
+import net.fhirfactory.dricats.reference.archimate.common.ElementBase;
 import net.fhirfactory.dricats.reference.archimate.common.valuesets.ElementTypeEnum;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.Serial;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -25,19 +26,23 @@ import java.util.Objects;
  * - triggeringEvents: BusinessEvent(s) that start this process
  * - resultingEvents: BusinessEvent(s) that are emitted by this process
  */
-public class BusinessProcess extends SimpleElementBase {
-    @Serial private static final long serialVersionUID = -12345678920105L;
+public class BusinessProcess extends ElementBase implements Serializable {
+    //
+    // Housekeeping
+    //
+    @Serial
+    private static final long serialVersionUID = -12345678920105L;
     private static final Logger LOG = LoggerFactory.getLogger(BusinessProcess.class);
 
-    // Element-specific attributes (by reference IDs)
-    private List<DistributableObjectId> performers;
-    private List<DistributableObjectId> usedServices;
-    private List<DistributableObjectId> inputBusinessObjects;
-    private List<DistributableObjectId> outputBusinessObjects;
-    private List<DistributableObjectId> triggeringEvents;
-    private List<DistributableObjectId> resultingEvents;
+    // Element-specific attributes (by references)
+    private List<ElementReference> performers;
+    private List<ElementReference> usedServices;
+    private List<ElementReference> inputBusinessObjects;
+    private List<ElementReference> outputBusinessObjects;
+    private List<ElementReference> triggeringEvents;
+    private List<ElementReference> resultingEvents;
 
-    public BusinessProcess(){
+    public BusinessProcess() {
         super();
         setElementType(ElementTypeEnum.BUSINESS_PROCESS);
         this.performers = new ArrayList<>();
@@ -49,38 +54,154 @@ public class BusinessProcess extends SimpleElementBase {
     }
 
     // Getters/Setters and helpers
-    public List<DistributableObjectId> getPerformers() { return performers; }
-    public void setPerformers(List<DistributableObjectId> performers) { this.performers = performers == null ? new ArrayList<>() : performers; }
-    public void addPerformer(DistributableObjectId performer){ if(performer == null){ return; } if(this.performers == null){ this.performers = new ArrayList<>(); } this.performers.add(performer); }
-    public void clearPerformers(){ if(this.performers != null){ this.performers.clear(); } }
+    public List<ElementReference> getPerformers() {
+        return performers;
+    }
 
-    public List<DistributableObjectId> getUsedServices() { return usedServices; }
-    public void setUsedServices(List<DistributableObjectId> usedServices) { this.usedServices = usedServices == null ? new ArrayList<>() : usedServices; }
-    public void addUsedService(DistributableObjectId service){ if(service == null){ return; } if(this.usedServices == null){ this.usedServices = new ArrayList<>(); } this.usedServices.add(service); }
-    public void clearUsedServices(){ if(this.usedServices != null){ this.usedServices.clear(); } }
+    public void setPerformers(List<ElementReference> performers) {
+        this.performers = performers == null ? new ArrayList<>() : performers;
+    }
 
-    public List<DistributableObjectId> getInputBusinessObjects() { return inputBusinessObjects; }
-    public void setInputBusinessObjects(List<DistributableObjectId> inputBusinessObjects) { this.inputBusinessObjects = inputBusinessObjects == null ? new ArrayList<>() : inputBusinessObjects; }
-    public void addInputBusinessObject(DistributableObjectId businessObject){ if(businessObject == null){ return; } if(this.inputBusinessObjects == null){ this.inputBusinessObjects = new ArrayList<>(); } this.inputBusinessObjects.add(businessObject); }
-    public void clearInputBusinessObjects(){ if(this.inputBusinessObjects != null){ this.inputBusinessObjects.clear(); } }
+    public void addPerformer(ElementReference performer) {
+        if (performer == null) {
+            return;
+        }
+        if (this.performers == null) {
+            this.performers = new ArrayList<>();
+        }
+        this.performers.add(performer);
+    }
 
-    public List<DistributableObjectId> getOutputBusinessObjects() { return outputBusinessObjects; }
-    public void setOutputBusinessObjects(List<DistributableObjectId> outputBusinessObjects) { this.outputBusinessObjects = outputBusinessObjects == null ? new ArrayList<>() : outputBusinessObjects; }
-    public void addOutputBusinessObject(DistributableObjectId businessObject){ if(businessObject == null){ return; } if(this.outputBusinessObjects == null){ this.outputBusinessObjects = new ArrayList<>(); } this.outputBusinessObjects.add(businessObject); }
-    public void clearOutputBusinessObjects(){ if(this.outputBusinessObjects != null){ this.outputBusinessObjects.clear(); } }
+    public void clearPerformers() {
+        if (this.performers != null) {
+            this.performers.clear();
+        }
+    }
 
-    public List<DistributableObjectId> getTriggeringEvents() { return triggeringEvents; }
-    public void setTriggeringEvents(List<DistributableObjectId> triggeringEvents) { this.triggeringEvents = triggeringEvents == null ? new ArrayList<>() : triggeringEvents; }
-    public void addTriggeringEvent(DistributableObjectId event){ if(event == null){ return; } if(this.triggeringEvents == null){ this.triggeringEvents = new ArrayList<>(); } this.triggeringEvents.add(event); }
-    public void clearTriggeringEvents(){ if(this.triggeringEvents != null){ this.triggeringEvents.clear(); } }
+    public List<ElementReference> getUsedServices() {
+        return usedServices;
+    }
 
-    public List<DistributableObjectId> getResultingEvents() { return resultingEvents; }
-    public void setResultingEvents(List<DistributableObjectId> resultingEvents) { this.resultingEvents = resultingEvents == null ? new ArrayList<>() : resultingEvents; }
-    public void addResultingEvent(DistributableObjectId event){ if(event == null){ return; } if(this.resultingEvents == null){ this.resultingEvents = new ArrayList<>(); } this.resultingEvents.add(event); }
-    public void clearResultingEvents(){ if(this.resultingEvents != null){ this.resultingEvents.clear(); } }
+    public void setUsedServices(List<ElementReference> usedServices) {
+        this.usedServices = usedServices == null ? new ArrayList<>() : usedServices;
+    }
+
+    public void addUsedService(ElementReference service) {
+        if (service == null) {
+            return;
+        }
+        if (this.usedServices == null) {
+            this.usedServices = new ArrayList<>();
+        }
+        this.usedServices.add(service);
+    }
+
+    public void clearUsedServices() {
+        if (this.usedServices != null) {
+            this.usedServices.clear();
+        }
+    }
+
+    public List<ElementReference> getInputBusinessObjects() {
+        return inputBusinessObjects;
+    }
+
+    public void setInputBusinessObjects(List<ElementReference> inputBusinessObjects) {
+        this.inputBusinessObjects = inputBusinessObjects == null ? new ArrayList<>() : inputBusinessObjects;
+    }
+
+    public void addInputBusinessObject(ElementReference businessObject) {
+        if (businessObject == null) {
+            return;
+        }
+        if (this.inputBusinessObjects == null) {
+            this.inputBusinessObjects = new ArrayList<>();
+        }
+        this.inputBusinessObjects.add(businessObject);
+    }
+
+    public void clearInputBusinessObjects() {
+        if (this.inputBusinessObjects != null) {
+            this.inputBusinessObjects.clear();
+        }
+    }
+
+    public List<ElementReference> getOutputBusinessObjects() {
+        return outputBusinessObjects;
+    }
+
+    public void setOutputBusinessObjects(List<ElementReference> outputBusinessObjects) {
+        this.outputBusinessObjects = outputBusinessObjects == null ? new ArrayList<>() : outputBusinessObjects;
+    }
+
+    public void addOutputBusinessObject(ElementReference businessObject) {
+        if (businessObject == null) {
+            return;
+        }
+        if (this.outputBusinessObjects == null) {
+            this.outputBusinessObjects = new ArrayList<>();
+        }
+        this.outputBusinessObjects.add(businessObject);
+    }
+
+    public void clearOutputBusinessObjects() {
+        if (this.outputBusinessObjects != null) {
+            this.outputBusinessObjects.clear();
+        }
+    }
+
+    public List<ElementReference> getTriggeringEvents() {
+        return triggeringEvents;
+    }
+
+    public void setTriggeringEvents(List<ElementReference> triggeringEvents) {
+        this.triggeringEvents = triggeringEvents == null ? new ArrayList<>() : triggeringEvents;
+    }
+
+    public void addTriggeringEvent(ElementReference event) {
+        if (event == null) {
+            return;
+        }
+        if (this.triggeringEvents == null) {
+            this.triggeringEvents = new ArrayList<>();
+        }
+        this.triggeringEvents.add(event);
+    }
+
+    public void clearTriggeringEvents() {
+        if (this.triggeringEvents != null) {
+            this.triggeringEvents.clear();
+        }
+    }
+
+    public List<ElementReference> getResultingEvents() {
+        return resultingEvents;
+    }
+
+    public void setResultingEvents(List<ElementReference> resultingEvents) {
+        this.resultingEvents = resultingEvents == null ? new ArrayList<>() : resultingEvents;
+    }
+
+    public void addResultingEvent(ElementReference event) {
+        if (event == null) {
+            return;
+        }
+        if (this.resultingEvents == null) {
+            this.resultingEvents = new ArrayList<>();
+        }
+        this.resultingEvents.add(event);
+    }
+
+    public void clearResultingEvents() {
+        if (this.resultingEvents != null) {
+            this.resultingEvents.clear();
+        }
+    }
 
     @Override
-    protected Logger getLogger(){ return LOG; }
+    protected Logger getLogger() {
+        return LOG;
+    }
 
     @Override
     public boolean equals(Object o) {

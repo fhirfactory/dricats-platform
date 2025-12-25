@@ -21,7 +21,7 @@
  */
 package net.fhirfactory.dricats.internals.pubsub.messages;
 
-import net.fhirfactory.dricats.internals.pubsub.TopicSubscription;
+import net.fhirfactory.dricats.internals.pubsub.topics.TopicSubscription;
 import net.fhirfactory.dricats.internals.pubsub.common.ApplicationComponentIdMask;
 import net.fhirfactory.dricats.internals.pubsub.common.EventTemporalWindow;
 import net.fhirfactory.dricats.internals.pubsub.common.SubscriptionMaskBase;

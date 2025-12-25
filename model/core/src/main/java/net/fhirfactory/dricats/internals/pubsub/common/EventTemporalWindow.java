@@ -21,7 +21,7 @@
  */
 package net.fhirfactory.dricats.internals.pubsub.common;
 
-import net.fhirfactory.dricats.internals.common.datatypes.EffectiveDate;
+import net.fhirfactory.dricats.internals.datatypes.EffectiveDate;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import java.io.Serial;
@@ -85,7 +85,7 @@ public class EventTemporalWindow extends EffectiveDate implements Serializable {
         return new ToStringBuilder(this)
                 .append("effectiveStartDate", getEffectiveStartDate())
                 .append("effectiveEndDate", getEffectiveEndDate())
-                .append("id", getId())
+                .append("id", getLocalId())
                 .toString();
     }
 }

@@ -3,7 +3,7 @@ package net.fhirfactory.dricats.model.configuration.configurationfile.archetypes
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
-import net.fhirfactory.dricats.internals.common.DistributableObjectIdentifierType;
+import net.fhirfactory.dricats.internals.common.identifiers.datatypes.ElementIdentifierType;
 import net.fhirfactory.dricats.internals.configuration.segments.*;
 import net.fhirfactory.dricats.internals.configuration.valuesets.ApplicationConcurrencyModeEnum;
 import net.fhirfactory.dricats.internals.configuration.valuesets.ApplicationDeploymentModeEnum;
@@ -60,7 +60,7 @@ public class BaseSubsystemConfigurationObjectYamlTest {
         solution.setSolutionName("CareFlow");
         solution.setSolutionGroup("ACTHealth");
         solution.setSolutionDescription("CareFlow Integrated Care Platform");
-        DistributableObjectIdentifierType idType = new DistributableObjectIdentifierType();
+        ElementIdentifierType idType = new ElementIdentifierType();
         idType.setCode("MRN");
         idType.setValue("12345");
         idType.setDisplay("Medical Record Number");

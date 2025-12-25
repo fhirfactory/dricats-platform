@@ -3,10 +3,11 @@
  */
 package net.fhirfactory.dricats.reference.archimate.layers.technology;
 
+import net.fhirfactory.dricats.internals.common.id.ObjectId;
 import net.fhirfactory.dricats.reference.archimate.common.ElementBase;
-import net.fhirfactory.dricats.internals.common.DistributableObjectId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import java.io.Serial;
 import java.util.ArrayList;
 import java.util.List;
@@ -24,10 +25,10 @@ public class Node extends ElementBase {
     // - subNodes: child Node(s) in a composition/aggregation structure
     // - parent: parent Node reference
     // - services: TechnologyService(s) provided by this node
-    private List<DistributableObjectId> interfaces;
-    private List<DistributableObjectId> subNodes;
-    private DistributableObjectId parent;
-    private List<DistributableObjectId> services;
+    private List<ObjectId> interfaces;
+    private List<ObjectId> subNodes;
+    private ObjectId parent;
+    private List<ObjectId> services;
 
     public Node() {
         super();
@@ -39,28 +40,28 @@ public class Node extends ElementBase {
 
     protected Logger getLogger(){ return LOG; }
 
-    public List<DistributableObjectId> getInterfaces() { return interfaces; }
-    public void setInterfaces(List<DistributableObjectId> interfaces) { this.interfaces = interfaces == null ? new ArrayList<>() : interfaces; }
-    public void addInterface(DistributableObjectId interfaceId) {
+    public List<ObjectId> getInterfaces() { return interfaces; }
+    public void setInterfaces(List<ObjectId> interfaces) { this.interfaces = interfaces == null ? new ArrayList<>() : interfaces; }
+    public void addInterface(ObjectId interfaceId) {
         if(interfaceId == null){ return; }
         if(this.interfaces == null){ this.interfaces = new ArrayList<>(); }
         this.interfaces.add(interfaceId);
     }
 
-    public List<DistributableObjectId> getSubNodes() { return subNodes; }
-    public void setSubNodes(List<DistributableObjectId> subNodes) { this.subNodes = subNodes == null ? new ArrayList<>() : subNodes; }
-    public void addSubNode(DistributableObjectId nodeId) {
+    public List<ObjectId> getSubNodes() { return subNodes; }
+    public void setSubNodes(List<ObjectId> subNodes) { this.subNodes = subNodes == null ? new ArrayList<>() : subNodes; }
+    public void addSubNode(ObjectId nodeId) {
         if(nodeId == null){ return; }
         if(this.subNodes == null){ this.subNodes = new ArrayList<>(); }
         this.subNodes.add(nodeId);
     }
 
-    public DistributableObjectId getParent() { return parent; }
-    public void setParent(DistributableObjectId parent) { this.parent = parent; }
+    public ObjectId getParent() { return parent; }
+    public void setParent(ObjectId parent) { this.parent = parent; }
 
-    public List<DistributableObjectId> getServices() { return services; }
-    public void setServices(List<DistributableObjectId> services) { this.services = services == null ? new ArrayList<>() : services; }
-    public void addService(DistributableObjectId serviceId) {
+    public List<ObjectId> getServices() { return services; }
+    public void setServices(List<ObjectId> services) { this.services = services == null ? new ArrayList<>() : services; }
+    public void addService(ObjectId serviceId) {
         if(serviceId == null){ return; }
         if(this.services == null){ this.services = new ArrayList<>(); }
         this.services.add(serviceId);
@@ -93,8 +94,8 @@ public class Node extends ElementBase {
                 ", servicesCount="+(services==null?0:services.size())+
                 ", documentation='"+getDocumentation()+'\''+
                 ", specialization='"+getSpecialization()+'\''+
-                ", properties="+getProperties()+
-                ", objectID="+getObjectID()+
+                ", properties="+ getExtensions()+
+                ", id="+ getLocalId()+
                 ", identifiers="+getIdentifiers()+
                 ", metadata="+getMetadata()+
                 ", securityLabels="+getSecurityLabels()+

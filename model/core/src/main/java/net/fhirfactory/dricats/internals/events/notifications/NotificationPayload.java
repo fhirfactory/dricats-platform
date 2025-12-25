@@ -21,19 +21,15 @@
  */
 package net.fhirfactory.dricats.internals.events.notifications;
 
-import java.io.Serial;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
-
-import net.fhirfactory.dricats.internals.common.DistributableObjectId;
-import net.fhirfactory.dricats.internals.common.naming.QualifiedName;
-import net.fhirfactory.dricats.internals.common.naming.UnqualifiedName;
+import net.fhirfactory.dricats.internals.common.naming.FullyDistinguishedName;
+import net.fhirfactory.dricats.internals.common.id.ObjectId;
+import net.fhirfactory.dricats.internals.common.naming.RelativeDistinguishedName;
 import net.fhirfactory.dricats.internals.data.Payload;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import net.fhirfactory.dricats.internals.common.SerialisableObject;
+import java.io.Serial;
+import java.util.UUID;
 
 public class NotificationPayload extends Payload {
     //
@@ -54,11 +50,10 @@ public class NotificationPayload extends Payload {
 
     public NotificationPayload() {
         super();
-        UnqualifiedName unqualifiedName = new UnqualifiedName("NotificationPayload", UUID.randomUUID().toString());
-        QualifiedName qualifiedName = new QualifiedName();
+        RelativeDistinguishedName unqualifiedName = new RelativeDistinguishedName("NotificationPayload", UUID.randomUUID().toString());
+        FullyDistinguishedName qualifiedName = new FullyDistinguishedName();
         qualifiedName.appendUnqualifiedName(unqualifiedName);
-        this.setObjectID(new DistributableObjectId(qualifiedName));
-        this.setId(getObjectID().getQualifiedName().getCommonName());
+        this.setLocalId(new ObjectId(qualifiedName));
     }
 
     //

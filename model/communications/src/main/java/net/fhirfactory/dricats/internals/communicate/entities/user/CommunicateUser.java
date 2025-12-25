@@ -22,7 +22,6 @@
 package net.fhirfactory.dricats.internals.communicate.entities.user;
 
 import java.io.Serial;
-import java.util.StringJoiner;
 
 import net.fhirfactory.dricats.resources.actors.User;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -167,12 +166,12 @@ public class CommunicateUser extends User {
                 .append("name", getName())
                 .append("documentation", getDocumentation())
                 .append("specialization", getSpecialization())
-                .append("properties", getProperties())
+                .append("properties", getExtensions())
                 .append("identifiers", getIdentifiers())
                 .append("securityLabels", getSecurityLabels())
                 .append("objectID", getObjectID())
                 .append("metadata", getMetadata())
-                .append("id", getId())
+                .append("id", getLocalId())
                 .toString();
     }
 }

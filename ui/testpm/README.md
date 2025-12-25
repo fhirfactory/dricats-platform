@@ -22,10 +22,10 @@ How to start (Camel standalone)
 Available endpoints
 The REST context path is /. The base resource path is /oam.
 - GET /oam/applicationcomponents
-- GET /oam/applicationcomponents/{id}
-- GET /oam/applicationcomponents/{id}/subcomponents
+- GET /oam/applicationcomponents/{objectId}
+- GET /oam/applicationcomponents/{objectId}/subcomponents
 - GET /oam/metrics
-- GET /oam/metrics/{id}
+- GET /oam/metrics/{objectId}
 
 Example requests
 - List components:

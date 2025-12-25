@@ -21,10 +21,9 @@
  */
 package net.fhirfactory.dricats.internals.pathways.summaries;
 
-import net.fhirfactory.dricats.internals.common.DistributableObject;
-import net.fhirfactory.dricats.internals.common.DistributableObjectId;
+import net.fhirfactory.dricats.internals.common.id.ObjectId;
 import net.fhirfactory.dricats.internals.pubsub.messages.MessageSubscription;
-import net.fhirfactory.dricats.reference.archimate.common.SimpleElementBase;
+import net.fhirfactory.dricats.reference.archimate.common.ElementBase;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,7 +33,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PathwayElementSummary extends SimpleElementBase implements Serializable {
+public class PathwayElementSummary extends ElementBase implements Serializable {
     //
     // Housekeeping
     //
@@ -42,8 +41,8 @@ public class PathwayElementSummary extends SimpleElementBase implements Serializ
     private static final long serialVersionUID = 1L;
     private static final Logger LOG = LoggerFactory.getLogger(PathwayElementSummary.class);
 
-    private DistributableObjectId sourceApplicationInterface;
-    private DistributableObjectId targetApplicationInterface;
+    private ObjectId sourceApplicationInterface;
+    private ObjectId targetApplicationInterface;
     private List<MessageSubscription> trafficType;
 
     //
@@ -61,19 +60,19 @@ public class PathwayElementSummary extends SimpleElementBase implements Serializ
      // Bean Methods
     //
 
-    public DistributableObjectId getSourceApplicationInterface() {
+    public ObjectId getSourceApplicationInterface() {
         return sourceApplicationInterface;
     }
 
-    public void setSourceApplicationInterface(DistributableObjectId sourceApplicationInterface) {
+    public void setSourceApplicationInterface(ObjectId sourceApplicationInterface) {
         this.sourceApplicationInterface = sourceApplicationInterface;
     }
 
-    public DistributableObjectId getTargetApplicationInterface() {
+    public ObjectId getTargetApplicationInterface() {
         return targetApplicationInterface;
     }
 
-    public void setTargetApplicationInterface(DistributableObjectId targetApplicationInterface) {
+    public void setTargetApplicationInterface(ObjectId targetApplicationInterface) {
         this.targetApplicationInterface = targetApplicationInterface;
     }
 

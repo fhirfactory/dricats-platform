@@ -21,25 +21,25 @@
  */
 package net.fhirfactory.dricats.datagrid.central.taskgrid.h2;
 
+import jakarta.annotation.Priority;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.Alternative;
-import net.fhirfactory.dricats.internals.common.DistributableObjectId;
-import net.fhirfactory.dricats.internals.common.datatypes.EffectiveDate;
-import net.fhirfactory.dricats.internals.common.naming.CommonName;
-import net.fhirfactory.dricats.internals.common.naming.QualifiedName;
-import net.fhirfactory.dricats.internals.common.naming.UnqualifiedName;
-import net.fhirfactory.dricats.internals.common.naming.UnqualifiedNameEntry;
-import net.fhirfactory.dricats.internals.tasking.InternalTask;
 import net.fhirfactory.dricats.datagrid.central.taskgrid.spi.ITaskPersistenceService;
+import net.fhirfactory.dricats.internals.common.DistributableObjectId;
+import net.fhirfactory.dricats.internals.datatypes.EffectiveDate;
+import net.fhirfactory.dricats.internals.common.id.ObjectId;
+import net.fhirfactory.dricats.internals.common.naming.*;
+import net.fhirfactory.dricats.internals.common.naming.datatypes.DistinguishedNameEntry;
+import net.fhirfactory.dricats.internals.tasking.InternalTask;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import jakarta.annotation.*;
-
-
 import java.sql.*;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 /**
  * H2-backed implementation of the ITaskPersistenceService.
@@ -141,7 +141,7 @@ public class H2TaskPersistenceService implements ITaskPersistenceService {
                 }
             }
 
-            List<UnqualifiedNameEntry> parts = new ArrayList<>();
+            List<DistinguishedNameEntry> parts = new ArrayList<>();
             try (PreparedStatement ps = c.prepareStatement("SELECT seq, qualifier, value FROM QUALIFIED_NAME_PART WHERE task_key=? ORDER BY seq ASC")) {
                 ps.setString(1, key);
                 try (ResultSet rs = ps.executeQuery()) {
@@ -149,7 +149,7 @@ public class H2TaskPersistenceService implements ITaskPersistenceService {
                         int seq = rs.getInt(1);
                         String q = rs.getString(2);
                         String v = rs.getString(3);
-                        UnqualifiedNameEntry entry = new UnqualifiedNameEntry(q, v);
+                        DistinguishedNameEntry entry = new DistinguishedNameEntry(q, v);
                         entry.setSequenceNumber(seq);
                         parts.add(entry);
                     }
@@ -157,17 +157,14 @@ public class H2TaskPersistenceService implements ITaskPersistenceService {
             }
 
             InternalTask t = new InternalTask();
-            if (idValue != null && !idValue.isEmpty()) {
-                t.setId(new CommonName(idValue));
-            }
             // Build DistributableObjectId
-            DistributableObjectId oid = new DistributableObjectId();
-            QualifiedName qn = new QualifiedName();
-            for (UnqualifiedNameEntry p : parts) {
-                UnqualifiedName u = new UnqualifiedName(p.getQualifier(), p.getValue());
+
+            FullyDistinguishedName qn = new FullyDistinguishedName();
+            for (DistinguishedNameEntry p : parts) {
+                RelativeDistinguishedName u = new RelativeDistinguishedName(p.getQualifier(), p.getValue());
                 qn.appendUnqualifiedName(u);
             }
-            oid.setQualifiedName(qn);
+            ObjectId oid = new ObjectId(qn);
             EffectiveDate ed = new EffectiveDate();
             if (effStart != null) ed.setEffectiveStartDate(effStart);
             if (effEnd != null) ed.setEffectiveEndDate(effEnd);
@@ -191,7 +188,7 @@ public class H2TaskPersistenceService implements ITaskPersistenceService {
             // Upsert TASK
             String idVal = null;
             try {
-                CommonName cn = task.getId();
+                CommonName cn = task.getLocalId();
                 if (cn != null && cn.getValue() != null) idVal = cn.getValue();
             } catch (Exception ignore) {}
 
@@ -202,7 +199,7 @@ public class H2TaskPersistenceService implements ITaskPersistenceService {
             }
 
             // Upsert OBJECT_ID
-            LocalDateTime es = null; LocalDateTime ee = null; List<UnqualifiedNameEntry> parts = new ArrayList<>();
+            LocalDateTime es = null; LocalDateTime ee = null; List<DistinguishedNameEntry> parts = new ArrayList<>();
             try {
                 DistributableObjectId oid = task.getObjectID();
                 if (oid != null) {
@@ -211,9 +208,9 @@ public class H2TaskPersistenceService implements ITaskPersistenceService {
                         ee = oid.getEffectiveDate().getEffectiveEndDate();
                     }
                     if (oid.getQualifiedName() != null) {
-                        Map<Integer, UnqualifiedNameEntry> m = oid.getQualifiedName().getUnqualifiedNameEntries();
+                        Map<Integer, DistinguishedNameEntry> m = oid.getQualifiedName().getUnqualifiedNameEntries();
                         for (int i = 0; i < oid.getQualifiedName().getRelativeDNCount(); i++) {
-                            UnqualifiedNameEntry e = m.get(i);
+                            DistinguishedNameEntry e = m.get(i);
                             if (e != null) parts.add(e);
                         }
                     }
@@ -235,7 +232,7 @@ public class H2TaskPersistenceService implements ITaskPersistenceService {
             if (!parts.isEmpty()) {
                 try (PreparedStatement ins = c.prepareStatement("INSERT INTO QUALIFIED_NAME_PART(task_key, seq, qualifier, value) VALUES(?,?,?,?)")) {
                     int seq = 0;
-                    for (UnqualifiedNameEntry p : parts) {
+                    for (DistinguishedNameEntry p : parts) {
                         ins.setString(1, key);
                         ins.setInt(2, seq++);
                         ins.setString(3, p.getQualifier());

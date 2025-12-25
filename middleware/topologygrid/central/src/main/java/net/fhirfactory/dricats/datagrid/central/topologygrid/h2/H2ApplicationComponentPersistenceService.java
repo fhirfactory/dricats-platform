@@ -25,7 +25,7 @@ import jakarta.annotation.Priority;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.Alternative;
 import net.fhirfactory.dricats.datagrid.central.topologygrid.spi.IApplicationComponentPersistenceService;
-import net.fhirfactory.dricats.internals.oam.topology.base.ApplicationComponentSummary;
+import net.fhirfactory.dricats.reference.archimate.layers.application.ApplicationComponent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -75,7 +75,7 @@ public class H2ApplicationComponentPersistenceService implements IApplicationCom
     }
 
     @Override
-    public Optional<ApplicationComponentSummary> load(String key) {
+    public Optional<ApplicationComponent> load(String key) {
         if (key == null || key.isEmpty()) return Optional.empty();
         initIfNeeded();
         try (Connection c = DriverManager.getConnection(jdbcUrl(), jdbcUser(), jdbcPass())) {
@@ -83,7 +83,7 @@ public class H2ApplicationComponentPersistenceService implements IApplicationCom
                 ps.setString(1, key);
                 try (ResultSet rs = ps.executeQuery()) {
                     if (!rs.next()) { return Optional.empty(); }
-                    ApplicationComponentSummary s = new ApplicationComponentSummary();
+                    ApplicationComponent s = new ApplicationComponent();
                     s.setName(rs.getString(1));
                     s.setSpecialization(rs.getString(2));
                     s.setDocumentation(rs.getString(3));
@@ -97,7 +97,7 @@ public class H2ApplicationComponentPersistenceService implements IApplicationCom
     }
 
     @Override
-    public void save(String key, ApplicationComponentSummary component) {
+    public void save(String key, ApplicationComponent component) {
         if (key == null || key.isEmpty() || component == null) return;
         initIfNeeded();
         try (Connection c = DriverManager.getConnection(jdbcUrl(), jdbcUser(), jdbcPass())) {

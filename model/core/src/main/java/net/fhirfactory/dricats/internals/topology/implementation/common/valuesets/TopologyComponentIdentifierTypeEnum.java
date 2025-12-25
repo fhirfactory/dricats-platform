@@ -23,7 +23,7 @@ package net.fhirfactory.dricats.internals.topology.implementation.common.valuese
 
 import java.net.URI;
 
-import net.fhirfactory.dricats.internals.common.DistributableObjectIdentifierType;
+import net.fhirfactory.dricats.internals.common.identifiers.datatypes.ElementIdentifierType;
 
 public enum TopologyComponentIdentifierTypeEnum {
     IDENTIFIER_TYPE_SOFTWARE_COMPONENT_ID("SoftwareComponentIdentifier", "dricats.identifiers.applications-component.id", "https://fhirfactory.net/CodeSystems/IdentifierTypes"),
@@ -53,11 +53,11 @@ public enum TopologyComponentIdentifierTypeEnum {
         return identifierTypeSystem;
     }
 
-    public DistributableObjectIdentifierType toDistributableObjectIdentifierType() {
-        DistributableObjectIdentifierType distributableObjectIdentifierType = new DistributableObjectIdentifierType();
-        distributableObjectIdentifierType.setCode(identifierTypeCode);
-        distributableObjectIdentifierType.setDisplay(identifierTypeDisplay);
-        distributableObjectIdentifierType.setSystem(identifierTypeSystem);
-        return(distributableObjectIdentifierType);
+    public ElementIdentifierType toDistributableObjectIdentifierType() {
+        ElementIdentifierType elementIdentifierType = new ElementIdentifierType();
+        elementIdentifierType.setCode(identifierTypeCode);
+        elementIdentifierType.setDisplay(identifierTypeDisplay);
+        elementIdentifierType.setSystem(identifierTypeSystem);
+        return(elementIdentifierType);
     }
 }
