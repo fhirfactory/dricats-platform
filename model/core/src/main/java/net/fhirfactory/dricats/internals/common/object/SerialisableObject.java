@@ -42,7 +42,7 @@ public class SerialisableObject implements Serializable{
     // Attributes
     //
 
-    private ObjectId localId;
+    private ObjectId objectId;
 
     //
     // Constructor(s)
@@ -53,34 +53,34 @@ public class SerialisableObject implements Serializable{
         ObjectId idValue = new ObjectId();
         idValue.setName(new CommonName(UUID.randomUUID().toString()));
         idValue.setQualifier(new CommonQualifier("Object"));
-        setLocalId(idValue);
+        setObjectId(idValue);
     }
 
     public SerialisableObject(ObjectId idValue){
         super();
-        setLocalId(idValue);
+        setObjectId(idValue);
     }
 
     //
     // Bean Methods
     //
 
-    public ObjectId getLocalId() {
-        return localId;
+    public ObjectId getObjectId() {
+        return objectId;
     }
 
-    public void setLocalId(ObjectId localId) {
-        this.localId = localId;
+    public void setObjectId(ObjectId objectId) {
+        this.objectId = objectId;
     }
 
     @JsonIgnore
     public CommonName getCommonName(){
-        return(getLocalId().getName());
+        return(getObjectId().getName());
     }
 
     @JsonIgnore
     public void setCommonName(CommonName commonName){
-        getLocalId().setName(commonName);
+        getObjectId().setName(commonName);
     }
 
     public Long getSerialVersionUID() {
@@ -94,7 +94,7 @@ public class SerialisableObject implements Serializable{
     @Override
     public String toString() {
         return new StringJoiner(", ", SerialisableObject.class.getSimpleName() + "[", "]")
-                .add("id=" + getLocalId())
+                .add("id=" + getObjectId())
                 .toString();
     }
 }

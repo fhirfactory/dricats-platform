@@ -1,3 +1,4 @@
+
 /*
  * Copyright (c) 2025 Mark A. Hunter
  *
@@ -28,7 +29,7 @@ import jakarta.enterprise.inject.Instance;
 import jakarta.inject.Inject;
 import net.fhirfactory.dricats.datagrid.central.topologygrid.spi.IApplicationComponentPersistenceService;
 import net.fhirfactory.dricats.datagrid.common.topologygrid.IApplicationComponentCacheClient;
-import net.fhirfactory.dricats.internals.common.DistributableObjectId;
+import net.fhirfactory.dricats.internals.common.id.ObjectKey;
 import net.fhirfactory.dricats.internals.common.identifiers.ElementReference;
 import net.fhirfactory.dricats.internals.topology.implementation.layers.application.valuesets.ApplicationComponentSpecialisationEnum;
 import net.fhirfactory.dricats.reference.archimate.common.valuesets.ElementTypeEnum;
@@ -47,7 +48,10 @@ import org.infinispan.notifications.cachelistener.event.CacheEntryEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -374,28 +378,24 @@ public class DistributedApplicationComponentCacheWithStore implements IApplicati
     }
 
     @Override
-    public List<ApplicationComponent> getSubcomponents(DistributableObjectId parentObjectId, ApplicationComponentSpecialisationEnum componentType) {
-        getLogger().debug(".getContainedComponents(): Entry, parentObjectId={}, componentType={}", parentObjectId, componentType);
-        String key = null;
-        if (parentObjectId != null && parentObjectId.getQualifiedName() != null && parentObjectId.getQualifiedName().getCommonName().getValue() != null && !parentObjectId.getQualifiedName().getCommonName().getValue().isEmpty()) {
-            key = parentObjectId.getQualifiedName().getCommonName().getValue();
-        }
-        if (key == null)
+    public List<ApplicationComponent> getSubcomponents(ObjectKey parentObjectKey, ApplicationComponentSpecialisationEnum componentType) {
+        getLogger().debug(".getContainedComponents(): Entry, parentObjectKey={}, componentType={}", parentObjectKey, componentType);
+        if (parentObjectKey == null)
             return Collections.emptyList();
-        ApplicationComponent parent = get(key);
+        ApplicationComponent parent = get(parentObjectKey.getKeyValue());
 
         if (parent == null) {
-            getLogger().info(".getContainedComponents(): Exit, No subcomponents for id={} (component missing)", parentObjectId);
+            getLogger().info(".getContainedComponents(): Exit, No subcomponents for id={} (component missing)", parentObjectKey);
             return Collections.emptyList();
         }
         if (parent.getElementType() != ElementTypeEnum.APPLICATION_COMPONENT) {
-            getLogger().info(".getContainedComponents(): Exit, No subcomponents for id={} (component is not a ApplicationComponent)", parentObjectId);
+            getLogger().info(".getContainedComponents(): Exit, No subcomponents for id={} (component is not a ApplicationComponent)", parentObjectKey);
             return Collections.emptyList();
         }
         List<ApplicationComponent> resultList = new ArrayList<>();
 
         for (ElementReference childReference : parent.getSubComponents()) {
-            String currentKey = childReference.getLocalObjectId().getQualifiedName().getCommonName().getValue();
+            String currentKey = childReference.getLocalObjectId().getKeyValue();
             ApplicationComponent child = get(currentKey);
             if (child != null) {
                 resultList.add(child);
@@ -404,7 +404,7 @@ public class DistributedApplicationComponentCacheWithStore implements IApplicati
             }
         }
 
-        getLogger().info(".getContainedComponents(): Exit, Returning {} subcomponents for parentObjectId={}", resultList.size(), parentObjectId);
+        getLogger().info(".getContainedComponents(): Exit, Returning {} subcomponents for parentObjectKey={}", resultList.size(), parentObjectKey);
         return resultList;
     }
 

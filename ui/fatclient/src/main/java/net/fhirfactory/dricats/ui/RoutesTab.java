@@ -24,7 +24,7 @@ package net.fhirfactory.dricats.ui;
 import javafx.geometry.Insets;
 import javafx.scene.control.Tab;
 import javafx.scene.layout.BorderPane;
-import net.fhirfactory.dricats.internals.common.DistributableObjectId;
+import net.fhirfactory.dricats.internals.common.id.ObjectId;
 import net.fhirfactory.dricats.internals.common.naming.FullyDistinguishedName;
 import net.fhirfactory.dricats.internals.common.naming.RelativeDistinguishedName;
 import net.fhirfactory.dricats.internals.pathways.Pathway;
@@ -262,14 +262,14 @@ public class RoutesTab extends Tab {
             java.util.List<Integer> keys = new java.util.ArrayList<>(seg.getRouteSegmentSequence().keySet());
             java.util.Collections.sort(keys);
             for(Integer k: keys){
-                net.fhirfactory.dricats.internals.common.DistributableObjectId pathId = seg.getRouteSegmentSequence().get(k);
+                ObjectId pathId = seg.getRouteSegmentSequence().get(k);
                 if(pathId==null){ continue; }
                 PathwayRouteSegment path = client.getPathById(pathId);
                 if(path==null || path.getPathwayElementSequence()==null){ continue; }
                 java.util.List<Integer> eKeys = new java.util.ArrayList<>(path.getPathwayElementSequence().keySet());
                 java.util.Collections.sort(eKeys);
                 for(Integer ek: eKeys){
-                    net.fhirfactory.dricats.internals.common.DistributableObjectId flowId = path.getPathwayElementSequence().get(ek);
+                    ObjectId flowId = path.getPathwayElementSequence().get(ek);
                     if(flowId==null){ continue; }
                     PathwayElement flow = client.getFlowById(flowId);
                     if(flow!=null){ rows.add(new FlowRow(flow)); }
@@ -297,7 +297,7 @@ public class RoutesTab extends Tab {
             clearPathwayDetails();
             return;
         }
-        pwIdValue.setText(idToString(p.getObjectID()));
+        pwIdValue.setText(idToString(p.getObjectId()));
         pwNameValue.setText(nz(p.getName()));
         pwDocValue.setText(nz(p.getDocumentation()));
         pwDistributionValue.setText(p.getRouteSelectionCriteria()==null? "" : p.getRouteSelectionCriteria().name());
@@ -329,9 +329,9 @@ public class RoutesTab extends Tab {
         flowServiceValue.setText(idToString(flow.getUtilisedApplicationService().getLocalObjectId()));
     }
 
-    private static String idToString(DistributableObjectId id){
+    private static String idToString(ObjectId id){
         if(id==null){ return ""; }
-        try { return String.valueOf(id.getCommonId()); } catch (Throwable t){ return String.valueOf(id); }
+        try { return String.valueOf(id.getKeyValue()); } catch (Throwable t){ return String.valueOf(id); }
     }
 
     private static String nz(String s){ return s==null? "" : s; }
@@ -345,9 +345,9 @@ public class RoutesTab extends Tab {
         return null;
     }
 
-    private static String resolveRestKey(DistributableObjectId id){
+    private static String resolveRestKey(ObjectId id){
         if(id==null){ return null; }
-        try{ return id.getQualifiedName().getCommonName().getValue(); } catch (Exception e){ return null; }
+        try{ return id.getKeyValue(); } catch (Exception e){ return null; }
     }
 
     private void onCreatePathway(){
@@ -372,11 +372,11 @@ public class RoutesTab extends Tab {
         p.setRouteSelectionCriteria(PathwayRouteSelectionCriteriaEnum.DISTRIBUTE_RANDOM);
         FullyDistinguishedName qn = new FullyDistinguishedName();
         qn.appendUnqualifiedName(new RelativeDistinguishedName("Pathway", name));
-        p.setObjectID(new DistributableObjectId(qn));
+        p.setObjectId(new ObjectId(qn));
         Pathway created = client.createPathway(p);
         loadPathways();
         // Try to select created pathway
-        if(created!=null){ selectPathway(resolveRestKey(created.getObjectID())); }
+        if(created!=null){ selectPathway(resolveRestKey(created.getObjectId())); }
     }
 
     private void onCreateRoute(){
@@ -391,11 +391,11 @@ public class RoutesTab extends Tab {
         String label = res.get().trim();
         // Build route with ID based on parent pathway qualified name
         Pathway parent = client.getPathway(pwId);
-        if(parent==null || parent.getObjectID()==null){ return; }
-        FullyDistinguishedName rq = new FullyDistinguishedName(parent.getObjectID().getQualifiedName());
+        if(parent==null || parent.getObjectId()==null){ return; }
+        FullyDistinguishedName rq = new FullyDistinguishedName(parent.getObjectId().getFullyDistinguishedName());
         rq.appendUnqualifiedName(new RelativeDistinguishedName("Segment", label));
         PathwayRoute route = new PathwayRoute();
-        route.setObjectID(new DistributableObjectId(rq));
+        route.setObjectId(new ObjectId(rq));
         PathwayRoute created = client.createPathwayRoute(pwId, route);
         loadPathways();
         if(created!=null){ selectPathway(pwId); }
@@ -412,14 +412,14 @@ public class RoutesTab extends Tab {
         if(res.isEmpty()){ return; }
         SegmentEditorDialog.Result r = res.get();
         // Build segment
-        FullyDistinguishedName base = new FullyDistinguishedName(route.getObjectID().getQualifiedName());
+        FullyDistinguishedName base = new FullyDistinguishedName(route.getObjectId().getFullyDistinguishedName());
         String label = r.label==null||r.label.isBlank()? ("Path-"+System.currentTimeMillis()) : r.label.trim();
         base.appendUnqualifiedName(new RelativeDistinguishedName("Path", label));
         PathwayRouteSegment seg = new PathwayRouteSegment();
-        seg.setObjectID(new DistributableObjectId(base));
+        seg.setObjectId(new ObjectId(base));
         int i=1;
         for(PathwayElement pe : r.ordered){
-            if(pe!=null && pe.getObjectID()!=null){ seg.getPathwayElementSequence().put(i++, pe.getObjectID()); }
+            if(pe!=null && pe.getObjectId()!=null){ seg.getPathwayElementSequence().put(i++, pe.getObjectId()); }
         }
         PathwayRouteSegment saved = client.updatePathwayRouteSegment(seg);
         if(saved==null){ return; }
@@ -429,7 +429,7 @@ public class RoutesTab extends Tab {
         if(!route.getRouteSegmentSequence().isEmpty()){
             next = new java.util.ArrayList<>(route.getRouteSegmentSequence().keySet()).stream().max(Integer::compareTo).orElse(0) + 1;
         }
-        route.getRouteSegmentSequence().put(next, saved.getObjectID());
+        route.getRouteSegmentSequence().put(next, saved.getObjectId());
         client.updatePathwayRoute(route);
         loadPathways();
         selectPathway(sn.pathwayId);
@@ -454,7 +454,7 @@ public class RoutesTab extends Tab {
             if(c.isEmpty()){ return; }
             chosenKey = c.get();
         }
-        DistributableObjectId segId = route.getRouteSegmentSequence().get(chosenKey);
+        ObjectId segId = route.getRouteSegmentSequence().get(chosenKey);
         PathwayRouteSegment existing = client.getPathById(segId);
         java.util.List<PathwayElement> allElements = client.listPathwayElements();
         SegmentEditorDialog dlg = new SegmentEditorDialog(allElements, existing);
@@ -462,23 +462,23 @@ public class RoutesTab extends Tab {
         if(res.isEmpty()){ return; }
         SegmentEditorDialog.Result r = res.get();
         // Update existing object (may change name/doc/elements; keep same ObjectID unless label changed)
-        FullyDistinguishedName qn = new FullyDistinguishedName(existing.getObjectID().getQualifiedName());
+        FullyDistinguishedName qn = new FullyDistinguishedName(existing.getObjectId().getFullyDistinguishedName());
         if(r.label!=null && !r.label.isBlank()){
             // Rebuild tail to use provided label
             // Remove last component by reconstructing from route base and appending Path/label
-            FullyDistinguishedName base = new FullyDistinguishedName(route.getObjectID().getQualifiedName());
+            FullyDistinguishedName base = new FullyDistinguishedName(route.getObjectId().getFullyDistinguishedName());
             base.appendUnqualifiedName(new RelativeDistinguishedName("Path", r.label.trim()));
-            existing.setObjectID(new DistributableObjectId(base));
+            existing.setObjectId(new ObjectId(base));
         }
         existing.getPathwayElementSequence().clear();
-        int i=1; for(PathwayElement pe : r.ordered){ if(pe!=null && pe.getObjectID()!=null){ existing.getPathwayElementSequence().put(i++, pe.getObjectID()); } }
+        int i=1; for(PathwayElement pe : r.ordered){ if(pe!=null && pe.getObjectId()!=null){ existing.getPathwayElementSequence().put(i++, pe.getObjectId()); } }
         PathwayRouteSegment saved = client.updatePathwayRouteSegment(existing);
         if(saved==null){ return; }
         // If ID changed, update reference in route
-        String newKey = resolveRestKey(saved.getObjectID());
+        String newKey = resolveRestKey(saved.getObjectId());
         String oldKey = resolveRestKey(segId);
         if(newKey!=null && oldKey!=null && !newKey.equals(oldKey)){
-            route.getRouteSegmentSequence().put(chosenKey, saved.getObjectID());
+            route.getRouteSegmentSequence().put(chosenKey, saved.getObjectId());
             client.updatePathwayRoute(route);
         }
         loadPathways();
@@ -493,7 +493,7 @@ public class RoutesTab extends Tab {
             client.deletePathway(p.id);
             loadPathways();
         } else if (v instanceof SegmentNode s){
-            String key = resolveRestKey(s.segment.getObjectID());
+            String key = resolveRestKey(s.segment.getObjectId());
             if(key!=null){ client.deletePathwayRoute(key); }
             loadPathways();
             selectPathway(s.pathwayId);
@@ -615,7 +615,7 @@ public class RoutesTab extends Tab {
             if(existing!=null){
                 // Try to infer label from last segment of QualifiedName
                 try {
-                    String last = existing.getObjectID().getQualifiedName().getCommonName().getValue();
+                    String last = existing.getObjectId().getFullyDistinguishedName().getCommonName().getValue();
                     labelField.setText(last);
                 } catch (Exception ignored) {}
                 // Preselect elements in order
@@ -624,11 +624,11 @@ public class RoutesTab extends Tab {
                     java.util.Collections.sort(keys);
                     for(Integer k: keys){
                         // lookup by id among allElements
-                        net.fhirfactory.dricats.internals.common.DistributableObjectId oid = existing.getPathwayElementSequence().get(k);
+                        ObjectId oid = existing.getPathwayElementSequence().get(k);
                         if(oid==null) continue;
                         for(PathwayElement pe: allElements){
                             try{
-                                String a = resolveRestKey(pe.getObjectID());
+                                String a = resolveRestKey(pe.getObjectId());
                                 String b = resolveRestKey(oid);
                                 if(a!=null && a.equals(b)){ selectedList.getItems().add(pe); break; }
                             } catch (Exception ignored) {}

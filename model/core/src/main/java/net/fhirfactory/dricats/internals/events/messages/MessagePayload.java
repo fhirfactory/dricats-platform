@@ -54,7 +54,7 @@ public class MessagePayload extends Payload {
         RelativeDistinguishedName unqualifiedName = new RelativeDistinguishedName("MessagePayload", UUID.randomUUID().toString());
         FullyDistinguishedName qualifiedName = new FullyDistinguishedName();
         qualifiedName.appendUnqualifiedName(unqualifiedName);
-        this.setLocalId(new ObjectId(qualifiedName));
+        this.setObjectId(new ObjectId(qualifiedName));
     }
 
     //

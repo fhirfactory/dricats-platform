@@ -105,9 +105,9 @@ public class CommunicateGroup extends Group {
                 .append("specialization", getSpecialization())
                 .append("extensions", getExtensions())
                 .append("securityLabels", getSecurityLabels())
-                .append("objectID", getObjectID())
+                .append("localId", getObjectId())
                 .append("metadata", getMetadata())
-                .append("id", getLocalId())
+                .append("id", getObjectId())
                 .toString();
     }
 

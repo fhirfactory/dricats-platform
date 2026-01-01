@@ -54,11 +54,11 @@ public class UIMetricsCacheService {
             LOG.warn(".getLatestMetricsForComponent(): Cannot build metrics: component not found for component");
             return null;
         }
-        String key = Optional.ofNullable(component.getObjectID()).map(id -> id.getCommonId()).map(t -> t.getToken()).orElse("");
+        String key = component.resolveKey();
         ApplicationComponentMetricsData m = metricsMap.get(key);
         if (m == null) {
             m = new ApplicationComponentMetricsData();
-            m.setComponentID(component.getObjectID());
+            m.setComponentID(component.getObjectId());
             m.setParticipantName(Optional.ofNullable(component.getName()).orElse(""));
             metricsMap.put(key, m);
         }

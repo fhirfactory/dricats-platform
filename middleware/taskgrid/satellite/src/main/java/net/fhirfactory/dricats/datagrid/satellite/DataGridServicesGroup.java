@@ -24,15 +24,14 @@ package net.fhirfactory.dricats.datagrid.satellite;
 import jakarta.annotation.PostConstruct;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-import net.fhirfactory.dricats.internals.common.DistributableObjectId;
+import net.fhirfactory.dricats.internals.common.id.ObjectId;
 import net.fhirfactory.dricats.internals.common.naming.FullyDistinguishedName;
 import net.fhirfactory.dricats.internals.common.naming.RelativeDistinguishedName;
-import net.fhirfactory.dricats.reference.archimate.layers.application.ApplicationComponent;
 import net.fhirfactory.dricats.internals.topology.implementation.layers.application.valuesets.ApplicationComponentSpecialisationEnum;
 import net.fhirfactory.dricats.internals.topology.interfaces.ISubsystem;
+import net.fhirfactory.dricats.reference.archimate.layers.application.ApplicationComponent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -70,12 +69,12 @@ public class DataGridServicesGroup extends ApplicationComponent implements Seria
     public void initialisation(){
         getLogger().debug(".initialisation(): Entry");
         getLogger().info(".initialisation(): [Resolve DistributableObjectId] Start");
-        DistributableObjectId subsystemId = getSubsystem().getSubsystem().getObjectID();
-        FullyDistinguishedName subsystemQualifiedName = subsystemId.getQualifiedName();
+        ObjectId subsystemId = getSubsystem().getSubsystem().getObjectId();
+        FullyDistinguishedName subsystemQualifiedName = subsystemId.getFullyDistinguishedName();
         FullyDistinguishedName myQualifiedName = new FullyDistinguishedName(subsystemQualifiedName);
         myQualifiedName.appendUnqualifiedName(new RelativeDistinguishedName(ApplicationComponentSpecialisationEnum.SUBSYSTEM_APPLICATION_WORK_UNIT_PROCESSOR_GROUP.getType(), "DataGrid"));
-        DistributableObjectId myId = new DistributableObjectId(myQualifiedName);
-        setObjectID(myId);
+        ObjectId myId = new ObjectId(myQualifiedName);
+        setObjectId(myId);
         getLogger().info(".initialisation(): [Resolve DistributableObjectId] End");
         getLogger().debug(".initialisation(): Exit");
     }

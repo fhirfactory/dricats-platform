@@ -91,9 +91,9 @@ public class CommunicateOrganization extends Organisation {
                 .append("properties", getExtensions())
                 .append("identifiers", getIdentifiers())
                 .append("securityLabels", getSecurityLabels())
-                .append("objectID", getObjectID())
+                .append("localId", getObjectId())
                 .append("metadata", getMetadata())
-                .append("id", getLocalId())
+                .append("id", getObjectId())
                 .toString();
     }
 

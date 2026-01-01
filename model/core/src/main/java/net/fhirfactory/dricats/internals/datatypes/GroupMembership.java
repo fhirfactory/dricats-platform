@@ -83,7 +83,7 @@ public class GroupMembership extends AggregationRelationshipBase implements Seri
                 .append("identifiers", getIdentifiers())
                 .append("securityLabels", getSecurityLabels())
                 .append("metadata", getMetadata())
-                .append("id", getLocalId())
+                .append("id", getObjectId())
                 .toString();
     }
 }

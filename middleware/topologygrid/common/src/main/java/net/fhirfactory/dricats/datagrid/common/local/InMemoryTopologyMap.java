@@ -21,7 +21,7 @@
  */
 package net.fhirfactory.dricats.datagrid.common.local;
 
-import net.fhirfactory.dricats.internals.common.DistributableObjectId;
+import net.fhirfactory.dricats.internals.common.id.ObjectKey;
 import net.fhirfactory.dricats.internals.common.identifiers.ElementReference;
 import net.fhirfactory.dricats.reference.archimate.layers.application.ApplicationComponent;
 import org.slf4j.Logger;
@@ -43,29 +43,29 @@ import java.util.stream.Collectors;
 public class InMemoryTopologyMap implements ILocalTopologyMap {
     private static final Logger LOG = LoggerFactory.getLogger(InMemoryTopologyMap.class);
 
-    private final ConcurrentMap<DistributableObjectId, ApplicationComponent> componentsById = new ConcurrentHashMap<>();
+    private final ConcurrentMap<ObjectKey, ApplicationComponent> componentsById = new ConcurrentHashMap<>();
     private final AtomicLong changeVersion = new AtomicLong(0);
 
     @Override
     public void add(ApplicationComponent component) {
-        if (component == null || component.getObjectID() == null) {
+        if (component == null || component.getObjectId() == null) {
             LOG.warn("Attempt to add null component or component with null ID: {}", component);
             return;
         }
-        componentsById.put(component.getObjectID(), component);
+        componentsById.put(component.getObjectId(), component);
         changeVersion.incrementAndGet();
     }
 
     @Override
     public boolean remove(ApplicationComponent component) {
-        if (component == null || component.getObjectID() == null) {
+        if (component == null || component.getObjectId() == null) {
             return false;
         }
-        return removeById(component.getObjectID());
+        return removeById(component.getObjectId());
     }
 
     @Override
-    public boolean removeById(DistributableObjectId id) {
+    public boolean removeById(ObjectKey id) {
         if (id == null) {
             return false;
         }
@@ -77,7 +77,7 @@ public class InMemoryTopologyMap implements ILocalTopologyMap {
     }
 
     @Override
-    public Optional<ApplicationComponent> findById(DistributableObjectId id) {
+    public Optional<ApplicationComponent> findById(ObjectKey id) {
         if (id == null) {
             return Optional.empty();
         }
@@ -108,11 +108,11 @@ public class InMemoryTopologyMap implements ILocalTopologyMap {
         if (component == null) {
             return Collections.emptyList();
         }
-        return getChildrenById(component.getObjectID());
+        return getChildrenById(component.getObjectId());
     }
 
     @Override
-    public List<ApplicationComponent> getChildrenById(DistributableObjectId id) {
+    public List<ApplicationComponent> getChildrenById(ObjectKey id) {
         if (id == null) {
             return Collections.emptyList();
         }
@@ -121,11 +121,11 @@ public class InMemoryTopologyMap implements ILocalTopologyMap {
             return Collections.emptyList();
         }
         ApplicationComponent parent = parentOpt.get();
-        List<ApplicationComponent> children = getChildren(parent.getObjectID());
+        List<ApplicationComponent> children = getChildren(parent.getObjectId());
         return children;
     }
 
-    protected List<ApplicationComponent> getChildren(DistributableObjectId id) {
+    protected List<ApplicationComponent> getChildren(ObjectKey id) {
         if (id == null) {
             return Collections.emptyList();
         }

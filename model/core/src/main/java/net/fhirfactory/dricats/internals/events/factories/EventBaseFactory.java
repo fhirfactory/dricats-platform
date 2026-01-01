@@ -34,14 +34,14 @@ public class EventBaseFactory {
         if(eventBase == null){
             return null;
         }
-        if(eventBase.getLocalId() == null){
+        if(eventBase.getObjectId() == null){
             return null;
         }
         EventBase newEventBase = new EventBase(eventBase);
-        FullyDistinguishedName newName = SerializationUtils.clone(eventBase.getLocalId().getFullyDistinguishedName());
+        FullyDistinguishedName newName = SerializationUtils.clone(eventBase.getObjectId().getFullyDistinguishedName());
         newName.getUnqualifiedName().setValue(UUID.randomUUID().toString());
-        newEventBase.setLocalId(new ObjectId(newName));
-        newEventBase.getHistory().put(eventBase.getHistory().size()+1, eventBase.getLocalId());
+        newEventBase.setObjectId(new ObjectId(newName));
+        newEventBase.getHistory().put(eventBase.getHistory().size()+1, eventBase.getObjectId());
         return newEventBase;
     }
 }

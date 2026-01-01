@@ -26,7 +26,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import jakarta.annotation.PostConstruct;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-import net.fhirfactory.dricats.internals.common.DistributableObjectId;
+import net.fhirfactory.dricats.internals.common.id.ObjectId;
 import net.fhirfactory.dricats.internals.pathways.Pathway;
 import net.fhirfactory.dricats.internals.pathways.PathwayElement;
 import net.fhirfactory.dricats.internals.pathways.PathwayRoute;
@@ -144,9 +144,9 @@ public class PathwayResourceHandler extends BaseHandler {
             return new ArrayList<>();
         }
         List<PathwayRoute> pathwayRoutes = new ArrayList<>();
-        for (net.fhirfactory.dricats.internals.common.DistributableObjectId segId : pathway.getPossiblePathwayRoutes().values()) {
+        for (ObjectId segId : pathway.getPossiblePathwayRoutes().values()) {
             if (segId != null) {
-                PathwayRoute s = getPathwayCacheService().getPathwayRouteByIdToken(segId.getQualifiedName().getCommonName().getValue());
+                PathwayRoute s = getPathwayCacheService().getPathwayRouteByIdToken(segId.getFullyDistinguishedName().getCommonName().getValue());
                 if (s != null) { pathwayRoutes.add(s); }
             }
         }
@@ -236,8 +236,8 @@ public class PathwayResourceHandler extends BaseHandler {
             ObjectMapper om = new ObjectMapper();
             om.registerModule(new JavaTimeModule());
             Pathway p = om.readValue(pathwayJson, Pathway.class);
-            if(p==null || p.getObjectID()==null){ return null; }
-            getPathwayCacheService().getPathways().put(getPathwayCacheService().resolveKeyValue(p.getObjectID()), p);
+            if(p==null || p.getObjectId()==null){ return null; }
+            getPathwayCacheService().getPathways().put(getPathwayCacheService().resolveKeyValue(p.getObjectId()), p);
             return convertToJson(p);
         } catch (Exception e){
             LOG.warn(".createOrUpdatePathway(): failed: {}", e.toString());
@@ -251,7 +251,7 @@ public class PathwayResourceHandler extends BaseHandler {
         Pathway p = getPathwayCacheService().getPathways().remove(id);
         if(p!=null && p.getPossiblePathwayRoutes()!=null){
             // Remove linked routes
-            for (java.util.Map.Entry<Integer, DistributableObjectId> e : p.getPossiblePathwayRoutes().entrySet()){
+            for (java.util.Map.Entry<Integer, ObjectId> e : p.getPossiblePathwayRoutes().entrySet()){
                 if(e.getValue()!=null){ deletePathwayRoute(getPathwayCacheService().resolveKeyValue(e.getValue())); }
             }
         }
@@ -264,8 +264,8 @@ public class PathwayResourceHandler extends BaseHandler {
             com.fasterxml.jackson.databind.ObjectMapper om = new com.fasterxml.jackson.databind.ObjectMapper();
             om.registerModule(new com.fasterxml.jackson.datatype.jsr310.JavaTimeModule());
             PathwayRoute r = om.readValue(routeJson, PathwayRoute.class);
-            if(r==null || r.getObjectID()==null){ return null; }
-            String rKey = getPathwayCacheService().resolveKeyValue(r.getObjectID());
+            if(r==null || r.getObjectId()==null){ return null; }
+            String rKey = getPathwayCacheService().resolveKeyValue(r.getObjectId());
             getPathwayCacheService().getPathwayRoutes().put(rKey, r);
             // link to pathway
             Pathway p = getPathway(pathwayId);
@@ -274,7 +274,7 @@ public class PathwayResourceHandler extends BaseHandler {
                 if(p.getPossiblePathwayRoutes()!=null && !p.getPossiblePathwayRoutes().isEmpty()){
                     next = new java.util.ArrayList<>(p.getPossiblePathwayRoutes().keySet()).stream().max(Integer::compareTo).orElse(0) + 1;
                 }
-                p.getPossiblePathwayRoutes().put(next, r.getObjectID());
+                p.getPossiblePathwayRoutes().put(next, r.getObjectId());
             }
             return convertToJson(r);
         } catch (Exception e){
@@ -290,8 +290,8 @@ public class PathwayResourceHandler extends BaseHandler {
             com.fasterxml.jackson.databind.ObjectMapper om = new com.fasterxml.jackson.databind.ObjectMapper();
             om.registerModule(new com.fasterxml.jackson.datatype.jsr310.JavaTimeModule());
             PathwayRoute r = om.readValue(routeJson, PathwayRoute.class);
-            if(r==null || r.getObjectID()==null){ return null; }
-            String rKey = getPathwayCacheService().resolveKeyValue(r.getObjectID());
+            if(r==null || r.getObjectId()==null){ return null; }
+            String rKey = getPathwayCacheService().resolveKeyValue(r.getObjectId());
             getPathwayCacheService().getPathwayRoutes().put(rKey, r);
             return convertToJson(r);
         } catch (Exception e){
@@ -305,7 +305,7 @@ public class PathwayResourceHandler extends BaseHandler {
         if(StringUtils.isBlank(id)){ return; }
         PathwayRoute r = getPathwayCacheService().getPathwayRoutes().remove(id);
         if(r!=null && r.getRouteSegmentSequence()!=null){
-            for(java.util.Map.Entry<Integer, DistributableObjectId> e : r.getRouteSegmentSequence().entrySet()){
+            for(java.util.Map.Entry<Integer, ObjectId> e : r.getRouteSegmentSequence().entrySet()){
                 if(e.getValue()!=null){ deletePathwayRouteSegment(getPathwayCacheService().resolveKeyValue(e.getValue())); }
             }
         }
@@ -326,8 +326,8 @@ public class PathwayResourceHandler extends BaseHandler {
             com.fasterxml.jackson.databind.ObjectMapper om = new com.fasterxml.jackson.databind.ObjectMapper();
             om.registerModule(new com.fasterxml.jackson.datatype.jsr310.JavaTimeModule());
             PathwayRouteSegment s = om.readValue(segmentJson, PathwayRouteSegment.class);
-            if(s==null || s.getObjectID()==null){ return null; }
-            String sKey = getPathwayCacheService().resolveKeyValue(s.getObjectID());
+            if(s==null || s.getObjectId()==null){ return null; }
+            String sKey = getPathwayCacheService().resolveKeyValue(s.getObjectId());
             getPathwayCacheService().getPathwayRouteSegments().put(sKey, s);
             return convertToJson(s);
         } catch (Exception e){

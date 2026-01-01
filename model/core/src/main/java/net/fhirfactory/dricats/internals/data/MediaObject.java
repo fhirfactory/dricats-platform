@@ -114,7 +114,7 @@ public class MediaObject extends DistributableObject{
         sb.append(", securityLabels=").append(getSecurityLabels());
         sb.append(", metadata=").append(getMetadata());
         sb.append(", identifiers=").append(getIdentifiers());
-        sb.append(", id='").append(getLocalId()).append('\'');
+        sb.append(", id='").append(getObjectId()).append('\'');
         sb.append('}');
         return sb.toString();
     }

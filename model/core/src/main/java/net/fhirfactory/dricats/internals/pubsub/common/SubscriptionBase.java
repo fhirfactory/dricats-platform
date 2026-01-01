@@ -63,7 +63,7 @@ public class SubscriptionBase extends DistributableObject implements Serializabl
         RelativeDistinguishedName unqualifiedName = new RelativeDistinguishedName(subscriptionEventType, UUID.randomUUID().toString());
         qualifiedName.appendUnqualifiedName(unqualifiedName);
         ObjectId subscriptionId = new ObjectId(qualifiedName);
-        setLocalId(subscriptionId);
+        setObjectId(subscriptionId);
         this.subscriberFunction = subscriberFunction;
     }
 

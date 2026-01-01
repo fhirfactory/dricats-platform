@@ -54,13 +54,13 @@ public class Topic extends SerialisableObject implements Serializable {
     }
 
     public Topic(FullyDistinguishedName topicName){
-        setLocalId(new ObjectId(topicName));
+        setObjectId(new ObjectId(topicName));
         topicDescription = "No description available";
         setTopicName(topicName);
     }
 
     public Topic(FullyDistinguishedName topicName, String description){
-        setLocalId(new ObjectId(topicName));
+        setObjectId(new ObjectId(topicName));
         topicDescription = description;
         setTopicName(topicName);
     }

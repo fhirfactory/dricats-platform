@@ -223,7 +223,7 @@ public class WUPInterfaceBase extends ApplicationInterface implements Serializab
                 .append("extensions", getExtensions())
                 .append("securityLabels", getSecurityLabels())
                 .append("metadata", getMetadata())
-                .append("id", getLocalId())
+                .append("id", getObjectId())
                 .append("interfaceContentRole", getInterfaceContentRole())
                 .append("interfaceConnectivityRole", getInterfaceConnectivityRole())
                 .append("adapters", getAdapters())

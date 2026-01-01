@@ -92,7 +92,7 @@ public class PublicationSet extends ApplicationFunction implements Serializable 
                 .append("extensions", getExtensions())
                 .append("securityLabels", getSecurityLabels())
                 .append("metadata", getMetadata())
-                .append("id", getLocalId())
+                .append("id", getObjectId())
                 .toString();
     }
 }

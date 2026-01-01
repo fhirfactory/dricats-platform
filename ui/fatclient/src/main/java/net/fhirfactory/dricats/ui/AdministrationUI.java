@@ -103,19 +103,19 @@ public class AdministrationUI extends Application {
         }
         try { rows.add(new KVRow("Name", Objects.toString(summary.getName(), ""))); } catch (Exception ignored) {}
         try {
-            if (summary.getLocalId() != null && summary.getLocalId().getValue() != null)
-                rows.add(new KVRow("ID", summary.getLocalId().getValue()));
+            if (summary.getObjectId() != null && summary.getObjectId().getKeyValue() != null)
+                rows.add(new KVRow("ID", summary.getObjectId().getKeyValue()));
         } catch (Exception ignored) {}
         try {
-            if (summary.getObjectID() != null)
-                rows.add(new KVRow("ObjectID", Objects.toString(summary.getObjectID().getCommonName().getValue(), "")));
+            if (summary.getObjectId().getName() != null)
+                rows.add(new KVRow("CommonName", Objects.toString(summary.getObjectId().getName().getValue(), "")));
         } catch (Exception ignored) {}
         try { rows.add(new KVRow("Element Type", Objects.toString(summary.getElementType(), ""))); } catch (Exception ignored) {}
         try { rows.add(new KVRow("Specialization", Objects.toString(summary.getSpecialization(), ""))); } catch (Exception ignored) {}
         try { rows.add(new KVRow("Documentation", Objects.toString(summary.getDocumentation(), ""))); } catch (Exception ignored) {}
         try {
             if (summary.getParent() != null)
-                rows.add(new KVRow("Parent", Objects.toString(summary.getParent().getLocalObjectId().getQualifiedName().getCommonName().getValue(), "")));
+                rows.add(new KVRow("Parent", Objects.toString(summary.getParent().getLocalObjectId().getName().getValue(), "")));
         } catch (Exception ignored) {}
         try {
             int count = summary.getSubComponents() == null ? 0 : summary.getSubComponents().size();
@@ -142,11 +142,11 @@ public class AdministrationUI extends Application {
         TreeItem<String> root = new TreeItem<>("UniqueName");
         root.setExpanded(true);
         try {
-            if (summary == null || summary.getObjectID() == null || summary.getObjectID().getQualifiedName() == null) {
+            if (summary == null || summary.getObjectId() == null || summary.getObjectId().getFullyDistinguishedName() == null) {
                 root.getChildren().add(new TreeItem<>("No selection"));
             } else {
                 java.util.Map<Integer, DistinguishedNameEntry> entries =
-                        summary.getObjectID().getQualifiedName().getUnqualifiedNameEntries();
+                        summary.getObjectId().getFullyDistinguishedName().getUnqualifiedNameEntries();
                 if (entries == null || entries.isEmpty()) {
                     root.getChildren().add(new TreeItem<>("<empty>"));
                 } else {

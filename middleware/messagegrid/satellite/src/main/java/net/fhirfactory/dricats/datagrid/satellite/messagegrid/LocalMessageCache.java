@@ -23,12 +23,12 @@ package net.fhirfactory.dricats.datagrid.satellite.messagegrid;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-import net.fhirfactory.dricats.internals.common.DistributableObjectId;
+import net.fhirfactory.dricats.internals.common.id.ObjectId;
+import net.fhirfactory.dricats.internals.common.id.ObjectKey;
 import net.fhirfactory.dricats.internals.common.naming.FullyDistinguishedName;
-import net.fhirfactory.dricats.internals.common.id.ObjectToken;
+import net.fhirfactory.dricats.internals.events.interfaces.ILocalMessageService;
 import net.fhirfactory.dricats.internals.events.messages.MessageObject;
 import net.fhirfactory.dricats.internals.events.messages.MessageSet;
-import net.fhirfactory.dricats.internals.events.interfaces.ILocalMessageService;
 import net.fhirfactory.dricats.internals.topology.implementation.layers.application.valuesets.ApplicationComponentSpecialisationEnum;
 import net.fhirfactory.dricats.internals.topology.interfaces.ISubsystem;
 import org.slf4j.Logger;
@@ -52,7 +52,7 @@ public class LocalMessageCache implements ILocalMessageService {
     // Attributes
     //
 
-    private Map<ObjectToken, Queue<MessageObject>> incomingQueueCache ;
+    private Map<ObjectKey, Queue<MessageObject>> incomingQueueCache ;
     private Queue<MessageObject> outgoingQueueCache ;
 
     @Inject
@@ -75,7 +75,7 @@ public class LocalMessageCache implements ILocalMessageService {
         return LOG;
     }
 
-    protected Map<ObjectToken, Queue<MessageObject>> getIncomingQueueCache() {
+    protected Map<ObjectKey, Queue<MessageObject>> getIncomingQueueCache() {
         return incomingQueueCache;
     }
 
@@ -101,7 +101,7 @@ public class LocalMessageCache implements ILocalMessageService {
             getLogger().warn(".queueMessage(): Exit, Message target is null");
             return;
         }
-        ObjectToken objectToken = messageObject.getTarget().getLocalObjectId().getCommonId();
+        ObjectKey objectToken = messageObject.getTarget().getLocalObjectId();
         if(!getIncomingQueueCache().containsKey(objectToken)){
             Queue<MessageObject> incomingMessageQueue = new ConcurrentLinkedQueue<>();
             incomingMessageQueue.add(messageObject);
@@ -113,7 +113,7 @@ public class LocalMessageCache implements ILocalMessageService {
     }
 
     @Override
-    public MessageObject peekNextMessage( ObjectToken consumerObjectToken){
+    public MessageObject peekNextMessage( ObjectKey consumerObjectToken){
         if(consumerObjectToken == null){
             getLogger().debug(".peekIncomingMessage(): Exit, consumerIdToken is null");
             return(null);
@@ -128,7 +128,7 @@ public class LocalMessageCache implements ILocalMessageService {
     }
 
     @Override
-    public MessageObject pollNextMessage( ObjectToken consumerObjectToken){
+    public MessageObject pollNextMessage( ObjectKey consumerObjectToken){
         getLogger().debug(".pollNextMessage(): Entry, consumerIdToken -> {}", consumerObjectToken);
         if(consumerObjectToken == null){
             getLogger().debug(".pollNextMessage(): Exit, consumerIdToken is null");
@@ -175,13 +175,13 @@ public class LocalMessageCache implements ILocalMessageService {
             getLogger().debug(".postMessage(): Exit, nothing to post, return -> {}", messagePostedInstant);
             return(messagePostedInstant);
         }
-        DistributableObjectId messageTarget = message.getTarget().getLocalObjectId();
+        ObjectId messageTarget = message.getTarget().getLocalObjectId();
         if(messageTarget == null){
             getLogger().debug(".postMessage(): Exit, no target, return -> {}", messagePostedInstant);
             return(messagePostedInstant);
         }
-        FullyDistinguishedName targetSubsystemQualifiedName = messageTarget.getQualifiedName().extractQualifiedNameForQualifier(ApplicationComponentSpecialisationEnum.SUBSYSTEM_APPLICATION_INSTANCE.getType());
-        FullyDistinguishedName localSubsystemQualifiedName = getSubsystem().getSubsystem().getObjectID().getQualifiedName();
+        FullyDistinguishedName targetSubsystemQualifiedName = messageTarget.getFullyDistinguishedName().extractQualifiedNameForQualifier(ApplicationComponentSpecialisationEnum.SUBSYSTEM_APPLICATION_INSTANCE.getType());
+        FullyDistinguishedName localSubsystemQualifiedName = getSubsystem().getSubsystem().getObjectId().getFullyDistinguishedName();
         String targetSubsystemName = targetSubsystemQualifiedName.getUnqualifiedName().getValue();
         String localSubsystemName = localSubsystemQualifiedName.getUnqualifiedName().getValue();
         if(targetSubsystemName.contentEquals(localSubsystemName)){
@@ -196,7 +196,7 @@ public class LocalMessageCache implements ILocalMessageService {
     }
 
     @Override
-    public MessageSet pollNextMessage(ObjectToken consumerId, Integer size) {
+    public MessageSet pollNextMessage(ObjectKey consumerId, Integer size) {
         getLogger().debug(".pollNextMessage(): Entry, consumerIdToken -> {}, size -> {}", consumerId, size);
         MessageSet messageSet = new MessageSet();
         if(consumerId == null){

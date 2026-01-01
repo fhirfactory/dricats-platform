@@ -34,14 +34,14 @@ public class NotificationObjectFactory extends EventBaseFactory{
         if(notificationObject == null){
             return null;
         }
-        if(notificationObject.getLocalId() == null){
+        if(notificationObject.getObjectId() == null){
             return null;
         }
         NotificationObject newNotificationObject = new NotificationObject(notificationObject);
-        FullyDistinguishedName newName = SerializationUtils.clone(notificationObject.getLocalId().getFullyDistinguishedName());
+        FullyDistinguishedName newName = SerializationUtils.clone(notificationObject.getObjectId().getFullyDistinguishedName());
         newName.getUnqualifiedName().setValue(UUID.randomUUID().toString());
-        newNotificationObject.setLocalId(new ObjectId(newName));
-        newNotificationObject.getHistory().put(notificationObject.getHistory().size()+1, notificationObject.getLocalId());
+        newNotificationObject.setObjectId(new ObjectId(newName));
+        newNotificationObject.getHistory().put(notificationObject.getHistory().size()+1, notificationObject.getObjectId());
         return newNotificationObject;
     }
 }

@@ -147,7 +147,7 @@ public class UITopologyCacheService {
         List<ApplicationComponent> result = new ArrayList<>();
         if (ac.getSubComponents() != null) {
             for (ElementReference childId : ac.getSubComponents()) {
-                String key = childId.getLocalObjectId().getQualifiedName().getCommonName().getValue();
+                String key = childId.getLocalObjectId().getFullyDistinguishedName().getCommonName().getValue();
                 ElementBase child = components.get(key);
                 boolean isWUPAdapter = child.getSpecialization().contentEquals(ApplicationComponentSpecialisationEnum.SUBSYSTEM_APPLICATION_WUP_INTERFACE_ADAPTER.getType());
                 if(isWUPAdapter){
@@ -184,7 +184,7 @@ public class UITopologyCacheService {
 
         if (ac.getInterfaces() != null) {
             for (ElementReference childInterface : ac.getInterfaces()) {
-                String key = childInterface.getLocalObjectId().getQualifiedName().getCommonName().getValue();
+                String key = childInterface.getLocalObjectId().getFullyDistinguishedName().getCommonName().getValue();
                 ElementBase child = components.get(key);
                 if (child instanceof IngresApplicationInterface) {
                     result.add((IngresApplicationInterface) child);
@@ -218,7 +218,7 @@ public class UITopologyCacheService {
 
         if (ac.getInterfaces() != null) {
             for (ElementReference childInterface : ac.getInterfaces()) {
-                String key = childInterface.getLocalObjectId().getQualifiedName().getCommonName().getValue();
+                String key = childInterface.getLocalObjectId().getFullyDistinguishedName().getCommonName().getValue();
                 ElementBase child = components.get(key);
                 if (child instanceof EgressApplicationInterface) {
                     result.add((EgressApplicationInterface) child);
@@ -253,7 +253,7 @@ public class UITopologyCacheService {
         List<WUPAdapterBase> result = new ArrayList<>();
         if (wup.getAdapters() != null) {
             for (ElementReference childInterface : wup.getAdapters()) {
-                String key = childInterface.getLocalObjectId().getQualifiedName().getCommonName().getValue();
+                String key = childInterface.getLocalObjectId().getFullyDistinguishedName().getCommonName().getValue();
                 ElementBase child = components.get(key);
                 boolean isWUPAdapter = child.getSpecialization().contentEquals(ApplicationComponentSpecialisationEnum.SUBSYSTEM_APPLICATION_WUP_INTERFACE_ADAPTER.getType());
                 if (isWUPAdapter) {

@@ -90,7 +90,7 @@ public class BusinessInteraction extends ElementBase implements Serializable {
                 ", documentation='"+getDocumentation()+'\''+
                 ", specialization='"+getSpecialization()+'\''+
                 ", extensions="+getExtensions()+
-                ", id="+ getLocalId()+
+                ", id="+ getObjectId()+
                 ", metadata="+getMetadata()+
                 '}';
     }

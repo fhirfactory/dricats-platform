@@ -33,7 +33,7 @@ import java.io.Serial;
 import java.io.Serializable;
 import java.util.Objects;
 
-public class ObjectId implements Serializable, Comparable<ObjectId>{
+public class ObjectId extends ObjectKey implements Serializable, Comparable<ObjectId>{
     //
     // Housekeeping
     //
@@ -56,41 +56,56 @@ public class ObjectId implements Serializable, Comparable<ObjectId>{
     // Constructor(s)
     //
     public ObjectId(){
+        super();
         this.name = new CommonName();
         this.qualifier = new CommonQualifier();
         this.effectivePeriod = new EffectiveDate();
     }
 
     public ObjectId(CommonName name, CommonQualifier qualifier) {
+        super();
         this.name = name;
         this.qualifier = qualifier;
         this.effectivePeriod = new EffectiveDate();
     }
 
     public ObjectId(String qualifier, String name) {
+        super();
         this.name = new CommonName(name);
         this.qualifier = new CommonQualifier(qualifier);
         this.effectivePeriod = new EffectiveDate();
     }
 
     public ObjectId(FullyDistinguishedName fdn) {
+        super();
         this.name = new CommonName(fdn);
+        this.qualifier = new CommonQualifier(fdn);
         this.effectivePeriod = new EffectiveDate();
     }
 
     public ObjectId(CommonName name, CommonQualifier qualifier, EffectiveDate effectiveDate) {
+        super();
         this.name = name;
         this.qualifier = qualifier;
         this.effectivePeriod = effectiveDate;
     }
 
     public ObjectId(String qualifier, String name, EffectiveDate effectiveDate) {
+        super();
+        this.name = new CommonName(name);
+        this.qualifier = new CommonQualifier(qualifier);
+        this.effectivePeriod = effectiveDate;
+    }
+
+    public ObjectId(ObjectKey objectKey, String qualifier, String name, EffectiveDate effectiveDate) {
+        super(objectKey.getUpperBits(), objectKey.getLowerBits(), objectKey.getVersion());
         this.name = new CommonName(name);
         this.qualifier = new CommonQualifier(qualifier);
         this.effectivePeriod = effectiveDate;
     }
 
     public ObjectId(FullyDistinguishedName fdn,  EffectiveDate effectiveDate) {
+        super();
         this.name = new CommonName(fdn);
         this.effectivePeriod = effectiveDate;
     }
@@ -150,16 +165,6 @@ public class ObjectId implements Serializable, Comparable<ObjectId>{
         return(this);
     }
 
-    public static ObjectId fromIdValueString(String idValue){
-        if(idValue.isEmpty()){
-            return(null);
-        }
-        CommonName commonName = CommonName.fromIdValueString(idValue);
-        CommonQualifier commonqualifier = CommonQualifier.fromIdValueString(idValue);
-        ObjectId id = new ObjectId(commonName, commonqualifier);
-        return(id);
-    }
-
     public EffectiveDate getEffectivePeriod() {
         return effectivePeriod;
     }
@@ -178,6 +183,10 @@ public class ObjectId implements Serializable, Comparable<ObjectId>{
         sb.append("ObjectId{");
         sb.append("name=").append(name);
         sb.append(", qualifier=").append(qualifier);
+        sb.append(", effectivePeriod=").append(effectivePeriod);
+        sb.append(", upperBits=").append(getUpperBits());
+        sb.append(", lowerBits=").append(getLowerBits());
+        sb.append(", version=").append(getVersion());
         sb.append('}');
         return sb.toString();
     }
@@ -187,12 +196,12 @@ public class ObjectId implements Serializable, Comparable<ObjectId>{
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         ObjectId objectId = (ObjectId) o;
-        return Objects.equals(name, objectId.name) && Objects.equals(qualifier, objectId.qualifier);
+        return Objects.equals(name, objectId.name) && Objects.equals(qualifier, objectId.qualifier) && Objects.equals(effectivePeriod, objectId.effectivePeriod);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, qualifier);
+        return Objects.hash(name, qualifier, effectivePeriod, getUpperBits(), getLowerBits(), getVersion());
     }
 
     //

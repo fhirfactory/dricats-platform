@@ -59,7 +59,7 @@ public class NotificationObject extends EventBase {
         RelativeDistinguishedName unqualifiedName = new RelativeDistinguishedName("Notification", UUID.randomUUID().toString());
         FullyDistinguishedName qualifiedName = new FullyDistinguishedName();
         qualifiedName.appendUnqualifiedName(unqualifiedName);
-        this.setLocalId(new ObjectId(qualifiedName));
+        this.setObjectId(new ObjectId(qualifiedName));
         setNotificationPayload(new NotificationPayload());
     }
 
@@ -78,7 +78,7 @@ public class NotificationObject extends EventBase {
         RelativeDistinguishedName unqualifiedName = new RelativeDistinguishedName("Notification", UUID.randomUUID().toString());
         FullyDistinguishedName qualifiedName = new FullyDistinguishedName();
         qualifiedName.appendUnqualifiedName(unqualifiedName);
-        this.setLocalId(new ObjectId(qualifiedName));
+        this.setObjectId(new ObjectId(qualifiedName));
     }
 
     //

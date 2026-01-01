@@ -60,7 +60,7 @@ public class SimpleDistributableObject extends SerialisableObject {
     public SimpleDistributableObject(FullyDistinguishedName qualifiedName) {
         super();
         ObjectId objectId = new ObjectId(qualifiedName);
-        this.setLocalId(objectId);
+        this.setObjectId(objectId);
         this.metadata = new ObjectMetadata();
         this.securityLabels = new SecurityLabels();
     }
@@ -84,8 +84,8 @@ public class SimpleDistributableObject extends SerialisableObject {
         } else {
             setSecurityLabels(new SecurityLabels());
         }
-        if(ori.getLocalId() != null) {
-            setLocalId(SerializationUtils.clone(ori.getLocalId()));
+        if(ori.getObjectId() != null) {
+            setObjectId(SerializationUtils.clone(ori.getObjectId()));
         }
     }
 
@@ -120,9 +120,9 @@ public class SimpleDistributableObject extends SerialisableObject {
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder("SimpleDistributableObject{");
-        sb.append("objectID=").append(getLocalId());
+        sb.append("objectID=").append(getObjectId());
         sb.append(", metadata=").append(getMetadata());
-        sb.append(", id='").append(getLocalId());
+        sb.append(", id='").append(getObjectId());
         sb.append('}');
         return sb.toString();
     }

@@ -101,7 +101,7 @@ public class LocalApplicationComponentBroker  {
         } else {
             outcome.setEntry(entry);
             outcome.setStatus(MethodOutcomeEnum.REVIEW_ENTRY_FOUND);
-            outcome.setId(entry.getLocalId().getValue());
+            outcome.setId(entry.getObjectId().getKeyValue());
         }
         getLogger().debug(".getResource(): Exit");
         return(outcome);

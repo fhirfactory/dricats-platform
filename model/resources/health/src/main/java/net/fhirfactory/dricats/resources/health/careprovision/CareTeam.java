@@ -119,10 +119,10 @@ public class CareTeam extends Team implements Serializable {
                 .add("type='" + getType() + "'")
                 .add("contact=" + getContact())
                 .add("members=" + getMembers())
-                .add("objectID=" + getObjectID())
+                .add("localId=" + getObjectId())
                 .add("securityLabels=" + getSecurityLabels())
                 .add("metadata=" + getMetadata())
-                .add("id=" + getLocalId())
+                .add("id=" + getObjectId())
                 .toString();
     }
 

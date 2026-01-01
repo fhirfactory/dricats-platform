@@ -25,7 +25,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import net.fhirfactory.dricats.datagrid.satellite.DataGridServicesGroup;
 import net.fhirfactory.dricats.deployment.valuesets.SubsystemInternalServiceNamesEnum;
-import net.fhirfactory.dricats.internals.common.DistributableObjectId;
+import net.fhirfactory.dricats.internals.common.id.ObjectId;
 import net.fhirfactory.dricats.internals.common.naming.FullyDistinguishedName;
 import net.fhirfactory.dricats.internals.common.naming.RelativeDistinguishedName;
 import net.fhirfactory.dricats.internals.events.interfaces.ILocalMessageService;
@@ -91,11 +91,11 @@ public class MessageDistributionService extends JChannelControllerBase {
     @Override
     protected void populateIdentityDetails(){
         getLogger().debug(".buildObjectId(): Entry");
-        DistributableObjectId databusServiceGroupId = getDataBusServicesGroup().getObjectID();
-        FullyDistinguishedName myQualifiedName = new FullyDistinguishedName(databusServiceGroupId.getQualifiedName());
+        ObjectId databusServiceGroupId = getDataBusServicesGroup().getObjectId();
+        FullyDistinguishedName myQualifiedName = new FullyDistinguishedName(databusServiceGroupId.getFullyDistinguishedName());
         myQualifiedName.appendUnqualifiedName(new RelativeDistinguishedName(ApplicationComponentSpecialisationEnum.SUBSYSTEM_APPLICATION_WORK_UNIT_PROCESSOR.getType(), "MessageDistributionService"));
-        DistributableObjectId myId = new DistributableObjectId(myQualifiedName);
-        setObjectID(myId);
+        ObjectId myId = new ObjectId(myQualifiedName);
+        setObjectId(myId);
         setParent(getDataBusServicesGroup().getReference());
         getLogger().debug(".buildObjectId(): Exit");
     }

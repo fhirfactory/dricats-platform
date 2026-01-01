@@ -23,7 +23,6 @@ package net.fhirfactory.dricats.internals.common.naming;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import net.fhirfactory.dricats.internals.common.id.ObjectId;
-import net.fhirfactory.dricats.internals.common.id.ObjectToken;
 import net.fhirfactory.dricats.internals.common.naming.common.DotSeparatedName;
 import net.fhirfactory.dricats.internals.common.naming.datatypes.DistinguishedNameEntry;
 import org.apache.commons.lang3.StringUtils;
@@ -60,21 +59,6 @@ public class CommonQualifier extends DotSeparatedName implements Serializable {
     public CommonQualifier(FullyDistinguishedName qualifiedName) {
         StringBuilder qualifierBuilder = new StringBuilder();
         Map<Integer, DistinguishedNameEntry> unqualifiedNameSet = qualifiedName.getUnqualifiedNameEntries();
-        int setSize = unqualifiedNameSet.size();
-        for (int counter = 0; counter < setSize; counter++) {
-            RelativeDistinguishedName currentUnqualifiedName = unqualifiedNameSet.get(counter);
-            qualifierBuilder.append(currentUnqualifiedName.getQualifier());
-            if (counter < (setSize - 1)) {
-                qualifierBuilder.append(".");
-            }
-        }
-        setValue(qualifierBuilder.toString());
-    }
-
-    public CommonQualifier(ObjectToken token) {
-        FullyDistinguishedName tempQualifiedName = new FullyDistinguishedName(token);
-        StringBuilder qualifierBuilder = new StringBuilder();
-        Map<Integer, DistinguishedNameEntry> unqualifiedNameSet = tempQualifiedName.getUnqualifiedNameEntries();
         int setSize = unqualifiedNameSet.size();
         for (int counter = 0; counter < setSize; counter++) {
             RelativeDistinguishedName currentUnqualifiedName = unqualifiedNameSet.get(counter);

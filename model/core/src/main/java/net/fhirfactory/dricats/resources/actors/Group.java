@@ -132,7 +132,7 @@ public class Group extends BusinessCollaboration implements Serializable {
                 .append("extensions", getExtensions())
                 .append("securityLabels", getSecurityLabels())
                 .append("metadata", getMetadata())
-                .append("id", getLocalId())
+                .append("id", getObjectId())
                 .append("membership", getMembership())
                 .toString();
     }

@@ -92,7 +92,7 @@ public class MLLPSenderInterface extends WUPAdapterBase implements IMetricsExtra
                 .append("identifiers", getIdentifiers())
                 .append("securityLabels", getSecurityLabels())
                 .append("metadata", getMetadata())
-                .append("id", getLocalId())
+                .append("id", getObjectId())
                 .toString();
     }
 

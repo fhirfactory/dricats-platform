@@ -2,6 +2,7 @@ package net.fhirfactory.dricats.datagrid.central.metricsgrid;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import net.fhirfactory.dricats.internals.common.id.ObjectKey;
 import net.fhirfactory.dricats.internals.oam.metrics.ApplicationComponentMetricsData;
 import net.fhirfactory.dricats.internals.topology.implementation.layers.application.valuesets.ApplicationComponentSpecialisationEnum;
 import net.fhirfactory.dricats.reference.archimate.layers.application.ApplicationComponent;
@@ -173,10 +174,10 @@ public class H2MetricsRepository {
         }
     }
 
-    public List<ApplicationComponentMetricsData> fetchByTimeRangeForComponent(LocalDateTime start, LocalDateTime end, String componentId) {
+    public List<ApplicationComponentMetricsData> fetchByTimeRangeForComponent(LocalDateTime start, LocalDateTime end, String componentKey) {
         String sql = "SELECT mr.* FROM metrics_records mr JOIN application_components ac ON mr.component_fk = ac.id WHERE ac.object_id_common_name = ? AND (? IS NULL OR mr.last_activity >= ?) AND (? IS NULL OR mr.last_activity <= ?) ORDER BY mr.last_activity ASC, mr.id ASC";
         try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setString(1, componentId);
+            ps.setString(1, componentKey);
             Timestamp tsStart = start != null ? Timestamp.valueOf(start) : null;
             Timestamp tsEnd = end != null ? Timestamp.valueOf(end) : null;
             if (tsStart == null) {
@@ -201,7 +202,7 @@ public class H2MetricsRepository {
             }
             return list;
         } catch (SQLException e) {
-            LOG.error("Failed to fetch metrics by time range for component={}", componentId, e);
+            LOG.error("Failed to fetch metrics by time range for component={}", componentKey, e);
             return new ArrayList<>();
         }
     }
@@ -256,12 +257,10 @@ public class H2MetricsRepository {
 
     private Long ensureComponentRow(ApplicationComponent component,
                                     ApplicationComponentMetricsData md) {
-        String commonName = null;
-        if (component != null && component.getObjectID() != null && component.getObjectID().getQualifiedName() != null && component.getObjectID().getQualifiedName().getCommonName() != null) {
-            commonName = component.getObjectID().getQualifiedName().getCommonName().getValue();
-        }
+        String commonName = component != null ? component.resolveKey() : null;
         String typeStr = (md != null && md.getComponentType() != null) ? md.getComponentType().name() : null;
-        String doiJson = toJsonGeneral(component != null ? component.getObjectID() : null);
+        ObjectKey objectKey = component != null ? component.getObjectId() : null;
+        String doiJson = toJsonGeneral(objectKey);
         if (commonName == null && doiJson == null && typeStr == null) {
             return null; // nothing to store
         }
@@ -302,18 +301,17 @@ public class H2MetricsRepository {
     }
 
     public ApplicationComponentMetricsData fetchLatestForComponent(ApplicationComponent component) {
-        String componentId = (component != null && component.getObjectID()!=null && component.getObjectID().getQualifiedName()!=null && component.getObjectID().getQualifiedName().getCommonName()!=null)
-                ? component.getObjectID().getQualifiedName().getCommonName().getValue() : null;
+        String componentKey = component != null ? component.resolveKey() : null;
         String sql = "SELECT mr.* FROM metrics_records mr JOIN application_components ac ON mr.component_fk = ac.id WHERE ac.object_id_common_name = ? ORDER BY mr.last_activity DESC NULLS LAST, mr.id DESC LIMIT 1";
         try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setString(1, componentId);
+            ps.setString(1, componentKey);
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
                     return mapMetrics(rs);
                 }
             }
         } catch (SQLException e) {
-            LOG.error("Failed to fetch latest metrics for component(summary)={} ", componentId, e);
+            LOG.error("Failed to fetch latest metrics for component(summary)={} ", componentKey, e);
         }
         return null;
     }

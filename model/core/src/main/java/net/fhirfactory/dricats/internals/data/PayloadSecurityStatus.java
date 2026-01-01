@@ -75,7 +75,7 @@ public class PayloadSecurityStatus extends SerialisableObject implements Seriali
         return "PayloadSecurityStatus{" +
                 "securityStatus='" + securityStatus + '\'' +
                 ", securityStatusDescription='" + securityStatusDescription + '\'' +
-                ", id = '" + getLocalId() + '\'' +
+                ", id = '" + getObjectId() + '\'' +
                 '}';
     }
 

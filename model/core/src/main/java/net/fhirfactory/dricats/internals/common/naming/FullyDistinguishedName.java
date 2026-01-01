@@ -22,8 +22,7 @@
 package net.fhirfactory.dricats.internals.common.naming;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import net.fhirfactory.dricats.internals.datatypes.EffectiveDate;
-import net.fhirfactory.dricats.internals.common.id.ObjectToken;
+import net.fhirfactory.dricats.internals.common.id.ObjectId;
 import net.fhirfactory.dricats.internals.common.naming.datatypes.DistinguishedNameEntry;
 import org.apache.commons.lang3.SerializationUtils;
 import org.slf4j.Logger;
@@ -31,7 +30,9 @@ import org.slf4j.LoggerFactory;
 
 import java.io.Serial;
 import java.io.Serializable;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.StringJoiner;
 
 /**
  * @author Mark A. Hunter (ACT Health)
@@ -57,7 +58,6 @@ public class FullyDistinguishedName implements Serializable, Comparable<FullyDis
     private static final String FDN_TO_STRING_SUFFIX = ")";
     private static final String FDN_TOKEN_ID = "QualifiedNameToken";
     private Map<Integer, DistinguishedNameEntry> unqualifiedNameSet;
-    private EffectiveDate effectivePeriod;
 
     /**
      * Default Constructor
@@ -65,7 +65,6 @@ public class FullyDistinguishedName implements Serializable, Comparable<FullyDis
     public FullyDistinguishedName() {
         getLogger().trace(".QualifiedName(): Default constructor invoked.");
         this.unqualifiedNameSet = new HashMap<>();
-        this.effectivePeriod = new EffectiveDate();
         getLogger().trace(".QualifiedName(): this.rdnElementSet initialised.");
     }
 
@@ -93,7 +92,6 @@ public class FullyDistinguishedName implements Serializable, Comparable<FullyDis
             DistinguishedNameEntry clonedUnqualifiedName = SerializationUtils.clone(currentUnqualifiedName);
             this.unqualifiedNameSet.put(counter, clonedUnqualifiedName);
         }
-        this.effectivePeriod = new EffectiveDate();
     }
 
     public FullyDistinguishedName(CommonQualifier qualifier, CommonName name) {
@@ -104,80 +102,20 @@ public class FullyDistinguishedName implements Serializable, Comparable<FullyDis
             DistinguishedNameEntry currentEntry = new DistinguishedNameEntry(qualifierValues[counter], nameValues[counter]);
             this.unqualifiedNameSet.put(counter, currentEntry);
         }
-        this.effectivePeriod = new EffectiveDate();
     }
 
-    /**
-     * This constructor uses an FDNToken to construct a new FDN.
-     *
-     * @param token An FDNToken from which the FDN may be instantiated.
-     */
-    public FullyDistinguishedName(ObjectToken token) {
-        getLogger().trace(".QualifiedName( QualifiedNameToken token ): Constructor invoked, token --> {}", token);
-        if (token == null) {
+    public FullyDistinguishedName(ObjectId objectId) {
+        getLogger().trace(".QualifiedName( ObjectId objectId ): Constructor invoked, objectId --> {}", objectId);
+        if (objectId == null) {
             throw (new IllegalArgumentException("Empty parameter passed to Constructor"));
         }
-        String tokenContent = token.getToken();
-        getLogger().trace(".QualifiedName( FDNToken token ): tokenContent --> {}", tokenContent);
-        String[] rdnStringEntries = tokenContent.split("><");
-        if (rdnStringEntries.length <= 0) {
-            throw (new IllegalArgumentException("Badly formed FDNToken passed to Constructor, cannot parse -> " + token.getToken()));
+        this.unqualifiedNameSet = new HashMap<>();
+        String[] qualifierValues = objectId.getQualifier().getValue().split("\\.");
+        String[] nameValues = objectId.getName().getValue().split("\\.");
+        for (int counter = 0; counter < qualifierValues.length; counter++) {
+            DistinguishedNameEntry currentEntry = new DistinguishedNameEntry(qualifierValues[counter], nameValues[counter]);
+            this.unqualifiedNameSet.put(counter, currentEntry);
         }
-        getLogger().trace(".QualifiedName(FDNToken token): We have a valid JSONObject for the FDNToken!, now extract content & process");
-        this.unqualifiedNameSet = new HashMap<Integer, DistinguishedNameEntry>();
-        for (int counter = 0; counter < rdnStringEntries.length; counter++) {
-            getLogger().trace(".QualifiedName( FDNToken token ): Iterating through the extracted Token, attempting to extract RDN[{}]", counter);
-            String currentCounterEntry = null;
-            for (int loopCounter = 0; loopCounter < rdnStringEntries.length; loopCounter += 1) {
-                if (rdnStringEntries[loopCounter].startsWith("<" + counter + ":")) {
-                    currentCounterEntry = rdnStringEntries[loopCounter];
-                    break;
-                }
-                if (currentCounterEntry == null) {
-                    if (rdnStringEntries[loopCounter].startsWith(counter + ":")) {
-                        currentCounterEntry = rdnStringEntries[loopCounter];
-                        break;
-                    }
-                }
-            }
-            getLogger().trace(".QualifiedName( FDNToken token ): processing ->{}", currentCounterEntry);
-            // Extract the RDN Type/Qualifier
-            String rdnQualifierWorking = null;
-            if (currentCounterEntry.startsWith("<" + counter + ":")) {
-                rdnQualifierWorking = currentCounterEntry.replace("<" + counter + ":", "");
-            } else if (currentCounterEntry.startsWith(counter + ":")) {
-                rdnQualifierWorking = currentCounterEntry.replace(counter + ":", "");
-            }
-            int rdnQualifierEnd = rdnQualifierWorking.indexOf(">");
-            String rdnQualifier = rdnQualifierWorking.substring(0, rdnQualifierEnd);
-            // Extract the RDN Value
-            String rdnValueWorking = null;
-            if (currentCounterEntry.startsWith("<")) {
-                rdnValueWorking = currentCounterEntry.substring(1, currentCounterEntry.length() - 1);
-            } else {
-                rdnValueWorking = currentCounterEntry;
-            }
-            int startPoint = rdnValueWorking.indexOf(">");
-            int endPoint = rdnValueWorking.indexOf("<");
-            String rdnValue = rdnValueWorking.substring(startPoint + 1, endPoint);
-            getLogger().trace(".QualifiedName( FDNToken token ): creating RDN, rdnQualifier->{}, rdnValue->{}", rdnQualifier, rdnValue);
-            DistinguishedNameEntry currentUnqualifiedName = new DistinguishedNameEntry(rdnQualifier, rdnValue);
-            getLogger().trace(".QualifiedName( FDNToken token ): Iterating through the extracted RDNs, current RDN --> {}", currentUnqualifiedName);
-            this.unqualifiedNameSet.put(counter, currentUnqualifiedName);
-        }
-    }
-
-    /**
-     * Compose the token string from the provided QualifiedName.
-     */
-    public String toObjectTokenString() {
-        ObjectToken objectToken = toObjectToken();
-        return(objectToken.getToken());
-    }
-
-    public ObjectToken toObjectToken(){
-        ObjectToken objectToken = NamingUtilities.toObjectToken(this);
-        return(objectToken);
     }
 
     @JsonIgnore
@@ -297,6 +235,14 @@ public class FullyDistinguishedName implements Serializable, Comparable<FullyDis
     }
 
     @JsonIgnore
+    public CommonQualifier getCommonQualifier() {
+        getLogger().trace(".getCommonQualifier(): Entry");
+        CommonQualifier commonQualifier = new CommonQualifier(this);
+        getLogger().trace(".getCommonQualifier(): Exit, commonQualifier->{}", commonQualifier);
+        return (commonQualifier);
+    }
+
+    @JsonIgnore
     private String pseudoXMLAttribute(int order, String attributeName, String attributeValue) {
         StringBuilder xmlAttributeBuilder = new StringBuilder();
         xmlAttributeBuilder.append("<");
@@ -396,8 +342,8 @@ public class FullyDistinguishedName implements Serializable, Comparable<FullyDis
         if(this == o){
             return 0;
         }
-        String token1 = this.toObjectTokenString();
-        String token2 = o.toObjectTokenString();
+        String token1 = this.getCommonQualifier().getValue() + "=" + this.getCommonName().getValue();
+        String token2 = o.getCommonQualifier().getValue() + "=" + o.getCommonName().getValue();
         return token1.compareTo(token2);
     }
 }

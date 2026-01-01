@@ -22,7 +22,7 @@
 package net.fhirfactory.dricats.internals.common.naming;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import net.fhirfactory.dricats.internals.common.id.ObjectToken;
+import net.fhirfactory.dricats.internals.common.id.ObjectKey;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -80,22 +80,6 @@ public class RelativeDistinguishedName implements Serializable {
         }
         this.value = otherUnqualifiedName.getValue();
         this.qualifier = otherUnqualifiedName.getQualifier();
-    }
-
-    public RelativeDistinguishedName(ObjectToken token) {
-        getLogger().trace(".UnqualifiedName(UnqualifiedNameToken): Entry, token --> {}", token);
-        if (token == null) {
-            throw (new IllegalArgumentException("null UnqualifiedNameToken passed to Constructor"));
-        }
-        String tokenContent = token.getToken();
-        String[] tokenSplit = tokenContent.split("><");
-        String qualifierWorking = tokenSplit[0];
-        String qualifier = qualifierWorking.substring(1, qualifierWorking.length() - 1);
-        setQualifier(qualifier);
-        String valueWorking = tokenSplit[1];
-        String value = valueWorking.substring(0, valueWorking.length() - 2);
-        setValue(value);
-        getLogger().trace(".UnqualifiedName(UnqualifiedNameToken): new UnqualifiedName created, now building different String values!");
     }
 
     //
@@ -156,14 +140,14 @@ public class RelativeDistinguishedName implements Serializable {
     }
 
     @JsonIgnore
-    private ObjectToken toToken() {
-        ObjectToken token = new ObjectToken(pseudoXMLAttribute(getQualifier(), getValue()));
+    private ObjectKey toToken() {
+        ObjectKey token = new ObjectKey(pseudoXMLAttribute(getQualifier(), getValue()));
         return token;
     }
 
     @JsonIgnore
-    public ObjectToken getToken() {
-        ObjectToken token = toToken();
+    public ObjectKey getToken() {
+        ObjectKey token = toToken();
         return (token);
     }
 

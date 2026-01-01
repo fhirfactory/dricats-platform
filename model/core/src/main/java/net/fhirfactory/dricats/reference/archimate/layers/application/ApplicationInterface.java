@@ -76,7 +76,7 @@ public class ApplicationInterface extends ElementBase {
         ElementReference reference = SerializationUtils.clone(parent);
         FullyDistinguishedName newName = reference.getLocalObjectId().getFullyDistinguishedName();
         newName.appendUnqualifiedName(unqualifiedName);
-        setLocalId(new ObjectId(newName));
+        setObjectId(new ObjectId(newName));
         setDocumentation(documentation);
         setSpecialization(specialization);
         this.services = new ArrayList<>();
@@ -163,7 +163,7 @@ public class ApplicationInterface extends ElementBase {
                 .append("extensions", getExtensions())
                 .append("securityLabels", getSecurityLabels())
                 .append("metadata", getMetadata())
-                .append("id", getLocalId())
+                .append("id", getObjectId())
                 .toString();
     }
 }

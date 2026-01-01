@@ -23,14 +23,11 @@ package net.fhirfactory.dricats.internals.common.naming;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import net.fhirfactory.dricats.internals.common.id.ObjectId;
-import net.fhirfactory.dricats.internals.common.id.ObjectToken;
 import net.fhirfactory.dricats.internals.common.naming.common.DotSeparatedName;
-import net.fhirfactory.dricats.internals.common.naming.datatypes.DistinguishedNameEntry;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.SerializationUtils;
 
 import java.io.Serial;
 import java.io.Serializable;
-import java.util.Map;
 import java.util.Objects;
 
 public class CommonName extends DotSeparatedName implements Serializable {
@@ -58,53 +55,11 @@ public class CommonName extends DotSeparatedName implements Serializable {
     }
 
     public CommonName(FullyDistinguishedName qualifiedName) {
-        FullyDistinguishedName tempQualifiedName = new FullyDistinguishedName(qualifiedName);
-        StringBuilder nameContentBuilder = new StringBuilder();
-        Map<Integer, DistinguishedNameEntry> unqualifiedNameSet = tempQualifiedName.getUnqualifiedNameEntries();
-        int setSize = unqualifiedNameSet.size();
-        for (int counter = 0; counter < setSize; counter++) {
-            RelativeDistinguishedName currentUnqualifiedName = unqualifiedNameSet.get(counter);
-            nameContentBuilder.append(currentUnqualifiedName.getValue());
-            if (counter < (setSize - 1)) {
-                nameContentBuilder.append(".");
-            }
-        }
-        setValue(nameContentBuilder.toString());
+        setValue(qualifiedName.getCommonNameValue());
     }
 
-    public CommonName(ObjectToken token) {
-        FullyDistinguishedName tempQualifiedName = new FullyDistinguishedName(token);
-        StringBuilder nameContentBuilder = new StringBuilder();
-        Map<Integer, DistinguishedNameEntry> unqualifiedNameSet = tempQualifiedName.getUnqualifiedNameEntries();
-        int setSize = unqualifiedNameSet.size();
-        for (int counter = 0; counter < setSize; counter++) {
-            RelativeDistinguishedName currentUnqualifiedName = unqualifiedNameSet.get(counter);
-            nameContentBuilder.append(currentUnqualifiedName.getValue());
-            if (counter < (setSize - 1)) {
-                nameContentBuilder.append(".");
-            }
-        }
-        setValue(nameContentBuilder.toString());
-    }
-
-    //
-    // Accessor(s)
-    //
-
-    //
-    // Factory Methods
-    //
-
-    public static CommonName fromIdValueString(String idValue){
-        if(StringUtils.isEmpty(idValue)){
-            return(null);
-        }
-        String[] idValueComponents = idValue.split(ObjectId.ID_QUALIFIER_NAME_SEPARATOR);
-        if(idValueComponents.length < 2){
-            return(null);
-        }
-        CommonName name = new CommonName(idValueComponents[1]);
-        return(name);
+    public CommonName(ObjectId objectId) {
+        setValue(SerializationUtils.clone(objectId.getName().getValue()));
     }
 
     //

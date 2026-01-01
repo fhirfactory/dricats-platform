@@ -97,7 +97,7 @@ public class TeamMembership extends CompositionRelationship implements Serializa
                 .append("identifiers", getIdentifiers())
                 .append("securityLabels", getSecurityLabels())
                 .append("metadata", getMetadata())
-                .append("id", getLocalId())
+                .append("id", getObjectId())
                 .toString();
     }
 }

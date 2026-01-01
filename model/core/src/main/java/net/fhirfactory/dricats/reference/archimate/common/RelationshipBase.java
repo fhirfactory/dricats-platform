@@ -139,12 +139,12 @@ public abstract class RelationshipBase extends DistributableObject implements Se
                 Objects.equals(properties, that.properties) &&
                 Objects.equals(source, that.source) &&
                 Objects.equals(target, that.target) &&
-                Objects.equals(getLocalId(), that.getLocalId());
+                Objects.equals(getObjectId(), that.getObjectId());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(type, name, documentation, specialization, properties, source, target, getLocalId());
+        return Objects.hash(type, name, documentation, specialization, properties, source, target, getObjectId());
     }
 
     @Override
@@ -157,7 +157,7 @@ public abstract class RelationshipBase extends DistributableObject implements Se
                 ", properties="+properties+
                 ", sourceRef='"+ source +'\''+
                 ", targetRef='"+ target +'\''+
-                ", id="+ getLocalId()+
+                ", id="+ getObjectId()+
                 ", identifiers="+getIdentifiers()+
                 ", metadata="+getMetadata()+
                 ", securityLabels="+getSecurityLabels()+

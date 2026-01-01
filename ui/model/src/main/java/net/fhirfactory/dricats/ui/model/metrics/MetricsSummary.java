@@ -88,7 +88,7 @@ public class MetricsSummary extends SimpleDistributableObject implements Seriali
                 .append("securityLabels", getSecurityLabels())
                 .append("objectID", getObjectID())
                 .append("metadata", getMetadata())
-                .append("id", getLocalId())
+                .append("id", getObjectId())
                 .toString();
     }
 }

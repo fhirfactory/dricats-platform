@@ -75,7 +75,7 @@ public class ContentSubscription extends SubscriptionBase implements Serializabl
                 .append("identifiers", getIdentifiers())
                 .append("securityLabels", getSecurityLabels())
                 .append("metadata", getMetadata())
-                .append("id", getLocalId())
+                .append("id", getObjectId())
                 .toString();
     }
 }

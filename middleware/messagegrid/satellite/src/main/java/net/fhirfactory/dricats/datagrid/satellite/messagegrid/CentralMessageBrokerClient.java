@@ -3,6 +3,8 @@ package net.fhirfactory.dricats.datagrid.satellite.messagegrid;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
 import jakarta.enterprise.context.ApplicationScoped;
+import net.fhirfactory.dricats.internals.events.messages.MessageObject;
+import net.fhirfactory.dricats.internals.topics.Topic;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
@@ -16,9 +18,6 @@ import org.apache.kafka.common.serialization.StringDeserializer;
 import org.apache.kafka.common.serialization.StringSerializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import net.fhirfactory.dricats.internals.events.messages.MessageObject;
-import net.fhirfactory.dricats.internals.topics.Topic;
 
 import java.io.*;
 import java.time.Duration;
@@ -99,7 +98,7 @@ public class CentralMessageBrokerClient {
             throw new IllegalArgumentException("MessageObject cannot be null");
         }
         byte[] payload = serialize(message);
-        String key = (message.getLocalId() != null ? message.getLocalId().getValue() : null);
+        String key = message.resolveKey();
         ProducerRecord<String, byte[]> record = new ProducerRecord<>(topicName, key, payload);
         LOG.debug("CentralMessageBrokerClient: Publishing id={} to topic={}", key, topicName);
         producer.send(record, (md, ex) -> {

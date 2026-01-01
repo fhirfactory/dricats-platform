@@ -86,7 +86,7 @@ public class ApplicationProcess extends ElementBase {
                 ", documentation='"+getDocumentation()+'\''+
                 ", specialization='"+getSpecialization()+'\''+
                 ", extensions="+getExtensions()+
-                ", id="+ getLocalId()+
+                ", id="+ getObjectId()+
                 ", metadata="+getMetadata()+
                 '}';
     }

@@ -53,7 +53,7 @@ public class NotificationPayload extends Payload {
         RelativeDistinguishedName unqualifiedName = new RelativeDistinguishedName("NotificationPayload", UUID.randomUUID().toString());
         FullyDistinguishedName qualifiedName = new FullyDistinguishedName();
         qualifiedName.appendUnqualifiedName(unqualifiedName);
-        this.setLocalId(new ObjectId(qualifiedName));
+        this.setObjectId(new ObjectId(qualifiedName));
     }
 
     //

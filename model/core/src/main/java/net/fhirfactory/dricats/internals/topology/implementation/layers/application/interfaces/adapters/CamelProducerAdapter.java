@@ -95,7 +95,7 @@ public class CamelProducerAdapter extends WUPAdapterBase implements IMetricsExtr
                 .append("identifiers", getIdentifiers())
                 .append("securityLabels", getSecurityLabels())
                 .append("metadata", getMetadata())
-                .append("id", getLocalId())
+                .append("id", getObjectId())
                 .toString();
     }
 

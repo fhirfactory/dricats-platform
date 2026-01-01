@@ -83,7 +83,7 @@ public class User extends BusinessRole implements Serializable {
                 .add("securityLabels=" + getSecurityLabels())
                 .add("metadata=" + getMetadata())
                 .add("identifiers=" + getIdentifiers())
-                .add("id=" + getLocalId())
+                .add("id=" + getObjectId())
                 .toString();
     }
 

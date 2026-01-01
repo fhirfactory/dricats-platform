@@ -26,8 +26,8 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import net.fhirfactory.dricats.internals.common.DistributableObjectId;
-import net.fhirfactory.dricats.internals.common.id.ObjectToken;
+import net.fhirfactory.dricats.internals.common.id.ObjectId;
+import net.fhirfactory.dricats.internals.common.id.ObjectKey;
 import net.fhirfactory.dricats.internals.oam.metrics.ApplicationComponentMetricsData;
 import net.fhirfactory.dricats.internals.pathways.Pathway;
 import net.fhirfactory.dricats.internals.pathways.PathwayElement;
@@ -260,7 +260,7 @@ public class MainRESTClient {
     }
 
     public Pathway updatePathway(Pathway pathway) {
-        String id = resolveRestKey(pathway==null? null : pathway.getObjectID());
+        String id = pathway.resolveKey();
         if (id == null) { return null; }
         String url;
         try { url = normalize(baseUrl) + "/api/pathway/" + urlEncode(id); } catch (IOException e) { return null; }
@@ -360,7 +360,7 @@ public class MainRESTClient {
     }
 
     public PathwayRoute updatePathwayRoute(PathwayRoute route){
-        String id = resolveRestKey(route==null? null : route.getObjectID());
+        String id = route.getObjectId().getKeyValue();
         if(id==null){ return null; }
         String url;
         try { url = normalize(baseUrl) + "/api/route/" + urlEncode(id); } catch (IOException e) { return null; }
@@ -413,7 +413,7 @@ public class MainRESTClient {
     }
 
     public PathwayRouteSegment updatePathwayRouteSegment(PathwayRouteSegment segment){
-        String id = resolveRestKey(segment==null? null : segment.getObjectID());
+        String id = segment.getObjectId().getKeyValue();
         if(id==null){ return null; }
         String url;
         try { url = normalize(baseUrl) + "/api/segment/" + urlEncode(id); } catch (IOException e) { return null; }
@@ -490,89 +490,89 @@ public class MainRESTClient {
     }
 
     // Resolve REST key from DistributableObjectId using QualifiedName.CommonName.value
-    private static String resolveRestKey(DistributableObjectId id) {
+    private static String resolveRestKey(ObjectId id) {
         if (id == null) { return null; }
         try {
-            return id.getQualifiedName().getCommonName().getValue();
+            return id.getKeyValue();
         } catch (Exception e) {
             LOG.warn("[UI] resolveRestKey(): Failed to resolve key from {}: {}", id, e.toString());
             return null;
         }
     }
 
-    public List<ApplicationComponent> listSubcomponents(ObjectToken id) {
-        if (id == null || id.getToken() == null || id.getToken().isBlank()) { return Collections.emptyList(); }
-        return listSubcomponents(id.getToken());
+    public List<ApplicationComponent> listSubcomponents(ObjectKey id) {
+        if (id == null || id.getKeyValue() == null || id.getKeyValue().isBlank()) { return Collections.emptyList(); }
+        return listSubcomponents(id.getKeyValue());
     }
 
-    public ApplicationComponentMetricsData getLatestMetrics(ObjectToken id) {
-        if (id == null || id.getToken() == null || id.getToken().isBlank()) { return null; }
-        return getLatestMetrics(id.getToken());
+    public ApplicationComponentMetricsData getLatestMetrics(ObjectKey id) {
+        if (id == null || id.getKeyValue() == null || id.getKeyValue().isBlank()) { return null; }
+        return getLatestMetrics(id.getKeyValue());
     }
 
-    public Pathway getPathway(ObjectToken id) {
-        if (id == null || id.getToken() == null || id.getToken().isBlank()) { return null; }
-        return getPathway(id.getToken());
+    public Pathway getPathway(ObjectKey id) {
+        if (id == null || id.getKeyValue() == null || id.getKeyValue().isBlank()) { return null; }
+        return getPathway(id.getKeyValue());
     }
 
-    public java.util.Map<Integer, PathwayRoute> getPathwaySegments(ObjectToken id) {
-        if (id == null || id.getToken() == null || id.getToken().isBlank()) { return java.util.Collections.emptyMap(); }
-        return getPathwaySegments(id.getToken());
+    public java.util.Map<Integer, PathwayRoute> getPathwaySegments(ObjectKey id) {
+        if (id == null || id.getKeyValue() == null || id.getKeyValue().isBlank()) { return java.util.Collections.emptyMap(); }
+        return getPathwaySegments(id.getKeyValue());
     }
 
-    public PathwayRoute getSegmentById(ObjectToken id) {
-        if (id == null || id.getToken() == null || id.getToken().isBlank()) { return null; }
-        return getSegmentById(id.getToken());
+    public PathwayRoute getSegmentById(ObjectKey id) {
+        if (id == null || id.getKeyValue() == null || id.getKeyValue().isBlank()) { return null; }
+        return getSegmentById(id.getKeyValue());
     }
 
-    public PathwayRouteSegment getPathById(ObjectToken id) {
-        if (id == null || id.getToken() == null || id.getToken().isBlank()) { return null; }
-        return getPathById(id.getToken());
+    public PathwayRouteSegment getPathById(ObjectKey id) {
+        if (id == null || id.getKeyValue() == null || id.getKeyValue().isBlank()) { return null; }
+        return getPathById(id.getKeyValue());
     }
 
-    public PathwayElement getFlowById(ObjectToken id) {
-        if (id == null || id.getToken() == null || id.getToken().isBlank()) { return null; }
-        return getFlowById(id.getToken());
+    public PathwayElement getFlowById(ObjectKey id) {
+        if (id == null || id.getKeyValue() == null || id.getKeyValue().isBlank()) { return null; }
+        return getFlowById(id.getKeyValue());
     }
 
     // Overloads that accept DistributableObjectId and use CommonName as REST key
-    public List<ApplicationComponent> listSubcomponents(DistributableObjectId id) {
+    public List<ApplicationComponent> listSubcomponents(ObjectId id) {
         String key = resolveRestKey(id);
         if (key == null || key.isBlank()) { return Collections.emptyList(); }
         return listSubcomponents(key);
     }
 
-    public ApplicationComponentMetricsData getLatestMetrics(DistributableObjectId id) {
+    public ApplicationComponentMetricsData getLatestMetrics(ObjectId id) {
         String key = resolveRestKey(id);
         if (key == null || key.isBlank()) { return null; }
         return getLatestMetrics(key);
     }
 
-    public Pathway getPathway(DistributableObjectId id) {
+    public Pathway getPathway(ObjectId id) {
         String key = resolveRestKey(id);
         if (key == null || key.isBlank()) { return null; }
         return getPathway(key);
     }
 
-    public java.util.Map<Integer, PathwayRoute> getPathwaySegments(DistributableObjectId id) {
+    public java.util.Map<Integer, PathwayRoute> getPathwaySegments(ObjectId id) {
         String key = resolveRestKey(id);
         if (key == null || key.isBlank()) { return java.util.Collections.emptyMap(); }
         return getPathwaySegments(key);
     }
 
-    public PathwayRoute getSegmentById(DistributableObjectId id) {
+    public PathwayRoute getSegmentById(ObjectId id) {
         String key = resolveRestKey(id);
         if (key == null || key.isBlank()) { return null; }
         return getSegmentById(key);
     }
 
-    public PathwayRouteSegment getPathById(DistributableObjectId id) {
+    public PathwayRouteSegment getPathById(ObjectId id) {
         String key = resolveRestKey(id);
         if (key == null || key.isBlank()) { return null; }
         return getPathById(key);
     }
 
-    public PathwayElement getFlowById(DistributableObjectId id) {
+    public PathwayElement getFlowById(ObjectId id) {
         String key = resolveRestKey(id);
         if (key == null || key.isBlank()) { return null; }
         return getFlowById(key);
@@ -596,7 +596,7 @@ public class MainRESTClient {
     }
 
     public PathwayElement updateFlow(PathwayElement flow){
-        String id = resolveRestKey(flow==null? null : flow.getObjectID());
+        String id = resolveRestKey(flow==null? null : flow.getObjectId());
         if(id==null){ return null; }
         String url;
         try { url = normalize(baseUrl) + "/api/pathwayelement/" + urlEncode(id); } catch (IOException e) { return null; }
@@ -694,12 +694,12 @@ public class MainRESTClient {
         return java.util.Collections.emptyList();
     }
 
-    public List<WUPInterfaceBase> listInterfaces(ObjectToken id){
-        if (id == null || id.getToken() == null || id.getToken().isBlank()) { return java.util.Collections.emptyList(); }
-        return listInterfaces(id.getToken());
+    public List<WUPInterfaceBase> listInterfaces(ObjectKey id){
+        if (id == null || id.getKeyValue() == null || id.getKeyValue().isBlank()) { return java.util.Collections.emptyList(); }
+        return listInterfaces(id.getKeyValue());
     }
 
-    public List<WUPInterfaceBase> listInterfaces(DistributableObjectId id){
+    public List<WUPInterfaceBase> listInterfaces(ObjectId id){
         String key = resolveRestKey(id);
         if (key == null || key.isBlank()) { return java.util.Collections.emptyList(); }
         return listInterfaces(key);

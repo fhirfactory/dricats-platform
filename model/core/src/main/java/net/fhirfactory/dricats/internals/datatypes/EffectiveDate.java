@@ -128,7 +128,7 @@ public class EffectiveDate extends SerialisableObject implements Serializable, C
 		builder.append(", effectiveEndDate=");
 		builder.append(effectiveEndDate);
 		builder.append(", id=");
-		builder.append(getLocalId());
+		builder.append(getObjectId());
 		builder.append("]");
 		return builder.toString();
 	}

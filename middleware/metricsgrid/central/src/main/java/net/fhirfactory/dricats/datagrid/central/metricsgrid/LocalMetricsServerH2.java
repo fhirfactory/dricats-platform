@@ -31,9 +31,8 @@ public class LocalMetricsServerH2 implements ILocalMetricsServerInterface {
     }
 
     public List<ApplicationComponentMetricsData> getMetrics(ApplicationComponent softwareComponent, LocalDateTime metricsStartTime, LocalDateTime metricsEndTime) {
-        String componentId = (softwareComponent != null && softwareComponent.getObjectID() != null && softwareComponent.getObjectID().getQualifiedName() != null && softwareComponent.getObjectID().getQualifiedName().getCommonName() != null)
-                ? softwareComponent.getObjectID().getQualifiedName().getCommonName().getValue() : null;
-        return repository.fetchByTimeRangeForComponent(metricsStartTime, metricsEndTime, componentId);
+        String componentKey = softwareComponent != null ? softwareComponent.resolveKey() : null;
+        return repository.fetchByTimeRangeForComponent(metricsStartTime, metricsEndTime, componentKey);
     }
 
     @Override

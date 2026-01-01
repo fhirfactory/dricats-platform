@@ -21,7 +21,9 @@
  */
 package net.fhirfactory.dricats.reference.archimate.layers.application;
 
+import net.fhirfactory.dricats.internals.common.id.ObjectId;
 import net.fhirfactory.dricats.internals.common.identifiers.ElementReference;
+import net.fhirfactory.dricats.internals.datatypes.EffectiveDate;
 import net.fhirfactory.dricats.internals.oam.metrics.ApplicationComponentMetricsData;
 import net.fhirfactory.dricats.internals.oam.topology.ApplicationComponentStatus;
 import net.fhirfactory.dricats.reference.archimate.common.ElementBase;
@@ -33,6 +35,7 @@ import org.slf4j.LoggerFactory;
 import java.io.Serial;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -82,6 +85,18 @@ public class ApplicationComponent extends ElementBase {
         this.subComponents = new ArrayList<>();
         this.supportedApplicationFunctions = new ArrayList<>();
         this.supportedApplicationServices = new ArrayList<>();
+        this.metricsData = new ApplicationComponentMetricsData();
+        this.componentStatus = new ApplicationComponentStatus();
+        getLogger().trace("ApplicationComponent(name, documentation, interfaceSpecialisation): constructed");
+    }
+
+    public ApplicationComponent(ElementReference parent, ObjectId objectId, String documentation, String specialization, Map<String, String> extensions) {
+        super( objectId, documentation, specialization, ElementTypeEnum.APPLICATION_COMPONENT, extensions);
+        this.interfaces = new ArrayList<>();
+        this.subComponents = new ArrayList<>();
+        this.supportedApplicationFunctions = new ArrayList<>();
+        this.supportedApplicationServices = new ArrayList<>();
+        setParent(parent);
         this.metricsData = new ApplicationComponentMetricsData();
         this.componentStatus = new ApplicationComponentStatus();
         getLogger().trace("ApplicationComponent(name, documentation, interfaceSpecialisation): constructed");

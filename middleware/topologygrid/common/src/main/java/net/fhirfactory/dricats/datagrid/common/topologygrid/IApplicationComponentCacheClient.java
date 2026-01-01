@@ -21,7 +21,7 @@
  */
 package net.fhirfactory.dricats.datagrid.common.topologygrid;
 
-import net.fhirfactory.dricats.internals.common.DistributableObjectId;
+import net.fhirfactory.dricats.internals.common.id.ObjectKey;
 import net.fhirfactory.dricats.internals.topology.implementation.layers.application.valuesets.ApplicationComponentSpecialisationEnum;
 import net.fhirfactory.dricats.reference.archimate.layers.application.ApplicationComponent;
 
@@ -29,7 +29,7 @@ import java.util.List;
 
 public interface IApplicationComponentCacheClient {
 
-    List<ApplicationComponent> getSubcomponents(DistributableObjectId parent, ApplicationComponentSpecialisationEnum componentType);
+    List<ApplicationComponent> getSubcomponents(ObjectKey parent, ApplicationComponentSpecialisationEnum componentType);
 
     ApplicationComponent getSolutionComponent();
 

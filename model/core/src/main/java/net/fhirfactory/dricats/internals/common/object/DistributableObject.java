@@ -25,11 +25,10 @@ import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
-import net.fhirfactory.dricats.internals.common.naming.CommonName;
 import net.fhirfactory.dricats.internals.common.identifiers.ElementIdentifier;
 import net.fhirfactory.dricats.internals.common.naming.FullyDistinguishedName;
-import net.fhirfactory.dricats.internals.common.id.ObjectId;
 import org.apache.commons.lang3.SerializationUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -108,31 +107,21 @@ public class DistributableObject extends SimpleDistributableObject implements Se
 
     /**
      *
-     * @return DistributableObjectId.getCommonId().getToken() if available, otherwise CommonName.getValue() if available, otherwise UUID.randomUUID().toString()
+     * @return DistributableObjectId.getLocalId().getKeyValue() if available, otherwise create it....
      */
     public String resolveKey() {
         String key = null;
         try {
-            key = getLocalId().getIdValue();
+            key = getObjectId().getKeyValue();
         } catch (Exception e) {
             // ignore
         }
-        if (key == null) {
-            try {
-                CommonName cn = this.getLocalId().getName();
-                if (cn != null && cn.getValue() != null && !cn.getValue().isEmpty()) {
-                    key = cn.getValue();
-                }
-            } catch (Exception e) {
-                // ignore
-            }
-        }
-        if (key == null) {
-            try {
-                this.setLocalId(new ObjectId());
-            } catch (Exception e) {
-                LOG.debug("resolveKey(NotificationSubscription): unable to set generated id on item", e);
-            }
+        if (key != null && key.isEmpty()) {
+            UUID uuid = UUID.randomUUID();
+            getObjectId().setUpperBits(uuid.getMostSignificantBits());
+            getObjectId().setLowerBits(uuid.getLeastSignificantBits());
+            getObjectId().setVersion(0L);
+            key = getObjectId().getKeyValue();
         }
         return key;
     }
@@ -148,11 +137,11 @@ public class DistributableObject extends SimpleDistributableObject implements Se
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder("DistributableObject{");
-        sb.append("objectID=").append(getLocalId());
+        sb.append("objectID=").append(getObjectId());
         sb.append(", identifiers=").append(getIdentifiers());
         sb.append(", metadata=").append(getMetadata());
         sb.append(", securityLabels=").append(getSecurityLabels());
-        sb.append(", id='").append(getLocalId());
+        sb.append(", id='").append(getObjectId());
         sb.append('}');
         return sb.toString();
     }

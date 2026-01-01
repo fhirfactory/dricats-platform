@@ -23,8 +23,8 @@ package net.fhirfactory.dricats.internals.common.identifiers;
 
 import java.io.Serial;
 
+import net.fhirfactory.dricats.internals.common.id.ObjectId;
 import net.fhirfactory.dricats.internals.common.identifiers.datatypes.ElementIdentifierType;
-import net.fhirfactory.dricats.internals.common.id.ObjectToken;
 import net.fhirfactory.dricats.internals.common.object.SerialisableObject;
 import net.fhirfactory.dricats.internals.datatypes.EffectiveDate;
 
@@ -40,7 +40,7 @@ public class ElementIdentifier extends SerialisableObject {
     // Attributes
     //
 
-    private ObjectToken identifierValue;
+    private ObjectId identifierValue;
     private ElementIdentifierType identifierType;
     private EffectiveDate effectiveDate;
 
@@ -49,12 +49,12 @@ public class ElementIdentifier extends SerialisableObject {
     //
     public ElementIdentifier() {
         super();
-        this.identifierValue = new ObjectToken();
+        this.identifierValue = new ObjectId();
         this.identifierType = new ElementIdentifierType();
         this.effectiveDate = new EffectiveDate();
     }
 
-    public ElementIdentifier(ObjectToken identifierValue, ElementIdentifierType identifierType, EffectiveDate effectiveDate) {
+    public ElementIdentifier(ObjectId identifierValue, ElementIdentifierType identifierType, EffectiveDate effectiveDate) {
         super();
         this.identifierValue = identifierValue;
         this.identifierType = identifierType;
@@ -74,11 +74,11 @@ public class ElementIdentifier extends SerialisableObject {
     // Bean Methods
     //
 
-    public ObjectToken getIdentifierValue() {
+    public ObjectId getIdentifierValue() {
         return identifierValue;
     }
 
-    public void setIdentifierValue(ObjectToken identifierValue) {
+    public void setIdentifierValue(ObjectId identifierValue) {
         this.identifierValue = identifierValue;
     }
 

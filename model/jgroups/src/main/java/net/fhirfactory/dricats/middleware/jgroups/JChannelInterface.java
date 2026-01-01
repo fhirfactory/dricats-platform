@@ -21,7 +21,6 @@
  */
 package net.fhirfactory.dricats.middleware.jgroups;
 
-import net.fhirfactory.dricats.internals.common.DistributableObjectId;
 import net.fhirfactory.dricats.internals.common.identifiers.ElementReference;
 import net.fhirfactory.dricats.internals.topology.implementation.layers.application.interfaces.adapters.JGroupsAdapter;
 import net.fhirfactory.dricats.internals.topology.interfaces.ISubsystem;

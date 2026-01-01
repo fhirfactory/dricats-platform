@@ -34,16 +34,16 @@ public class MessageObjectFactory extends EventBaseFactory{
         if(messageObject == null){
             return null;
         }
-        if(messageObject.getLocalId() == null){
+        if(messageObject.getObjectId() == null){
             return null;
         }
         MessageObject newMessageObject = new MessageObject(messageObject);
-        FullyDistinguishedName newName = SerializationUtils.clone(messageObject.getLocalId().getFullyDistinguishedName());
+        FullyDistinguishedName newName = SerializationUtils.clone(messageObject.getObjectId().getFullyDistinguishedName());
         newName.getUnqualifiedName().setValue(UUID.randomUUID().toString());
 
-        newMessageObject.setLocalId(new ObjectId(newName));
+        newMessageObject.setObjectId(new ObjectId(newName));
 
-        newMessageObject.getHistory().put(messageObject.getHistory().size()+1, messageObject.getLocalId());
+        newMessageObject.getHistory().put(messageObject.getHistory().size()+1, messageObject.getObjectId());
         return newMessageObject;
     }
 }

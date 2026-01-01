@@ -255,7 +255,7 @@ public class PathwayElement extends FlowRelationship implements Serializable {
                 .append("properties", getProperties())
                 .append("identifiers", getIdentifiers())
                 .append("securityLabels", getSecurityLabels())
-                .append("id", getLocalId())
+                .append("id", getObjectId())
                 .append("metadata", getMetadata())
                 .toString();
     }

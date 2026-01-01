@@ -104,7 +104,7 @@ public class EgressApplicationInterface extends WUPInterfaceBase implements Seri
                 .append("extensions", getExtensions())
                 .append("securityLabels", getSecurityLabels())
                 .append("metadata", getMetadata())
-                .append("id", getLocalId())
+                .append("id", getObjectId())
                 .toString();
     }
 }

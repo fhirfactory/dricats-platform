@@ -87,7 +87,7 @@ public class WUPAdapterBase extends ApplicationComponent implements Serializable
                 .append("identifiers", getIdentifiers())
                 .append("securityLabels", getSecurityLabels())
                 .append("metadata", getMetadata())
-                .append("id", getLocalId())
+                .append("id", getObjectId())
                 .toString();
     }
 

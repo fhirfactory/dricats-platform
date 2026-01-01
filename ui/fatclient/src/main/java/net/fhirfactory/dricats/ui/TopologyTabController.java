@@ -392,19 +392,19 @@ public class TopologyTabController {
         }
         try { rows.add(new KVRow("Name", Objects.toString(summary.getName(), ""))); } catch (Exception ignored) {}
         try {
-            if (summary.getLocalId() != null && summary.getLocalId().getValue() != null)
-                rows.add(new KVRow("ID", summary.getLocalId().getValue()));
+            if (summary.getObjectId() != null && summary.getObjectId().getKeyValue() != null)
+                rows.add(new KVRow("ID", summary.getObjectId().getKeyValue()));
         } catch (Exception ignored) {}
         try {
-            if (summary.getObjectID() != null)
-                rows.add(new KVRow("ObjectID", Objects.toString(summary.getObjectID().getCommonName().getValue(), "")));
+            if (summary.getObjectId() != null)
+                rows.add(new KVRow("ObjectID", Objects.toString(summary.getObjectId().getName().getValue(), "")));
         } catch (Exception ignored) {}
         try { rows.add(new KVRow("Element Type", Objects.toString(summary.getElementType(), ""))); } catch (Exception ignored) {}
         try { rows.add(new KVRow("Specialization", Objects.toString(summary.getSpecialization(), ""))); } catch (Exception ignored) {}
         try { rows.add(new KVRow("Documentation", Objects.toString(summary.getDocumentation(), ""))); } catch (Exception ignored) {}
         try {
             if (summary.getParent() != null)
-                rows.add(new KVRow("Parent", Objects.toString(summary.getParent().getLocalObjectId().getCommonName().getValue(), "")));
+                rows.add(new KVRow("Parent", Objects.toString(summary.getParent().getLocalObjectId().getName().getValue(), "")));
         } catch (Exception ignored) {}
         try {
             int count = summary.getSubComponents() == null ? 0 : summary.getSubComponents().size();
@@ -431,11 +431,11 @@ public class TopologyTabController {
         TreeItem<String> root = new TreeItem<>("UniqueName");
         root.setExpanded(true);
         try {
-            if (summary == null || summary.getObjectID() == null || summary.getObjectID().getQualifiedName() == null) {
+            if (summary == null || summary.getObjectId() == null || summary.getObjectId().getFullyDistinguishedName() == null) {
                 root.getChildren().add(new TreeItem<>("No selection"));
             } else {
                 java.util.Map<Integer, DistinguishedNameEntry> entries =
-                        summary.getObjectID().getQualifiedName().getUnqualifiedNameEntries();
+                        summary.getObjectId().getFullyDistinguishedName().getUnqualifiedNameEntries();
                 if (entries == null || entries.isEmpty()) {
                     root.getChildren().add(new TreeItem<>("<empty>"));
                 } else {
@@ -619,12 +619,12 @@ public class TopologyTabController {
                 String header = ingress.getName();
                 if (header == null || header.isBlank()) header = ingress.resolveKey();
                 ingressRows.add(new KVRow("Ingress #" + idx, header));
-                try { if (ingress.getLocalId() != null && ingress.getLocalId().getValue() != null) ingressRows.add(new KVRow("ID", ingress.getLocalId().getValue())); } catch (Exception ignored) {}
-                try { if (ingress.getObjectID() != null) ingressRows.add(new KVRow("ObjectID", java.util.Objects.toString(ingress.getObjectID().getCommonName().getValue(), ""))); } catch (Exception ignored) {}
+                try { if (ingress.getObjectId() != null && ingress.getObjectId().getKeyValue() != null) ingressRows.add(new KVRow("ID", ingress.getObjectId().getKeyValue())); } catch (Exception ignored) {}
+                try { if (ingress.getObjectId() != null) ingressRows.add(new KVRow("ObjectID", java.util.Objects.toString(ingress.getObjectId().getName().getValue(), ""))); } catch (Exception ignored) {}
                 try { ingressRows.add(new KVRow("Element Type", java.util.Objects.toString(ingress.getElementType(), ""))); } catch (Exception ignored) {}
                 try { ingressRows.add(new KVRow("Specialization", java.util.Objects.toString(ingress.getSpecialization(), ""))); } catch (Exception ignored) {}
                 try { ingressRows.add(new KVRow("Documentation", java.util.Objects.toString(ingress.getDocumentation(), ""))); } catch (Exception ignored) {}
-                try { if (ingress.getOwner() != null) ingressRows.add(new KVRow("Parent", java.util.Objects.toString(ingress.getOwner().getLocalObjectId().getCommonName().getValue(), ""))); } catch (Exception ignored) {}
+                try { if (ingress.getOwner() != null) ingressRows.add(new KVRow("Parent", java.util.Objects.toString(ingress.getOwner().getLocalObjectId().getName().getValue(), ""))); } catch (Exception ignored) {}
                 try {
                     if (ingress.getComponentStatus() != null) {
                         ingressRows.add(new KVRow("Status", java.util.Objects.toString(ingress.getComponentStatus().getComponentStatus(), "")));
@@ -648,12 +648,12 @@ public class TopologyTabController {
                 String header = egress.getName();
                 if (header == null || header.isBlank()) header = egress.resolveKey();
                 egressRows.add(new KVRow("Egress #" + idx, header));
-                try { if (egress.getLocalId() != null && egress.getLocalId().getValue() != null) egressRows.add(new KVRow("ID", egress.getLocalId().getValue())); } catch (Exception ignored) {}
-                try { if (egress.getObjectID() != null) egressRows.add(new KVRow("ObjectID", Objects.toString(egress.getObjectID().getCommonName().getValue(), ""))); } catch (Exception ignored) {}
+                try { if (egress.getObjectId() != null && egress.getObjectId().getKeyValue() != null) egressRows.add(new KVRow("ID", egress.getObjectId().getKeyValue())); } catch (Exception ignored) {}
+                try { if (egress.getObjectId() != null) egressRows.add(new KVRow("ObjectID", Objects.toString(egress.getObjectId().getName().getValue(), ""))); } catch (Exception ignored) {}
                 try { egressRows.add(new KVRow("Element Type", java.util.Objects.toString(egress.getElementType(), ""))); } catch (Exception ignored) {}
                 try { egressRows.add(new KVRow("Specialization", java.util.Objects.toString(egress.getSpecialization(), ""))); } catch (Exception ignored) {}
                 try { egressRows.add(new KVRow("Documentation", java.util.Objects.toString(egress.getDocumentation(), ""))); } catch (Exception ignored) {}
-                try { if (egress.getOwner() != null) egressRows.add(new KVRow("Parent", java.util.Objects.toString(egress.getOwner().getLocalObjectId().getQualifiedName().getCommonName().getValue(), ""))); } catch (Exception ignored) {}
+                try { if (egress.getOwner() != null) egressRows.add(new KVRow("Parent", java.util.Objects.toString(egress.getOwner().getLocalObjectId().getFullyDistinguishedName().getCommonName().getValue(), ""))); } catch (Exception ignored) {}
                 try {
                     if (egress.getComponentStatus() != null) {
                         egressRows.add(new KVRow("Status", java.util.Objects.toString(egress.getComponentStatus().getComponentStatus(), "")));

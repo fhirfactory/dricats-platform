@@ -22,7 +22,7 @@
 package net.fhirfactory.dricats.ui.serverside.caches.pathways;
 
 import jakarta.enterprise.context.ApplicationScoped;
-import net.fhirfactory.dricats.internals.common.DistributableObjectId;
+import net.fhirfactory.dricats.internals.common.id.ObjectId;
 import net.fhirfactory.dricats.internals.pathways.Pathway;
 import net.fhirfactory.dricats.internals.pathways.PathwayElement;
 import net.fhirfactory.dricats.internals.pathways.PathwayRoute;
@@ -91,30 +91,30 @@ public class UIPathwayCacheService {
     // Business Methods
     //
 
-    public boolean hasObjectIdValue(DistributableObjectId objectId){
+    public boolean hasObjectIdValue(ObjectId objectId){
         if(objectId==null){
             getLogger().debug(".hasObjectIdValue(): Exit, pathway has no ObjectID, returning");
             return(false);
         }
-        if(objectId.getQualifiedName()==null){
+        if(objectId.getFullyDistinguishedName()==null){
             getLogger().debug(".hasObjectIdValue(): Exit, pathway has no QualifiedName, returning");
             return(false);
         }
-        if(objectId.getQualifiedName().getCommonName()==null){
+        if(objectId.getFullyDistinguishedName().getCommonName()==null){
             getLogger().debug(".hasObjectIdValue(): Exit, pathway has no CommonName, returning");
             return(false);
         }
-        if(StringUtils.isEmpty(objectId.getQualifiedName().getCommonName().getValue())){
+        if(StringUtils.isEmpty(objectId.getFullyDistinguishedName().getCommonName().getValue())){
             getLogger().debug(".hasObjectIdValue(): Exit, pathway has no CommonName.Value, returning");
             return(false);
         }
         return(true);
     }
 
-    public String resolveKeyValue(DistributableObjectId objectId){
+    public String resolveKeyValue(ObjectId objectId){
         getLogger().debug(".resolveKeyValue(): Entry, objectId -> {}", objectId);
         if(hasObjectIdValue(objectId)){
-            String value = objectId.getQualifiedName().getCommonName().getValue();
+            String value = objectId.getFullyDistinguishedName().getCommonName().getValue();
             getLogger().debug(".resolveKeyValue(): Exit, objectId has ObjectID etc., returning {}", value);
             return(value);
         }
@@ -128,7 +128,7 @@ public class UIPathwayCacheService {
             getLogger().debug(".addPathway(): Exit, pathway is null, returning");
             return;
         }
-        String key = resolveKeyValue(pathway.getObjectID());
+        String key = resolveKeyValue(pathway.getObjectId());
         if(StringUtils.isEmpty(key)){
             getLogger().debug(".addPathway(): Exit, pathway has no ObjectID etc., returning");
             return;
@@ -143,7 +143,7 @@ public class UIPathwayCacheService {
             getLogger().debug(".removePathway(): Exit, pathway is null, returning");
             return;
         }
-        String key = resolveKeyValue(pathway.getObjectID());
+        String key = resolveKeyValue(pathway.getObjectId());
         if(StringUtils.isEmpty(key)){
             getLogger().debug(".removePathway(): Exit, pathway has no ObjectID etc., returning");
             return;
@@ -158,7 +158,7 @@ public class UIPathwayCacheService {
             getLogger().debug(".addPathwayRoute(): Exit, pathwayRoute is null, returning");
             return;
         }
-        String key = resolveKeyValue(pathwayRoute.getObjectID());
+        String key = resolveKeyValue(pathwayRoute.getObjectId());
         if(StringUtils.isEmpty(key)){
             getLogger().debug(".addPathwayRoute(): Exit, pathway has no ObjectID etc., returning");
             return;
@@ -184,7 +184,7 @@ public class UIPathwayCacheService {
             getLogger().debug(".addPathwayRouteSegment(): Exit, pathwayRouteSegment is null, returning");
             return;
         }
-        String key = resolveKeyValue(pathwayRouteSegment.getObjectID());
+        String key = resolveKeyValue(pathwayRouteSegment.getObjectId());
         if(StringUtils.isEmpty(key)){
             getLogger().debug(".addPathwayRouteSegment(): Exit, pathwayRouteSegment has no ObjectID etc., returning");
             return;
@@ -210,7 +210,7 @@ public class UIPathwayCacheService {
             getLogger().debug(".addPathwayElement(): Exit, pathwayElement is null, returning");
             return;
         }
-        String key = resolveKeyValue(pathwayElement.getObjectID());
+        String key = resolveKeyValue(pathwayElement.getObjectId());
         if(StringUtils.isEmpty(key)){
             getLogger().debug(".addPathwayElement(): Exit, pathwayElement has no ObjectID etc., returning");
             return;

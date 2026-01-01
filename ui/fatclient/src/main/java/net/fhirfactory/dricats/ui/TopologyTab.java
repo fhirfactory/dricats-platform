@@ -214,13 +214,13 @@ public class TopologyTab extends Tab {
         } catch (Exception ignored) {
         }
         try {
-            if (applicationComponent.getLocalId() != null && applicationComponent.getLocalId().getValue() != null)
-                rows.add(new KVRow("ID", applicationComponent.getLocalId().getValue()));
+            if (applicationComponent.getObjectId() != null && applicationComponent.getObjectId().getKeyValue() != null)
+                rows.add(new KVRow("ID", applicationComponent.getObjectId().getKeyValue()));
         } catch (Exception ignored) {
         }
         try {
-            if (applicationComponent.getObjectID() != null)
-                rows.add(new KVRow("ObjectID", Objects.toString(applicationComponent.getObjectID().getCommonName().getValue(), "")));
+            if (applicationComponent.getObjectId() != null)
+                rows.add(new KVRow("ObjectID", Objects.toString(applicationComponent.getObjectId().getName().getValue(), "")));
         } catch (Exception ignored) {
         }
         try {
@@ -237,7 +237,7 @@ public class TopologyTab extends Tab {
         }
         try {
             if (applicationComponent.getParent() != null)
-                rows.add(new KVRow("Parent", Objects.toString(applicationComponent.getParent().getLocalObjectId().getQualifiedName().getCommonName().getValue(), "")));
+                rows.add(new KVRow("Parent", Objects.toString(applicationComponent.getParent().getLocalObjectId().getFullyDistinguishedName().getCommonName().getValue(), "")));
         } catch (Exception ignored) {
         }
         try {
@@ -267,11 +267,11 @@ public class TopologyTab extends Tab {
         TreeItem<String> root = new TreeItem<>("UniqueName");
         root.setExpanded(true);
         try {
-            if (summary == null || summary.getObjectID() == null || summary.getObjectID().getQualifiedName() == null) {
+            if (summary == null || summary.getObjectId() == null || summary.getObjectId().getFullyDistinguishedName() == null) {
                 root.getChildren().add(new TreeItem<>("No selection"));
             } else {
                 java.util.Map<Integer, DistinguishedNameEntry> entries =
-                        summary.getObjectID().getQualifiedName().getUnqualifiedNameEntries();
+                        summary.getObjectId().getFullyDistinguishedName().getUnqualifiedNameEntries();
                 if (entries == null || entries.isEmpty()) {
                     root.getChildren().add(new TreeItem<>("<empty>"));
                 } else {

@@ -95,7 +95,7 @@ public class Node extends ElementBase {
                 ", documentation='"+getDocumentation()+'\''+
                 ", specialization='"+getSpecialization()+'\''+
                 ", properties="+ getExtensions()+
-                ", id="+ getLocalId()+
+                ", id="+ getObjectId()+
                 ", identifiers="+getIdentifiers()+
                 ", metadata="+getMetadata()+
                 ", securityLabels="+getSecurityLabels()+

@@ -21,12 +21,12 @@
  */
 package net.fhirfactory.dricats.datagrid.satellite.notificationgrid;
 
-import net.fhirfactory.dricats.internals.common.DistributableObjectId;
+import net.fhirfactory.dricats.internals.common.id.ObjectId;
+import net.fhirfactory.dricats.internals.common.id.ObjectKey;
 import net.fhirfactory.dricats.internals.common.naming.FullyDistinguishedName;
-import net.fhirfactory.dricats.internals.common.id.ObjectToken;
+import net.fhirfactory.dricats.internals.events.interfaces.ILocalNotificationService;
 import net.fhirfactory.dricats.internals.events.notifications.NotificationObject;
 import net.fhirfactory.dricats.internals.events.notifications.NotificationSet;
-import net.fhirfactory.dricats.internals.events.interfaces.ILocalNotificationService;
 import net.fhirfactory.dricats.internals.topology.implementation.layers.application.valuesets.ApplicationComponentSpecialisationEnum;
 import net.fhirfactory.dricats.internals.topology.interfaces.ISubsystem;
 import org.slf4j.Logger;
@@ -35,7 +35,9 @@ import org.slf4j.LoggerFactory;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 @ApplicationScoped
@@ -50,7 +52,7 @@ public class LocalNotificationCache implements ILocalNotificationService {
     // Attributes
     //
 
-    private Map<ObjectToken, Queue<NotificationObject>> incomingQueueCache ;
+    private Map<ObjectKey, Queue<NotificationObject>> incomingQueueCache ;
     private Queue<NotificationObject> outgoingQueueCache ;
 
     @Inject
@@ -73,7 +75,7 @@ public class LocalNotificationCache implements ILocalNotificationService {
         return LOG;
     }
 
-    protected Map<ObjectToken, Queue<NotificationObject>> getIncomingQueueCache() {
+    protected Map<ObjectKey, Queue<NotificationObject>> getIncomingQueueCache() {
         return incomingQueueCache;
     }
 
@@ -99,7 +101,7 @@ public class LocalNotificationCache implements ILocalNotificationService {
             getLogger().warn(".queueMessage(): Exit, Message target is null");
             return;
         }
-        ObjectToken objectToken = NotificationObject.getTarget().getLocalObjectId().getCommonId();
+        ObjectKey objectToken = NotificationObject.getTarget().getLocalObjectId();
         if(!getIncomingQueueCache().containsKey(objectToken)){
             Queue<NotificationObject> incomingMessageQueue = new ConcurrentLinkedQueue<>();
             incomingMessageQueue.add(NotificationObject);
@@ -111,7 +113,7 @@ public class LocalNotificationCache implements ILocalNotificationService {
     }
 
     @Override
-    public NotificationObject peekNextNotification( ObjectToken consumerObjectToken){
+    public NotificationObject peekNextNotification( ObjectKey consumerObjectToken){
         if(consumerObjectToken == null){
             getLogger().debug(".peekNextNotification(): Exit, consumerIdToken is null");
             return(null);
@@ -126,7 +128,7 @@ public class LocalNotificationCache implements ILocalNotificationService {
     }
 
     @Override
-    public NotificationObject pollNextNotification( ObjectToken consumerObjectToken){
+    public NotificationObject pollNextNotification( ObjectKey consumerObjectToken){
         getLogger().debug(".pollNextNotification(): Entry, consumerIdToken -> {}", consumerObjectToken);
         if(consumerObjectToken == null){
             getLogger().debug(".pollNextNotification(): Exit, consumerIdToken is null");
@@ -142,7 +144,7 @@ public class LocalNotificationCache implements ILocalNotificationService {
     }
 
     @Override
-    public NotificationSet pollNextNotification(ObjectToken consumer, Integer size) {
+    public NotificationSet pollNextNotification(ObjectKey consumer, Integer size) {
         getLogger().debug(".pollNextNotification(): Entry, consumerIdToken -> {}, size -> {}", consumer, size);
         NotificationSet notificationSet = new NotificationSet();
         if(consumer == null){
@@ -198,13 +200,13 @@ public class LocalNotificationCache implements ILocalNotificationService {
             getLogger().debug(".postNotification(): Exit, nothing to post, return -> {}", messagePostedInstant);
             return(messagePostedInstant);
         }
-        DistributableObjectId messageTarget = message.getTarget().getLocalObjectId();
+        ObjectId messageTarget = message.getTarget().getLocalObjectId();
         if(messageTarget == null){
             getLogger().debug(".postNotification(): Exit, no target, return -> {}", messagePostedInstant);
             return(messagePostedInstant);
         }
-        FullyDistinguishedName targetSubsystemQualifiedName = messageTarget.getQualifiedName().extractQualifiedNameForQualifier(ApplicationComponentSpecialisationEnum.SUBSYSTEM_APPLICATION_INSTANCE.getType());
-        FullyDistinguishedName localSubsystemQualifiedName = getSubsystem().getSubsystem().getObjectID().getQualifiedName();
+        FullyDistinguishedName targetSubsystemQualifiedName = messageTarget.getFullyDistinguishedName().extractQualifiedNameForQualifier(ApplicationComponentSpecialisationEnum.SUBSYSTEM_APPLICATION_INSTANCE.getType());
+        FullyDistinguishedName localSubsystemQualifiedName = getSubsystem().getSubsystem().getObjectId().getFullyDistinguishedName();
         String targetSubsystemName = targetSubsystemQualifiedName.getUnqualifiedName().getValue();
         String localSubsystemName = localSubsystemQualifiedName.getUnqualifiedName().getValue();
         if(targetSubsystemName.contentEquals(localSubsystemName)){

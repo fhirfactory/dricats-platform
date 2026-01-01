@@ -29,7 +29,6 @@ import net.fhirfactory.dricats.reference.archimate.layers.application.Applicatio
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Timer;
@@ -125,7 +124,7 @@ public class UITopologyCacheSynchronisationService {
         do {
             List<ApplicationComponent> changedApplicationComponents = getTopologyGridCacheClient().getChangedApplicationComponents(getLastTopologyCacheVersion(), DEFAULT_TOPOLOGY_UPDATE_COUNT);
             for (ApplicationComponent applicationComponent : changedApplicationComponents) {
-                getLogger().debug("doTopologyUpdateCheck(): Processing application component: {}", applicationComponent.getObjectID().getCommonName().getValue());
+                getLogger().debug("doTopologyUpdateCheck(): Processing application component: {}", applicationComponent.getObjectId().getFullyDistinguishedName().getCommonName().getValue());
                 String key = applicationComponent.resolveKey();
                 getTopologyCacheService().getComponents().put(key, applicationComponent);
             }

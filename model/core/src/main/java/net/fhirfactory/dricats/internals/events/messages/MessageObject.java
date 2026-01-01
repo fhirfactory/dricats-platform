@@ -61,7 +61,7 @@ public class MessageObject extends EventBase implements Serializable {
         RelativeDistinguishedName unqualifiedName = new RelativeDistinguishedName("Message", UUID.randomUUID().toString());
         FullyDistinguishedName qualifiedName = new FullyDistinguishedName();
         qualifiedName.appendUnqualifiedName(unqualifiedName);
-        this.setLocalId(new ObjectId(qualifiedName));
+        this.setObjectId(new ObjectId(qualifiedName));
         setMessagePayload(new MessagePayload());
         setMessageSequenceNumber(-1);
     }
@@ -86,7 +86,7 @@ public class MessageObject extends EventBase implements Serializable {
         RelativeDistinguishedName unqualifiedName = new RelativeDistinguishedName("Message", UUID.randomUUID().toString());
         FullyDistinguishedName qualifiedName = new FullyDistinguishedName();
         qualifiedName.appendUnqualifiedName(unqualifiedName);
-        this.setLocalId(new ObjectId(qualifiedName));
+        this.setObjectId(new ObjectId(qualifiedName));
     }
 
     public  MessageObject(String MessageId, ElementReference source, ElementReference target, LocalDateTime sendDate, MessagePayload payload, int sequenceNumber ){
@@ -94,7 +94,7 @@ public class MessageObject extends EventBase implements Serializable {
         RelativeDistinguishedName unqualifiedName = new RelativeDistinguishedName("Message", UUID.randomUUID().toString());
         FullyDistinguishedName qualifiedName = new FullyDistinguishedName();
         qualifiedName.appendUnqualifiedName(unqualifiedName);
-        this.setLocalId(new ObjectId(qualifiedName));
+        this.setObjectId(new ObjectId(qualifiedName));
         setMessageSequenceNumber(sequenceNumber);
     }
 

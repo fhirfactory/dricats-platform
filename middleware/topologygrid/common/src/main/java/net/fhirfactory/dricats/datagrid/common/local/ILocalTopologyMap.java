@@ -1,6 +1,6 @@
 package net.fhirfactory.dricats.datagrid.common.local;
 
-import net.fhirfactory.dricats.internals.common.DistributableObjectId;
+import net.fhirfactory.dricats.internals.common.id.ObjectKey;
 import net.fhirfactory.dricats.reference.archimate.layers.application.ApplicationComponent;
 
 import java.util.Collection;
@@ -14,9 +14,9 @@ import java.util.function.Predicate;
 public interface ILocalTopologyMap {
     void add(ApplicationComponent component);
     boolean remove(ApplicationComponent component);
-    boolean removeById(DistributableObjectId id);
+    boolean removeById(ObjectKey id);
 
-    Optional<ApplicationComponent> findById(DistributableObjectId id);
+    Optional<ApplicationComponent> findById(ObjectKey id);
 
     /**
      * Find components whose name equals or contains the provided name fragment (case-insensitive).
@@ -36,7 +36,7 @@ public interface ILocalTopologyMap {
     /**
      * Get direct children for the component identified by id.
      */
-    List<ApplicationComponent> getChildrenById(DistributableObjectId id);
+    List<ApplicationComponent> getChildrenById(ObjectKey id);
 
     /**
      * All components currently stored.
