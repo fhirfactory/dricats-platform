@@ -21,14 +21,18 @@
  */
 package net.fhirfactory.dricats.internals.topology.implementation.layers.application.interfaces;
 
-import net.fhirfactory.dricats.internals.common.id.ObjectId;
+import net.fhirfactory.dricats.internals.common.identifiers.ElementReference;
 import net.fhirfactory.dricats.internals.topology.implementation.layers.application.interfaces.base.SubscriptionSet;
 import net.fhirfactory.dricats.internals.topology.implementation.layers.application.interfaces.base.WUPInterfaceBase;
+import net.fhirfactory.dricats.internals.topology.implementation.layers.application.interfaces.valuesets.InterfaceComponentTypeEnum;
+import net.fhirfactory.dricats.internals.topology.implementation.layers.application.valuesets.ApplicationComponentSpecialisationEnum;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class IngresApplicationInterface extends WUPInterfaceBase implements Serializable {
     //
@@ -42,20 +46,29 @@ public class IngresApplicationInterface extends WUPInterfaceBase implements Seri
     //
 
     private SubscriptionSet subscriptions;
-    private ObjectId representativePathwayElement;
-    private List<ObjectId> producerPathwayElements;
+    private ElementReference representativePathwayElement;
+    private List<ElementReference> producerPathwayElements;
     //
     // Constructor(s)
     //
     public IngresApplicationInterface() {
         super();
         this.producerPathwayElements = new java.util.ArrayList<>();
+        setSpecialization(InterfaceComponentTypeEnum.GENERIC_RECEIVER_INTERFACE.getName());
+    }
+
+    public IngresApplicationInterface(ElementReference parent, String name, String documentation, InterfaceComponentTypeEnum specialisation, Map<String, String> configurationParameters){
+        super(parent, name, documentation, specialisation, configurationParameters);
+        this.producerPathwayElements = new ArrayList<>();
     }
 
     //
     // Getters and Setters
     //
     public SubscriptionSet getSubscriptions() {
+        if(this.subscriptions == null){
+            this.subscriptions = new SubscriptionSet();
+        }
         return subscriptions;
     }
 
@@ -63,18 +76,21 @@ public class IngresApplicationInterface extends WUPInterfaceBase implements Seri
         this.subscriptions = subscriptions;
     }
 
-    public ObjectId getRepresentativePathwayElement() {
+    public ElementReference getRepresentativePathwayElement() {
         return representativePathwayElement;
     }
 
-    public void setRepresentativePathwayElement(ObjectId representativePathwayElement) {
+    public void setRepresentativePathwayElement(ElementReference representativePathwayElement) {
         this.representativePathwayElement = representativePathwayElement;
     }
 
-    public List<ObjectId> getProducerPathwayElements() {
+    public List<ElementReference> getProducerPathwayElements() {
+        if(this.producerPathwayElements == null){
+            this.producerPathwayElements = new ArrayList<>();
+        }
         return producerPathwayElements;
     }
-    public void setProducerPathwayElements(List<ObjectId> producerPathwayElements) {
+    public void setProducerPathwayElements(List<ElementReference> producerPathwayElements) {
         this.producerPathwayElements = producerPathwayElements;
     }
 
@@ -88,20 +104,23 @@ public class IngresApplicationInterface extends WUPInterfaceBase implements Seri
                 .append("subscriptions", getSubscriptions())
                 .append("representativePathwayElement", getRepresentativePathwayElement())
                 .append("producerPathwayElements", getProducerPathwayElements())
-                .append("adapters", getAdapters())
-                .append("interfaceConnectivityRole", getInterfaceConnectivityRole())
-                .append("metricsData", getMetricsData())
-                .append("interfaceContentRole", getInterfaceContentRole())
-                .append("owner", getOwner())
-                .append("services", getServices())
+                .append("localObjectId", getElementInstanceId())
+                .append("securityLabels", getSecurityLabels())
+                .append("metadata", getMetadata())
+                .append("shortName", getShortName())
+                .append("longName", getIdentifier())
+                .append("otherIdentifiers", getOtherIdentifiers())
+                .append("securityLabels", getSecurityLabels())
                 .append("elementType", getElementType())
-                .append("name", getName())
                 .append("documentation", getDocumentation())
                 .append("specialization", getSpecialization())
                 .append("extensions", getExtensions())
-                .append("securityLabels", getSecurityLabels())
-                .append("metadata", getMetadata())
-                .append("id", getObjectId())
+                .append("owner", getOwner())
+                .append("services", getServices())
+                .append("supportedDataObjects", getSupportedDataObjects())
+                .append("componentStatus", getComponentStatus())
+                .append("adapters", getAdapters())
+                .append("metricsData", getMetricsData())
                 .toString();
     }
 }

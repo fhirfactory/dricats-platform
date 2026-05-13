@@ -75,7 +75,7 @@ public class CommunicateUserReference extends ElementReference {
 		builder.append(", getReferenceDescription()=");
 		builder.append(getReferenceDescription());
 		builder.append(", getTargetObjectType()=");
-		builder.append(getObjectType());
+		builder.append(getElementType());
 		builder.append("]");
 		return builder.toString();
 	}

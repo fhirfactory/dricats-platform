@@ -22,13 +22,14 @@
 package net.fhirfactory.dricats.internals.topology.implementation.layers.application;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import net.fhirfactory.dricats.internals.common.id.ElementInstanceId;
 import net.fhirfactory.dricats.internals.common.identifiers.ElementIdentifier;
-import net.fhirfactory.dricats.internals.common.id.ObjectId;
+import net.fhirfactory.dricats.internals.common.identifiers.ElementReference;
+import net.fhirfactory.dricats.internals.topology.implementation.common.TopologyComponent;
 import net.fhirfactory.dricats.internals.topology.implementation.common.valuesets.TopologyExtensionTypeValueSet;
 import net.fhirfactory.dricats.internals.topology.implementation.layers.application.valuesets.ApplicationComponentSpecialisationEnum;
 import net.fhirfactory.dricats.internals.topology.implementation.layers.technology.valuesets.NetworkSecurityZoneEnum;
 import net.fhirfactory.dricats.internals.topology.interfaces.ISubsystem;
-import net.fhirfactory.dricats.reference.archimate.layers.application.ApplicationComponent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,7 +37,7 @@ import java.io.Serial;
 import java.util.HashMap;
 import java.util.Map;
 
-public abstract class Subsystem extends ApplicationComponent implements ISubsystem {
+public abstract class Subsystem extends TopologyComponent implements ISubsystem {
     //
     // Housekeeping
     //
@@ -59,6 +60,11 @@ public abstract class Subsystem extends ApplicationComponent implements ISubsyst
 
     }
 
+    public Subsystem(ElementReference parent, String shortName, String description, String specialization, Map<String, String> extensions){
+        super(parent, shortName, description, specialization, extensions);
+        setSpecialization(ApplicationComponentSpecialisationEnum.SUBSYSTEM.getType());
+    }
+
     //
     // abstract methods
     //
@@ -69,6 +75,7 @@ public abstract class Subsystem extends ApplicationComponent implements ISubsyst
     // Interface Implementation
     //
 
+    @JsonIgnore
     public Subsystem getSubsystem(){
         return(this);
     }
@@ -96,8 +103,8 @@ public abstract class Subsystem extends ApplicationComponent implements ISubsyst
 	}
 
 	@JsonIgnore
-	public Map<ObjectId, SubsystemCluster> getApplicationCluster(){
-		HashMap<ObjectId, SubsystemCluster> applicationClusterSet = new HashMap<ObjectId, SubsystemCluster>();
+	public Map<ElementInstanceId, SubsystemCluster> getApplicationCluster(){
+		HashMap<ElementInstanceId, SubsystemCluster> applicationClusterSet = new HashMap<ElementInstanceId, SubsystemCluster>();
 		// TODO add code to extract subsystem application cluster instances.
 		return(applicationClusterSet);
 	}

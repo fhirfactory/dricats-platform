@@ -24,8 +24,7 @@ package net.fhirfactory.dricats.internals.communicate.entities.media;
 import java.io.Serial;
 import java.util.Objects;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import net.fhirfactory.dricats.internals.communicate.entities.media.datatypes.CommunicateMediaDetail;
 import net.fhirfactory.dricats.internals.data.MediaObject;
@@ -37,7 +36,6 @@ public class CommunicateMedia extends MediaObject {
 
     @Serial
     private static final long serialVersionUID = -12345678900147L;
-    private static final Logger LOG = LoggerFactory.getLogger(CommunicateMedia.class);
 
     //
     // Attributes
@@ -65,25 +63,22 @@ public class CommunicateMedia extends MediaObject {
     // Utility Methods
     //
 
-    protected Logger getLogger() {
-        return LOG;
-    }
-
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder("CommunicateMedia{");
-        sb.append("mediaDetails=").append(getMediaDetails());
-        sb.append(", mediaContent=").append(getMediaContent());
-        sb.append(", mediaReference='").append(getMediaReference()).append('\'');
-        sb.append(", mediaSize=").append(getMediaSize());
-        sb.append(", mediaCreationDate=").append(getMediaCreationDate());
-        sb.append(", mediaUpdateDate=").append(getMediaUpdateDate());
-        sb.append(", securityLabels=").append(getSecurityLabels());
-        sb.append(", metadata=").append(getMetadata());
-        sb.append(", identifiers=").append(getIdentifiers());
-        sb.append(", localId='").append(getObjectId()).append('\'');
-        sb.append('}');
-        return sb.toString();
+        return new ToStringBuilder(this)
+                .append("mediaDetails", getMediaDetails())
+                .append("localObjectId", getElementInstanceId())
+                .append("securityLabels", getSecurityLabels())
+                .append("metadata", getMetadata())
+                .append("shortName", getShortName())
+                .append("identifier", getIdentifier())
+                .append("otherIdentifiers", getOtherIdentifiers())
+                .append("mediaContent", getMediaContent())
+                .append("mediaReference", getMediaReference())
+                .append("mediaSize", getMediaSize())
+                .append("mediaCreationDate", getMediaCreationDate())
+                .append("mediaUpdateDate", getMediaUpdateDate())
+                .toString();
     }
 
     @Override

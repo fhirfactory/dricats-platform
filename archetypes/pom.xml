@@ -18,6 +18,7 @@
         <module>twin</module>
         <module>fhirserver</module>
         <module>default-servers</module>
+        <module>subsystem</module>
     </modules>
 
     <properties>

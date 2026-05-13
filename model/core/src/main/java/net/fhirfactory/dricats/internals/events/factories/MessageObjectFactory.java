@@ -21,8 +21,7 @@
  */
 package net.fhirfactory.dricats.internals.events.factories;
 
-import net.fhirfactory.dricats.internals.common.naming.FullyDistinguishedName;
-import net.fhirfactory.dricats.internals.common.id.ObjectId;
+import net.fhirfactory.dricats.internals.common.identifiers.ElementIdentifier;
 import net.fhirfactory.dricats.internals.events.messages.MessageObject;
 import org.apache.commons.lang3.SerializationUtils;
 
@@ -34,16 +33,21 @@ public class MessageObjectFactory extends EventBaseFactory{
         if(messageObject == null){
             return null;
         }
-        if(messageObject.getObjectId() == null){
+        if(messageObject.getElementInstanceId() == null){
             return null;
         }
         MessageObject newMessageObject = new MessageObject(messageObject);
-        FullyDistinguishedName newName = SerializationUtils.clone(messageObject.getObjectId().getFullyDistinguishedName());
-        newName.getUnqualifiedName().setValue(UUID.randomUUID().toString());
-
-        newMessageObject.setObjectId(new ObjectId(newName));
-
-        newMessageObject.getHistory().put(messageObject.getHistory().size()+1, messageObject.getObjectId());
+        newMessageObject.setMessageSequenceNumber(messageObject.getMessageSequenceNumber()+1);
+        UUID uuid = UUID.randomUUID();
+        StringBuilder messageShortNameBuilder = new StringBuilder();
+        messageShortNameBuilder.append(messageObject.getIdentifier().getIdentifierValue().getUnqualifiedName().getQualifier());
+        messageShortNameBuilder.append("->");
+        messageShortNameBuilder.append(uuid.toString());
+        newMessageObject.setShortName(messageShortNameBuilder.toString());
+        ElementIdentifier newName = SerializationUtils.clone(messageObject.getIdentifier());
+        newName.getIdentifierValue().getUnqualifiedName().setValue(uuid.toString());
+        newMessageObject.setIdentifier(newName);
+        newMessageObject.getHistory().put(messageObject.getHistory().size()+1, messageObject.getReference());
         return newMessageObject;
     }
 }

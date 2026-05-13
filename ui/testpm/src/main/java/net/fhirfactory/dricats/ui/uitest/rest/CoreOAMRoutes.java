@@ -23,7 +23,7 @@ package net.fhirfactory.dricats.ui.uitest.rest;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import jakarta.annotation.PostConstruct;
-import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.context.Dependent;
 import jakarta.enterprise.event.Observes;
 import jakarta.enterprise.event.Startup;
 import jakarta.inject.Inject;
@@ -39,7 +39,7 @@ import org.slf4j.LoggerFactory;
  * Camel REST routes that mirror the dricats-middleware-oam-central API, but
  * backed by an in-memory stub service for UI testing.
  */
-@ApplicationScoped
+@Dependent
 public class CoreOAMRoutes extends RouteBuilder {
     //
      // Housekeeping
@@ -65,7 +65,6 @@ public class CoreOAMRoutes extends RouteBuilder {
         if(!initialized){
             LOG.info("CoreOAMRoutes:initialize(): Initialising");
             topologyHandler.initialise();
-            topologyTestResourceSetBuilder.initialise();
             initialized = true;
             LOG.info("CoreOAMRoutes:initialize(): Initialising.... Done!");
         }

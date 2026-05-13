@@ -21,8 +21,8 @@
  */
 package net.fhirfactory.dricats.internals.events.messages;
 
-import net.fhirfactory.dricats.internals.common.naming.FullyDistinguishedName;
-import net.fhirfactory.dricats.internals.common.id.ObjectId;
+import net.fhirfactory.dricats.internals.common.identifiers.ElementIdentifier;
+import net.fhirfactory.dricats.internals.common.naming.DistinguishedName;
 import net.fhirfactory.dricats.internals.common.naming.RelativeDistinguishedName;
 import net.fhirfactory.dricats.internals.data.Payload;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -52,9 +52,11 @@ public class MessagePayload extends Payload {
     public MessagePayload() {
         super();
         RelativeDistinguishedName unqualifiedName = new RelativeDistinguishedName("MessagePayload", UUID.randomUUID().toString());
-        FullyDistinguishedName qualifiedName = new FullyDistinguishedName();
+        DistinguishedName qualifiedName = new DistinguishedName();
         qualifiedName.appendUnqualifiedName(unqualifiedName);
-        this.setObjectId(new ObjectId(qualifiedName));
+        ElementIdentifier identifier = new ElementIdentifier(qualifiedName);
+        setIdentifier(identifier);
+        setShortName(unqualifiedName.getUnqualifiedValue());
     }
 
     //

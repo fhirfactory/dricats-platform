@@ -25,7 +25,7 @@ import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
 import jakarta.enterprise.context.ApplicationScoped;
 import net.fhirfactory.dricats.datagrid.common.topologygrid.IApplicationComponentCacheClient;
-import net.fhirfactory.dricats.internals.common.id.ObjectKey;
+import net.fhirfactory.dricats.internals.common.id.ElementInstanceId;
 import net.fhirfactory.dricats.internals.common.identifiers.ElementReference;
 import net.fhirfactory.dricats.internals.topology.implementation.layers.application.valuesets.ApplicationComponentSpecialisationEnum;
 import net.fhirfactory.dricats.reference.archimate.common.valuesets.ElementTypeEnum;
@@ -258,7 +258,7 @@ public class TopologyCacheClient implements IApplicationComponentCacheClient {
 
     @Override
     public String resolveKey(ApplicationComponent item) {
-        String key = item.resolveKey();
+        String key = item.resolveElementInstanceKey();
         return key;
     }
 
@@ -322,24 +322,24 @@ public class TopologyCacheClient implements IApplicationComponentCacheClient {
         return(result);
     }
 
-    public List<ApplicationComponent> getSubcomponents(ObjectKey parentObjectKey, ApplicationComponentSpecialisationEnum componentType) {
-        LOG.debug(".getContainedComponents(): Entry, parentObjectId={}, componentType={}", parentObjectKey, componentType);
-        if (parentObjectKey == null)
+    public List<ApplicationComponent> getSubcomponents(ElementInstanceId parentElementInstanceId, ApplicationComponentSpecialisationEnum componentType) {
+        LOG.debug(".getContainedComponents(): Entry, parentObjectId={}, componentType={}", parentElementInstanceId, componentType);
+        if (parentElementInstanceId == null)
             return Collections.emptyList();
-        ApplicationComponent parent = get(parentObjectKey.getKeyValue());
+        ApplicationComponent parent = get(parentElementInstanceId.getIdValue());
 
         if (parent == null) {
-            LOG.info(".getContainedComponents(): Exit, No subcomponents for id={} (component missing)", parentObjectKey);
+            LOG.info(".getContainedComponents(): Exit, No subcomponents for id={} (component missing)", parentElementInstanceId);
             return Collections.emptyList();
         }
         if (parent.getElementType() != ElementTypeEnum.APPLICATION_COMPONENT) {
-            LOG.info(".getContainedComponents(): Exit, No subcomponents for id={} (component is not a ApplicationComponent)", parentObjectKey);
+            LOG.info(".getContainedComponents(): Exit, No subcomponents for id={} (component is not a ApplicationComponent)", parentElementInstanceId);
             return Collections.emptyList();
         }
         List<ApplicationComponent> resultList = new ArrayList<>();
 
         for (ElementReference childReference : parent.getSubComponents()) {
-            String currentKey = childReference.getLocalObjectId().getKeyValue();
+            String currentKey = childReference.getElementInstanceId().getIdValue();
             ApplicationComponent child = get(currentKey);
             if (child != null) {
                 resultList.add(child);
@@ -348,7 +348,7 @@ public class TopologyCacheClient implements IApplicationComponentCacheClient {
             }
         }
 
-        LOG.info(".getContainedComponents(): Exit, Returning {} subcomponents for parentObjectId={}", resultList.size(), parentObjectKey);
+        LOG.info(".getContainedComponents(): Exit, Returning {} subcomponents for parentObjectId={}", resultList.size(), parentElementInstanceId);
         return resultList;
     }
 

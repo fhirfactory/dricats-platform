@@ -3,8 +3,9 @@
  */
 package net.fhirfactory.dricats.reference.archimate.layers.technology;
 
-import net.fhirfactory.dricats.internals.common.id.ObjectId;
+import net.fhirfactory.dricats.internals.common.identifiers.ElementReference;
 import net.fhirfactory.dricats.reference.archimate.common.ElementBase;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,10 +26,10 @@ public class Node extends ElementBase {
     // - subNodes: child Node(s) in a composition/aggregation structure
     // - parent: parent Node reference
     // - services: TechnologyService(s) provided by this node
-    private List<ObjectId> interfaces;
-    private List<ObjectId> subNodes;
-    private ObjectId parent;
-    private List<ObjectId> services;
+    private List<ElementReference> interfaces;
+    private List<ElementReference> subNodes;
+    private ElementReference parent;
+    private List<ElementReference> services;
 
     public Node() {
         super();
@@ -40,28 +41,28 @@ public class Node extends ElementBase {
 
     protected Logger getLogger(){ return LOG; }
 
-    public List<ObjectId> getInterfaces() { return interfaces; }
-    public void setInterfaces(List<ObjectId> interfaces) { this.interfaces = interfaces == null ? new ArrayList<>() : interfaces; }
-    public void addInterface(ObjectId interfaceId) {
+    public List<ElementReference> getInterfaces() { return interfaces; }
+    public void setInterfaces(List<ElementReference> interfaces) { this.interfaces = interfaces == null ? new ArrayList<>() : interfaces; }
+    public void addInterface(ElementReference interfaceId) {
         if(interfaceId == null){ return; }
         if(this.interfaces == null){ this.interfaces = new ArrayList<>(); }
         this.interfaces.add(interfaceId);
     }
 
-    public List<ObjectId> getSubNodes() { return subNodes; }
-    public void setSubNodes(List<ObjectId> subNodes) { this.subNodes = subNodes == null ? new ArrayList<>() : subNodes; }
-    public void addSubNode(ObjectId nodeId) {
+    public List<ElementReference> getSubNodes() { return subNodes; }
+    public void setSubNodes(List<ElementReference> subNodes) { this.subNodes = subNodes == null ? new ArrayList<>() : subNodes; }
+    public void addSubNode(ElementReference nodeId) {
         if(nodeId == null){ return; }
         if(this.subNodes == null){ this.subNodes = new ArrayList<>(); }
         this.subNodes.add(nodeId);
     }
 
-    public ObjectId getParent() { return parent; }
-    public void setParent(ObjectId parent) { this.parent = parent; }
+    public ElementReference getParent() { return parent; }
+    public void setParent(ElementReference parent) { this.parent = parent; }
 
-    public List<ObjectId> getServices() { return services; }
-    public void setServices(List<ObjectId> services) { this.services = services == null ? new ArrayList<>() : services; }
-    public void addService(ObjectId serviceId) {
+    public List<ElementReference> getServices() { return services; }
+    public void setServices(List<ElementReference> services) { this.services = services == null ? new ArrayList<>() : services; }
+    public void addService(ElementReference serviceId) {
         if(serviceId == null){ return; }
         if(this.services == null){ this.services = new ArrayList<>(); }
         this.services.add(serviceId);
@@ -86,19 +87,22 @@ public class Node extends ElementBase {
 
     @Override
     public String toString() {
-        return getClass().getSimpleName()+"{"+
-                "name='"+getName()+'\''+
-                ", interfacesCount="+(interfaces==null?0:interfaces.size())+
-                ", subNodesCount="+(subNodes==null?0:subNodes.size())+
-                ", parentRef="+(parent==null?"null":parent)+
-                ", servicesCount="+(services==null?0:services.size())+
-                ", documentation='"+getDocumentation()+'\''+
-                ", specialization='"+getSpecialization()+'\''+
-                ", properties="+ getExtensions()+
-                ", id="+ getObjectId()+
-                ", identifiers="+getIdentifiers()+
-                ", metadata="+getMetadata()+
-                ", securityLabels="+getSecurityLabels()+
-                '}';
+        return new ToStringBuilder(this)
+                .append("interfaces", getInterfaces())
+                .append("subNodes", getSubNodes())
+                .append("parent", getParent())
+                .append("services", getServices())
+                .append("localObjectId", getElementInstanceId())
+                .append("securityLabels", getSecurityLabels())
+                .append("metadata", getMetadata())
+                .append("shortName", getShortName())
+                .append("longName", getIdentifier())
+                .append("otherIdentifiers", getOtherIdentifiers())
+                .append("securityLabels", getSecurityLabels())
+                .append("elementType", getElementType())
+                .append("documentation", getDocumentation())
+                .append("specialization", getSpecialization())
+                .append("extensions", getExtensions())
+                .toString();
     }
 }

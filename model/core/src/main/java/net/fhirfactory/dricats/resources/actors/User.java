@@ -24,13 +24,13 @@ package net.fhirfactory.dricats.resources.actors;
 
 import net.fhirfactory.dricats.internals.datatypes.UserLogin;
 import net.fhirfactory.dricats.reference.archimate.layers.business.BusinessRole;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.StringJoiner;
 
 public class User extends BusinessRole implements Serializable {
     //
@@ -76,14 +76,23 @@ public class User extends BusinessRole implements Serializable {
 
     @Override
     public String toString() {
-        return new StringJoiner(", ", User.class.getSimpleName() + "[", "]")
-                .add("logins=" + getLogins())
-                .add("status='" + getStatus() + "'")
-                .add("name=" + getName())
-                .add("securityLabels=" + getSecurityLabels())
-                .add("metadata=" + getMetadata())
-                .add("identifiers=" + getIdentifiers())
-                .add("id=" + getObjectId())
+        return new ToStringBuilder(this)
+                .append("logins", getLogins())
+                .append("status", getStatus())
+                .append("localObjectId", getElementInstanceId())
+                .append("securityLabels", getSecurityLabels())
+                .append("metadata", getMetadata())
+                .append("shortName", getShortName())
+                .append("longName", getIdentifier())
+                .append("otherIdentifiers", getOtherIdentifiers())
+                .append("securityLabels", getSecurityLabels())
+                .append("elementType", getElementType())
+                .append("documentation", getDocumentation())
+                .append("specialization", getSpecialization())
+                .append("extensions", getExtensions())
+                .append("responsibilities", getResponsibilities())
+                .append("actors", getActors())
+                .append("owner", getOwner())
                 .toString();
     }
 

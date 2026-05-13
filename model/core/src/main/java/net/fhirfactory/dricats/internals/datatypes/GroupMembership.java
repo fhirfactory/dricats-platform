@@ -73,17 +73,18 @@ public class GroupMembership extends AggregationRelationshipBase implements Seri
         return new ToStringBuilder(this)
                 .append("membershipRole", getMembershipRole())
                 .append("membershipStatus", getMembershipStatus())
+                .append("localObjectId", getElementInstanceId())
+                .append("securityLabels", getSecurityLabels())
+                .append("metadata", getMetadata())
+                .append("shortName", getShortName())
+                .append("longName", getIdentifier())
+                .append("otherIdentifiers", getOtherIdentifiers())
                 .append("type", getType())
                 .append("source", getSource())
                 .append("target", getTarget())
-                .append("name", getName())
                 .append("documentation", getDocumentation())
                 .append("specialization", getSpecialization())
                 .append("properties", getProperties())
-                .append("identifiers", getIdentifiers())
-                .append("securityLabels", getSecurityLabels())
-                .append("metadata", getMetadata())
-                .append("id", getObjectId())
                 .toString();
     }
 }

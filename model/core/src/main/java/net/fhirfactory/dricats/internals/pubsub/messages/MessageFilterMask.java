@@ -22,7 +22,7 @@
 package net.fhirfactory.dricats.internals.pubsub.messages;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import net.fhirfactory.dricats.internals.common.naming.FullyDistinguishedName;
+import net.fhirfactory.dricats.internals.common.naming.DistinguishedName;
 import net.fhirfactory.dricats.internals.events.messages.MessageObject;
 import net.fhirfactory.dricats.internals.events.messages.MessagePayload;
 import net.fhirfactory.dricats.internals.pubsub.common.FilterMaskBase;
@@ -88,7 +88,7 @@ public class MessageFilterMask extends FilterMaskBase implements Serializable {
 
         MessagePayload messagePayload = null;
         Topic messageTopic = null;
-        FullyDistinguishedName messageTopicName = null;
+        DistinguishedName messageTopicName = null;
         try{
             messagePayload = testMessageObject.getMessagePayload();
             messageTopic = messagePayload.getDataTopic();

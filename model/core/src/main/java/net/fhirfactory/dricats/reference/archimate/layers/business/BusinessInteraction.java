@@ -6,6 +6,7 @@ package net.fhirfactory.dricats.reference.archimate.layers.business;
 import net.fhirfactory.dricats.internals.common.identifiers.ElementReference;
 import net.fhirfactory.dricats.reference.archimate.common.ElementBase;
 import net.fhirfactory.dricats.reference.archimate.common.valuesets.ElementTypeEnum;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -59,8 +60,6 @@ public class BusinessInteraction extends ElementBase implements Serializable {
     public void addAccessBusinessObject(ElementReference businessObject) { if(businessObject == null){ return; } if(this.accessBusinessObjects == null){ this.accessBusinessObjects = new ArrayList<>(); } this.accessBusinessObjects.add(businessObject); }
     public void clearAccessBusinessObjects(){ if(this.accessBusinessObjects != null){ this.accessBusinessObjects.clear(); } }
 
-    @Override
-    protected Logger getLogger(){ return LOG; }
 
     @Override
     public boolean equals(Object o) {
@@ -81,17 +80,22 @@ public class BusinessInteraction extends ElementBase implements Serializable {
 
     @Override
     public String toString() {
-        return getClass().getSimpleName()+"{"+
-                "name='"+getName()+'\''+
-                ", collaborationRef="+(collaboration==null?"null":collaboration)+
-                ", participantsCount="+(participants==null?0:participants.size())+
-                ", usedServicesCount="+(usedServices==null?0:usedServices.size())+
-                ", accessBusinessObjectsCount="+(accessBusinessObjects==null?0:accessBusinessObjects.size())+
-                ", documentation='"+getDocumentation()+'\''+
-                ", specialization='"+getSpecialization()+'\''+
-                ", extensions="+getExtensions()+
-                ", id="+ getObjectId()+
-                ", metadata="+getMetadata()+
-                '}';
+        return new ToStringBuilder(this)
+                .append("collaboration", getCollaboration())
+                .append("participants", getParticipants())
+                .append("usedServices", getUsedServices())
+                .append("accessBusinessObjects", getAccessBusinessObjects())
+                .append("localObjectId", getElementInstanceId())
+                .append("securityLabels", getSecurityLabels())
+                .append("metadata", getMetadata())
+                .append("shortName", getShortName())
+                .append("longName", getIdentifier())
+                .append("otherIdentifiers", getOtherIdentifiers())
+                .append("securityLabels", getSecurityLabels())
+                .append("elementType", getElementType())
+                .append("documentation", getDocumentation())
+                .append("specialization", getSpecialization())
+                .append("extensions", getExtensions())
+                .toString();
     }
 }

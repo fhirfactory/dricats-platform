@@ -45,9 +45,6 @@ public class BusinessFunction extends ElementBase implements Serializable {
     public void setOwner(ElementReference owner) { this.owner = owner; }
 
     @Override
-    protected Logger getLogger(){ return LOG; }
-
-    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;

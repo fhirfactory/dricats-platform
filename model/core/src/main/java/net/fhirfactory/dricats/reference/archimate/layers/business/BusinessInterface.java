@@ -44,8 +44,9 @@ public class BusinessInterface extends ElementBase implements Serializable {
     public void addService(ElementReference service){ if(service == null){ return; } if(this.services == null){ this.services = new ArrayList<>(); } this.services.add(service); }
     public void clearServices(){ if(this.services != null){ this.services.clear(); } }
 
-    @Override
-    protected Logger getLogger(){ return LOG; }
+    //
+     // Standard methods
+    //
 
     @Override
     public boolean equals(Object o) {

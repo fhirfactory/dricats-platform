@@ -22,15 +22,14 @@
 package net.fhirfactory.dricats.internals.common.naming;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
-import net.fhirfactory.dricats.internals.common.id.ObjectId;
 import net.fhirfactory.dricats.internals.common.naming.common.DotSeparatedName;
 import net.fhirfactory.dricats.internals.common.naming.datatypes.DistinguishedNameEntry;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.Map;
-import java.util.Objects;
 
 public class CommonQualifier extends DotSeparatedName implements Serializable {
     //
@@ -56,7 +55,7 @@ public class CommonQualifier extends DotSeparatedName implements Serializable {
         super(ori);
     }
 
-    public CommonQualifier(FullyDistinguishedName qualifiedName) {
+    public CommonQualifier(DistinguishedName qualifiedName) {
         StringBuilder qualifierBuilder = new StringBuilder();
         Map<Integer, DistinguishedNameEntry> unqualifiedNameSet = qualifiedName.getUnqualifiedNameEntries();
         int setSize = unqualifiedNameSet.size();
@@ -64,10 +63,10 @@ public class CommonQualifier extends DotSeparatedName implements Serializable {
             RelativeDistinguishedName currentUnqualifiedName = unqualifiedNameSet.get(counter);
             qualifierBuilder.append(currentUnqualifiedName.getQualifier());
             if (counter < (setSize - 1)) {
-                qualifierBuilder.append(".");
+                qualifierBuilder.append(DEFAULT_SEPARATOR);
             }
         }
-        setValue(qualifierBuilder.toString());
+        setName(qualifierBuilder.toString());
     }
 
     //
@@ -82,7 +81,7 @@ public class CommonQualifier extends DotSeparatedName implements Serializable {
         if(StringUtils.isEmpty(idValue)){
             return(null);
         }
-        String[] idValueComponents = idValue.split(ObjectId.ID_QUALIFIER_NAME_SEPARATOR);
+        String[] idValueComponents = idValue.split(DotSeparatedName.DEFAULT_SEPARATOR);
         if(idValueComponents.length < 2){
             return(null);
         }
@@ -93,23 +92,22 @@ public class CommonQualifier extends DotSeparatedName implements Serializable {
     //
     // Standard Methods
     //
-    @Override
-    public String toString() {
-        return "CommonQualifier{" +
-                "value=" + getValue() +
-                '}';
-    }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        CommonQualifier commonName = (CommonQualifier) o;
-        return (commonName.getValue().contentEquals(this.getValue()));
+    public String toString() {
+        return new ToStringBuilder(this)
+                .append("name", getName())
+                .append("nameMap", getNameMap())
+                .toString();
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getValue());
+        return super.hashCode();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return super.equals(o);
     }
 }

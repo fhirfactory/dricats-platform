@@ -52,6 +52,7 @@ public class TopologyTab extends Tab {
 
     public TopologyTab(String baseUrl) {
         super("Topology");
+        LOG.debug("TopologyTab(): [Entry] baseUrl={}", baseUrl);
         setClosable(false);
         try {
             javafx.fxml.FXMLLoader loader = new javafx.fxml.FXMLLoader(
@@ -68,9 +69,11 @@ public class TopologyTab extends Tab {
             // Fallback to programmatic UI only if needed
             setContent(buildContentFallback(baseUrl));
         }
+        LOG.debug("TopologyTab(): [Exit]");
     }
 
     private BorderPane buildContentFallback(String baseUrl) {
+        LOG.debug(".buildContentFallback(): [Entry] baseUrl={}", baseUrl);
         // initialize client for fallback mode
         this.client = new MainRESTClient(baseUrl);
         MenuBar menuBar = new MenuBar();
@@ -105,23 +108,23 @@ public class TopologyTab extends Tab {
                     return;
                 }
                 if (value instanceof ApplicationComponent acs) {
-                    String label = acs.getName();
+                    String label = acs.getShortName();
                     if (label == null || label.isBlank()) {
                         label = MainRESTClient.resolveKey(acs);
                     }
                     setText(label);
                     setStyle("");
                 } else if (value instanceof IngresApplicationInterface ifIn) {
-                    String label = ifIn.getName();
+                    String label = ifIn.getShortName();
                     if (label == null || label.isBlank()) {
-                        label = ifIn.resolveKey();
+                        label = ifIn.resolveElementInstanceKey();
                     }
                     setText("[IN] " + label);
                     setStyle("-fx-text-fill: #2a7fff;");
                 } else if (value instanceof EgressApplicationInterface ifOut) {
-                    String label = ifOut.getName();
+                    String label = ifOut.getShortName();
                     if (label == null || label.isBlank()) {
-                        label = ifOut.resolveKey();
+                        label = ifOut.resolveElementInstanceKey();
                     }
                     setText("[OUT] " + label);
                     setStyle("-fx-text-fill: #2a7fff;");
@@ -198,170 +201,42 @@ public class TopologyTab extends Tab {
         root.setTop(menuBar);
         root.setCenter(treeView);
         root.setRight(right);
+        LOG.debug(".buildContentFallback(): [Exit]");
         return root;
     }
 
     private void refreshDetails(ApplicationComponent applicationComponent) {
-        if (detailsTable == null) return;
-        javafx.collections.ObservableList<KVRow> rows = javafx.collections.FXCollections.observableArrayList();
-        if (applicationComponent == null) {
-            rows.add(new KVRow("Info", "No component selected."));
-            detailsTable.setItems(rows);
+        LOG.debug(".refreshDetails(): [Entry]");
+        if (detailsTable == null) {
+            LOG.debug(".refreshDetails(): [Exit] detailsTable is null");
             return;
         }
-        try {
-            rows.add(new KVRow("Name", Objects.toString(applicationComponent.getName(), "")));
-        } catch (Exception ignored) {
-        }
-        try {
-            if (applicationComponent.getObjectId() != null && applicationComponent.getObjectId().getKeyValue() != null)
-                rows.add(new KVRow("ID", applicationComponent.getObjectId().getKeyValue()));
-        } catch (Exception ignored) {
-        }
-        try {
-            if (applicationComponent.getObjectId() != null)
-                rows.add(new KVRow("ObjectID", Objects.toString(applicationComponent.getObjectId().getName().getValue(), "")));
-        } catch (Exception ignored) {
-        }
-        try {
-            rows.add(new KVRow("Element Type", Objects.toString(applicationComponent.getElementType(), "")));
-        } catch (Exception ignored) {
-        }
-        try {
-            rows.add(new KVRow("Specialization", Objects.toString(applicationComponent.getSpecialization(), "")));
-        } catch (Exception ignored) {
-        }
-        try {
-            rows.add(new KVRow("Documentation", Objects.toString(applicationComponent.getDocumentation(), "")));
-        } catch (Exception ignored) {
-        }
-        try {
-            if (applicationComponent.getParent() != null)
-                rows.add(new KVRow("Parent", Objects.toString(applicationComponent.getParent().getLocalObjectId().getFullyDistinguishedName().getCommonName().getValue(), "")));
-        } catch (Exception ignored) {
-        }
-        try {
-            int count = applicationComponent.getSubComponents() == null ? 0 : applicationComponent.getSubComponents().size();
-            rows.add(new KVRow("Subcomponents", Integer.toString(count)));
-        } catch (Exception ignored) {
-        }
-        try {
-            if (applicationComponent.getComponentStatus() != null) {
-                rows.add(new KVRow("Status", Objects.toString(applicationComponent.getComponentStatus().getComponentStatus(), "")));
-                String desc = applicationComponent.getComponentStatus().getComponentStatusDescription();
-                if (desc != null && !desc.isBlank()) rows.add(new KVRow("Status Description", desc));
-                if (applicationComponent.getComponentStatus().getStartupInstant() != null)
-                    rows.add(new KVRow("Startup", Objects.toString(applicationComponent.getComponentStatus().getStartupInstant(), "")));
-                if (applicationComponent.getComponentStatus().getLastActivityInstant() != null)
-                    rows.add(new KVRow("Last Activity", Objects.toString(applicationComponent.getComponentStatus().getLastActivityInstant(), "")));
-                if (applicationComponent.getComponentStatus().getLastHeartbeatInstant() != null)
-                    rows.add(new KVRow("Last Heartbeat", Objects.toString(applicationComponent.getComponentStatus().getLastHeartbeatInstant(), "")));
-            }
-        } catch (Exception ignored) {
-        }
-        detailsTable.setItems(rows);
+        detailsTable.setItems(TopologyUIUtilities.getDetailsRows(applicationComponent));
+        LOG.debug(".refreshDetails(): [Exit]");
     }
 
     private void refreshUniqueName(ApplicationComponent summary) {
-        if (uniqueNameTree == null) return;
-        TreeItem<String> root = new TreeItem<>("UniqueName");
-        root.setExpanded(true);
-        try {
-            if (summary == null || summary.getObjectId() == null || summary.getObjectId().getFullyDistinguishedName() == null) {
-                root.getChildren().add(new TreeItem<>("No selection"));
-            } else {
-                java.util.Map<Integer, DistinguishedNameEntry> entries =
-                        summary.getObjectId().getFullyDistinguishedName().getUnqualifiedNameEntries();
-                if (entries == null || entries.isEmpty()) {
-                    root.getChildren().add(new TreeItem<>("<empty>"));
-                } else {
-                    java.util.List<Integer> keys = new java.util.ArrayList<>(entries.keySet());
-                    java.util.Collections.sort(keys);
-                    for (Integer k : keys) {
-                        DistinguishedNameEntry e = entries.get(k);
-                        String qual = e == null ? "" : java.util.Objects.toString(e.getQualifier(), "");
-                        String val = e == null ? "" : java.util.Objects.toString(e.getValue(), "");
-                        TreeItem<String> child = new TreeItem<>(qual + " = " + val);
-                        root.getChildren().add(child);
-                    }
-                }
-            }
-        } catch (Exception ignored) {
-            root.getChildren().add(new TreeItem<>("<error reading UniqueName>"));
+        LOG.debug(".refreshUniqueName(): [Entry]");
+        if (uniqueNameTree == null) {
+            LOG.debug(".refreshUniqueName(): [Exit] uniqueNameTree is null");
+            return;
         }
-        uniqueNameTree.setRoot(root);
+        uniqueNameTree.setRoot(TopologyUIUtilities.getUniqueNameTreeRoot(summary));
+        LOG.debug(".refreshUniqueName(): [Exit]");
     }
 
     private void refreshMetrics(ApplicationComponent applicationComponent) {
-        if (metricsTable == null) return;
-        javafx.collections.ObservableList<KVRow> rows = javafx.collections.FXCollections.observableArrayList();
-        if (applicationComponent == null) {
-            rows.add(new KVRow("Info", "No component selected."));
-            metricsTable.setItems(rows);
+        LOG.debug(".refreshMetrics(): [Entry]");
+        if (metricsTable == null) {
+            LOG.debug(".refreshMetrics(): [Exit] metricsTable is null");
             return;
         }
-        String id = applicationComponent.resolveKey();
-        ApplicationComponentMetricsData md = client.getLatestMetrics(id);
-        if (md == null) {
-            rows.add(new KVRow("Info", "No metrics available for: " + Objects.toString(applicationComponent.getName(), id)));
-            metricsTable.setItems(rows);
-            return;
-        }
-        try {
-            rows.add(new KVRow("Component", Objects.toString(md.getParticipantName(), "")));
-        } catch (Exception ignored) {
-        }
-        try {
-            if (md.getComponentType() != null) rows.add(new KVRow("Type", Objects.toString(md.getComponentType(), "")));
-        } catch (Exception ignored) {
-        }
-        try {
-            if (md.getComponentStartupInstant() != null)
-                rows.add(new KVRow("Startup", Objects.toString(md.getComponentStartupInstant(), "")));
-        } catch (Exception ignored) {
-        }
-        try {
-            if (md.getLastActivityInstant() != null)
-                rows.add(new KVRow("Last Activity", Objects.toString(md.getLastActivityInstant(), "")));
-        } catch (Exception ignored) {
-        }
-        try {
-            if (md.getComponentStatus() != null)
-                rows.add(new KVRow("Status", Objects.toString(md.getComponentStatus(), "")));
-        } catch (Exception ignored) {
-        }
-        ComponentMessagingStatistics ms = md.getMessagingStatistics();
-        if (ms != null) {
-            rows.add(new KVRow("Messaging", ""));
-            try {
-                rows.add(new KVRow("Ingress", Objects.toString(ms.getIngresMessageCount(), "0")));
-            } catch (Exception ignored) {
-            }
-            try {
-                rows.add(new KVRow("Egress Attempts", Objects.toString(ms.getEgressMessageAttemptCount(), "0")));
-            } catch (Exception ignored) {
-            }
-            try {
-                rows.add(new KVRow("Egress Success", Objects.toString(ms.getEgressMessageSuccessCount(), "0")));
-            } catch (Exception ignored) {
-            }
-            try {
-                rows.add(new KVRow("Egress Failures", Objects.toString(ms.getEgressMessageFailureCount(), "0")));
-            } catch (Exception ignored) {
-            }
-            try {
-                rows.add(new KVRow("Internal Sent", Objects.toString(ms.getInternalDistributedMessageCount(), "0")));
-            } catch (Exception ignored) {
-            }
-            try {
-                rows.add(new KVRow("Internal Received", Objects.toString(ms.getInternalReceivedMessageCount(), "0")));
-            } catch (Exception ignored) {
-            }
-        }
-        metricsTable.setItems(rows);
+        metricsTable.setItems(TopologyUIUtilities.getMetricsRows(applicationComponent, client));
+        LOG.debug(".refreshMetrics(): [Exit]");
     }
 
     private void loadRoots() {
+        LOG.debug(".loadRoots(): [Entry]");
         TreeItem<Object> hiddenRoot = new TreeItem<>();
         treeView.setRoot(hiddenRoot);
         List<ApplicationComponent> roots = null;
@@ -372,42 +247,57 @@ public class TopologyTab extends Tab {
         }
         if (roots == null) {
             LOG.info("[UI] No components returned (null list)");
+            LOG.debug(".loadRoots(): [Exit] roots is null");
             return;
         }
         LOG.info("[UI] Loaded {} components", roots.size());
         hiddenRoot.getChildren().clear();
         for (ApplicationComponent s : roots) {
+            LOG.trace(".loadRoots(): adding s={}", s);
             if (s != null) {
                 hiddenRoot.getChildren().add(createTreeItem(s));
             }
         }
+        LOG.debug(".loadRoots(): [Exit]");
     }
 
     private TreeItem<Object> createTreeItem(ApplicationComponent s) {
+        LOG.debug(".createTreeItem(): [Entry] s={}", s);
         TreeItem<Object> item = new TreeItem<>(s);
         item.getChildren().add(new TreeItem<>());
         item.expandedProperty().addListener((obs, o, n) -> {
             if (n) loadChildrenIfNeeded(item);
         });
+        LOG.debug(".createTreeItem(): [Exit]");
         return item;
     }
 
     private void loadChildrenIfNeeded(TreeItem<Object> parentItem) {
-        if (parentItem == null || !(parentItem.getValue() instanceof ApplicationComponent)) return;
-        if (!hasPlaceholder(parentItem)) return;
+        LOG.debug(".loadChildrenIfNeeded(): [Entry] parentItem={}", parentItem);
+        if (parentItem == null || !(parentItem.getValue() instanceof ApplicationComponent)) {
+            LOG.debug(".loadChildrenIfNeeded(): [Exit] parentItem or value type mismatch");
+            return;
+        }
+        if (!hasPlaceholder(parentItem)) {
+            LOG.debug(".loadChildrenIfNeeded(): [Exit] already loaded");
+            return;
+        }
         parentItem.getChildren().clear();
 
         ApplicationComponent s = (ApplicationComponent) parentItem.getValue();
         String id = MainRESTClient.resolveKey(s);
         List<ApplicationComponent> kids = client.listSubcomponents(id);
+        LOG.trace(".loadChildrenIfNeeded(): kids={}", kids);
         for (ApplicationComponent child : kids) {
             if (child != null) parentItem.getChildren().add(createTreeItem(child));
         }
         // add interface nodes
         try {
             List<? extends WUPInterfaceBase> ifaces = client.listInterfaces(id);
+            LOG.trace(".loadChildrenIfNeeded(): ifaces={}", ifaces);
             if (ifaces != null) {
                 for (Object iface : ifaces) {
+                    LOG.trace(".loadChildrenIfNeeded(): processing iface={}", iface);
                     if (iface != null && iface.getClass().isArray()) {
                         int len = java.lang.reflect.Array.getLength(iface);
                         for (int i = 0; i < len; i++) {
@@ -426,9 +316,13 @@ public class TopologyTab extends Tab {
         } catch (Exception e) {
             LOG.warn("[UI] Failed to fetch interfaces for {}: {}", id, e.toString());
         }
+        LOG.debug(".loadChildrenIfNeeded(): [Exit]");
     }
 
     private boolean hasPlaceholder(TreeItem<Object> item) {
-        return item.getChildren().size() == 1 && item.getChildren().get(0).getValue() == null;
+        LOG.debug(".hasPlaceholder(): [Entry]");
+        boolean has = item.getChildren().size() == 1 && item.getChildren().get(0).getValue() == null;
+        LOG.debug(".hasPlaceholder(): [Exit] has={}", has);
+        return has;
     }
 }

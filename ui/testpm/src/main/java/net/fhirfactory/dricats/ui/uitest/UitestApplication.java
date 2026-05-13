@@ -23,16 +23,28 @@ package net.fhirfactory.dricats.ui.uitest;
 
 import jakarta.annotation.PostConstruct;
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.inject.Produces;
+import jakarta.inject.Inject;
+import net.fhirfactory.dricats.internals.common.identifiers.ElementIdentifier;
+import net.fhirfactory.dricats.internals.common.naming.CommonName;
+import net.fhirfactory.dricats.internals.common.naming.CommonQualifier;
+import net.fhirfactory.dricats.internals.common.naming.DistinguishedName;
+import net.fhirfactory.dricats.internals.topology.implementation.layers.application.Subsystem;
+import net.fhirfactory.dricats.internals.topology.implementation.layers.application.valuesets.ApplicationComponentSpecialisationEnum;
+import net.fhirfactory.dricats.internals.topology.interfaces.ISubsystem;
+import net.fhirfactory.dricats.reference.archimate.common.valuesets.ElementTypeEnum;
 import net.fhirfactory.dricats.ui.uitest.configuration.UITestServerConfiguration;
 import net.fhirfactory.dricats.ui.uitest.configuration.UITestServerConfigurationLoader;
-import org.apache.camel.LoggingLevel;
-import org.apache.camel.builder.RouteBuilder;
+import net.fhirfactory.dricats.ui.uitest.testdata.PathwayTestResourceSetBuilder;
+import net.fhirfactory.dricats.ui.uitest.testdata.TopologyTestResourceSetBuilder;
+import org.apache.camel.CamelContext;
+import org.apache.camel.impl.DefaultCamelContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 
 @ApplicationScoped
-public class UitestApplication extends RouteBuilder {
+public class UitestApplication implements ISubsystem {
     //
      // Housekeeping
     //
@@ -45,6 +57,12 @@ public class UitestApplication extends RouteBuilder {
     private boolean initialized = false;
     private UITestServerConfiguration uiTestServerConfiguration;
 
+    @Inject
+    TopologyTestResourceSetBuilder topologyTestResourceSetBuilder;
+
+    @Inject
+    PathwayTestResourceSetBuilder pathwayTestResourceSetBuilder;
+
     //
      // Constructor
     //
@@ -53,17 +71,34 @@ public class UitestApplication extends RouteBuilder {
 
     }
 
+    //
+     // Camel Context
+    //
+
+    @Produces
+    @ApplicationScoped
+    public CamelContext createCamelContext() {
+        return new DefaultCamelContext();
+    }
+
     // Post Construct
     @PostConstruct
     public void initialise(){
         getLogger().debug(".initalise(): Entry");
         if (!isInitialized()) {
             getLogger().info("UitestApplication::initialise(): Initialising....");
+            try {
+                createCamelContext();
+            } catch (Exception ex){
+                getLogger().error(ex.getMessage());
+            }
             getLogger().info("UitestApplication::initialise(): [Load Configuration File] Start");
             UITestServerConfigurationLoader configurationLoader = new UITestServerConfigurationLoader();
             this.uiTestServerConfiguration = (UITestServerConfiguration) configurationLoader.readPropertyFile();
             getLogger().info("UitestApplication::initialise(): [Load Configuration File] Finish");
             System.out.println("UitestApplication::initialise(): Booted!!!!!");
+            topologyTestResourceSetBuilder.initialise();
+            pathwayTestResourceSetBuilder.initialise();
             getLogger().info("UitestApplication::initialise(): [Finish Initialisation] Start");
             setInitialized(true);
             getLogger().info("UitestApplication::initialise(): [Finish Initialisation] Finish");
@@ -95,15 +130,24 @@ public class UitestApplication extends RouteBuilder {
         this.initialized = initialized;
     }
 
-    // Simple Route
+    // Getters and Setters
+    public Subsystem getSubsystem() {
+        Subsystem subsystem = new Subsystem() {
+            @Override
+            protected ElementIdentifier specifySubsystemIdentifier() {
+                CommonQualifier qualifier = new CommonQualifier();
+                qualifier.getNameMap().put(0, ApplicationComponentSpecialisationEnum.SOLUTION.name());
+                qualifier.getNameMap().put(1, ApplicationComponentSpecialisationEnum.SUBSYSTEM.name());
+                CommonName name = new CommonName();
+                name.getNameMap().put(0, "UITestHarness");
+                name.getNameMap().put(1, "UITestPresentationManager");
 
-    @Override
-    public void configure() throws Exception {
-        String processingPlantName = getClass().getSimpleName();
-
-        from("timer://"+processingPlantName+"?delay=1000&repeatCount=1")
-                .routeId("ProcessingPlant::"+processingPlantName)
-                .log(LoggingLevel.DEBUG, "Starting....");
+                DistinguishedName dn = new DistinguishedName(qualifier, name);
+                ElementIdentifier elementIdentifier = new ElementIdentifier(dn);
+                return(elementIdentifier);
+            }
+        };
+        return(subsystem);
     }
 }
 

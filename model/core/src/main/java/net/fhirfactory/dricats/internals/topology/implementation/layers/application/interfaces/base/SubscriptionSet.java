@@ -56,18 +56,27 @@ public class SubscriptionSet extends ApplicationFunction {
     //
 
     public List<MessageSubscription> getMessageSubscriptions() {
+        if(this.messageSubscriptions == null){
+            this.messageSubscriptions = new ArrayList<>();
+        }
         return messageSubscriptions;
     }
     public void setMessageSubscriptions(List<MessageSubscription> messageSubscriptions) {
         this.messageSubscriptions = messageSubscriptions;
     }
     public List<NotificationSubscription> getNotificationSubscriptions() {
+        if(this.notificationSubscriptions == null){
+            this.notificationSubscriptions = new ArrayList<>();
+        }
         return notificationSubscriptions;
     }
     public void setNotificationSubscriptions(List<NotificationSubscription> notificationSubscriptions) {
         this.notificationSubscriptions = notificationSubscriptions;
     }
     public List<ContentSubscription> getContentSubscriptions() {
+        if(this.contentSubscriptions == null){
+            this.contentSubscriptions = new ArrayList<>();
+        }
         return contentSubscriptions;
     }
     public void setContentSubscriptions(List<ContentSubscription> contentSubscriptions) {

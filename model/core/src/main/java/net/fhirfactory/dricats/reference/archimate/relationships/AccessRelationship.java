@@ -59,7 +59,7 @@ public class AccessRelationship extends RelationshipBase {
      * @param targetId The ID of the target element (the data object)
      */
     public AccessRelationship(ElementReference sourceId, ElementReference targetId) {
-        super(sourceId, targetId);
+        super(sourceId, targetId, RelationshipTypeEnum.ACCESS);
         setType(RelationshipTypeEnum.ACCESS);
         this.accessType = AccessType.READ;
     }
@@ -72,7 +72,7 @@ public class AccessRelationship extends RelationshipBase {
      * @param accessType The type of access (READ, WRITE, READ_WRITE)
      */
     public AccessRelationship(ElementReference sourceId, ElementReference targetId, AccessType accessType) {
-        super(sourceId, targetId);
+        super(sourceId, targetId, RelationshipTypeEnum.ACCESS);
         this.accessType = accessType;
         setType(RelationshipTypeEnum.ACCESS);
     }
@@ -85,7 +85,7 @@ public class AccessRelationship extends RelationshipBase {
      * @param targetId The ID of the target element (the data object)
      */
     public AccessRelationship(String name, ElementReference sourceId, ElementReference targetId) {
-        super(name, sourceId, targetId);
+        super(name, "", sourceId, targetId, RelationshipTypeEnum.ACCESS);
         this.accessType = AccessType.READ;
         setType(RelationshipTypeEnum.ACCESS);
     }
@@ -99,7 +99,7 @@ public class AccessRelationship extends RelationshipBase {
      * @param accessType The type of access (READ, WRITE, READ_WRITE)
      */
     public AccessRelationship(String name, ElementReference sourceId, ElementReference targetId, AccessType accessType) {
-        super(name, sourceId, targetId);
+        super(name, "", sourceId, targetId, RelationshipTypeEnum.ACCESS);
         this.accessType = accessType;
         setType(RelationshipTypeEnum.ACCESS);
     }
@@ -113,7 +113,7 @@ public class AccessRelationship extends RelationshipBase {
      * @param targetId The ID of the target element (the data object)
      */
     public AccessRelationship(String name, String description, ElementReference sourceId, ElementReference targetId) {
-        super(name, description, sourceId, targetId);
+        super(name, description, sourceId, targetId, RelationshipTypeEnum.ACCESS);
         this.accessType = AccessType.READ;
         setType(RelationshipTypeEnum.ACCESS);
     }
@@ -128,7 +128,7 @@ public class AccessRelationship extends RelationshipBase {
      * @param accessType The type of access (READ, WRITE, READ_WRITE)
      */
     public AccessRelationship(String name, String description, ElementReference sourceId, ElementReference targetId, AccessType accessType) {
-        super(name, description, sourceId, targetId);
+        super(name, description, sourceId, targetId, RelationshipTypeEnum.ACCESS);
         this.accessType = accessType;
         setType(RelationshipTypeEnum.ACCESS);
     }

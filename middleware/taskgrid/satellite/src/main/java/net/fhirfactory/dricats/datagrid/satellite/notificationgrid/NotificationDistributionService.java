@@ -21,11 +21,13 @@
  */
 package net.fhirfactory.dricats.datagrid.satellite.notificationgrid;
 
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 import net.fhirfactory.dricats.datagrid.satellite.DataGridServicesGroup;
 import net.fhirfactory.dricats.deployment.valuesets.SubsystemInternalServiceNamesEnum;
-import net.fhirfactory.dricats.internals.common.id.ObjectId;
+import net.fhirfactory.dricats.internals.common.identifiers.ElementIdentifier;
 import net.fhirfactory.dricats.internals.common.identifiers.ElementReference;
-import net.fhirfactory.dricats.internals.common.naming.FullyDistinguishedName;
+import net.fhirfactory.dricats.internals.common.naming.DistinguishedName;
 import net.fhirfactory.dricats.internals.common.naming.RelativeDistinguishedName;
 import net.fhirfactory.dricats.internals.events.interfaces.ILocalNotificationService;
 import net.fhirfactory.dricats.internals.topology.implementation.layers.application.valuesets.ApplicationComponentSpecialisationEnum;
@@ -40,8 +42,6 @@ import org.jgroups.ObjectMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
 import java.time.LocalDateTime;
 
 @ApplicationScoped
@@ -90,15 +90,16 @@ public class NotificationDistributionService extends JChannelControllerBase {
 
     @Override
     protected void populateIdentityDetails(){
-        getLogger().debug(".buildObjectId(): Entry");
-        ObjectId datagridServiceGroupId = getDataBusServicesGroup().getObjectId();
+        getLogger().debug(".populateIdentityDetails(): Entry");
+        DistinguishedName datagridServiceName = getDataBusServicesGroup().getIdentifier().getIdentifierValue();
         ElementReference datagridServicesGroupReference = getDataBusServicesGroup().getReference();
         setParent(datagridServicesGroupReference);
-        FullyDistinguishedName myQualifiedName = new FullyDistinguishedName(datagridServiceGroupId.getFullyDistinguishedName());
+        DistinguishedName myQualifiedName = new DistinguishedName(datagridServiceName);
         myQualifiedName.appendUnqualifiedName(new RelativeDistinguishedName(ApplicationComponentSpecialisationEnum.SUBSYSTEM_APPLICATION_WORK_UNIT_PROCESSOR.getType(), "NotificationDistributionService"));
-        ObjectId myId = new ObjectId(myQualifiedName);
-        setObjectId(myId);
-        getLogger().debug(".buildObjectId(): Exit");
+        ElementIdentifier myId = new ElementIdentifier(myQualifiedName);
+        setIdentifier(myId);
+        setShortName(myQualifiedName.getUnqualifiedName().getValue());
+        getLogger().debug(".populateIdentityDetails(): Exit");
     }
 
     //

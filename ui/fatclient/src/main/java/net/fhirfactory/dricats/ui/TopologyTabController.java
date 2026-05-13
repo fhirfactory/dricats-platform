@@ -4,10 +4,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
-import net.fhirfactory.dricats.internals.common.naming.datatypes.DistinguishedNameEntry;
 import net.fhirfactory.dricats.internals.data.valuesets.MimeTypeEnum;
-import net.fhirfactory.dricats.internals.oam.metrics.ApplicationComponentMetricsData;
-import net.fhirfactory.dricats.internals.oam.metrics.datatypes.ComponentMessagingStatistics;
 import net.fhirfactory.dricats.internals.pubsub.content.ContentFilter;
 import net.fhirfactory.dricats.internals.pubsub.content.ContentSubscription;
 import net.fhirfactory.dricats.internals.pubsub.topics.TopicFilter;
@@ -52,6 +49,7 @@ public class TopologyTabController {
     private String baseUrl;
 
     public void setBaseUrl(String baseUrl) {
+        LOG.debug(".setBaseUrl(): [Entry] baseUrl={}", baseUrl);
         this.baseUrl = baseUrl;
         if (this.baseUrl == null || this.baseUrl.isBlank()) {
             this.baseUrl = "http://localhost:12000";
@@ -59,10 +57,12 @@ public class TopologyTabController {
         this.client = new MainRESTClient(this.baseUrl);
         // initial load
         loadRoots();
+        LOG.debug(".setBaseUrl(): [Exit]");
     }
 
     @FXML
     private void initialize() {
+        LOG.debug(".initialize(): [Entry]");
         // Tree cell factory for ApplicationComponent
         if (treeView != null) {
             treeView.setShowRoot(false);
@@ -75,7 +75,7 @@ public class TopologyTabController {
                         setStyle("");
                     } else if (item instanceof ApplicationComponent) {
                         ApplicationComponent acs = (ApplicationComponent) item;
-                        String label = acs.getName();
+                        String label = acs.getShortName();
                         if (label == null || label.isBlank()) {
                             label = net.fhirfactory.dricats.ui.restclient.MainRESTClient.resolveKey(acs);
                         }
@@ -83,17 +83,17 @@ public class TopologyTabController {
                         setStyle("");
                     } else if (item instanceof IngresApplicationInterface) {
                         IngresApplicationInterface ifs = (IngresApplicationInterface) item;
-                        String label = ifs.getName();
+                        String label = ifs.getShortName();
                         if (label == null || label.isBlank()) {
-                            label = ifs.resolveKey();
+                            label = ifs.resolveElementInstanceKey();
                         }
                         setText("[IN] " + label);
                         setStyle("-fx-text-fill: #2a7fff;");
                     } else if (item instanceof EgressApplicationInterface) {
                         EgressApplicationInterface ifs = (EgressApplicationInterface) item;
-                        String label = ifs.getName();
+                        String label = ifs.getShortName();
                         if (label == null || label.isBlank()) {
-                            label = ifs.resolveKey();
+                            label = ifs.resolveElementInstanceKey();
                         }
                         setText("[OUT] " + label);
                         setStyle("-fx-text-fill: #2a7fff;");
@@ -116,9 +116,9 @@ public class TopologyTabController {
                         refreshMetrics(s);
                         refreshInterfaceDetails(s);
                     } else if (v instanceof IngresApplicationInterface ifIn) {
-                        LOG.info("[UI] Ingress Interface selected: {}", ifIn.resolveKey());
+                        LOG.info("[UI] Ingress Interface selected: {}", ifIn.resolveElementInstanceKey());
                     } else if (v instanceof EgressApplicationInterface ifOut) {
-                        LOG.info("[UI] Egress Interface selected: {}", ifOut.resolveKey());
+                        LOG.info("[UI] Egress Interface selected: {}", ifOut.resolveElementInstanceKey());
                     } else {
                         LOG.info("[UI] Tree selection is other node");
                     }
@@ -220,70 +220,100 @@ public class TopologyTabController {
                 }
             });
         }
+        LOG.debug(".initialize(): [Exit]");
     }
     
     private void showIngressSubscriptionsDialog(IngresApplicationInterface ingress) {
+        LOG.debug(".showIngressSubscriptionsDialog(): [Entry] ingress={}", ingress);
         String name = null;
-        try { name = ingress.getName(); } catch (Exception ignored) {}
+        try { name = ingress.getShortName(); } catch (Exception ignored) {}
         if (name == null || name.isBlank()) {
-            try { name = ingress.resolveKey(); } catch (Exception ignored) {}
+            try { name = ingress.resolveElementInstanceKey(); } catch (Exception ignored) {}
         }
         String title = "Supported Content Subscriptions";
         String header = (name == null || name.isBlank()) ? "Ingress Interface" : name;
         java.util.List<ContentSubscription> subs = null;
         try { subs = ingress.getSubscriptions().getContentSubscriptions(); } catch (Exception ignored) {}
 
-        StringBuilder sb = new StringBuilder();
+        javafx.collections.ObservableList<IngressSubscriptionRow> rows = javafx.collections.FXCollections.observableArrayList();
         if (subs == null || subs.isEmpty()) {
-            sb.append("No ContentSubscriptions defined for this ingress interface.");
+            rows.add(new IngressSubscriptionRow("N/A", "Info", "No ContentSubscriptions defined for this ingress interface."));
         } else {
             int i = 1;
             for (ContentSubscription cs : subs) {
                 if (cs == null) { continue; }
-                sb.append("#").append(i++).append("\n");
-                try { sb.append("  Source: ").append(java.util.Objects.toString(cs.getContentSubscriptionMask().getInternalEventSource().getComponentIdMask().prettyPrint(), "")).append("\n"); } catch (Exception ignored) {}
-                try { sb.append("  Target: ").append(java.util.Objects.toString(cs.getContentSubscriptionMask().getInternalEventTarget().getComponentIdMask().prettyPrint(), "")).append("\n"); } catch (Exception ignored) {}
-                try { 
+                String subLabel = "Subscription #" + i;
+                try {
+                    String source = java.util.Objects.toString(cs.getContentSubscriptionMask().getInternalEventSource().getComponentIdMask().prettyPrint(), "");
+                    rows.add(new IngressSubscriptionRow(subLabel, "Source", source));
+                } catch (Exception ignored) {}
+                try {
+                    String target = java.util.Objects.toString(cs.getContentSubscriptionMask().getInternalEventTarget().getComponentIdMask().prettyPrint(), "");
+                    rows.add(new IngressSubscriptionRow(subLabel, "Target", target));
+                } catch (Exception ignored) {}
+                try {
                     java.util.List<TopicSubscription> topics = cs.getContentSubscriptionMask().getEventTopicSubscriptions();
                     if (topics != null && !topics.isEmpty()) {
-                        sb.append("  Topics:");
-                        for (TopicSubscription t : topics) {
-                            sb.append("\n    - ").append(t.prettyPrint());
+                        StringBuilder topicSb = new StringBuilder();
+                        for (int tIdx = 0; tIdx < topics.size(); tIdx++) {
+                            topicSb.append(topics.get(tIdx).prettyPrint());
+                            if (tIdx < topics.size() - 1) {
+                                topicSb.append(", ");
+                            }
                         }
-                        sb.append("\n");
+                        rows.add(new IngressSubscriptionRow(subLabel, "Topics", topicSb.toString()));
                     }
                 } catch (Exception ignored) {}
-                try { sb.append("  Origin: ").append(java.util.Objects.toString(cs.getContentSubscriptionMask().getEventOrigin(), "")).append("\n"); } catch (Exception ignored) {}
-                try { sb.append("  Final Destination: ").append(java.util.Objects.toString(cs.getContentSubscriptionMask().getEventFinalDestination(), "")).append("\n"); } catch (Exception ignored) {}
-                try { sb.append("  Temporal Window: ").append(java.util.Objects.toString(cs.getContentSubscriptionMask().getTemporalWindow().prettyPrint(), "")).append("\n"); } catch (Exception ignored) {}
-                sb.append("\n");
+                try {
+                    String origin = java.util.Objects.toString(cs.getContentSubscriptionMask().getEventOrigin(), "");
+                    if (!origin.isBlank()) rows.add(new IngressSubscriptionRow(subLabel, "Origin", origin));
+                } catch (Exception ignored) {}
+                try {
+                    String finalDest = java.util.Objects.toString(cs.getContentSubscriptionMask().getEventFinalDestination(), "");
+                    if (!finalDest.isBlank()) rows.add(new IngressSubscriptionRow(subLabel, "Final Destination", finalDest));
+                } catch (Exception ignored) {}
+                try {
+                    String tempWindow = java.util.Objects.toString(cs.getContentSubscriptionMask().getTemporalWindow().prettyPrint(), "");
+                    if (!tempWindow.isBlank()) rows.add(new IngressSubscriptionRow(subLabel, "Temporal Window", tempWindow));
+                } catch (Exception ignored) {}
+                i++;
             }
         }
 
         Alert dlg = new Alert(Alert.AlertType.INFORMATION);
         dlg.setTitle(title);
         dlg.setHeaderText(header);
-        // Use a resizable dialog and let it size to content
-        javafx.scene.control.TextArea ta = new javafx.scene.control.TextArea(sb.toString());
-        ta.setWrapText(true);
-        ta.setEditable(false);
-        dlg.getDialogPane().setContent(ta);
+
+        TableView<IngressSubscriptionRow> table = new TableView<>();
+        TableColumn<IngressSubscriptionRow, String> colSub = new TableColumn<>("Subscription");
+        colSub.setCellValueFactory(new javafx.scene.control.cell.PropertyValueFactory<>("subscription"));
+        colSub.setPrefWidth(150);
+
+        TableColumn<IngressSubscriptionRow, String> colAttr = new TableColumn<>("Attribute");
+        colAttr.setCellValueFactory(new javafx.scene.control.cell.PropertyValueFactory<>("attribute"));
+        colAttr.setPrefWidth(150);
+
+        TableColumn<IngressSubscriptionRow, String> colVal = new TableColumn<>("Value");
+        colVal.setCellValueFactory(new javafx.scene.control.cell.PropertyValueFactory<>("value"));
+        colVal.setPrefWidth(400);
+
+        table.getColumns().addAll(colSub, colAttr, colVal);
+        table.setItems(rows);
+        table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+
+        dlg.getDialogPane().setContent(table);
         dlg.setResizable(true);
-        dlg.getDialogPane().setPrefSize(javafx.scene.layout.Region.USE_COMPUTED_SIZE, javafx.scene.layout.Region.USE_COMPUTED_SIZE);
-        dlg.setOnShown(e -> {
-            javafx.stage.Window w = dlg.getDialogPane().getScene().getWindow();
-            if (w instanceof javafx.stage.Stage st) {
-                st.sizeToScene();
-            }
-        });
+        dlg.getDialogPane().setPrefSize(800, 600);
         dlg.showAndWait();
+        LOG.debug(".showIngressSubscriptionsDialog(): [Exit]");
     }
 
     private void showEgressSubscriptionsDialog(EgressApplicationInterface egress) {
+        LOG.debug(".showEgressSubscriptionsDialog(): [Entry] egress={}", egress);
         String name = null;
-        try { name = egress.getName(); } catch (Exception ignored) {}
+        try { name = egress.getShortName(); } catch (Exception ignored) {}
         if (name == null || name.isBlank()) {
-            try { name = egress.resolveKey(); } catch (Exception ignored) {}
+            try { name = egress.resolveElementInstanceKey(); } catch (Exception ignored) {}
         }
         String title = "Supported Content Filters";
         String header = (name == null || name.isBlank()) ? "Egress Interface" : name;
@@ -380,117 +410,45 @@ public class TopologyTabController {
             }
         });
         dlg.showAndWait();
+        LOG.debug(".showEgressSubscriptionsDialog(): [Exit]");
     }
 
     private void refreshDetails(ApplicationComponent summary) {
-        if (detailsTable == null) return;
-        javafx.collections.ObservableList<KVRow> rows = javafx.collections.FXCollections.observableArrayList();
-        if (summary == null) {
-            rows.add(new KVRow("Info", "No component selected."));
-            detailsTable.setItems(rows);
+        LOG.debug(".refreshDetails(): [Entry]");
+        if (detailsTable == null) {
+            LOG.debug(".refreshDetails(): [Exit] detailsTable is null");
             return;
         }
-        try { rows.add(new KVRow("Name", Objects.toString(summary.getName(), ""))); } catch (Exception ignored) {}
-        try {
-            if (summary.getObjectId() != null && summary.getObjectId().getKeyValue() != null)
-                rows.add(new KVRow("ID", summary.getObjectId().getKeyValue()));
-        } catch (Exception ignored) {}
-        try {
-            if (summary.getObjectId() != null)
-                rows.add(new KVRow("ObjectID", Objects.toString(summary.getObjectId().getName().getValue(), "")));
-        } catch (Exception ignored) {}
-        try { rows.add(new KVRow("Element Type", Objects.toString(summary.getElementType(), ""))); } catch (Exception ignored) {}
-        try { rows.add(new KVRow("Specialization", Objects.toString(summary.getSpecialization(), ""))); } catch (Exception ignored) {}
-        try { rows.add(new KVRow("Documentation", Objects.toString(summary.getDocumentation(), ""))); } catch (Exception ignored) {}
-        try {
-            if (summary.getParent() != null)
-                rows.add(new KVRow("Parent", Objects.toString(summary.getParent().getLocalObjectId().getName().getValue(), "")));
-        } catch (Exception ignored) {}
-        try {
-            int count = summary.getSubComponents() == null ? 0 : summary.getSubComponents().size();
-            rows.add(new KVRow("Subcomponents", Integer.toString(count)));
-        } catch (Exception ignored) {}
-        try {
-            if (summary.getComponentStatus() != null) {
-                rows.add(new KVRow("Status", Objects.toString(summary.getComponentStatus().getComponentStatus(), "")));
-                String desc = summary.getComponentStatus().getComponentStatusDescription();
-                if (desc != null && !desc.isBlank()) rows.add(new KVRow("Status Description", desc));
-                if (summary.getComponentStatus().getStartupInstant() != null)
-                    rows.add(new KVRow("Startup", Objects.toString(summary.getComponentStatus().getStartupInstant(), "")));
-                if (summary.getComponentStatus().getLastActivityInstant() != null)
-                    rows.add(new KVRow("Last Activity", Objects.toString(summary.getComponentStatus().getLastActivityInstant(), "")));
-                if (summary.getComponentStatus().getLastHeartbeatInstant() != null)
-                    rows.add(new KVRow("Last Heartbeat", Objects.toString(summary.getComponentStatus().getLastHeartbeatInstant(), "")));
-            }
-        } catch (Exception ignored) {}
-        detailsTable.setItems(rows);
+        detailsTable.setItems(TopologyUIUtilities.getDetailsRows(summary));
+        LOG.debug(".refreshDetails(): [Exit]");
     }
 
     private void refreshUniqueName(ApplicationComponent summary) {
-        if (uniqueNameTree == null) return;
-        TreeItem<String> root = new TreeItem<>("UniqueName");
-        root.setExpanded(true);
-        try {
-            if (summary == null || summary.getObjectId() == null || summary.getObjectId().getFullyDistinguishedName() == null) {
-                root.getChildren().add(new TreeItem<>("No selection"));
-            } else {
-                java.util.Map<Integer, DistinguishedNameEntry> entries =
-                        summary.getObjectId().getFullyDistinguishedName().getUnqualifiedNameEntries();
-                if (entries == null || entries.isEmpty()) {
-                    root.getChildren().add(new TreeItem<>("<empty>"));
-                } else {
-                    java.util.List<Integer> keys = new java.util.ArrayList<>(entries.keySet());
-                    java.util.Collections.sort(keys);
-                    for (Integer k : keys) {
-                        DistinguishedNameEntry e = entries.get(k);
-                        String qual = e == null ? "" : java.util.Objects.toString(e.getQualifier(), "");
-                        String val = e == null ? "" : java.util.Objects.toString(e.getValue(), "");
-                        TreeItem<String> child = new TreeItem<>(qual + " = " + val);
-                        root.getChildren().add(child);
-                    }
-                }
-            }
-        } catch (Exception ignored) {
-            root.getChildren().add(new TreeItem<>("<error reading UniqueName>"));
+        LOG.debug(".refreshUniqueName(): [Entry]");
+        if (uniqueNameTree == null) {
+            LOG.debug(".refreshUniqueName(): [Exit] uniqueNameTree is null");
+            return;
         }
-        uniqueNameTree.setRoot(root);
+        uniqueNameTree.setRoot(TopologyUIUtilities.getUniqueNameTreeRoot(summary));
+        LOG.debug(".refreshUniqueName(): [Exit]");
     }
 
     private void refreshMetrics(ApplicationComponent summary) {
-        if (metricsTable == null) return;
-        javafx.collections.ObservableList<KVRow> rows = javafx.collections.FXCollections.observableArrayList();
-        if (summary == null) {
-            rows.add(new KVRow("Info", "No component selected."));
-            metricsTable.setItems(rows);
+        LOG.debug(".refreshMetrics(): [Entry]");
+        if (metricsTable == null) {
+            LOG.debug(".refreshMetrics(): [Exit] metricsTable is null");
             return;
         }
-        String id = MainRESTClient.resolveKey(summary);
-        ApplicationComponentMetricsData md = client == null ? null : client.getLatestMetrics(id);
-        if (md == null) {
-            rows.add(new KVRow("Info", "No metrics available for: " + Objects.toString(summary.getName(), id)));
-            metricsTable.setItems(rows);
-            return;
-        }
-        try { rows.add(new KVRow("Component", Objects.toString(md.getParticipantName(), ""))); } catch (Exception ignored) {}
-        try { if (md.getComponentType() != null) rows.add(new KVRow("Type", Objects.toString(md.getComponentType(), ""))); } catch (Exception ignored) {}
-        try { if (md.getComponentStartupInstant() != null) rows.add(new KVRow("Startup", Objects.toString(md.getComponentStartupInstant(), ""))); } catch (Exception ignored) {}
-        try { if (md.getLastActivityInstant() != null) rows.add(new KVRow("Last Activity", Objects.toString(md.getLastActivityInstant(), ""))); } catch (Exception ignored) {}
-        try { if (md.getComponentStatus() != null) rows.add(new KVRow("Status", Objects.toString(md.getComponentStatus(), ""))); } catch (Exception ignored) {}
-        ComponentMessagingStatistics ms = md.getMessagingStatistics();
-        if (ms != null) {
-            rows.add(new KVRow("Messaging", ""));
-            try { rows.add(new KVRow("Ingress", Objects.toString(ms.getIngresMessageCount(), "0"))); } catch (Exception ignored) {}
-            try { rows.add(new KVRow("Egress Attempts", Objects.toString(ms.getEgressMessageAttemptCount(), "0"))); } catch (Exception ignored) {}
-            try { rows.add(new KVRow("Egress Success", Objects.toString(ms.getEgressMessageSuccessCount(), "0"))); } catch (Exception ignored) {}
-            try { rows.add(new KVRow("Egress Failures", Objects.toString(ms.getEgressMessageFailureCount(), "0"))); } catch (Exception ignored) {}
-            try { rows.add(new KVRow("Internal Sent", Objects.toString(ms.getInternalDistributedMessageCount(), "0"))); } catch (Exception ignored) {}
-            try { rows.add(new KVRow("Internal Received", Objects.toString(ms.getInternalReceivedMessageCount(), "0"))); } catch (Exception ignored) {}
-        }
-        metricsTable.setItems(rows);
+        metricsTable.setItems(TopologyUIUtilities.getMetricsRows(summary, client));
+        LOG.debug(".refreshMetrics(): [Exit]");
     }
 
     private void loadRoots() {
-        if (treeView == null) return;
+        LOG.debug(".loadRoots(): [Entry]");
+        if (treeView == null) {
+            LOG.debug(".loadRoots(): [Exit] treeView is null");
+            return;
+        }
         TreeItem<Object> hiddenRoot = new TreeItem<>();
         treeView.setRoot(hiddenRoot);
         List<ApplicationComponent> roots = null;
@@ -501,30 +459,42 @@ public class TopologyTabController {
         }
         if (roots == null) {
             LOG.info("[UI] No components returned (null list)");
+            LOG.debug(".loadRoots(): [Exit] roots is null");
             return;
         }
         LOG.info("[UI] Loaded {} components", roots.size());
         hiddenRoot.getChildren().clear();
         for (ApplicationComponent s : roots) {
+            LOG.trace(".loadRoots(): processing root component={}", s);
             if (s != null) {
                 hiddenRoot.getChildren().add(createTreeItem(s));
             }
         }
+        LOG.debug(".loadRoots(): [Exit]");
     }
 
     private TreeItem<Object> createTreeItem(ApplicationComponent s) {
+        LOG.debug(".createTreeItem(): [Entry] s={}", s);
         TreeItem<Object> item = new TreeItem<>(s);
         // placeholder child to show expansion arrow
         item.getChildren().add(new TreeItem<>());
         item.expandedProperty().addListener((obs, was, is) -> {
             if (is) loadChildrenIfNeeded(item);
         });
+        LOG.debug(".createTreeItem(): [Exit]");
         return item;
     }
 
     private void loadChildrenIfNeeded(TreeItem<Object> parentItem) {
-        if (parentItem == null || !(parentItem.getValue() instanceof ApplicationComponent)) return;
-        if (!hasPlaceholder(parentItem)) return;
+        LOG.debug(".loadChildrenIfNeeded(): [Entry] parentItem={}", parentItem);
+        if (parentItem == null || !(parentItem.getValue() instanceof ApplicationComponent)) {
+            LOG.debug(".loadChildrenIfNeeded(): [Exit] parentItem or value mismatch");
+            return;
+        }
+        if (!hasPlaceholder(parentItem)) {
+            LOG.debug(".loadChildrenIfNeeded(): [Exit] already loaded");
+            return;
+        }
         parentItem.getChildren().clear();
         ApplicationComponent s = (ApplicationComponent) parentItem.getValue();
         String id = MainRESTClient.resolveKey(s);
@@ -535,6 +505,7 @@ public class TopologyTabController {
             LOG.warn("[UI] Failed to fetch subcomponents for {}: {}", id, e.toString());
         }
         if (kids != null) {
+            LOG.trace(".loadChildrenIfNeeded(): kids={}", kids);
             for (ApplicationComponent k : kids) {
                 if (k != null) parentItem.getChildren().add(createTreeItem(k));
             }
@@ -543,6 +514,7 @@ public class TopologyTabController {
         try {
             java.util.List<? extends WUPInterfaceBase> ifaces = client == null ? null : client.listInterfaces(id);
             if (ifaces != null) {
+                LOG.trace(".loadChildrenIfNeeded(): ifaces={}", ifaces);
                 for (Object iface : ifaces) {
                     // Some backends may wrap results in arrays; handle both single and array values
                     if (iface != null && iface.getClass().isArray()) {
@@ -555,7 +527,7 @@ public class TopologyTabController {
                             }
                         }
                     } else if (iface instanceof IngresApplicationInterface ||
-                               iface instanceof EgressApplicationInterface) {
+                            iface instanceof EgressApplicationInterface) {
                         parentItem.getChildren().add(new TreeItem<>(iface));
                     }
                 }
@@ -563,13 +535,18 @@ public class TopologyTabController {
         } catch (Exception e) {
             LOG.warn("[UI] Failed to fetch interfaces for {}: {}", id, e.toString());
         }
+        LOG.debug(".loadChildrenIfNeeded(): [Exit]");
     }
 
     private boolean hasPlaceholder(TreeItem<Object> item) {
-        return item.getChildren().size() == 1 && item.getChildren().get(0).getValue() == null;
+        LOG.debug(".hasPlaceholder(): [Entry]");
+        boolean has = item.getChildren().size() == 1 && item.getChildren().get(0).getValue() == null;
+        LOG.debug(".hasPlaceholder(): [Exit] has={}", has);
+        return has;
     }
 
     private void refreshInterfaceDetails(ApplicationComponent summary) {
+        LOG.debug(".refreshInterfaceDetails(): [Entry]");
         // Prepare empty observable lists
         javafx.collections.ObservableList<KVRow> ingressRows = javafx.collections.FXCollections.observableArrayList();
         javafx.collections.ObservableList<KVRow> egressRows = javafx.collections.FXCollections.observableArrayList();
@@ -616,15 +593,15 @@ public class TopologyTabController {
             int idx = 1;
             for (IngresApplicationInterface ingress : ingressList) {
                 // Section header
-                String header = ingress.getName();
-                if (header == null || header.isBlank()) header = ingress.resolveKey();
+                String header = ingress.getShortName();
+                if (header == null || header.isBlank()) header = ingress.resolveElementInstanceKey();
                 ingressRows.add(new KVRow("Ingress #" + idx, header));
-                try { if (ingress.getObjectId() != null && ingress.getObjectId().getKeyValue() != null) ingressRows.add(new KVRow("ID", ingress.getObjectId().getKeyValue())); } catch (Exception ignored) {}
-                try { if (ingress.getObjectId() != null) ingressRows.add(new KVRow("ObjectID", java.util.Objects.toString(ingress.getObjectId().getName().getValue(), ""))); } catch (Exception ignored) {}
+                try { if (ingress.getElementInstanceId() != null && ingress.getElementInstanceId().resolveKey() != null) ingressRows.add(new KVRow("ID", ingress.getElementInstanceId().resolveKey())); } catch (Exception ignored) {}
+                try { if (ingress.getShortName() != null) ingressRows.add(new KVRow("Name", java.util.Objects.toString(ingress.getShortName(), ""))); } catch (Exception ignored) {}
                 try { ingressRows.add(new KVRow("Element Type", java.util.Objects.toString(ingress.getElementType(), ""))); } catch (Exception ignored) {}
                 try { ingressRows.add(new KVRow("Specialization", java.util.Objects.toString(ingress.getSpecialization(), ""))); } catch (Exception ignored) {}
                 try { ingressRows.add(new KVRow("Documentation", java.util.Objects.toString(ingress.getDocumentation(), ""))); } catch (Exception ignored) {}
-                try { if (ingress.getOwner() != null) ingressRows.add(new KVRow("Parent", java.util.Objects.toString(ingress.getOwner().getLocalObjectId().getName().getValue(), ""))); } catch (Exception ignored) {}
+                try { if (ingress.getOwner() != null) ingressRows.add(new KVRow("Parent", java.util.Objects.toString(ingress.getOwner().getElementIdentifier().getIdentifierValue().getCommonName(), ""))); } catch (Exception ignored) {}
                 try {
                     if (ingress.getComponentStatus() != null) {
                         ingressRows.add(new KVRow("Status", java.util.Objects.toString(ingress.getComponentStatus().getComponentStatus(), "")));
@@ -645,15 +622,23 @@ public class TopologyTabController {
         } else {
             int idx = 1;
             for (EgressApplicationInterface egress : egressList) {
-                String header = egress.getName();
-                if (header == null || header.isBlank()) header = egress.resolveKey();
+                String header = egress.getShortName();
+                if (header == null || header.isBlank()) header = egress.resolveElementInstanceKey();
                 egressRows.add(new KVRow("Egress #" + idx, header));
-                try { if (egress.getObjectId() != null && egress.getObjectId().getKeyValue() != null) egressRows.add(new KVRow("ID", egress.getObjectId().getKeyValue())); } catch (Exception ignored) {}
-                try { if (egress.getObjectId() != null) egressRows.add(new KVRow("ObjectID", Objects.toString(egress.getObjectId().getName().getValue(), ""))); } catch (Exception ignored) {}
+                try {
+                    if (egress.getElementInstanceId() != null && egress.getElementInstanceId().resolveKey() != null) {
+                        egressRows.add(new KVRow("ID", egress.getElementInstanceId().resolveKey()));
+                    }
+                } catch (Exception ignored) {}
+                try {
+                    if (egress.getShortName() != null) {
+                        egressRows.add(new KVRow("Name", Objects.toString(egress.getShortName(), "")));
+                    }
+                } catch (Exception ignored) {}
                 try { egressRows.add(new KVRow("Element Type", java.util.Objects.toString(egress.getElementType(), ""))); } catch (Exception ignored) {}
                 try { egressRows.add(new KVRow("Specialization", java.util.Objects.toString(egress.getSpecialization(), ""))); } catch (Exception ignored) {}
                 try { egressRows.add(new KVRow("Documentation", java.util.Objects.toString(egress.getDocumentation(), ""))); } catch (Exception ignored) {}
-                try { if (egress.getOwner() != null) egressRows.add(new KVRow("Parent", java.util.Objects.toString(egress.getOwner().getLocalObjectId().getFullyDistinguishedName().getCommonName().getValue(), ""))); } catch (Exception ignored) {}
+                try { if (egress.getOwner() != null) egressRows.add(new KVRow("Parent", java.util.Objects.toString(egress.getOwner().getElementIdentifier().getIdentifierValue().getCommonName().getName(), ""))); } catch (Exception ignored) {}
                 try {
                     if (egress.getComponentStatus() != null) {
                         egressRows.add(new KVRow("Status", java.util.Objects.toString(egress.getComponentStatus().getComponentStatus(), "")));
@@ -670,6 +655,30 @@ public class TopologyTabController {
         }
         if (ingressInterfaceTable != null) ingressInterfaceTable.setItems(ingressRows);
         if (egressInterfaceTable != null) egressInterfaceTable.setItems(egressRows);
+        LOG.debug(".refreshInterfaceDetails(): [Exit]");
+    }
+
+    // Row model for Ingress Subscription dialog TableView
+    public static class IngressSubscriptionRow {
+        private final javafx.beans.property.SimpleStringProperty subscription;
+        private final javafx.beans.property.SimpleStringProperty attribute;
+        private final javafx.beans.property.SimpleStringProperty value;
+
+        public IngressSubscriptionRow(String subscription, String attribute, String value) {
+            LOG.debug("IngressSubscriptionRow(): [Entry]");
+            this.subscription = new javafx.beans.property.SimpleStringProperty(subscription);
+            this.attribute = new javafx.beans.property.SimpleStringProperty(attribute);
+            this.value = new javafx.beans.property.SimpleStringProperty(value);
+            LOG.debug("IngressSubscriptionRow(): [Exit]");
+        }
+
+        public String getSubscription() { return subscription.get(); }
+        public String getAttribute() { return attribute.get(); }
+        public String getValue() { return value.get(); }
+
+        public javafx.beans.property.StringProperty subscriptionProperty() { return subscription; }
+        public javafx.beans.property.StringProperty attributeProperty() { return attribute; }
+        public javafx.beans.property.StringProperty valueProperty() { return value; }
     }
 
     // Row model for Supported Content Filters dialog TableView
@@ -685,6 +694,7 @@ public class TopologyTabController {
 
         public ContentFilterRow(String index, String source, String target, String topics, String origin,
                                 String finalDestination, String temporalWindow, String mediaTypes) {
+            LOG.debug("ContentFilterRow(): [Entry]");
             this.index = new javafx.beans.property.SimpleStringProperty(index);
             this.source = new javafx.beans.property.SimpleStringProperty(source);
             this.target = new javafx.beans.property.SimpleStringProperty(target);
@@ -693,6 +703,7 @@ public class TopologyTabController {
             this.finalDestination = new javafx.beans.property.SimpleStringProperty(finalDestination);
             this.temporalWindow = new javafx.beans.property.SimpleStringProperty(temporalWindow);
             this.mediaTypes = new javafx.beans.property.SimpleStringProperty(mediaTypes);
+            LOG.debug("ContentFilterRow(): [Exit]");
         }
 
         public String getIndex() { return index.get(); }

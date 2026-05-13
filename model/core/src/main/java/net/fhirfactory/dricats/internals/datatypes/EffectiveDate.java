@@ -32,7 +32,7 @@ import net.fhirfactory.dricats.common.DateUtility;
 import net.fhirfactory.dricats.deployment.contants.DefaultDeploymentConstants;
 import net.fhirfactory.dricats.internals.common.object.SerialisableObject;
 
-public class EffectiveDate extends SerialisableObject implements Serializable, Comparable<EffectiveDate>{
+public class EffectiveDate implements Serializable, Comparable<EffectiveDate>{
     //
     // Housekeeping
     //
@@ -127,8 +127,6 @@ public class EffectiveDate extends SerialisableObject implements Serializable, C
 		builder.append(effectiveStartDate);
 		builder.append(", effectiveEndDate=");
 		builder.append(effectiveEndDate);
-		builder.append(", id=");
-		builder.append(getObjectId());
 		builder.append("]");
 		return builder.toString();
 	}

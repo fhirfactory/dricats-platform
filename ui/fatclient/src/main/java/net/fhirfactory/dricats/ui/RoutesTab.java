@@ -24,8 +24,9 @@ package net.fhirfactory.dricats.ui;
 import javafx.geometry.Insets;
 import javafx.scene.control.Tab;
 import javafx.scene.layout.BorderPane;
-import net.fhirfactory.dricats.internals.common.id.ObjectId;
-import net.fhirfactory.dricats.internals.common.naming.FullyDistinguishedName;
+import net.fhirfactory.dricats.internals.common.identifiers.ElementIdentifier;
+import net.fhirfactory.dricats.internals.common.identifiers.ElementReference;
+import net.fhirfactory.dricats.internals.common.naming.DistinguishedName;
 import net.fhirfactory.dricats.internals.common.naming.RelativeDistinguishedName;
 import net.fhirfactory.dricats.internals.pathways.Pathway;
 import net.fhirfactory.dricats.internals.pathways.PathwayElement;
@@ -33,8 +34,17 @@ import net.fhirfactory.dricats.internals.pathways.PathwayRoute;
 import net.fhirfactory.dricats.internals.pathways.PathwayRouteSegment;
 import net.fhirfactory.dricats.internals.pathways.valuesets.PathwayRouteSelectionCriteriaEnum;
 import net.fhirfactory.dricats.ui.restclient.MainRESTClient;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
 public class RoutesTab extends Tab {
+    private static final Logger LOG = LoggerFactory.getLogger(RoutesTab.class);
+
     private MainRESTClient client;
 
     // Left: Tree of Pathways -> Segments
@@ -63,11 +73,13 @@ public class RoutesTab extends Tab {
     private javafx.scene.control.Label flowServiceValue;
 
     public RoutesTab() {
-        this("http://localhost:12000");
+        this("http://localhost:12101");
+        LOG.debug("RoutesTab(): [Entry/Exit]");
     }
 
     public RoutesTab(String baseUrl) {
         super("Routes");
+        LOG.debug("RoutesTab(): [Entry] baseUrl={}", baseUrl);
         setClosable(false);
         try {
             javafx.fxml.FXMLLoader loader = new javafx.fxml.FXMLLoader(
@@ -85,9 +97,11 @@ public class RoutesTab extends Tab {
             setContent(buildContent());
             loadPathways();
         }
+        LOG.debug("RoutesTab(): [Exit]");
     }
 
     private BorderPane buildContent() {
+        LOG.debug(".buildContent(): [Entry]");
         // Left: Tree with refresh
         javafx.scene.control.Button refreshBtn = new javafx.scene.control.Button("Refresh");
         refreshBtn.setOnAction(e -> loadPathways());
@@ -189,10 +203,12 @@ public class RoutesTab extends Tab {
         BorderPane pane = new BorderPane();
         pane.setLeft(left);
         pane.setCenter(right);
+        LOG.debug(".buildContent(): [Exit]");
         return pane;
     }
 
     private void onTreeSelectionChanged(Object value){
+        LOG.debug(".onTreeSelectionChanged(): [Entry] value={}", value);
         if(value instanceof SegmentNode s){
             // Update pathway pane using the parent pathway id
             net.fhirfactory.dricats.internals.pathways.Pathway p = client.getPathway(s.pathwayId);
@@ -207,33 +223,43 @@ public class RoutesTab extends Tab {
             clearPathwayDetails();
             clearSegmentDetails();
         }
+        LOG.debug(".onTreeSelectionChanged(): [Exit]");
     }
 
     private void loadPathways(){
-        java.util.List<java.util.Map<String,Object>> list = client.listPathways();
+        LOG.debug(".loadPathways(): [Entry]");
+        List<Pathway> pathwayList = client.listPathways();
+        LOG.info(".loadPathways(): Retrieved List, size -> {}", pathwayList.size());
         javafx.scene.control.TreeItem<Object> root = new javafx.scene.control.TreeItem<>("root");
         root.setExpanded(true);
-        for(java.util.Map<String,Object> m: list){
+        for(Pathway currentPathway: pathwayList){
             try {
-                String id = String.valueOf(m.getOrDefault("id",""));
-                String name = (m.get("name")==null? id : String.valueOf(m.get("name")));
-                String doc = m.get("documentation")==null? "" : String.valueOf(m.get("documentation"));
+                LOG.debug(".loadPathways(): Processing entry: {}", currentPathway);
+                String id = currentPathway.resolveElementInstanceKey();
+                String name = currentPathway.getShortName();
+                String doc = currentPathway.getDocumentation();
+                LOG.info(".loadPathways(): Pathway id={}, name={}", id, name);
+
                 PathwayItem p = new PathwayItem(id, name, doc);
                 javafx.scene.control.TreeItem<Object> pItem = new javafx.scene.control.TreeItem<>(p);
                 // add segment children
                 java.util.Map<Integer, PathwayRoute> segs = client.getPathwaySegments(id);
-                java.util.List<Integer> keys = new java.util.ArrayList<>(segs.keySet());
-                java.util.Collections.sort(keys);
-                for(Integer k: keys){
-                    PathwayRoute seg = segs.get(k);
-                    if(seg!=null){
-                        SegmentNode sn = new SegmentNode(id, k, seg);
-                        pItem.getChildren().add(new javafx.scene.control.TreeItem<>(sn));
+                if (segs != null) {
+                    java.util.List<Integer> keys = new java.util.ArrayList<>(segs.keySet());
+                    java.util.Collections.sort(keys);
+                    for(Integer k: keys){
+                        PathwayRoute seg = segs.get(k);
+                        if(seg!=null){
+                            SegmentNode sn = new SegmentNode(id, k, seg);
+                            pItem.getChildren().add(new javafx.scene.control.TreeItem<>(sn));
+                        }
                     }
                 }
                 pItem.setExpanded(true);
                 root.getChildren().add(pItem);
-            } catch (Exception ignored) {}
+            } catch (Exception e) {
+                LOG.error(".loadPathways(): Failed to process pathway entry", e);
+            }
         }
         treeView.setRoot(root);
         // select first segment if present
@@ -245,9 +271,11 @@ public class RoutesTab extends Tab {
                 }
             }
         }
+        LOG.debug(".loadPathways(): [Exit]");
     }
 
     private void populateSegmentDetails(String pathwayId, Integer index, PathwayRoute seg){
+        LOG.debug(".populateSegmentDetails(): [Entry] pathwayId={}, index={}, seg={}", pathwayId, index, seg);
         segIndexValue.setText(String.valueOf(index));
         // Distribution pattern is defined at the Pathway level in the refactored model
         net.fhirfactory.dricats.internals.pathways.Pathway pathway = client.getPathway(pathwayId);
@@ -259,19 +287,22 @@ public class RoutesTab extends Tab {
         // Populate flows table
         javafx.collections.ObservableList<FlowRow> rows = javafx.collections.FXCollections.observableArrayList();
         if(seg.getRouteSegmentSequence()!=null){
-            java.util.List<Integer> keys = new java.util.ArrayList<>(seg.getRouteSegmentSequence().keySet());
-            java.util.Collections.sort(keys);
+            List<Integer> keys = new ArrayList<>(seg.getRouteSegmentSequence().keySet());
+            Collections.sort(keys);
             for(Integer k: keys){
-                ObjectId pathId = seg.getRouteSegmentSequence().get(k);
+                LOG.trace(".populateSegmentDetails(): key={}", k);
+                ElementReference pathId = seg.getRouteSegmentSequence().get(k);
                 if(pathId==null){ continue; }
-                PathwayRouteSegment path = client.getPathById(pathId);
+                PathwayRouteSegment path = client.getPathById(pathId.getElementInstanceId().resolveKey());
                 if(path==null || path.getPathwayElementSequence()==null){ continue; }
-                java.util.List<Integer> eKeys = new java.util.ArrayList<>(path.getPathwayElementSequence().keySet());
-                java.util.Collections.sort(eKeys);
+                List<Integer> eKeys = new ArrayList<>(path.getPathwayElementSequence().keySet());
+                Collections.sort(eKeys);
                 for(Integer ek: eKeys){
-                    ObjectId flowId = path.getPathwayElementSequence().get(ek);
+                    LOG.trace(".populateSegmentDetails(): eKey={}", ek);
+                    ElementReference flowId = path.getPathwayElementSequence().get(ek);
                     if(flowId==null){ continue; }
-                    PathwayElement flow = client.getFlowById(flowId);
+                    if(flowId.getElementInstanceId() == null){continue;}
+                    PathwayElement flow = client.getFlowById(flowId.getElementInstanceId());
                     if(flow!=null){ rows.add(new FlowRow(flow)); }
                 }
             }
@@ -282,165 +313,250 @@ public class RoutesTab extends Tab {
         } else {
             showFlowDetails(null);
         }
+        LOG.debug(".populateSegmentDetails(): [Exit]");
     }
 
     private void clearSegmentDetails(){
+        LOG.debug(".clearSegmentDetails(): [Entry]");
         segIndexValue.setText("");
         segDistributionValue.setText("");
         segFlowsCountValue.setText("");
         flowsTable.getItems().clear();
         showFlowDetails(null);
+        LOG.debug(".clearSegmentDetails(): [Exit]");
     }
 
     private void showPathwayDetails(net.fhirfactory.dricats.internals.pathways.Pathway p){
+        LOG.debug(".showPathwayDetails(): [Entry] p={}", p);
         if(p==null){
             clearPathwayDetails();
+            LOG.debug(".showPathwayDetails(): [Exit] p is null");
             return;
         }
-        pwIdValue.setText(idToString(p.getObjectId()));
-        pwNameValue.setText(nz(p.getName()));
+        pwIdValue.setText(idToString(p.getIdentifier()));
+        pwNameValue.setText(nz(p.getShortName()));
         pwDocValue.setText(nz(p.getDocumentation()));
         pwDistributionValue.setText(p.getRouteSelectionCriteria()==null? "" : p.getRouteSelectionCriteria().name());
         int routesCount = (p.getPossiblePathwayRoutes()==null)? 0 : p.getPossiblePathwayRoutes().size();
         pwRoutesCountValue.setText(String.valueOf(routesCount));
+        LOG.debug(".showPathwayDetails(): [Exit]");
     }
 
     private void clearPathwayDetails(){
+        LOG.debug(".clearPathwayDetails(): [Entry]");
         pwIdValue.setText("");
         pwNameValue.setText("");
         pwDocValue.setText("");
         pwDistributionValue.setText("");
         pwRoutesCountValue.setText("");
+        LOG.debug(".clearPathwayDetails(): [Exit]");
     }
 
     private void showFlowDetails(PathwayElement flow){
+        LOG.debug(".showFlowDetails(): [Entry] flow={}", flow);
         if(flow==null){
             flowNameValue.setText("");
             flowDocValue.setText("");
             flowSourceValue.setText("");
             flowTargetValue.setText("");
             flowServiceValue.setText("");
+            LOG.debug(".showFlowDetails(): [Exit] flow is null");
             return;
         }
-        flowNameValue.setText(nz(flow.getName()));
+        flowNameValue.setText(nz(flow.getShortName()));
         flowDocValue.setText(nz(flow.getDocumentation()));
-        flowSourceValue.setText(idToString(flow.getSource().getLocalObjectId()));
-        flowTargetValue.setText(idToString(flow.getTarget().getLocalObjectId()));
-        flowServiceValue.setText(idToString(flow.getUtilisedApplicationService().getLocalObjectId()));
+        flowSourceValue.setText(idToString(flow.getSource().getElementIdentifier()));
+        flowTargetValue.setText(idToString(flow.getTarget().getElementIdentifier()));
+        if(flow.getUtilisedApplicationService() == null){
+            flowServiceValue.setText("");
+        } else {
+            flowServiceValue.setText(idToString(flow.getUtilisedApplicationService().getElementIdentifier()));
+        }
+        LOG.debug(".showFlowDetails(): [Exit]");
     }
 
-    private static String idToString(ObjectId id){
-        if(id==null){ return ""; }
-        try { return String.valueOf(id.getKeyValue()); } catch (Throwable t){ return String.valueOf(id); }
+    private static String idToString(ElementIdentifier id){
+        LOG.debug(".idToString(): [Entry] id={}", id);
+        if(id==null){
+            LOG.debug(".idToString(): [Exit] id is null");
+            return "";
+        }
+        try {
+            String s = String.valueOf(id.getIdentifierValue().getCommonName().getName());
+            LOG.debug(".idToString(): [Exit] s={}", s);
+            return s;
+        } catch (Throwable t){
+            String s = String.valueOf(id);
+            LOG.debug(".idToString(): [Exit] fallback s={}", s);
+            return s;
+        }
     }
 
-    private static String nz(String s){ return s==null? "" : s; }
+    private static String nz(String s){
+        LOG.debug(".nz(): [Entry/Exit] s={}", s);
+        return s==null? "" : s;
+    }
 
     private String selectedPathwayId(){
+        LOG.debug(".selectedPathwayId(): [Entry]");
         javafx.scene.control.TreeItem<Object> item = treeView.getSelectionModel().getSelectedItem();
-        if(item==null){ return null; }
+        if(item==null){
+            LOG.debug(".selectedPathwayId(): [Exit] no selection");
+            return null;
+        }
         Object v = item.getValue();
-        if(v instanceof SegmentNode s){ return s.pathwayId; }
-        if(v instanceof PathwayItem p){ return p.id; }
+        if(v instanceof SegmentNode s){
+            LOG.debug(".selectedPathwayId(): [Exit] pathwayId={}", s.pathwayId);
+            return s.pathwayId;
+        }
+        if(v instanceof PathwayItem p){
+            LOG.debug(".selectedPathwayId(): [Exit] id={}", p.id);
+            return p.id;
+        }
+        LOG.debug(".selectedPathwayId(): [Exit] unknown type");
         return null;
     }
 
-    private static String resolveRestKey(ObjectId id){
-        if(id==null){ return null; }
-        try{ return id.getKeyValue(); } catch (Exception e){ return null; }
-    }
-
     private void onCreatePathway(){
+        LOG.debug(".onCreatePathway(): [Entry]");
         javafx.scene.control.TextInputDialog nameDlg = new javafx.scene.control.TextInputDialog("");
         nameDlg.setTitle("New Pathway");
         nameDlg.setHeaderText("Enter a name for the new Pathway");
         nameDlg.setContentText("Name:");
         java.util.Optional<String> nameRes = nameDlg.showAndWait();
-        if(nameRes.isEmpty() || nameRes.get().isBlank()){ return; }
+        if(nameRes.isEmpty() || nameRes.get().isBlank()){
+            LOG.debug(".onCreatePathway(): [Exit] no name");
+            return;
+        }
         String name = nameRes.get().trim();
+        LOG.trace(".onCreatePathway(): name={}", name);
 
         javafx.scene.control.TextInputDialog docDlg = new javafx.scene.control.TextInputDialog("");
         docDlg.setTitle("New Pathway");
         docDlg.setHeaderText("Optional documentation");
         docDlg.setContentText("Documentation:");
         String documentation = docDlg.showAndWait().orElse("");
+        LOG.trace(".onCreatePathway(): documentation={}", documentation);
 
         Pathway p = new Pathway();
-        p.setName(name);
+        p.setShortName(name);
         p.setDocumentation(documentation);
         // default selection criteria
         p.setRouteSelectionCriteria(PathwayRouteSelectionCriteriaEnum.DISTRIBUTE_RANDOM);
-        FullyDistinguishedName qn = new FullyDistinguishedName();
+        DistinguishedName qn = new DistinguishedName();
         qn.appendUnqualifiedName(new RelativeDistinguishedName("Pathway", name));
-        p.setObjectId(new ObjectId(qn));
+        ElementIdentifier id = new ElementIdentifier(qn);
+        p.setIdentifier(id);
         Pathway created = client.createPathway(p);
+        LOG.trace(".onCreatePathway(): created={}", created);
         loadPathways();
         // Try to select created pathway
-        if(created!=null){ selectPathway(resolveRestKey(created.getObjectId())); }
+        if(created!=null){ selectPathway(created.resolveElementInstanceKey()); }
+        LOG.debug(".onCreatePathway(): [Exit]");
     }
 
     private void onCreateRoute(){
+        LOG.debug(".onCreateRoute(): [Entry]");
         String pwId = selectedPathwayId();
-        if(pwId==null){ return; }
+        if(pwId==null){
+            LOG.debug(".onCreateRoute(): [Exit] no pathway selected");
+            return;
+        }
+        LOG.trace(".onCreateRoute(): pwId={}", pwId);
         javafx.scene.control.TextInputDialog segDlg = new javafx.scene.control.TextInputDialog("StepA-StepB-StepC");
         segDlg.setTitle("New Pathway Route");
         segDlg.setHeaderText("Enter a label for the new Pathway Route (e.g., A-B-C)");
         segDlg.setContentText("Label:");
         java.util.Optional<String> res = segDlg.showAndWait();
-        if(res.isEmpty() || res.get().isBlank()){ return; }
+        if(res.isEmpty() || res.get().isBlank()){
+            LOG.debug(".onCreateRoute(): [Exit] no label");
+            return;
+        }
         String label = res.get().trim();
+        LOG.trace(".onCreateRoute(): label={}", label);
         // Build route with ID based on parent pathway qualified name
         Pathway parent = client.getPathway(pwId);
-        if(parent==null || parent.getObjectId()==null){ return; }
-        FullyDistinguishedName rq = new FullyDistinguishedName(parent.getObjectId().getFullyDistinguishedName());
+        if(parent==null || parent.getIdentifier()==null){
+            LOG.debug(".onCreateRoute(): [Exit] parent or identifier null");
+            return;
+        }
+        DistinguishedName rq = new DistinguishedName(parent.getIdentifier().getIdentifierValue());
         rq.appendUnqualifiedName(new RelativeDistinguishedName("Segment", label));
         PathwayRoute route = new PathwayRoute();
-        route.setObjectId(new ObjectId(rq));
+        route.setShortName(label);
+        ElementIdentifier id = new ElementIdentifier(rq);
+        route.setIdentifier(id);
         PathwayRoute created = client.createPathwayRoute(pwId, route);
+        LOG.trace(".onCreateRoute(): created={}", created);
         loadPathways();
         if(created!=null){ selectPathway(pwId); }
+        LOG.debug(".onCreateRoute(): [Exit]");
     }
 
     private void onCreateSegment(){
+        LOG.debug(".onCreateSegment(): [Entry]");
         javafx.scene.control.TreeItem<Object> item = treeView.getSelectionModel().getSelectedItem();
-        if(item==null || !(item.getValue() instanceof SegmentNode)) { return; }
+        if(item==null || !(item.getValue() instanceof SegmentNode)) {
+            LOG.debug(".onCreateSegment(): [Exit] no route selected");
+            return;
+        }
         SegmentNode sn = (SegmentNode) item.getValue();
+        LOG.trace(".onCreateSegment(): sn={}", sn);
         PathwayRoute route = sn.segment;
         java.util.List<PathwayElement> allElements = client.listPathwayElements();
         SegmentEditorDialog dlg = new SegmentEditorDialog(allElements, null);
         java.util.Optional<SegmentEditorDialog.Result> res = dlg.showAndWait();
-        if(res.isEmpty()){ return; }
+        if(res.isEmpty()){
+            LOG.debug(".onCreateSegment(): [Exit] cancelled");
+            return;
+        }
         SegmentEditorDialog.Result r = res.get();
+        LOG.trace(".onCreateSegment(): result={}", r);
         // Build segment
-        FullyDistinguishedName base = new FullyDistinguishedName(route.getObjectId().getFullyDistinguishedName());
+        DistinguishedName base = new DistinguishedName(route.getIdentifier().getIdentifierValue());
         String label = r.label==null||r.label.isBlank()? ("Path-"+System.currentTimeMillis()) : r.label.trim();
         base.appendUnqualifiedName(new RelativeDistinguishedName("Path", label));
         PathwayRouteSegment seg = new PathwayRouteSegment();
-        seg.setObjectId(new ObjectId(base));
+        seg.setShortName(label);
+        ElementIdentifier id = new ElementIdentifier(base);
+        seg.setIdentifier(id);
         int i=1;
         for(PathwayElement pe : r.ordered){
-            if(pe!=null && pe.getObjectId()!=null){ seg.getPathwayElementSequence().put(i++, pe.getObjectId()); }
+            LOG.trace(".onCreateSegment(): adding pe={}", pe);
+            if(pe!=null && pe.getIdentifier()!=null){ seg.getPathwayElementSequence().put(i++, pe.getReference()); }
         }
         PathwayRouteSegment saved = client.updatePathwayRouteSegment(seg);
-        if(saved==null){ return; }
+        if(saved==null){
+            LOG.debug(".onCreateSegment(): [Exit] save failed");
+            return;
+        }
         // Update parent route to include this segment
         if(route.getRouteSegmentSequence()==null){ route.setRouteSegmentSequence(new java.util.LinkedHashMap<>()); }
         int next = 1;
         if(!route.getRouteSegmentSequence().isEmpty()){
             next = new java.util.ArrayList<>(route.getRouteSegmentSequence().keySet()).stream().max(Integer::compareTo).orElse(0) + 1;
         }
-        route.getRouteSegmentSequence().put(next, saved.getObjectId());
+        route.getRouteSegmentSequence().put(next, saved.getReference());
         client.updatePathwayRoute(route);
         loadPathways();
         selectPathway(sn.pathwayId);
+        LOG.debug(".onCreateSegment(): [Exit]");
     }
 
     private void onEditSegment(){
+        LOG.debug(".onEditSegment(): [Entry]");
         javafx.scene.control.TreeItem<Object> item = treeView.getSelectionModel().getSelectedItem();
-        if(item==null || !(item.getValue() instanceof SegmentNode)) { return; }
+        if(item==null || !(item.getValue() instanceof SegmentNode)) {
+            LOG.debug(".onEditSegment(): [Exit] no segment selected");
+            return;
+        }
         SegmentNode sn = (SegmentNode) item.getValue();
+        LOG.trace(".onEditSegment(): sn={}", sn);
         PathwayRoute route = sn.segment;
-        if(route.getRouteSegmentSequence()==null || route.getRouteSegmentSequence().isEmpty()){ return; }
+        if(route.getRouteSegmentSequence()==null || route.getRouteSegmentSequence().isEmpty()){
+            LOG.debug(".onEditSegment(): [Exit] route sequence empty");
+            return;
+        }
         // Choose which segment
         java.util.List<Integer> keys = new java.util.ArrayList<>(route.getRouteSegmentSequence().keySet());
         java.util.Collections.sort(keys);
@@ -451,77 +567,116 @@ public class RoutesTab extends Tab {
             choice.setHeaderText("Select segment index to edit");
             choice.setContentText("Index:");
             java.util.Optional<Integer> c = choice.showAndWait();
-            if(c.isEmpty()){ return; }
+            if(c.isEmpty()){
+                LOG.debug(".onEditSegment(): [Exit] no choice");
+                return;
+            }
             chosenKey = c.get();
         }
-        ObjectId segId = route.getRouteSegmentSequence().get(chosenKey);
-        PathwayRouteSegment existing = client.getPathById(segId);
+        LOG.trace(".onEditSegment(): chosenKey={}", chosenKey);
+        ElementReference segId = route.getRouteSegmentSequence().get(chosenKey);
+        PathwayRouteSegment existing = client.getPathById(segId.getElementInstanceId());
         java.util.List<PathwayElement> allElements = client.listPathwayElements();
         SegmentEditorDialog dlg = new SegmentEditorDialog(allElements, existing);
         java.util.Optional<SegmentEditorDialog.Result> res = dlg.showAndWait();
-        if(res.isEmpty()){ return; }
+        if(res.isEmpty()){
+            LOG.debug(".onEditSegment(): [Exit] cancelled");
+            return;
+        }
         SegmentEditorDialog.Result r = res.get();
+        LOG.trace(".onEditSegment(): result={}", r);
         // Update existing object (may change name/doc/elements; keep same ObjectID unless label changed)
-        FullyDistinguishedName qn = new FullyDistinguishedName(existing.getObjectId().getFullyDistinguishedName());
+        DistinguishedName qn = new DistinguishedName(existing.getIdentifier().getIdentifierValue());
         if(r.label!=null && !r.label.isBlank()){
             // Rebuild tail to use provided label
             // Remove last component by reconstructing from route base and appending Path/label
-            FullyDistinguishedName base = new FullyDistinguishedName(route.getObjectId().getFullyDistinguishedName());
+            DistinguishedName base = new DistinguishedName(route.getIdentifier().getIdentifierValue());
             base.appendUnqualifiedName(new RelativeDistinguishedName("Path", r.label.trim()));
-            existing.setObjectId(new ObjectId(base));
+            ElementIdentifier newIdentifier = new ElementIdentifier(base);
+            existing.setIdentifier(newIdentifier);
         }
         existing.getPathwayElementSequence().clear();
-        int i=1; for(PathwayElement pe : r.ordered){ if(pe!=null && pe.getObjectId()!=null){ existing.getPathwayElementSequence().put(i++, pe.getObjectId()); } }
+        int i=1;
+        for(PathwayElement pe : r.ordered){
+            LOG.trace(".onEditSegment(): adding pe={}", pe);
+            if(pe!=null && pe.getElementInstanceId()!=null){ existing.getPathwayElementSequence().put(i++, pe.getReference()); }
+        }
         PathwayRouteSegment saved = client.updatePathwayRouteSegment(existing);
-        if(saved==null){ return; }
+        if(saved==null){
+            LOG.debug(".onEditSegment(): [Exit] save failed");
+            return;
+        }
         // If ID changed, update reference in route
-        String newKey = resolveRestKey(saved.getObjectId());
-        String oldKey = resolveRestKey(segId);
+        String newKey = saved.resolveElementInstanceKey();
+        String oldKey = segId.getElementInstanceId().resolveKey();
         if(newKey!=null && oldKey!=null && !newKey.equals(oldKey)){
-            route.getRouteSegmentSequence().put(chosenKey, saved.getObjectId());
+            LOG.trace(".onEditSegment(): key changed, updating route");
+            route.getRouteSegmentSequence().put(chosenKey, saved.getReference());
             client.updatePathwayRoute(route);
         }
         loadPathways();
         selectPathway(sn.pathwayId);
+        LOG.debug(".onEditSegment(): [Exit]");
     }
 
     private void onDeleteSelected(){
+        LOG.debug(".onDeleteSelected(): [Entry]");
         javafx.scene.control.TreeItem<Object> item = treeView.getSelectionModel().getSelectedItem();
-        if(item==null){ return; }
+        if(item==null){
+            LOG.debug(".onDeleteSelected(): [Exit] no selection");
+            return;
+        }
         Object v = item.getValue();
+        LOG.trace(".onDeleteSelected(): v={}", v);
         if(v instanceof PathwayItem p){
             client.deletePathway(p.id);
             loadPathways();
         } else if (v instanceof SegmentNode s){
-            String key = resolveRestKey(s.segment.getObjectId());
+            String key = s.segment.resolveElementInstanceKey();
             if(key!=null){ client.deletePathwayRoute(key); }
             loadPathways();
             selectPathway(s.pathwayId);
         }
+        LOG.debug(".onDeleteSelected(): [Exit]");
     }
 
     private void selectPathway(String id){
-        if(treeView.getRoot()==null){ return; }
+        LOG.debug(".selectPathway(): [Entry] id={}", id);
+        if(treeView.getRoot()==null){
+            LOG.debug(".selectPathway(): [Exit] no root");
+            return;
+        }
         for(javafx.scene.control.TreeItem<Object> pItem : treeView.getRoot().getChildren()){
             Object v = pItem.getValue();
             if(v instanceof PathwayItem p && p.id.equals(id)){
+                LOG.trace(".selectPathway(): selecting pItem={}", pItem);
                 treeView.getSelectionModel().select(pItem);
                 treeView.scrollTo(treeView.getRow(pItem));
+                LOG.debug(".selectPathway(): [Exit]");
                 return;
             }
         }
+        LOG.debug(".selectPathway(): [Exit] not found");
     }
 
     // Model wrappers for tree/table
     private static class PathwayItem {
         final String id; final String name; final String documentation;
-        PathwayItem(String id, String name, String documentation){ this.id=id; this.name=name; this.documentation=documentation; }
+        PathwayItem(String id, String name, String documentation){
+            LOG.debug("PathwayItem(): [Entry]");
+            this.id=id; this.name=name; this.documentation=documentation;
+            LOG.debug("PathwayItem(): [Exit]");
+        }
         @Override public String toString(){ return name==null||name.isBlank()? id : name; }
     }
 
     private static class SegmentNode {
         final String pathwayId; final Integer index; final PathwayRoute segment;
-        SegmentNode(String pathwayId, Integer index, PathwayRoute segment){ this.pathwayId=pathwayId; this.index=index; this.segment=segment; }
+        SegmentNode(String pathwayId, Integer index, PathwayRoute segment){
+            LOG.debug("SegmentNode(): [Entry]");
+            this.pathwayId=pathwayId; this.index=index; this.segment=segment;
+            LOG.debug("SegmentNode(): [Exit]");
+        }
         @Override public String toString(){ return "Pathway Route "+index; }
     }
 
@@ -531,12 +686,18 @@ public class RoutesTab extends Tab {
         private final javafx.beans.property.SimpleStringProperty source = new javafx.beans.property.SimpleStringProperty("");
         private final javafx.beans.property.SimpleStringProperty target = new javafx.beans.property.SimpleStringProperty("");
         private final javafx.beans.property.SimpleStringProperty service = new javafx.beans.property.SimpleStringProperty("");
-        FlowRow(PathwayElement flow){
+        FlowRow(PathwayElement flow) {
+            LOG.debug("FlowRow(): [Entry] flow={}", flow);
             this.flow = flow;
-            this.name.set(nz(flow.getName()));
-            this.source.set(idToString(flow.getSource().getLocalObjectId()));
-            this.target.set(idToString(flow.getTarget().getLocalObjectId()));
-            this.service.set(idToString(flow.getUtilisedApplicationService().getLocalObjectId()));
+            this.name.set(nz(flow.getShortName()));
+            this.source.set(idToString(flow.getSource().getElementIdentifier()));
+            this.target.set(idToString(flow.getTarget().getElementIdentifier()));
+            if (flow.getUtilisedApplicationService() != null) {
+                this.service.set(idToString(flow.getUtilisedApplicationService().getElementIdentifier()));
+            } else {
+                this.service.set("");
+            }
+            LOG.debug("FlowRow(): [Exit]");
         }
         public javafx.beans.property.StringProperty nameProperty(){ return name; }
         public javafx.beans.property.StringProperty sourceProperty(){ return source; }
@@ -554,11 +715,14 @@ public class RoutesTab extends Tab {
             final String label;
             final java.util.List<PathwayElement> ordered;
             Result(String label, java.util.List<PathwayElement> ordered){
+                LOG.debug("SegmentEditorDialog.Result(): [Entry]");
                 this.label = label; this.ordered = ordered;
+                LOG.debug("SegmentEditorDialog.Result(): [Exit]");
             }
         }
 
         SegmentEditorDialog(java.util.List<PathwayElement> allElements, PathwayRouteSegment existing){
+            LOG.debug("SegmentEditorDialog(): [Entry] existing={}", existing);
             setTitle(existing==null? "New Pathway Route Segment" : "Edit Pathway Route Segment");
             getDialogPane().getButtonTypes().addAll(javafx.scene.control.ButtonType.OK, javafx.scene.control.ButtonType.CANCEL);
 
@@ -566,7 +730,7 @@ public class RoutesTab extends Tab {
             availableList.setCellFactory(lv -> new javafx.scene.control.ListCell<>(){
                 @Override protected void updateItem(PathwayElement item, boolean empty){
                     super.updateItem(item, empty);
-                    if(empty || item==null){ setText(null); } else { setText(nz(item.getName())); }
+                    if(empty || item==null){ setText(null); } else { setText(nz(item.getShortName())); }
                 }
             });
             selectedList.setCellFactory(availableList.getCellFactory());
@@ -615,7 +779,7 @@ public class RoutesTab extends Tab {
             if(existing!=null){
                 // Try to infer label from last segment of QualifiedName
                 try {
-                    String last = existing.getObjectId().getFullyDistinguishedName().getCommonName().getValue();
+                    String last = existing.getIdentifier().getIdentifierValue().getCommonName().getName();
                     labelField.setText(last);
                 } catch (Exception ignored) {}
                 // Preselect elements in order
@@ -624,12 +788,12 @@ public class RoutesTab extends Tab {
                     java.util.Collections.sort(keys);
                     for(Integer k: keys){
                         // lookup by id among allElements
-                        ObjectId oid = existing.getPathwayElementSequence().get(k);
+                        ElementReference oid = existing.getPathwayElementSequence().get(k);
                         if(oid==null) continue;
                         for(PathwayElement pe: allElements){
                             try{
-                                String a = resolveRestKey(pe.getObjectId());
-                                String b = resolveRestKey(oid);
+                                String a = pe.resolveElementInstanceKey();
+                                String b = oid.getElementInstanceId().resolveKey();
                                 if(a!=null && a.equals(b)){ selectedList.getItems().add(pe); break; }
                             } catch (Exception ignored) {}
                         }
@@ -647,13 +811,21 @@ public class RoutesTab extends Tab {
         }
 
         private void moveSelected(int delta){
+            LOG.debug(".moveSelected(): [Entry] delta={}", delta);
             int idx = selectedList.getSelectionModel().getSelectedIndex();
-            if(idx<0) return;
+            if(idx<0) {
+                LOG.debug(".moveSelected(): [Exit] no selection");
+                return;
+            }
             int newIdx = idx + delta;
-            if(newIdx<0 || newIdx>= selectedList.getItems().size()) return;
+            if(newIdx<0 || newIdx>= selectedList.getItems().size()) {
+                LOG.debug(".moveSelected(): [Exit] out of bounds");
+                return;
+            }
             PathwayElement item = selectedList.getItems().remove(idx);
             selectedList.getItems().add(newIdx, item);
             selectedList.getSelectionModel().select(newIdx);
+            LOG.debug(".moveSelected(): [Exit]");
         }
     }
 }

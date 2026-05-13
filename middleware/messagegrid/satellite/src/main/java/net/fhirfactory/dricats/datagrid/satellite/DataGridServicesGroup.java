@@ -24,8 +24,8 @@ package net.fhirfactory.dricats.datagrid.satellite;
 import jakarta.annotation.PostConstruct;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-import net.fhirfactory.dricats.internals.common.id.ObjectId;
-import net.fhirfactory.dricats.internals.common.naming.FullyDistinguishedName;
+import net.fhirfactory.dricats.internals.common.identifiers.ElementIdentifier;
+import net.fhirfactory.dricats.internals.common.naming.DistinguishedName;
 import net.fhirfactory.dricats.internals.common.naming.RelativeDistinguishedName;
 import net.fhirfactory.dricats.internals.topology.implementation.layers.application.valuesets.ApplicationComponentSpecialisationEnum;
 import net.fhirfactory.dricats.internals.topology.interfaces.ISubsystem;
@@ -69,12 +69,13 @@ public class DataGridServicesGroup extends ApplicationComponent implements Seria
     public void initialisation(){
         getLogger().debug(".initialisation(): Entry");
         getLogger().info(".initialisation(): [Resolve DistributableObjectId] Start");
-        ObjectId subsystemId = getSubsystem().getSubsystem().getObjectId();
-        FullyDistinguishedName subsystemQualifiedName = subsystemId.getFullyDistinguishedName();
-        FullyDistinguishedName myQualifiedName = new FullyDistinguishedName(subsystemQualifiedName);
+        ElementIdentifier subsystemId = getSubsystem().getSubsystem().getIdentifier();
+        DistinguishedName subsystemQualifiedName = subsystemId.getIdentifierValue();
+        DistinguishedName myQualifiedName = new DistinguishedName(subsystemQualifiedName);
         myQualifiedName.appendUnqualifiedName(new RelativeDistinguishedName(ApplicationComponentSpecialisationEnum.SUBSYSTEM_APPLICATION_WORK_UNIT_PROCESSOR_GROUP.getType(), "DataGrid"));
-        ObjectId myId = new ObjectId(myQualifiedName);
-        setObjectId(myId);
+        ElementIdentifier myId = new ElementIdentifier(myQualifiedName);
+        setIdentifier(myId);
+        setShortName(myQualifiedName.getUnqualifiedName().getValue());
         getLogger().info(".initialisation(): [Resolve DistributableObjectId] End");
         getLogger().debug(".initialisation(): Exit");
     }
@@ -86,5 +87,9 @@ public class DataGridServicesGroup extends ApplicationComponent implements Seria
 
     protected ISubsystem getSubsystem() {
         return subsystem;
+    }
+
+    protected Logger getLogger() {
+        return LOG;
     }
 }

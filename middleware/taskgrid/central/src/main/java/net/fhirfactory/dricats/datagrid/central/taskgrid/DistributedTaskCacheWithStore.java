@@ -181,7 +181,7 @@ public class DistributedTaskCacheWithStore {
             LOG.warn("put(InternalTask): task is null, ignoring");
             return;
         }
-        String key = task.resolveKey();
+        String key = task.resolveElementInstanceKey();
         taskCache.put(key, task);
         persistence().ifPresent(p -> {
             try {

@@ -25,9 +25,9 @@ import jakarta.annotation.Priority;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.Alternative;
 import net.fhirfactory.dricats.datagrid.central.taskgrid.spi.ITaskPersistenceService;
-import net.fhirfactory.dricats.internals.common.id.ObjectId;
-import net.fhirfactory.dricats.internals.common.id.ObjectKey;
-import net.fhirfactory.dricats.internals.common.naming.FullyDistinguishedName;
+import net.fhirfactory.dricats.internals.common.id.ElementInstanceId;
+import net.fhirfactory.dricats.internals.common.identifiers.ElementIdentifier;
+import net.fhirfactory.dricats.internals.common.naming.DistinguishedName;
 import net.fhirfactory.dricats.internals.common.naming.RelativeDistinguishedName;
 import net.fhirfactory.dricats.internals.common.naming.datatypes.DistinguishedNameEntry;
 import net.fhirfactory.dricats.internals.datatypes.EffectiveDate;
@@ -158,25 +158,23 @@ public class H2TaskPersistenceService implements ITaskPersistenceService {
             }
 
             InternalTask t = new InternalTask();
-            // Build ObjectId
-
-            FullyDistinguishedName qn = new FullyDistinguishedName();
+            // Build DistinguishedName
+            DistinguishedName qn = new DistinguishedName();
             for (DistinguishedNameEntry p : parts) {
                 RelativeDistinguishedName u = new RelativeDistinguishedName(p.getQualifier(), p.getValue());
                 qn.appendUnqualifiedName(u);
             }
-            ObjectId oid = new ObjectId(qn);
-            ObjectKey token = new ObjectKey();
+            ElementIdentifier id = new ElementIdentifier(qn);
+            t.setIdentifier(id);
+
+            ElementInstanceId token = new ElementInstanceId();
             token.fromHexId(idValue);
-            oid.setUpperBits(token.getUpperBits());
-            oid.setLowerBits(token.getLowerBits());
-            oid.setVersion(token.getVersion());
-            
+            t.setElementInstanceId(token);
+
             EffectiveDate ed = new EffectiveDate();
             if (effStart != null) ed.setEffectiveStartDate(effStart);
             if (effEnd != null) ed.setEffectiveEndDate(effEnd);
-            oid.setEffectivePeriod(ed);
-            t.setObjectId(oid);
+            t.getMetadata().setEffectiveDate(ed);
 
             c.commit();
             return Optional.of(t);
@@ -193,7 +191,7 @@ public class H2TaskPersistenceService implements ITaskPersistenceService {
         try (Connection c = DriverManager.getConnection(jdbcUrl(), jdbcUser(), jdbcPass())) {
             c.setAutoCommit(false);
             // Upsert TASK
-            String idVal = task.resolveKey();
+            String idVal = task.resolveElementInstanceKey();
 
             try (PreparedStatement up = c.prepareStatement("MERGE INTO TASK(task_key, id_value) KEY(task_key) VALUES(?,?)")) {
                 up.setString(1, key);
@@ -204,15 +202,16 @@ public class H2TaskPersistenceService implements ITaskPersistenceService {
             // Upsert OBJECT_ID
             LocalDateTime es = null; LocalDateTime ee = null; List<DistinguishedNameEntry> parts = new ArrayList<>();
             try {
-                ObjectId oid = task.getObjectId();
+                ElementInstanceId oid = task.getElementInstanceId();
                 if (oid != null) {
-                    if (oid.getEffectivePeriod() != null) {
-                        es = oid.getEffectivePeriod().getEffectiveStartDate();
-                        ee = oid.getEffectivePeriod().getEffectiveEndDate();
+                    EffectiveDate ed = task.getMetadata().getEffectiveDate();
+                    if (ed != null) {
+                        es = ed.getEffectiveStartDate();
+                        ee = ed.getEffectiveEndDate();
                     }
-                    if (oid.getFullyDistinguishedName() != null) {
-                        Map<Integer, DistinguishedNameEntry> m = oid.getFullyDistinguishedName().getUnqualifiedNameEntries();
-                        for (int i = 0; i < oid.getFullyDistinguishedName().getRelativeDNCount(); i++) {
+                    if (task.getIdentifier() != null) {
+                        Map<Integer, DistinguishedNameEntry> m = task.getIdentifier().getIdentifierValue().getUnqualifiedNameEntries();
+                        for (int i = 0; i < task.getIdentifier().getIdentifierValue().getRelativeDNCount(); i++) {
                             DistinguishedNameEntry e = m.get(i);
                             if (e != null) parts.add(e);
                         }

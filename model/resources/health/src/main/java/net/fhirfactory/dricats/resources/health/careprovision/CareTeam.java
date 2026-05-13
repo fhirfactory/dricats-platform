@@ -115,14 +115,15 @@ public class CareTeam extends Team implements Serializable {
                 .add("reasonReference='" + getReasonReference() + "'")
                 .add("category='" + getCategory() + "'")
                 .add("subject=" + getSubject())
-                .add("name='" + getName() + "'")
+                .add("name='" + getShortName() + "'")
+                .add("identifier=" + getIdentifier())
                 .add("type='" + getType() + "'")
                 .add("contact=" + getContact())
                 .add("members=" + getMembers())
-                .add("localId=" + getObjectId())
+                .add("localId=" + getElementInstanceId())
                 .add("securityLabels=" + getSecurityLabels())
                 .add("metadata=" + getMetadata())
-                .add("id=" + getObjectId())
+                .add("id=" + getElementInstanceId())
                 .toString();
     }
 

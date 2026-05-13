@@ -25,8 +25,9 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import net.fhirfactory.dricats.common.DateUtility;
 import net.fhirfactory.dricats.deployment.contants.DefaultDeploymentConstants;
+import net.fhirfactory.dricats.internals.common.id.ElementInstanceId;
+import net.fhirfactory.dricats.internals.common.naming.DistinguishedName;
 import net.fhirfactory.dricats.internals.common.object.SerialisableObject;
-import net.fhirfactory.dricats.internals.common.id.ObjectId;
 import net.fhirfactory.dricats.internals.oam.metrics.datatypes.ComponentMessagingStatistics;
 import net.fhirfactory.dricats.internals.oam.metrics.datatypes.ComponentNotificationStatistics;
 import net.fhirfactory.dricats.internals.oam.metrics.datatypes.ComponentTaskProcessingStatistics;
@@ -51,8 +52,8 @@ public class CommonComponentMetricsData extends SerialisableObject{
 	// Attributes
 	//
 	
-	private ObjectId componentID;
-    private String participantName;
+	private ElementInstanceId componentID;
+    private String participantName; // Application Component Type
     private ApplicationComponentSpecialisationEnum componentType;
     @JsonFormat(pattern = DateUtility.DEFAULT_JSON_FORMAT,  timezone = DefaultDeploymentConstants.DEPLOYMENT_TIMEZONE)
     private Instant lastActivityInstant;
@@ -82,7 +83,7 @@ public class CommonComponentMetricsData extends SerialisableObject{
         this.messagingStatistics = new ComponentMessagingStatistics();
     }
 
-    public CommonComponentMetricsData(ObjectId componentId){
+    public CommonComponentMetricsData(ElementInstanceId componentId){
         this.componentID = componentId;
         this.componentType = null;
         this.lastActivityInstant = null;
@@ -103,11 +104,11 @@ public class CommonComponentMetricsData extends SerialisableObject{
 
 
 
-    public ObjectId getComponentID() {
+    public ElementInstanceId getComponentID() {
         return componentID;
     }
 
-    public void setComponentID(ObjectId componentID) {
+    public void setComponentID(ElementInstanceId componentID) {
         this.componentID = componentID;
     }
 

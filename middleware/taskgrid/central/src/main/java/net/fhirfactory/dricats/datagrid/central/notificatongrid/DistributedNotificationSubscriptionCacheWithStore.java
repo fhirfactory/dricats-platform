@@ -41,7 +41,7 @@ import org.infinispan.notifications.cachelistener.event.CacheEntryEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -167,7 +167,7 @@ public class DistributedNotificationSubscriptionCacheWithStore {
     }
 
     public void put(NotificationSubscription item) {
-        String key = item.resolveKey();
+        String key = item.resolveElementInstanceKey();
         cache.put(key, item);
     }
 

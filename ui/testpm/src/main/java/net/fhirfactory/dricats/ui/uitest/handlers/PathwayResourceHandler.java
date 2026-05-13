@@ -26,7 +26,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import jakarta.annotation.PostConstruct;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-import net.fhirfactory.dricats.internals.common.id.ObjectId;
+import net.fhirfactory.dricats.internals.common.identifiers.ElementReference;
 import net.fhirfactory.dricats.internals.pathways.Pathway;
 import net.fhirfactory.dricats.internals.pathways.PathwayElement;
 import net.fhirfactory.dricats.internals.pathways.PathwayRoute;
@@ -121,6 +121,12 @@ public class PathwayResourceHandler extends BaseHandler {
         }
         Pathway c = getPathwayCacheService().getPathways().get(key);
         if (c == null) {
+            List<Pathway> pathways = getPathwayCacheService().getPathwaysByPathwayIdentifier().get(key);
+            if(pathways != null && !pathways.isEmpty()){
+                c = pathways.get(0);
+            }
+        }
+        if (c == null) {
             LOG.warn(".getPathway(): Pathway not found for key={}", key);
         }
         LOG.debug(".getPathway(): Exit, Returning Pathway --> {}", c);
@@ -136,29 +142,29 @@ public class PathwayResourceHandler extends BaseHandler {
     }
 
     public List<PathwayRoute> getPathwayRoutes(String key) {
-        LOG.debug(".getSegments(): Entry, key -> {}", key);
+        LOG.debug(".getPathwayRoutes(): Entry, key -> {}", key);
 
-        Pathway pathway = getPathwayCacheService().getPathways().get(key);
+        Pathway pathway = getPathway(key);
         if(pathway == null){
-            LOG.warn(".getSegments(): Pathway not found for key={}", key);
+            LOG.warn(".getPathwayRoutes(): Pathway not found for key={}", key);
             return new ArrayList<>();
         }
         List<PathwayRoute> pathwayRoutes = new ArrayList<>();
-        for (ObjectId segId : pathway.getPossiblePathwayRoutes().values()) {
+        for (ElementReference segId : pathway.getPossiblePathwayRoutes().values()) {
             if (segId != null) {
-                PathwayRoute s = getPathwayCacheService().getPathwayRouteByIdToken(segId.getFullyDistinguishedName().getCommonName().getValue());
+                PathwayRoute s = getPathwayCacheService().getPathwayRouteByIdToken(getPathwayCacheService().resolveKeyValue(segId));
                 if (s != null) { pathwayRoutes.add(s); }
             }
         }
-        LOG.debug(".getSegments(): Exit, Returning {} Pathway Segments", pathwayRoutes.size());
+        LOG.debug(".getPathwayRoutes(): Exit, Returning {} Pathway Routes", pathwayRoutes.size());
         return pathwayRoutes;
     }
 
     public String getPathwayRoutesAsJSON(String key){
         LOG.debug(".getPathwayRoutesAsJSON(): Entry, key -> {}", key);
-        List<PathwayRoute> segments = getPathwayRoutes(key);
-        String result = convertToJson(segments);
-        LOG.debug(".getPathwayRoutesAsJSON(): Exit, Returning Pathway --> {}", result);
+        List<PathwayRoute> routes = getPathwayRoutes(key);
+        String result = convertToJson(routes);
+        LOG.debug(".getPathwayRoutesAsJSON(): Exit, Returning PathwayRoutes --> {}", result);
         return (result);
     }
 
@@ -168,6 +174,12 @@ public class PathwayResourceHandler extends BaseHandler {
             getLogger().debug(".getPathwayRoute(): Exit, key is null or blank, returning null");
             return(null); }
         PathwayRoute pathwayRoute= getPathwayCacheService().getPathwayRouteByIdToken(key);
+        if(pathwayRoute == null){
+            List<PathwayRoute> routes = getPathwayCacheService().getPathwaysByPathwayRouteIdentifier().get(key);
+            if(routes != null && !routes.isEmpty()){
+                pathwayRoute = routes.get(0);
+            }
+        }
         getLogger().debug(".getPathwayRoute(): Exit, Returning PathwayRoute --> {}", pathwayRoute);
         return (pathwayRoute) ;
     }
@@ -190,6 +202,12 @@ public class PathwayResourceHandler extends BaseHandler {
             return null;
         }
         PathwayRouteSegment pathwaySegment = getPathwayCacheService().getPathwaySegmentById(key);
+        if(pathwaySegment == null){
+            List<PathwayRouteSegment> segments = getPathwayCacheService().getPathwaysByPathwayRouteSegmentIdentifier().get(key);
+            if(segments != null && !segments.isEmpty()){
+                pathwaySegment = segments.get(0);
+            }
+        }
         getLogger().debug(".getPathwayRouteSegment(): Exit, Returning PathwayRouteSegment --> {}", pathwaySegment);
         return pathwaySegment;
     }
@@ -213,6 +231,12 @@ public class PathwayResourceHandler extends BaseHandler {
             return null;
         }
         PathwayElement pathwayElement = getPathwayCacheService().getPathwayElementById(key);
+        if(pathwayElement == null){
+            List<PathwayElement> elements = getPathwayCacheService().getPathwaysByPathwayElementIdentifier().get(key);
+            if(elements != null && !elements.isEmpty()){
+                pathwayElement = elements.get(0);
+            }
+        }
         getLogger().debug(".getPathwayElement(): Exit, Returning PathwayElement --> {}", pathwayElement);
         return pathwayElement;
     }
@@ -236,8 +260,8 @@ public class PathwayResourceHandler extends BaseHandler {
             ObjectMapper om = new ObjectMapper();
             om.registerModule(new JavaTimeModule());
             Pathway p = om.readValue(pathwayJson, Pathway.class);
-            if(p==null || p.getObjectId()==null){ return null; }
-            getPathwayCacheService().getPathways().put(getPathwayCacheService().resolveKeyValue(p.getObjectId()), p);
+            if(p==null || p.getElementInstanceId()==null){ return null; }
+            getPathwayCacheService().addPathway(p);
             return convertToJson(p);
         } catch (Exception e){
             LOG.warn(".createOrUpdatePathway(): failed: {}", e.toString());
@@ -248,12 +272,15 @@ public class PathwayResourceHandler extends BaseHandler {
     public void deletePathway(String id){
         LOG.debug(".deletePathway(): Entry id={}", id);
         if(StringUtils.isBlank(id)){ return; }
-        Pathway p = getPathwayCacheService().getPathways().remove(id);
-        if(p!=null && p.getPossiblePathwayRoutes()!=null){
-            // Remove linked routes
-            for (java.util.Map.Entry<Integer, ObjectId> e : p.getPossiblePathwayRoutes().entrySet()){
-                if(e.getValue()!=null){ deletePathwayRoute(getPathwayCacheService().resolveKeyValue(e.getValue())); }
+        Pathway p = getPathway(id);
+        if(p!=null){
+            if(p.getPossiblePathwayRoutes()!=null){
+                // Remove linked routes
+                for (java.util.Map.Entry<Integer, ElementReference> e : p.getPossiblePathwayRoutes().entrySet()){
+                    if(e.getValue()!=null){ deletePathwayRoute(getPathwayCacheService().resolveKeyValue(e.getValue())); }
+                }
             }
+            getPathwayCacheService().removePathway(p);
         }
     }
 
@@ -264,9 +291,8 @@ public class PathwayResourceHandler extends BaseHandler {
             com.fasterxml.jackson.databind.ObjectMapper om = new com.fasterxml.jackson.databind.ObjectMapper();
             om.registerModule(new com.fasterxml.jackson.datatype.jsr310.JavaTimeModule());
             PathwayRoute r = om.readValue(routeJson, PathwayRoute.class);
-            if(r==null || r.getObjectId()==null){ return null; }
-            String rKey = getPathwayCacheService().resolveKeyValue(r.getObjectId());
-            getPathwayCacheService().getPathwayRoutes().put(rKey, r);
+            if(r==null || r.getElementInstanceId()==null){ return null; }
+            getPathwayCacheService().addPathwayRoute(r);
             // link to pathway
             Pathway p = getPathway(pathwayId);
             if(p!=null){
@@ -274,7 +300,7 @@ public class PathwayResourceHandler extends BaseHandler {
                 if(p.getPossiblePathwayRoutes()!=null && !p.getPossiblePathwayRoutes().isEmpty()){
                     next = new java.util.ArrayList<>(p.getPossiblePathwayRoutes().keySet()).stream().max(Integer::compareTo).orElse(0) + 1;
                 }
-                p.getPossiblePathwayRoutes().put(next, r.getObjectId());
+                p.getPossiblePathwayRoutes().put(next, r.getReference());
             }
             return convertToJson(r);
         } catch (Exception e){
@@ -290,9 +316,8 @@ public class PathwayResourceHandler extends BaseHandler {
             com.fasterxml.jackson.databind.ObjectMapper om = new com.fasterxml.jackson.databind.ObjectMapper();
             om.registerModule(new com.fasterxml.jackson.datatype.jsr310.JavaTimeModule());
             PathwayRoute r = om.readValue(routeJson, PathwayRoute.class);
-            if(r==null || r.getObjectId()==null){ return null; }
-            String rKey = getPathwayCacheService().resolveKeyValue(r.getObjectId());
-            getPathwayCacheService().getPathwayRoutes().put(rKey, r);
+            if(r==null || r.getElementInstanceId()==null){ return null; }
+            getPathwayCacheService().addPathwayRoute(r);
             return convertToJson(r);
         } catch (Exception e){
             LOG.warn(".createOrUpdatePathwayRoute(): failed: {}", e.toString());
@@ -303,19 +328,22 @@ public class PathwayResourceHandler extends BaseHandler {
     public void deletePathwayRoute(String id){
         LOG.debug(".deletePathwayRoute(): Entry id={}", id);
         if(StringUtils.isBlank(id)){ return; }
-        PathwayRoute r = getPathwayCacheService().getPathwayRoutes().remove(id);
-        if(r!=null && r.getRouteSegmentSequence()!=null){
-            for(java.util.Map.Entry<Integer, ObjectId> e : r.getRouteSegmentSequence().entrySet()){
-                if(e.getValue()!=null){ deletePathwayRouteSegment(getPathwayCacheService().resolveKeyValue(e.getValue())); }
+        PathwayRoute r = getPathwayRoute(id);
+        if(r!=null){
+            if(r.getRouteSegmentSequence()!=null){
+                for(java.util.Map.Entry<Integer, ElementReference> e : r.getRouteSegmentSequence().entrySet()){
+                    if(e.getValue()!=null){ deletePathwayRouteSegment(getPathwayCacheService().resolveKeyValue(e.getValue())); }
+                }
             }
-        }
-        // unlink from any pathway
-        for(Pathway p : getPathwayCacheService().getPathways().values()){
-            if(p.getPossiblePathwayRoutes()==null){ continue; }
-            p.getPossiblePathwayRoutes().values().removeIf(oid -> {
-                String key = getPathwayCacheService().resolveKeyValue(oid);
-                return id.equals(key);
-            });
+            // unlink from any pathway
+            for(Pathway p : getPathwayCacheService().getPathways().values()){
+                if(p.getPossiblePathwayRoutes()==null){ continue; }
+                p.getPossiblePathwayRoutes().values().removeIf(oid -> {
+                    String key = getPathwayCacheService().resolveKeyValue(oid);
+                    return id.equals(key);
+                });
+            }
+            getPathwayCacheService().getPathwayRoutes().remove(id);
         }
     }
 
@@ -326,9 +354,8 @@ public class PathwayResourceHandler extends BaseHandler {
             com.fasterxml.jackson.databind.ObjectMapper om = new com.fasterxml.jackson.databind.ObjectMapper();
             om.registerModule(new com.fasterxml.jackson.datatype.jsr310.JavaTimeModule());
             PathwayRouteSegment s = om.readValue(segmentJson, PathwayRouteSegment.class);
-            if(s==null || s.getObjectId()==null){ return null; }
-            String sKey = getPathwayCacheService().resolveKeyValue(s.getObjectId());
-            getPathwayCacheService().getPathwayRouteSegments().put(sKey, s);
+            if(s==null || s.getElementInstanceId()==null){ return null; }
+            getPathwayCacheService().addPathwayRouteSegment(s);
             return convertToJson(s);
         } catch (Exception e){
             LOG.warn(".createOrUpdatePathwayRouteSegment(): failed: {}", e.toString());
@@ -339,14 +366,17 @@ public class PathwayResourceHandler extends BaseHandler {
     public void deletePathwayRouteSegment(String id){
         LOG.debug(".deletePathwayRouteSegment(): Entry id={}", id);
         if(StringUtils.isBlank(id)){ return; }
-        getPathwayCacheService().getPathwayRouteSegments().remove(id);
-        // unlink from any route
-        for(PathwayRoute r : getPathwayCacheService().getPathwayRoutes().values()){
-            if(r.getRouteSegmentSequence()==null){ continue; }
-            r.getRouteSegmentSequence().values().removeIf(oid -> {
-                String key = getPathwayCacheService().resolveKeyValue(oid);
-                return id.equals(key);
-            });
+        PathwayRouteSegment s = getPathwayRouteSegment(id);
+        if(s!=null){
+            // unlink from any route
+            for(PathwayRoute r : getPathwayCacheService().getPathwayRoutes().values()){
+                if(r.getRouteSegmentSequence()==null){ continue; }
+                r.getRouteSegmentSequence().values().removeIf(oid -> {
+                    String key = getPathwayCacheService().resolveKeyValue(oid);
+                    return id.equals(key);
+                });
+            }
+            getPathwayCacheService().getPathwayRouteSegments().remove(s);
         }
     }
 

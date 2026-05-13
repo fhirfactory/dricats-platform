@@ -25,7 +25,7 @@ import net.fhirfactory.dricats.internals.tasking.InternalTask;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.context.ApplicationScoped;
 import java.util.Optional;
 
 /**
@@ -34,7 +34,7 @@ import java.util.Optional;
  * which CDI will select instead of this one (use @Alternative with higher priority if needed).
  */
 @ApplicationScoped
-@javax.enterprise.inject.Alternative
+@jakarta.enterprise.inject.Alternative
 public class TaskPersistenceService implements ITaskPersistenceService {
     private static final Logger LOG = LoggerFactory.getLogger(TaskPersistenceService.class);
 

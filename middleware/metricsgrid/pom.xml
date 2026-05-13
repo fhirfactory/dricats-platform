@@ -20,6 +20,7 @@
     </properties>
 
     <modules>
+        <module>common</module>
         <module>central</module>
         <module>satellite</module>
     </modules>

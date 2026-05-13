@@ -21,7 +21,7 @@
  */
 package net.fhirfactory.dricats.internals.common.identifiers;
 
-import net.fhirfactory.dricats.internals.common.id.ObjectId;
+import net.fhirfactory.dricats.internals.common.id.ElementInstanceId;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -40,10 +40,10 @@ public class ElementReference implements Serializable {
     //
 
     private ElementIdentifier elementIdentifier;
-    private ObjectId localObjectId;
+    private ElementInstanceId elementInstanceId;
     private String referenceDescription;
-    private String objectType;
-    private String objectSpecialisation;
+    private String elementType;
+    private String elementSpecialisation;
 
     //
     // Constructor(s)
@@ -51,35 +51,46 @@ public class ElementReference implements Serializable {
 
     public ElementReference() {
         this.elementIdentifier = null;
-        this.localObjectId = null;
         this.referenceDescription = null;
-        this.objectType = null;
+        this.elementType = null;
+        this.elementSpecialisation = null;
+        this.elementInstanceId = null;
     }
 
-    public ElementReference(ElementIdentifier targetObjectIdentifier, String referenceDescription, String objectType) {
-        this.elementIdentifier = targetObjectIdentifier;
-        this.localObjectId = null;
+    public ElementReference(ElementIdentifier targetElementIdentifier, String referenceDescription, String elementType) {
+        this();
+        this.elementIdentifier = targetElementIdentifier;
         this.referenceDescription = referenceDescription;
-        this.objectType = objectType;
+        this.elementType = elementType;
     }
 
-    public ElementReference(ObjectId targetObjectId, String referenceDescription, String objectType) {
-        this.elementIdentifier = null;
-        this.localObjectId = targetObjectId;
+    public ElementReference(ElementIdentifier targetElementIdentifier, ElementInstanceId elementInstanceId, String referenceDescription, String elementType) {
+        this();
+        this.elementIdentifier = targetElementIdentifier;
         this.referenceDescription = referenceDescription;
-        this.objectType = objectType;
+        this.elementType = elementType;
+        this.elementInstanceId = elementInstanceId;
     }
 
     //
     // Bean Methods
     //
 
+
+    public ElementInstanceId getElementInstanceId() {
+        return elementInstanceId;
+    }
+
+    public void setElementInstanceId(ElementInstanceId elementInstanceId) {
+        this.elementInstanceId = elementInstanceId;
+    }
+
     public ElementIdentifier getElementIdentifier() {
         return this.elementIdentifier;
     }
 
-    public void setElementIdentifier(ElementIdentifier targetObjectIdentifier) {
-        this.elementIdentifier = targetObjectIdentifier;
+    public void setElementIdentifier(ElementIdentifier targetElementIdentifier) {
+        this.elementIdentifier = targetElementIdentifier;
     }
 
     public String getReferenceDescription() {
@@ -90,27 +101,20 @@ public class ElementReference implements Serializable {
         this.referenceDescription = referenceDescription;
     }
 
-    public String getObjectType() {
-        return objectType;
+    public String getElementType() {
+        return elementType;
     }
 
-    public void setObjectType(String objectType) {
-        this.objectType = objectType;
+    public void setElementType(String elementType) {
+        this.elementType = elementType;
     }
 
-    public String getObjectSpecialisation() {
-        return objectSpecialisation;
+    public String getElementSpecialisation() {
+        return elementSpecialisation;
     }
 
-    public void setObjectSpecialisation(String objectSpecialisation) {
-        this.objectSpecialisation = objectSpecialisation;
-    }
-
-    public ObjectId getLocalObjectId() {
-        return localObjectId;
-    }
-    public void setLocalObjectId(ObjectId localObjectId) {
-        this.localObjectId = localObjectId;
+    public void setElementSpecialisation(String elementSpecialisation) {
+        this.elementSpecialisation = elementSpecialisation;
     }
 
     //
@@ -122,11 +126,11 @@ public class ElementReference implements Serializable {
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder("DistributableObjectReference{");
-        sb.append("targetObjectIdentifier=").append(getElementIdentifier());
+        sb.append("elementIdentifier=").append(getElementIdentifier());
+        sb.append(", elementInstanceId=").append(getElementInstanceId());
         sb.append(", referenceDescription='").append(getReferenceDescription()).append('\'');
-        sb.append(", targetObjectType='").append(getObjectType()).append('\'');
-        sb.append(", objectSpecialisation='").append(getObjectSpecialisation()).append('\'');
-        sb.append(", objectId=").append(getLocalObjectId());
+        sb.append(", elementType='").append(getElementType()).append('\'');
+        sb.append(", elementSpecialisation='").append(getElementSpecialisation()).append('\'');
         sb.append('}');
         return sb.toString();
     }
@@ -138,13 +142,13 @@ public class ElementReference implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         ElementReference that = (ElementReference) o;
-        return Objects.equals(getElementIdentifier(), that.getElementIdentifier()) && Objects.equals(getObjectType(),that.getObjectType()) && Objects.equals(getLocalObjectId(), that.getLocalObjectId());
+        return Objects.equals(getElementIdentifier(), that.getElementIdentifier()) && Objects.equals(getElementType(),that.getElementType());
     }
 
     // hashCode()
 
     @Override
     public int hashCode() {
-        return Objects.hash(getElementIdentifier(), getReferenceDescription(), getObjectType(), getLocalObjectId());
+        return Objects.hash(getElementIdentifier(), getReferenceDescription(), getElementType());
     }
 }

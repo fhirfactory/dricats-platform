@@ -106,7 +106,7 @@ public class ApplicationComponentHandler {
     //
 
     protected MethodOutcome identifierBasedSearch(ElementIdentifier identifier) throws ResourceInvalidSearchException {
-        getLogger().debug(".doEntrySearch(): Entry, value->{}, type->{}", identifier.getObjectId(), identifier.getIdentifierType());
+        getLogger().debug(".doEntrySearch(): Entry, value->{}", identifier.getIdentifierValue());
         throw (new UnsupportedOperationException("Not yet implemented"));
         // getLogger().debug(".doEntrySearch(): Exit");
         // return(new MethodOutcome());

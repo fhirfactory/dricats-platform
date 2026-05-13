@@ -198,10 +198,9 @@ public class BusinessProcess extends ElementBase implements Serializable {
         }
     }
 
-    @Override
-    protected Logger getLogger() {
-        return LOG;
-    }
+    //
+     // Standard Methods
+    //
 
     @Override
     public boolean equals(Object o) {

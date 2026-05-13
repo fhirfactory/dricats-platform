@@ -21,10 +21,12 @@
  */
 package net.fhirfactory.dricats.ui.uitest.configuration;
 
+import jakarta.enterprise.context.ApplicationScoped;
 import net.fhirfactory.dricats.datagrid.satellite.configurationgrid.factories.common.BaseConfigurationFileLoader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@ApplicationScoped
 public class UITestServerConfigurationLoader extends BaseConfigurationFileLoader {
     //
      // Housekeeping

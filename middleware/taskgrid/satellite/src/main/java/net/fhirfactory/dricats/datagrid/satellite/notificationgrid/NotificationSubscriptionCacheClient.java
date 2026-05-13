@@ -139,7 +139,7 @@ public class NotificationSubscriptionCacheClient {
     }
 
     protected String resolveKey(NotificationSubscription item) {
-        String key = item.resolveKey();
+        String key = item.resolveElementInstanceKey();
         return key;
     }
 

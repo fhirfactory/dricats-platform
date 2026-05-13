@@ -21,12 +21,12 @@
  */
 package net.fhirfactory.dricats.internals.events.notifications;
 
-import net.fhirfactory.dricats.internals.common.naming.FullyDistinguishedName;
-import net.fhirfactory.dricats.internals.common.id.ObjectId;
+import net.fhirfactory.dricats.internals.common.identifiers.ElementIdentifier;
+import net.fhirfactory.dricats.internals.common.naming.DistinguishedName;
 import net.fhirfactory.dricats.internals.common.naming.RelativeDistinguishedName;
 import net.fhirfactory.dricats.internals.data.Payload;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import net.fhirfactory.dricats.reference.archimate.common.valuesets.ElementTypeEnum;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import java.io.Serial;
 import java.util.UUID;
@@ -38,11 +38,12 @@ public class NotificationPayload extends Payload {
 
     @Serial
     private static final long serialVersionUID = -12345678900061L;
-    private static final Logger LOG = LoggerFactory.getLogger(NotificationPayload.class);
 
     //
     // Attributes
     //
+
+    public static final String ELEMENT_SPECIALIZATION = "NotificationPayload";
 
     //
     // Constructor(s)
@@ -50,25 +51,47 @@ public class NotificationPayload extends Payload {
 
     public NotificationPayload() {
         super();
-        RelativeDistinguishedName unqualifiedName = new RelativeDistinguishedName("NotificationPayload", UUID.randomUUID().toString());
-        FullyDistinguishedName qualifiedName = new FullyDistinguishedName();
+        RelativeDistinguishedName unqualifiedName = new RelativeDistinguishedName(ELEMENT_SPECIALIZATION, UUID.randomUUID().toString());
+        DistinguishedName qualifiedName = new DistinguishedName();
         qualifiedName.appendUnqualifiedName(unqualifiedName);
-        this.setObjectId(new ObjectId(qualifiedName));
+        ElementIdentifier identifier = new ElementIdentifier(qualifiedName);
+        setIdentifier(identifier);
+        setSpecialization(ELEMENT_SPECIALIZATION);
+        setElementType(ElementTypeEnum.APPLICATION_DATA_OBJECT);
+        setShortName(ELEMENT_SPECIALIZATION+"->"+unqualifiedName.getUnqualifiedValue());
+        setDocumentation(getShortName());
     }
 
     //
     // Bean Methods
     //
 
+
+    //
+    // Standard Methods
+    //
+
+
     @Override
-    protected Logger getLogger(){
-        return(LOG);
+    public String toString() {
+        return new ToStringBuilder(this)
+                .append("localObjectId", getElementInstanceId())
+                .append("securityLabels", getSecurityLabels())
+                .append("metadata", getMetadata())
+                .append("shortName", getShortName())
+                .append("longName", getIdentifier())
+                .append("otherIdentifiers", getOtherIdentifiers())
+                .append("securityLabels", getSecurityLabels())
+                .append("elementType", getElementType())
+                .append("documentation", getDocumentation())
+                .append("specialization", getSpecialization())
+                .append("extensions", getExtensions())
+                .append("accessingFunctions", getAccessingFunctions())
+                .append("accessingServices", getAccessingServices())
+                .append("dataFormat", getDataFormat())
+                .append("dataTopic", getDataTopic())
+                .append("payloadSecurityStatus", getPayloadSecurityStatus())
+                .append("payloadContent", getPayloadContent())
+                .toString();
     }
-
-
-    //
-    // Utility Methods
-    //
-
-
 }

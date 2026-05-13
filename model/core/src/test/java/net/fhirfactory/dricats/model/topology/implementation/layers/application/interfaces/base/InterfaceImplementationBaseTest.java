@@ -19,17 +19,17 @@ class InterfaceImplementationBaseTest {
         assertNotNull(a.getMetricsData());
 
         TestInterface b = new TestInterface();
-        b.setName("n");
+        b.setShortName("n");
         b.setDocumentation("d");
         b.setSpecialization("spec");
-        assertEquals("n", b.getName());
+        assertEquals("n", b.getShortName());
         assertEquals("d", b.getDocumentation());
         assertEquals("spec", b.getSpecialization());
 
         ElementReference parent = new ElementReference();
         TestInterface c = new TestInterface();
         c.setOwner(parent);
-        c.setName("x");
+        c.setShortName("x");
         c.setDocumentation("y");
         c.setSpecialization("z");
         URI uri = URI.create("http://example.com");

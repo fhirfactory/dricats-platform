@@ -17,7 +17,6 @@ public class Value extends ElementBase implements Serializable {
     //
     @Serial
     private static final long serialVersionUID = -12345678920114L;
-    private static final Logger LOG = LoggerFactory.getLogger(Value.class);
 
     //
     // Constructor(s)
@@ -26,10 +25,4 @@ public class Value extends ElementBase implements Serializable {
         super();
         setElementType(ElementTypeEnum.VALUE);
     }
-
-    //
-     // Bean Methods
-    //
-    @Override
-    protected Logger getLogger(){ return LOG; }
 }

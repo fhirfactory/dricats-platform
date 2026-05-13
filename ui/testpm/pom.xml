@@ -42,6 +42,20 @@
             <scope>compile</scope>
         </dependency>
 
+        <dependency>
+            <groupId>net.fhirfactory.dricats</groupId>
+            <artifactId>dricats-middleware-topologygrid-common</artifactId>
+            <version>${project.version}</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>net.fhirfactory.dricats</groupId>
+            <artifactId>dricats-middleware-messagegrid-common</artifactId>
+            <version>${project.version}</version>
+            <scope>compile</scope>
+        </dependency>
+
         <!-- UI ServerSide Services -->
 
         <dependency>
@@ -58,31 +72,25 @@
             <artifactId>camel-core</artifactId>
             <scope>compile</scope>
         </dependency>
-
-        <!-- https://mvnrepository.com/artifact/org.apache.camel/camel-core -->
-        <dependency>
+<!--        <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-cdi</artifactId>
             <scope>compile</scope>
-        </dependency>
-
+        </dependency>-->
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-rest</artifactId>
             <scope>compile</scope>
         </dependency>
-
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-netty-http</artifactId>
             <scope>compile</scope>
         </dependency>
-
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-jackson</artifactId>
             <scope>compile</scope>
-    
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
@@ -113,14 +121,14 @@
             <groupId>jakarta.annotation</groupId>
             <artifactId>jakarta.annotation-api</artifactId>
             <version>2.1.1</version>
-            <!--scope>provided</scope-->
+            <scope>compile</scope>
         </dependency>
 
         <dependency>
             <groupId>jakarta.enterprise</groupId>
             <artifactId>jakarta.enterprise.cdi-api</artifactId>
             <version>4.0.1</version>
-            <!--scope>provided</scope-->
+            <scope>compile</scope>
         </dependency>
 
         <!--*******************************************************************************-->
@@ -158,6 +166,7 @@
         <dependency>
             <groupId>org.json</groupId>
             <artifactId>json</artifactId>
+            <version>${version-org.json}</version>
             <scope>compile</scope>
         </dependency>
 

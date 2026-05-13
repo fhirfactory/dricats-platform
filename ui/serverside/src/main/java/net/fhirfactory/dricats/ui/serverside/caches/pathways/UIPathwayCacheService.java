@@ -22,7 +22,7 @@
 package net.fhirfactory.dricats.ui.serverside.caches.pathways;
 
 import jakarta.enterprise.context.ApplicationScoped;
-import net.fhirfactory.dricats.internals.common.id.ObjectId;
+import net.fhirfactory.dricats.internals.common.identifiers.ElementReference;
 import net.fhirfactory.dricats.internals.pathways.Pathway;
 import net.fhirfactory.dricats.internals.pathways.PathwayElement;
 import net.fhirfactory.dricats.internals.pathways.PathwayRoute;
@@ -32,6 +32,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @ApplicationScoped
@@ -45,12 +46,26 @@ public class UIPathwayCacheService {
     // Attributes
     //
     private boolean initialised = false;
+
+    // Map<Pathway.getElementInstanceId().getIdValue(), Pathway>
     private Map<String, Pathway> pathways = new HashMap<>();
+    // Map<Pathway.getIdentifier().getIdentifierValue().getCommonName().getValue(), List<Pathway>>
+    private Map<String, List<Pathway>> pathwaysByPathwayIdentifier = new HashMap<>();
 
-
+    // Map<PathwayRoute.getElementInstanceId().getIdValue(), PathwayRoute>
     private Map<String, PathwayRoute> pathwayRoutes = new HashMap<>();
+    // Map<PathwayRoute.getIdentifier().getIdentifierValue().getCommonName().getValue(), List<PathwayRoute>>
+    private Map<String, List<PathwayRoute>> pathwaysByPathwayRouteIdentifier = new HashMap<>();
+
+    // Map<PathwayRouteSegment.getElementInstanceId().getIdValue(), PathwayRouteSegment>
     private Map<String, PathwayRouteSegment> pathwayRouteSegments = new HashMap<>();
+    // Map<PathwayRouteSegment.getIdentifier().getIdentifierValue().getCommonName().getValue(), List<PathwayRouteSegment>>
+    private Map<String, List<PathwayRouteSegment>> pathwaysByPathwayRouteSegmentIdentifier = new HashMap<>();
+
+    // Map<PathwayElement.getElementInstanceId().getIdValue(), PathwayElement>
     private Map<String, PathwayElement> pathwayElements = new HashMap<>();
+    // Map<PathwayElement.getIdentifier().getIdentifierValue().getCommonName().getValue(), List<PathwayElement>>
+    private Map<String, List<PathwayElement>> pathwaysByPathwayElementIdentifier = new HashMap<>();
 
     //
     // Constructor(s)
@@ -62,6 +77,10 @@ public class UIPathwayCacheService {
         pathwayRoutes = new HashMap<>();
         pathwayRouteSegments = new HashMap<>();
         pathwayElements = new HashMap<>();
+        pathwaysByPathwayIdentifier = new HashMap<>();
+        pathwaysByPathwayRouteIdentifier = new HashMap<>();
+        pathwaysByPathwayRouteSegmentIdentifier = new HashMap<>();
+        pathwaysByPathwayElementIdentifier = new HashMap<>();
         LOG.debug(".<constructor>(): Exit");
     }
 
@@ -84,6 +103,11 @@ public class UIPathwayCacheService {
     public Map<String, PathwayRouteSegment> getPathwayRouteSegments() { return pathwayRouteSegments; }
     public Map<String, PathwayElement> getPathwayElements() { return pathwayElements; }
 
+    public Map<String, List<Pathway>> getPathwaysByPathwayIdentifier() { return pathwaysByPathwayIdentifier; }
+    public Map<String, List<PathwayRoute>> getPathwaysByPathwayRouteIdentifier() { return pathwaysByPathwayRouteIdentifier; }
+    public Map<String, List<PathwayRouteSegment>> getPathwaysByPathwayRouteSegmentIdentifier() { return pathwaysByPathwayRouteSegmentIdentifier; }
+    public Map<String, List<PathwayElement>> getPathwaysByPathwayElementIdentifier() { return pathwaysByPathwayElementIdentifier; }
+
     protected Logger getLogger() {
         return LOG;
     }
@@ -91,30 +115,26 @@ public class UIPathwayCacheService {
     // Business Methods
     //
 
-    public boolean hasObjectIdValue(ObjectId objectId){
-        if(objectId==null){
+    public boolean hasObjectIdValue(ElementReference reference){
+        if(reference==null){
             getLogger().debug(".hasObjectIdValue(): Exit, pathway has no ObjectID, returning");
             return(false);
         }
-        if(objectId.getFullyDistinguishedName()==null){
+        if(reference.getElementInstanceId()==null){
             getLogger().debug(".hasObjectIdValue(): Exit, pathway has no QualifiedName, returning");
             return(false);
         }
-        if(objectId.getFullyDistinguishedName().getCommonName()==null){
+        if(reference.getElementInstanceId().getIdValue()==null){
             getLogger().debug(".hasObjectIdValue(): Exit, pathway has no CommonName, returning");
-            return(false);
-        }
-        if(StringUtils.isEmpty(objectId.getFullyDistinguishedName().getCommonName().getValue())){
-            getLogger().debug(".hasObjectIdValue(): Exit, pathway has no CommonName.Value, returning");
             return(false);
         }
         return(true);
     }
 
-    public String resolveKeyValue(ObjectId objectId){
-        getLogger().debug(".resolveKeyValue(): Entry, objectId -> {}", objectId);
-        if(hasObjectIdValue(objectId)){
-            String value = objectId.getFullyDistinguishedName().getCommonName().getValue();
+    public String resolveKeyValue(ElementReference reference){
+        getLogger().debug(".resolveKeyValue(): Entry, reference -> {}", reference);
+        if(hasObjectIdValue(reference)){
+            String value = reference.getElementInstanceId().getIdValue();
             getLogger().debug(".resolveKeyValue(): Exit, objectId has ObjectID etc., returning {}", value);
             return(value);
         }
@@ -128,7 +148,7 @@ public class UIPathwayCacheService {
             getLogger().debug(".addPathway(): Exit, pathway is null, returning");
             return;
         }
-        String key = resolveKeyValue(pathway.getObjectId());
+        String key = pathway.resolveElementInstanceKey();
         if(StringUtils.isEmpty(key)){
             getLogger().debug(".addPathway(): Exit, pathway has no ObjectID etc., returning");
             return;
@@ -143,7 +163,7 @@ public class UIPathwayCacheService {
             getLogger().debug(".removePathway(): Exit, pathway is null, returning");
             return;
         }
-        String key = resolveKeyValue(pathway.getObjectId());
+        String key = pathway.resolveElementInstanceKey();
         if(StringUtils.isEmpty(key)){
             getLogger().debug(".removePathway(): Exit, pathway has no ObjectID etc., returning");
             return;
@@ -158,7 +178,7 @@ public class UIPathwayCacheService {
             getLogger().debug(".addPathwayRoute(): Exit, pathwayRoute is null, returning");
             return;
         }
-        String key = resolveKeyValue(pathwayRoute.getObjectId());
+        String key = pathwayRoute.resolveElementInstanceKey();
         if(StringUtils.isEmpty(key)){
             getLogger().debug(".addPathwayRoute(): Exit, pathway has no ObjectID etc., returning");
             return;
@@ -184,7 +204,7 @@ public class UIPathwayCacheService {
             getLogger().debug(".addPathwayRouteSegment(): Exit, pathwayRouteSegment is null, returning");
             return;
         }
-        String key = resolveKeyValue(pathwayRouteSegment.getObjectId());
+        String key = pathwayRouteSegment.resolveElementInstanceKey();
         if(StringUtils.isEmpty(key)){
             getLogger().debug(".addPathwayRouteSegment(): Exit, pathwayRouteSegment has no ObjectID etc., returning");
             return;
@@ -210,7 +230,7 @@ public class UIPathwayCacheService {
             getLogger().debug(".addPathwayElement(): Exit, pathwayElement is null, returning");
             return;
         }
-        String key = resolveKeyValue(pathwayElement.getObjectId());
+        String key = pathwayElement.resolveElementInstanceKey();
         if(StringUtils.isEmpty(key)){
             getLogger().debug(".addPathwayElement(): Exit, pathwayElement has no ObjectID etc., returning");
             return;

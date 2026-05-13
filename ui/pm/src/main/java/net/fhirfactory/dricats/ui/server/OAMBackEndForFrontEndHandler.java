@@ -21,22 +21,20 @@
  */
 package net.fhirfactory.dricats.ui.server;
 
-import net.fhirfactory.dricats.datagrid.common.topologygrid.IApplicationComponentCacheClient;
-import net.fhirfactory.dricats.internals.common.DistributableObjectId;
-import net.fhirfactory.dricats.internals.common.naming.FullyDistinguishedName;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 import net.fhirfactory.dricats.internals.oam.metrics.ApplicationComponentMetricsData;
 import net.fhirfactory.dricats.internals.oam.metrics.interfaces.ILocalMetricsServerInterface;
-import net.fhirfactory.dricats.ui.model.topology.base.ApplicationComponentSummary;
+import net.fhirfactory.dricats.reference.archimate.common.ElementBase;
+import net.fhirfactory.dricats.reference.archimate.layers.application.ApplicationComponent;
+import net.fhirfactory.dricats.ui.serverside.caches.topology.UITopologyCacheService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeParseException;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Backing service for Camel REST routes. Contains simple methods that
@@ -47,38 +45,34 @@ public class OAMBackEndForFrontEndHandler {
     private static final Logger LOG = LoggerFactory.getLogger(OAMBackEndForFrontEndHandler.class);
 
     @Inject
-    IApplicationComponentCacheClient componentCacheClient;
+    UITopologyCacheService topologyCacheService;
 
     @Inject
     ILocalMetricsServerInterface metricsServer;
 
     // -------------------- Application Components ----------------------------
 
-    public ApplicationComponentSummary getComponent(String id) {
+    public ApplicationComponent getComponent(String id) {
         if (id == null || id.isEmpty()) { return null; }
-        return safeGet(id);
-    }
-
-    public List<ApplicationComponentSummary> listComponents() {
-        return Collections.emptyList();
-    }
-
-    public List<ApplicationComponentSummary> getSubComponents(String id) {
-        ApplicationComponentSummary root = getComponent(id);
-        if (root == null || root.getSubComponents() == null) { return Collections.emptyList(); }
-        List<ApplicationComponentSummary> result = new ArrayList<>();
-        for (DistributableObjectId childId : root.getSubComponents()) {
-            String key = extractKey(childId);
-            ApplicationComponentSummary child = safeGet(key);
-            if (child != null) { result.add(child); }
+        ElementBase element = topologyCacheService.getComponent(id);
+        if (element instanceof ApplicationComponent) {
+            return (ApplicationComponent) element;
         }
-        return result;
+        return null;
+    }
+
+    public List<ApplicationComponent> listComponents() {
+        return topologyCacheService.getAllApplicationComponents().stream().toList();
+    }
+
+    public List<ApplicationComponent> getSubComponents(String id) {
+        return topologyCacheService.getSubComponents(id);
     }
 
     // -------------------- Metrics -------------------------------------------
 
     public ApplicationComponentMetricsData getLatestMetricsForComponent(String id) {
-        ApplicationComponentSummary component = getComponent(id);
+        ApplicationComponent component = getComponent(id);
         if (component == null) { return null; }
         return metricsServer.getMetrics(component);
     }
@@ -91,26 +85,6 @@ public class OAMBackEndForFrontEndHandler {
     }
 
     // -------------------- Helpers -------------------------------------------
-
-    private ApplicationComponentSummary safeGet(String key) {
-        try {
-            return componentCacheClient.get(key);
-        } catch (Exception e) {
-            LOG.debug("safeGet: unable to fetch component with key={}: {}", key, e.getMessage());
-            return null;
-        }
-    }
-
-    private String extractKey(DistributableObjectId id) {
-        if (id == null) { return null; }
-        try {
-            FullyDistinguishedName qn = id.getQualifiedName();
-            if (qn != null && qn.getCommonName() != null && qn.getCommonName().getValue() != null) {
-                return qn.getCommonName().getValue();
-            }
-        } catch (Exception ignore) { }
-        return null;
-    }
 
     private LocalDateTime parseDateTime(String s) {
         if (s == null || s.isEmpty()) { return null; }

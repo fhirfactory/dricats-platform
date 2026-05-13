@@ -45,8 +45,7 @@ public class FlowRelationship extends RelationshipBase {
      * @param targetId The ID of the target element (the destination of the flow)
      */
     public FlowRelationship(ElementReference sourceId, ElementReference targetId) {
-        super(sourceId, targetId);
-        setType(RelationshipTypeEnum.FLOW);
+        super(sourceId, targetId, RelationshipTypeEnum.FLOW);
     }
 
     /**
@@ -57,7 +56,7 @@ public class FlowRelationship extends RelationshipBase {
      * @param targetId The ID of the target element (the destination of the flow)
      */
     public FlowRelationship(String name, ElementReference sourceId, ElementReference targetId) {
-        super(name, sourceId, targetId);
+        super(sourceId, targetId, RelationshipTypeEnum.FLOW);
         setType(RelationshipTypeEnum.FLOW);
     }
 
@@ -70,8 +69,7 @@ public class FlowRelationship extends RelationshipBase {
      * @param targetId The ID of the target element (the destination of the flow)
      */
     public FlowRelationship(String name, String description, ElementReference sourceId, ElementReference targetId) {
-        super(name, description, sourceId, targetId);
-        setType(RelationshipTypeEnum.FLOW);
+        super(name, description, sourceId, targetId, RelationshipTypeEnum.FLOW);
     }
 
     /**

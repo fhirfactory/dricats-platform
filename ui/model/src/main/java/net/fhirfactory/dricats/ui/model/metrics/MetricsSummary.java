@@ -22,8 +22,8 @@
 
 package net.fhirfactory.dricats.ui.model.metrics;
 
-import net.fhirfactory.dricats.internals.common.DistributableObjectId;
-import net.fhirfactory.dricats.internals.common.object.SimpleDistributableObject;
+import net.fhirfactory.dricats.internals.common.identifiers.ElementIdentifier;
+import net.fhirfactory.dricats.internals.common.object.ManagedObject;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import java.io.Serial;
@@ -31,7 +31,7 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-public class MetricsSummary extends SimpleDistributableObject implements Serializable {
+public class MetricsSummary extends ManagedObject implements Serializable {
     //
     // Housekeeping
     //
@@ -42,7 +42,7 @@ public class MetricsSummary extends SimpleDistributableObject implements Seriali
     // Attributes
     //
     private Map<String, String> metrics;
-    private DistributableObjectId metricsOwner;
+    private ElementIdentifier metricsOwner;
 
     //
     // Constructor(s)
@@ -53,7 +53,7 @@ public class MetricsSummary extends SimpleDistributableObject implements Seriali
         this.metricsOwner = null;
     }
 
-    public MetricsSummary(DistributableObjectId metricsOwner){
+    public MetricsSummary(ElementIdentifier metricsOwner){
         super();
         this.metrics = new HashMap<>();
         this.metricsOwner = metricsOwner;
@@ -69,10 +69,10 @@ public class MetricsSummary extends SimpleDistributableObject implements Seriali
         this.metrics = metrics;
     }
 
-    public DistributableObjectId getMetricsOwner() {
+    public ElementIdentifier getMetricsOwner() {
         return metricsOwner;
     }
-    public void setMetricsOwner(DistributableObjectId metricsOwner) {
+    public void setMetricsOwner(ElementIdentifier metricsOwner) {
         this.metricsOwner = metricsOwner;
     }
 
@@ -86,9 +86,9 @@ public class MetricsSummary extends SimpleDistributableObject implements Seriali
                 .append("metricsOwner", getMetricsOwner())
                 .append("metrics", getMetrics())
                 .append("securityLabels", getSecurityLabels())
-                .append("objectID", getObjectID())
+                .append("identifier", getIdentifier())
                 .append("metadata", getMetadata())
-                .append("id", getObjectId())
+                .append("id", getElementInstanceId())
                 .toString();
     }
 }

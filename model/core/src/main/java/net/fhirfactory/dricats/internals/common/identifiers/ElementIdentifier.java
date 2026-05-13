@@ -21,14 +21,14 @@
  */
 package net.fhirfactory.dricats.internals.common.identifiers;
 
-import java.io.Serial;
-
-import net.fhirfactory.dricats.internals.common.id.ObjectId;
-import net.fhirfactory.dricats.internals.common.identifiers.datatypes.ElementIdentifierType;
-import net.fhirfactory.dricats.internals.common.object.SerialisableObject;
+import net.fhirfactory.dricats.internals.common.naming.DistinguishedName;
 import net.fhirfactory.dricats.internals.datatypes.EffectiveDate;
 
-public class ElementIdentifier extends SerialisableObject {
+import java.io.Serial;
+import java.io.Serializable;
+
+public class
+ElementIdentifier implements Serializable {
     //
     // Housekeeping
     //
@@ -40,8 +40,7 @@ public class ElementIdentifier extends SerialisableObject {
     // Attributes
     //
 
-    private ObjectId identifierValue;
-    private ElementIdentifierType identifierType;
+    private DistinguishedName identifierValue;
     private EffectiveDate effectiveDate;
 
     //
@@ -49,22 +48,25 @@ public class ElementIdentifier extends SerialisableObject {
     //
     public ElementIdentifier() {
         super();
-        this.identifierValue = new ObjectId();
-        this.identifierType = new ElementIdentifierType();
+        this.identifierValue = new DistinguishedName();
         this.effectiveDate = new EffectiveDate();
     }
 
-    public ElementIdentifier(ObjectId identifierValue, ElementIdentifierType identifierType, EffectiveDate effectiveDate) {
+    public ElementIdentifier(DistinguishedName identifierValue) {
         super();
         this.identifierValue = identifierValue;
-        this.identifierType = identifierType;
+        this.effectiveDate = new EffectiveDate();
+    }
+
+    public ElementIdentifier(DistinguishedName identifierValue, EffectiveDate effectiveDate) {
+        super();
+        this.identifierValue = identifierValue;
         this.effectiveDate = effectiveDate;
     }
 
     public ElementIdentifier(ElementIdentifier ori) {
         super();
         this.identifierValue = ori.getIdentifierValue();
-        this.identifierType = new ElementIdentifierType();
         this.effectiveDate = new EffectiveDate();
         this.effectiveDate.setEffectiveEndDate(ori.getEffectiveDate().getEffectiveEndDate());
         this.effectiveDate.setEffectiveStartDate(ori.getEffectiveDate().getEffectiveStartDate());
@@ -74,20 +76,12 @@ public class ElementIdentifier extends SerialisableObject {
     // Bean Methods
     //
 
-    public ObjectId getIdentifierValue() {
+    public DistinguishedName getIdentifierValue() {
         return identifierValue;
     }
 
-    public void setIdentifierValue(ObjectId identifierValue) {
+    public void setIdentifierValue(DistinguishedName identifierValue) {
         this.identifierValue = identifierValue;
-    }
-
-    public ElementIdentifierType getIdentifierType() {
-        return identifierType;
-    }
-
-    public void setIdentifierType(ElementIdentifierType identifierType) {
-        this.identifierType = identifierType;
     }
 
     public EffectiveDate getEffectiveDate() {
@@ -106,7 +100,6 @@ public class ElementIdentifier extends SerialisableObject {
     public String toString() {
         return "DistributableObjectIdentifier{" +
                 "identifierValue=" + identifierValue +
-                ", identifierType=" + identifierType +
                 ", effectiveDate=" + effectiveDate +
                 '}';
     }
@@ -116,8 +109,13 @@ public class ElementIdentifier extends SerialisableObject {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         ElementIdentifier that = (ElementIdentifier) o;
-        if (identifierValue != null ? !identifierValue.equals(that.identifierValue) : that.identifierValue != null) return false;
-        if (identifierType != that.identifierType) return false;
-        return effectiveDate != null ? effectiveDate.equals(that.effectiveDate) : that.effectiveDate == null;
+        if(identifierValue == null && that.identifierValue == null){
+            return(true);
+        }
+        if(identifierValue == null || that.identifierValue == null){
+            return(false);
+        }
+        boolean effectiveDateEquals = effectiveDate.equals(that.effectiveDate);
+        return identifierValue.equals(that.identifierValue) && effectiveDateEquals;
     }
 }

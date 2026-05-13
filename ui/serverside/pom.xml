@@ -42,7 +42,7 @@
 
         <dependency>
             <groupId>net.fhirfactory.dricats</groupId>
-            <artifactId>dricats-middleware-topologygrid-satellite</artifactId>
+            <artifactId>dricats-middleware-messagegrid-common</artifactId>
             <version>${project.version}</version>
             <scope>compile</scope>
         </dependency>
@@ -88,6 +88,7 @@
         <dependency>
             <groupId>org.json</groupId>
             <artifactId>json</artifactId>
+            <version>${version-org.json}</version>
             <scope>compile</scope>
         </dependency>
 

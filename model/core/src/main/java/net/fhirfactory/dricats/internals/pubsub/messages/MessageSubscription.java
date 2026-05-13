@@ -21,6 +21,7 @@
  */
 package net.fhirfactory.dricats.internals.pubsub.messages;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import net.fhirfactory.dricats.internals.common.identifiers.ElementReference;
 import net.fhirfactory.dricats.internals.events.messages.MessageObject;
 import net.fhirfactory.dricats.internals.pubsub.common.SubscriptionBase;
@@ -75,7 +76,7 @@ public class MessageSubscription extends SubscriptionBase implements Serializabl
         this.messageSubscriptionMask = messageSubscriptionMask;
     }
 
-    @Override
+    @JsonIgnore
     protected Logger getLogger(){
         return LOG;
     }

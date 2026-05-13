@@ -21,8 +21,7 @@
  */
 package net.fhirfactory.dricats.internals.events.factories;
 
-import net.fhirfactory.dricats.internals.common.naming.FullyDistinguishedName;
-import net.fhirfactory.dricats.internals.common.id.ObjectId;
+import net.fhirfactory.dricats.internals.common.identifiers.ElementIdentifier;
 import net.fhirfactory.dricats.internals.events.notifications.NotificationObject;
 import org.apache.commons.lang3.SerializationUtils;
 
@@ -34,14 +33,20 @@ public class NotificationObjectFactory extends EventBaseFactory{
         if(notificationObject == null){
             return null;
         }
-        if(notificationObject.getObjectId() == null){
+        if(notificationObject.getElementInstanceId() == null){
             return null;
         }
         NotificationObject newNotificationObject = new NotificationObject(notificationObject);
-        FullyDistinguishedName newName = SerializationUtils.clone(notificationObject.getObjectId().getFullyDistinguishedName());
-        newName.getUnqualifiedName().setValue(UUID.randomUUID().toString());
-        newNotificationObject.setObjectId(new ObjectId(newName));
-        newNotificationObject.getHistory().put(notificationObject.getHistory().size()+1, notificationObject.getObjectId());
+        UUID uuid = UUID.randomUUID();
+        StringBuilder notificationShortNameBuilder = new StringBuilder();
+        notificationShortNameBuilder.append(notificationObject.getIdentifier().getIdentifierValue().getUnqualifiedName().getQualifier());
+        notificationShortNameBuilder.append("->");
+        notificationShortNameBuilder.append(uuid.toString());
+        newNotificationObject.setShortName(notificationShortNameBuilder.toString());
+        ElementIdentifier newName = SerializationUtils.clone(notificationObject.getIdentifier());
+        newName.getIdentifierValue().getUnqualifiedName().setValue(uuid.toString());
+        newNotificationObject.setIdentifier(newName);
+        newNotificationObject.getHistory().put(notificationObject.getHistory().size()+1, notificationObject.getReference());
         return newNotificationObject;
     }
 }

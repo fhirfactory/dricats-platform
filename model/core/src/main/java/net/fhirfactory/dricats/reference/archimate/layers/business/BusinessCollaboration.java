@@ -3,12 +3,10 @@
  */
 package net.fhirfactory.dricats.reference.archimate.layers.business;
 
-import net.fhirfactory.dricats.internals.common.id.ObjectId;
+import net.fhirfactory.dricats.internals.common.identifiers.ElementReference;
 import net.fhirfactory.dricats.reference.archimate.common.ElementBase;
 import net.fhirfactory.dricats.reference.archimate.common.valuesets.ElementTypeEnum;
 import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.Serial;
 import java.util.ArrayList;
@@ -22,10 +20,9 @@ import java.util.Objects;
  */
 public class BusinessCollaboration extends ElementBase {
     @Serial private static final long serialVersionUID = -12345678920103L;
-    private static final Logger LOG = LoggerFactory.getLogger(BusinessCollaboration.class);
 
     // Element-specific attributes
-    private List<ObjectId> participants;
+    private List<ElementReference> participants;
 
     public BusinessCollaboration(){
         super();
@@ -41,13 +38,11 @@ public class BusinessCollaboration extends ElementBase {
         }
     }
 
-    public List<ObjectId> getParticipants() { return participants; }
-    public void setParticipants(List<ObjectId> participants) { this.participants = participants; }
-    public void addParticipant(ObjectId participant){ if(this.participants == null){ this.participants = new ArrayList<>(); } this.participants.add(participant); }
+    public List<ElementReference> getParticipants() { return participants; }
+    public void setParticipants(List<ElementReference> participants) { this.participants = participants; }
+    public void addParticipant(ElementReference participant){ if(this.participants == null){ this.participants = new ArrayList<>(); } this.participants.add(participant); }
     public void clearParticipants(){ if(this.participants != null){ this.participants.clear(); } }
 
-    @Override
-    protected Logger getLogger(){ return LOG; }
 
     @Override
     public boolean equals(Object o) {

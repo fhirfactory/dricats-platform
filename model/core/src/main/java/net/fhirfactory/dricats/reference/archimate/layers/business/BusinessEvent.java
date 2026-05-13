@@ -79,9 +79,6 @@ public class BusinessEvent extends ElementBase {
     public void setInterrupting(boolean interrupting) { this.interrupting = interrupting; }
 
     @Override
-    protected Logger getLogger(){ return LOG; }
-
-    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;

@@ -22,13 +22,11 @@
 package net.fhirfactory.dricats.internals.common.object;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import net.fhirfactory.dricats.internals.common.id.ObjectId;
-import net.fhirfactory.dricats.internals.common.naming.*;
+import net.fhirfactory.dricats.internals.common.id.ElementInstanceId;
 
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.StringJoiner;
-import java.util.UUID;
 
 public class SerialisableObject implements Serializable{
 	//
@@ -42,7 +40,7 @@ public class SerialisableObject implements Serializable{
     // Attributes
     //
 
-    private ObjectId objectId;
+    private ElementInstanceId elementInstanceId;
 
     //
     // Constructor(s)
@@ -50,39 +48,29 @@ public class SerialisableObject implements Serializable{
 
     public SerialisableObject() {
         super();
-        ObjectId idValue = new ObjectId();
-        idValue.setName(new CommonName(UUID.randomUUID().toString()));
-        idValue.setQualifier(new CommonQualifier("Object"));
-        setObjectId(idValue);
+        setElementInstanceId(new ElementInstanceId());
     }
 
-    public SerialisableObject(ObjectId idValue){
+    public SerialisableObject(ElementInstanceId elementInstanceId){
         super();
-        setObjectId(idValue);
+        setElementInstanceId(elementInstanceId);
     }
+
+
 
     //
     // Bean Methods
     //
 
-    public ObjectId getObjectId() {
-        return objectId;
+    public ElementInstanceId getElementInstanceId() {
+        return elementInstanceId;
     }
 
-    public void setObjectId(ObjectId objectId) {
-        this.objectId = objectId;
-    }
-
-    @JsonIgnore
-    public CommonName getCommonName(){
-        return(getObjectId().getName());
+    public void setElementInstanceId(ElementInstanceId elementInstanceId) {
+        this.elementInstanceId = elementInstanceId;
     }
 
     @JsonIgnore
-    public void setCommonName(CommonName commonName){
-        getObjectId().setName(commonName);
-    }
-
     public Long getSerialVersionUID() {
     	return(serialVersionUID);
     }
@@ -94,7 +82,15 @@ public class SerialisableObject implements Serializable{
     @Override
     public String toString() {
         return new StringJoiner(", ", SerialisableObject.class.getSimpleName() + "[", "]")
-                .add("id=" + getObjectId())
+                .add("elementInstanceId=" + getElementInstanceId())
                 .toString();
+    }
+
+    //
+     // Business Methods
+    //
+
+    public String resolveObjectKey(){
+        return(getElementInstanceId().toHexId());
     }
 }

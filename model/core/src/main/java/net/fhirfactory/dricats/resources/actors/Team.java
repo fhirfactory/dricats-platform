@@ -112,15 +112,18 @@ public class Team extends BusinessCollaboration implements Serializable {
                 .append("status", getStatus())
                 .append("contact", getContact())
                 .append("members", getMembers())
-                .append("participants", getParticipants())
+                .append("localObjectId", getElementInstanceId())
+                .append("securityLabels", getSecurityLabels())
+                .append("metadata", getMetadata())
+                .append("shortName", getShortName())
+                .append("longName", getIdentifier())
+                .append("otherIdentifiers", getOtherIdentifiers())
+                .append("securityLabels", getSecurityLabels())
                 .append("elementType", getElementType())
-                .append("name", getName())
                 .append("documentation", getDocumentation())
                 .append("specialization", getSpecialization())
                 .append("extensions", getExtensions())
-                .append("securityLabels", getSecurityLabels())
-                .append("metadata", getMetadata())
-                .append("id", getObjectId())
+                .append("participants", getParticipants())
                 .toString();
     }
 
@@ -128,11 +131,17 @@ public class Team extends BusinessCollaboration implements Serializable {
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
         Team team = (Team) o;
-        return Objects.equals(getName(), team.getName()) && Objects.equals(getType(), team.getType()) && Objects.equals(getStatus(), team.getStatus());
+        boolean isEqual = super.equals(o) &&
+                Objects.equals(getType(), team.getType()) &&
+                Objects.equals(getStatus(), team.getStatus()) &&
+                Objects.equals(getContact(), team.getContact());
+
+
+        return  isEqual;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getName(), getType(), getStatus());
+        return Objects.hash(getShortName(), getType(), getStatus());
     }
 }

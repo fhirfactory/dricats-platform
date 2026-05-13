@@ -139,7 +139,7 @@ public class MessageSubscriptionCacheClient {
     }
 
     protected String resolveKey(MessageSubscription item) {
-        String key = item.resolveKey();
+        String key = item.resolveElementInstanceKey();
         return key;
     }
 

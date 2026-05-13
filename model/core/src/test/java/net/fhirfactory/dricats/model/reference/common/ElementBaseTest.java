@@ -17,7 +17,7 @@ class ElementBaseTest {
         MyElement a = new MyElement();
         MyElement b = new MyElement();
 
-        a.setName("n");
+        a.setShortName("n");
         a.setDocumentation("d");
         a.setSpecialization("s");
         a.setElementType(ElementTypeEnum.APPLICATION_COMPONENT);
@@ -25,7 +25,7 @@ class ElementBaseTest {
         props.put("k","v");
         a.setExtensions(props);
 
-        assertEquals("n", a.getName());
+        assertEquals("n", a.getShortName());
         assertEquals("d", a.getDocumentation());
         assertEquals("s", a.getSpecialization());
         assertEquals(ElementTypeEnum.APPLICATION_COMPONENT, a.getElementType());

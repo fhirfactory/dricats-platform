@@ -21,9 +21,12 @@
  */
 package net.fhirfactory.dricats.internals.pathways;
 
-import net.fhirfactory.dricats.internals.common.object.SimpleDistributableObject;
-import net.fhirfactory.dricats.internals.common.naming.FullyDistinguishedName;
-import net.fhirfactory.dricats.internals.common.id.ObjectId;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import net.fhirfactory.dricats.internals.common.identifiers.ElementIdentifier;
+import net.fhirfactory.dricats.internals.common.identifiers.ElementReference;
+import net.fhirfactory.dricats.internals.common.naming.DistinguishedName;
+import net.fhirfactory.dricats.internals.common.object.ManagedObject;
+import org.apache.commons.lang3.SerializationUtils;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,19 +36,22 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-public class PathwayRouteSegment extends SimpleDistributableObject implements Serializable {
+public class PathwayRouteSegment extends ManagedObject implements Serializable {
     //
     // Housekeeping
     //
     @Serial
     private static final long serialVersionUID = 1L;
-    private static final Logger LOG = LoggerFactory.getLogger(PathwayRouteSegment.class);
 
     //
     // Attributes
     //
+
+    public static final String ELEMENT_SPECIALISATION = "PathwayRouteSegment";
+    public static final String ELEMENT_TYPE = "ManagedObject";
+
      // Map<Sequence Number, PathwayElement ID>
-    private Map<Integer, ObjectId> pathwayElementSequence;
+    private Map<Integer, ElementReference> pathwayElementSequence;
 
     //
     // Constructor(s)
@@ -55,7 +61,7 @@ public class PathwayRouteSegment extends SimpleDistributableObject implements Se
         pathwayElementSequence = new HashMap<>()      ;
     }
 
-    public PathwayRouteSegment(FullyDistinguishedName qualifiedName){
+    public PathwayRouteSegment(DistinguishedName qualifiedName){
         super(qualifiedName);
         pathwayElementSequence = new HashMap<>()      ;
     }
@@ -63,12 +69,20 @@ public class PathwayRouteSegment extends SimpleDistributableObject implements Se
     //
     // Getters and Setters
     //
-    public Map<Integer, ObjectId> getPathwayElementSequence() {
+    public Map<Integer, ElementReference> getPathwayElementSequence() {
         return pathwayElementSequence;
     }
 
-    public void setPathwayElementSequence(Map<Integer, ObjectId> pathwayElementSequence) {
+    public void setPathwayElementSequence(Map<Integer, ElementReference> pathwayElementSequence) {
         this.pathwayElementSequence = pathwayElementSequence;
+    }
+
+    @Override
+    public ElementReference getReference(){
+        ElementReference reference = super.getReference();
+        reference.setElementSpecialisation(ELEMENT_SPECIALISATION);
+        reference.setElementType(ELEMENT_TYPE);
+        return reference;
     }
 
     //

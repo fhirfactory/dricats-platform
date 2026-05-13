@@ -98,6 +98,9 @@ abstract public class SubscriptionMaskBase implements Serializable {
     }
 
     public List<TopicSubscription> getEventTopicSubscriptions() {
+        if(this.eventTopicSubscriptions == null){
+            this.eventTopicSubscriptions = new ArrayList<>();
+        }
         return eventTopicSubscriptions;
     }
 
@@ -220,7 +223,7 @@ abstract public class SubscriptionMaskBase implements Serializable {
             return(false);
         }
         else{
-            Boolean qualifiedNameFilterOutcome = getInternalEventSource().getComponentIdMask().filter(testComponentId.getLocalObjectId().getFullyDistinguishedName());
+            Boolean qualifiedNameFilterOutcome = getInternalEventSource().getComponentIdMask().filter(testComponentId.getElementIdentifier().getIdentifierValue());
             getLogger().trace("filterInternalEventSource(): Exit, qualifiedNameFilterOutcome -> {}", qualifiedNameFilterOutcome);
             return(qualifiedNameFilterOutcome);
         }
@@ -237,7 +240,7 @@ abstract public class SubscriptionMaskBase implements Serializable {
             return(false);
         }
         else{
-            Boolean qualifiedNameFilterOutcome = getInternalEventTarget().getComponentIdMask().filter(testComponentId.getLocalObjectId().getFullyDistinguishedName());
+            Boolean qualifiedNameFilterOutcome = getInternalEventTarget().getComponentIdMask().filter(testComponentId.getElementIdentifier().getIdentifierValue());
             getLogger().trace("filterInternalEventTarget(): Exit, qualifiedNameFilterOutcome -> {}", qualifiedNameFilterOutcome);
             return(qualifiedNameFilterOutcome);
         }

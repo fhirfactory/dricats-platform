@@ -120,7 +120,7 @@ public class CodeableConcept extends SerialisableObject {
 		builder.append(", system=");
 		builder.append(system);
 		builder.append(", id=");
-		builder.append(getObjectId());
+		builder.append(getElementInstanceId());
 		builder.append("]");
 		return builder.toString();
 	}

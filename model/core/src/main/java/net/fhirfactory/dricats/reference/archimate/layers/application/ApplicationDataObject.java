@@ -45,9 +45,6 @@ public class ApplicationDataObject extends ElementBase implements Serializable {
     // Bean Methods
     //
 
-    @Override
-    protected Logger getLogger(){ return LOG; }
-
     public List<ApplicationFunction> getAccessingFunctions() {
         return accessingFunctions;
     }

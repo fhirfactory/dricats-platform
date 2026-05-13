@@ -7,8 +7,6 @@ import net.fhirfactory.dricats.internals.common.identifiers.ElementReference;
 import net.fhirfactory.dricats.reference.archimate.common.ElementBase;
 import net.fhirfactory.dricats.reference.archimate.common.valuesets.ElementTypeEnum;
 import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.Serial;
 import java.util.ArrayList;
@@ -17,7 +15,6 @@ import java.util.Objects;
 
 public class ApplicationCollaboration extends ElementBase {
     @Serial private static final long serialVersionUID = -12345678910102L;
-    private static final Logger LOG = LoggerFactory.getLogger(ApplicationCollaboration.class);
 
     // ArchiMate attributes specific to Application Collaboration:
     // - participants: references to participating ApplicationComponent(s) or nested collaborations
@@ -37,8 +34,6 @@ public class ApplicationCollaboration extends ElementBase {
             this.participants.addAll(ori.getParticipants());
         }
     }
-
-    protected Logger getLogger(){ return LOG; }
 
     public List<ElementReference> getParticipants() { return participants; }
     public void setParticipants(List<ElementReference> participants) { this.participants = participants; }

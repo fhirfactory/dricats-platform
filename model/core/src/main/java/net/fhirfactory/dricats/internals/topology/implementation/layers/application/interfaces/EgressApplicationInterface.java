@@ -21,14 +21,19 @@
  */
 package net.fhirfactory.dricats.internals.topology.implementation.layers.application.interfaces;
 
-import net.fhirfactory.dricats.internals.common.id.ObjectId;
+import net.fhirfactory.dricats.internals.common.identifiers.ElementReference;
 import net.fhirfactory.dricats.internals.topology.implementation.layers.application.interfaces.base.PublicationSet;
 import net.fhirfactory.dricats.internals.topology.implementation.layers.application.interfaces.base.WUPInterfaceBase;
+import net.fhirfactory.dricats.internals.topology.implementation.layers.application.interfaces.valuesets.InterfaceComponentTypeEnum;
+import net.fhirfactory.dricats.internals.topology.implementation.layers.application.valuesets.ApplicationComponentSpecialisationEnum;
+import net.fhirfactory.dricats.reference.archimate.layers.application.ApplicationInterface;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class EgressApplicationInterface extends WUPInterfaceBase implements Serializable {
     //
@@ -42,8 +47,8 @@ public class EgressApplicationInterface extends WUPInterfaceBase implements Seri
     //
 
     private PublicationSet publishedContent;
-    private ObjectId representativePathwayElement;
-    private List<ObjectId> consumerPathwayElements;
+    private ElementReference representativePathwayElement;
+    private List<ElementReference> consumerPathwayElements;
 
     //
      // Constructor(s)
@@ -51,9 +56,14 @@ public class EgressApplicationInterface extends WUPInterfaceBase implements Seri
 
     public EgressApplicationInterface(){
         super();
-        this.consumerPathwayElements = new java.util.ArrayList<>();
+        this.consumerPathwayElements = new ArrayList<>();
+        setSpecialization(InterfaceComponentTypeEnum.GENERIC_SENDER_INTERFACE.getName());
     }
 
+    public EgressApplicationInterface(ElementReference parent, String name, String documentation, InterfaceComponentTypeEnum specialisation, Map<String, String> configurationParameters){
+        super(parent, name, documentation, specialisation, configurationParameters);
+        this.consumerPathwayElements = new ArrayList<>();
+    }
 
     //
     // Getters and Setters
@@ -67,18 +77,18 @@ public class EgressApplicationInterface extends WUPInterfaceBase implements Seri
         this.publishedContent = publishedContent;
     }
 
-    public List<ObjectId> getConsumerPathwayElements() {
+    public List<ElementReference> getConsumerPathwayElements() {
         return consumerPathwayElements;
     }
 
-    public void setConsumerPathwayElements(List<ObjectId> consumerPathwayElements) {
+    public void setConsumerPathwayElements(List<ElementReference> consumerPathwayElements) {
         this.consumerPathwayElements = consumerPathwayElements;
     }
 
-    public ObjectId getRepresentativePathwayElement() {
+    public ElementReference getRepresentativePathwayElement() {
         return representativePathwayElement;
     }
-    public void setRepresentativePathwayElement(ObjectId representativePathwayElement) {
+    public void setRepresentativePathwayElement(ElementReference representativePathwayElement) {
         this.representativePathwayElement = representativePathwayElement;
     }
 
@@ -90,21 +100,25 @@ public class EgressApplicationInterface extends WUPInterfaceBase implements Seri
     public String toString() {
         return new ToStringBuilder(this)
                 .append("publishedContent", getPublishedContent())
+                .append("representativePathwayElement", getRepresentativePathwayElement())
                 .append("consumerPathwayElements", getConsumerPathwayElements())
-                .append("adapters", getAdapters())
-                .append("interfaceConnectivityRole", getInterfaceConnectivityRole())
-                .append("metricsData", getMetricsData())
-                .append("interfaceContentRole", getInterfaceContentRole())
-                .append("owner", getOwner())
-                .append("services", getServices())
+                .append("localObjectId", getElementInstanceId())
+                .append("securityLabels", getSecurityLabels())
+                .append("metadata", getMetadata())
+                .append("shortName", getShortName())
+                .append("longName", getIdentifier())
+                .append("otherIdentifiers", getOtherIdentifiers())
+                .append("securityLabels", getSecurityLabels())
                 .append("elementType", getElementType())
-                .append("name", getName())
                 .append("documentation", getDocumentation())
                 .append("specialization", getSpecialization())
                 .append("extensions", getExtensions())
-                .append("securityLabels", getSecurityLabels())
-                .append("metadata", getMetadata())
-                .append("id", getObjectId())
+                .append("owner", getOwner())
+                .append("services", getServices())
+                .append("supportedDataObjects", getSupportedDataObjects())
+                .append("componentStatus", getComponentStatus())
+                .append("adapters", getAdapters())
+                .append("metricsData", getMetricsData())
                 .toString();
     }
 }

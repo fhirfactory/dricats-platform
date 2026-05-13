@@ -25,8 +25,8 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import net.fhirfactory.dricats.datagrid.satellite.DataGridServicesGroup;
 import net.fhirfactory.dricats.deployment.valuesets.SubsystemInternalServiceNamesEnum;
-import net.fhirfactory.dricats.internals.common.id.ObjectId;
-import net.fhirfactory.dricats.internals.common.naming.FullyDistinguishedName;
+import net.fhirfactory.dricats.internals.common.identifiers.ElementIdentifier;
+import net.fhirfactory.dricats.internals.common.naming.DistinguishedName;
 import net.fhirfactory.dricats.internals.common.naming.RelativeDistinguishedName;
 import net.fhirfactory.dricats.internals.events.interfaces.ILocalMessageService;
 import net.fhirfactory.dricats.internals.topology.implementation.layers.application.valuesets.ApplicationComponentSpecialisationEnum;
@@ -91,11 +91,12 @@ public class MessageDistributionService extends JChannelControllerBase {
     @Override
     protected void populateIdentityDetails(){
         getLogger().debug(".buildObjectId(): Entry");
-        ObjectId databusServiceGroupId = getDataBusServicesGroup().getObjectId();
-        FullyDistinguishedName myQualifiedName = new FullyDistinguishedName(databusServiceGroupId.getFullyDistinguishedName());
+        ElementIdentifier databusServiceGroupId = getDataBusServicesGroup().getIdentifier();
+        DistinguishedName myQualifiedName = new DistinguishedName(databusServiceGroupId.getIdentifierValue());
         myQualifiedName.appendUnqualifiedName(new RelativeDistinguishedName(ApplicationComponentSpecialisationEnum.SUBSYSTEM_APPLICATION_WORK_UNIT_PROCESSOR.getType(), "MessageDistributionService"));
-        ObjectId myId = new ObjectId(myQualifiedName);
-        setObjectId(myId);
+        ElementIdentifier myId = new ElementIdentifier(myQualifiedName);
+        setIdentifier(myId);
+		setShortName(myQualifiedName.getUnqualifiedName().getValue());
         setParent(getDataBusServicesGroup().getReference());
         getLogger().debug(".buildObjectId(): Exit");
     }

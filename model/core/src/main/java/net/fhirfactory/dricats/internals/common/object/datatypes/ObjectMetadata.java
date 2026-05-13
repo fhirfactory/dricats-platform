@@ -21,22 +21,21 @@
  */
 package net.fhirfactory.dricats.internals.common.object.datatypes;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import net.fhirfactory.dricats.common.DateUtility;
+import net.fhirfactory.dricats.deployment.contants.DefaultDeploymentConstants;
+import net.fhirfactory.dricats.internals.common.id.ElementInstanceId;
+import net.fhirfactory.dricats.internals.datatypes.EffectiveDate;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+
 import java.io.Serial;
+import java.io.Serializable;
 import java.net.URI;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-
-import net.fhirfactory.dricats.common.DateUtility;
-import net.fhirfactory.dricats.deployment.contants.DefaultDeploymentConstants;
-import net.fhirfactory.dricats.internals.common.object.SerialisableObject;
-import net.fhirfactory.dricats.internals.datatypes.EffectiveDate;
-import net.fhirfactory.dricats.internals.common.id.ObjectId;
-import org.apache.commons.lang3.builder.ToStringBuilder;
-
-public class ObjectMetadata extends SerialisableObject {
+public class ObjectMetadata implements Serializable {
     //
     // Housekeeping
     //
@@ -55,20 +54,28 @@ public class ObjectMetadata extends SerialisableObject {
     private LocalDateTime creationDate;
     @JsonFormat(pattern = DateUtility.DEFAULT_JSON_FORMAT, timezone = DefaultDeploymentConstants.DEPLOYMENT_TIMEZONE)
     private LocalDateTime lastUpdateDate;
-    private Map<URI, ObjectType> localObjectTypes;
-    private Map<URI, ObjectId> localObjectIds;
+    private Map<URI, LocalObjectIdSetEntry> localObjectIds;
 
     //
      // Constructor(s)
     //
 
     public ObjectMetadata() {
-        super();
+        sourceSystem = null;
+        sourceSystemName = null;
         this.effectiveDate = new EffectiveDate();
         this.creationDate = LocalDateTime.now();
         this.lastUpdateDate = LocalDateTime.now();
         this.localObjectIds = new HashMap<>();
-        this.localObjectTypes = new HashMap<>();
+    }
+
+    public ObjectMetadata(ObjectMetadata metadata) {
+        setSourceSystem(metadata.getSourceSystem());
+        setSourceSystemName(metadata.getSourceSystemName());
+        setEffectiveDate(metadata.getEffectiveDate());
+        setCreationDate(metadata.getCreationDate());
+        setLastUpdateDate(metadata.getLastUpdateDate());
+        setLocalObjectIds(metadata.getLocalObjectIds());
     }
 
     //
@@ -114,20 +121,17 @@ public class ObjectMetadata extends SerialisableObject {
         this.lastUpdateDate = lastUpdateDate;
     }
 
-    public Map<URI, ObjectType> getLocalObjectTypes() {
-        return localObjectTypes;
-    }
-
-    public void setLocalObjectTypes(Map<URI, ObjectType> localObjectTypes) {
-        this.localObjectTypes = localObjectTypes;
-    }
-
-    public Map<URI, ObjectId> getLocalObjectIds() {
+    public Map<URI, LocalObjectIdSetEntry> getLocalObjectIds() {
         return localObjectIds;
     }
 
-    public void setLocalObjectIds(Map<URI, ObjectId> localObjectIds) {
-        this.localObjectIds = localObjectIds;
+    public void setLocalObjectIds(Map<URI, LocalObjectIdSetEntry> localObjectIds) {
+        if(localObjectIds == null){
+            this.localObjectIds = new HashMap<>();
+        }
+        if(localObjectIds != null && !localObjectIds.isEmpty()) {
+            this.localObjectIds.putAll(localObjectIds);
+        }
     }
 
     //
@@ -143,7 +147,48 @@ public class ObjectMetadata extends SerialisableObject {
                 .append("creationDate", creationDate)
                 .append("lastUpdateDate", lastUpdateDate)
                 .append("localObjectIds", localObjectIds)
-                .append("localObjectTypes", localObjectTypes)
                 .toString();
+    }
+
+    //
+     // Contained Classes
+    //
+
+    public class LocalObjectIdSetEntry implements Serializable {
+        @Serial
+        private static final long serialVersionUID = 12345678900001L;
+
+        private ElementInstanceId elementInstanceId;
+        private ObjectType objectType;
+
+        public LocalObjectIdSetEntry() {
+
+        }
+
+        public LocalObjectIdSetEntry(ElementInstanceId elementInstanceId, ObjectType objectType) {
+            this.elementInstanceId = elementInstanceId;
+            this.objectType = objectType;
+        }
+
+        public ElementInstanceId getLocalObjectId() {
+            return elementInstanceId;
+        }
+        public void setLocalObjectId(ElementInstanceId elementInstanceId) {
+            this.elementInstanceId = elementInstanceId;
+        }
+        public ObjectType getObjectType() {
+            return objectType;
+        }
+        public void setObjectType(ObjectType objectType) {
+            this.objectType = objectType;
+        }
+
+        @Override
+        public String toString() {
+            return new ToStringBuilder(this)
+                    .append("elementInstanceId", getLocalObjectId())
+                    .append("objectType", getObjectType())
+                    .toString();
+        }
     }
 }

@@ -27,7 +27,7 @@ import org.slf4j.LoggerFactory;
 
 import net.fhirfactory.dricats.internals.topology.implementation.common.ConfigurationMapEntry;
 
-import javax.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.context.ApplicationScoped;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;

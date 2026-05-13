@@ -84,7 +84,7 @@ public class H2ApplicationComponentPersistenceService implements IApplicationCom
                 try (ResultSet rs = ps.executeQuery()) {
                     if (!rs.next()) { return Optional.empty(); }
                     ApplicationComponent s = new ApplicationComponent();
-                    s.setName(rs.getString(1));
+                    s.setShortName(rs.getString(1));
                     s.setSpecialization(rs.getString(2));
                     s.setDocumentation(rs.getString(3));
                     return Optional.of(s);
@@ -103,7 +103,7 @@ public class H2ApplicationComponentPersistenceService implements IApplicationCom
         try (Connection c = DriverManager.getConnection(jdbcUrl(), jdbcUser(), jdbcPass())) {
             try (PreparedStatement up = c.prepareStatement("MERGE INTO APP_COMPONENT(comp_key, name, specialization, documentation) KEY(comp_key) VALUES(?,?,?,?)")) {
                 up.setString(1, key);
-                up.setString(2, safe(component.getName()));
+                up.setString(2, safe(component.getShortName()));
                 up.setString(3, safe(component.getSpecialization()));
                 up.setString(4, safe(component.getDocumentation()));
                 up.executeUpdate();

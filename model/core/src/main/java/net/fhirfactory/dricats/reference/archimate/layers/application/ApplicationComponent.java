@@ -21,16 +21,12 @@
  */
 package net.fhirfactory.dricats.reference.archimate.layers.application;
 
-import net.fhirfactory.dricats.internals.common.id.ObjectId;
 import net.fhirfactory.dricats.internals.common.identifiers.ElementReference;
-import net.fhirfactory.dricats.internals.datatypes.EffectiveDate;
 import net.fhirfactory.dricats.internals.oam.metrics.ApplicationComponentMetricsData;
 import net.fhirfactory.dricats.internals.oam.topology.ApplicationComponentStatus;
 import net.fhirfactory.dricats.reference.archimate.common.ElementBase;
 import net.fhirfactory.dricats.reference.archimate.common.valuesets.ElementTypeEnum;
 import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.Serial;
 import java.util.ArrayList;
@@ -49,7 +45,6 @@ public class ApplicationComponent extends ElementBase {
     //
     @Serial
     private static final long serialVersionUID = -12345678910101L;
-    private static final Logger LOG = LoggerFactory.getLogger(ApplicationComponent.class);
 
     // ArchiMate attributes specific to Application Component (by reference IDs)
     // - interfaces: references to ApplicationInterface objects
@@ -76,22 +71,11 @@ public class ApplicationComponent extends ElementBase {
         this.metricsData = new ApplicationComponentMetricsData();
         this.componentStatus = new ApplicationComponentStatus();
         this.setElementType(ElementTypeEnum.APPLICATION_COMPONENT);
-        getLogger().trace("ApplicationComponent(): constructed");
     }
 
-    public ApplicationComponent(String name, String documentation, String specialization) {
-        super(name, documentation, specialization, ElementTypeEnum.APPLICATION_COMPONENT);
-        this.interfaces = new ArrayList<>();
-        this.subComponents = new ArrayList<>();
-        this.supportedApplicationFunctions = new ArrayList<>();
-        this.supportedApplicationServices = new ArrayList<>();
-        this.metricsData = new ApplicationComponentMetricsData();
-        this.componentStatus = new ApplicationComponentStatus();
-        getLogger().trace("ApplicationComponent(name, documentation, interfaceSpecialisation): constructed");
-    }
 
-    public ApplicationComponent(ElementReference parent, ObjectId objectId, String documentation, String specialization, Map<String, String> extensions) {
-        super( objectId, documentation, specialization, ElementTypeEnum.APPLICATION_COMPONENT, extensions);
+    public ApplicationComponent(ElementReference parent, String name, String documentation, String specialization, Map<String, String> extensions) {
+        super( parent, name, documentation, specialization, extensions, ElementTypeEnum.APPLICATION_COMPONENT);
         this.interfaces = new ArrayList<>();
         this.subComponents = new ArrayList<>();
         this.supportedApplicationFunctions = new ArrayList<>();
@@ -99,7 +83,6 @@ public class ApplicationComponent extends ElementBase {
         setParent(parent);
         this.metricsData = new ApplicationComponentMetricsData();
         this.componentStatus = new ApplicationComponentStatus();
-        getLogger().trace("ApplicationComponent(name, documentation, interfaceSpecialisation): constructed");
     }
 
     //
@@ -108,6 +91,10 @@ public class ApplicationComponent extends ElementBase {
 
     public ApplicationComponentStatus getComponentStatus() {
         return componentStatus;
+    }
+
+    public void setComponentStatus(ApplicationComponentStatus componentStatus) {
+        this.componentStatus = componentStatus;
     }
 
     public List<ElementReference> getSupportedApplicationFunctions() {
@@ -144,10 +131,6 @@ public class ApplicationComponent extends ElementBase {
         if(supportedApplicationServices != null){
             this.supportedApplicationServices.addAll(supportedApplicationServices);
         }
-    }
-
-    protected Logger getLogger(){
-        return LOG;
     }
 
     public List<ElementReference> getInterfaces() {

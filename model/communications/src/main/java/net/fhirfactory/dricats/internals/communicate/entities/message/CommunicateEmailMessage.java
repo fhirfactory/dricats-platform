@@ -157,7 +157,7 @@ public class CommunicateEmailMessage extends CommunicateMessage{
         sb.append(", messageTarget=").append(getTarget());
         sb.append(", messageSendDate=").append(getEventSendDate());
         sb.append(", messageReceiveDate=").append(getEventReceiveDate());
-        sb.append(", messageId='").append(getObjectId()).append('\'');
+        sb.append(", messageId='").append(getElementInstanceId()).append('\'');
         sb.append(", messageSequenceNumber=").append(getMessageSequenceNumber());
         sb.append(", messagePayload=").append(getMessagePayload());
         sb.append('}');

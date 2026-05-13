@@ -33,7 +33,7 @@ public class ServingRelationship extends RelationshipBase {
      * @param targetId The ID of the target element (the element being served)
      */
     public ServingRelationship(ElementReference sourceId, ElementReference targetId) {
-        super(sourceId, targetId);
+        super(sourceId, targetId, RelationshipTypeEnum.SERVING);
         setType(RelationshipTypeEnum.SERVING);
     }
 
@@ -45,7 +45,7 @@ public class ServingRelationship extends RelationshipBase {
      * @param targetId The ID of the target element (the element being served)
      */
     public ServingRelationship(String name, ElementReference sourceId, ElementReference targetId) {
-        super(name, sourceId, targetId);
+        super(name, "", sourceId, targetId, RelationshipTypeEnum.SERVING);
         setType(RelationshipTypeEnum.SERVING);
     }
 
@@ -58,7 +58,7 @@ public class ServingRelationship extends RelationshipBase {
      * @param targetId The ID of the target element (the element being served)
      */
     public ServingRelationship(String name, String description, ElementReference sourceId, ElementReference targetId) {
-        super(name, description, sourceId, targetId);
+        super(name, description, sourceId, targetId, RelationshipTypeEnum.SERVING);
         setType(RelationshipTypeEnum.SERVING);
     }
 }

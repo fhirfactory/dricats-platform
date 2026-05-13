@@ -30,10 +30,4 @@ public class Product extends ElementBase implements Serializable {
         super();
         setElementType(ElementTypeEnum.PRODUCT);
     }
-
-    //
-     // Bean Methods
-    //
-    @Override
-    protected Logger getLogger(){ return LOG; }
 }

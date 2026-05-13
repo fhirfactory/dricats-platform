@@ -23,8 +23,8 @@ package net.fhirfactory.dricats.internals.communicate.entities.user.factories;
 
 import net.fhirfactory.dricats.internals.communicate.entities.user.valuesets.CommunicateUserNameSuffixes;
 
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 
 @ApplicationScoped
 public class CommunicateUserNameFactory {

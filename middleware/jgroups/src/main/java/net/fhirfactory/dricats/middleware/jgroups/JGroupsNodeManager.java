@@ -11,8 +11,8 @@ import net.fhirfactory.dricats.datagrid.satellite.configurationgrid.LocalConfigu
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 import java.time.LocalDateTime;
 
 @ApplicationScoped
@@ -52,8 +52,8 @@ public class JGroupsNodeManager {
     private LocalTaskServerInterface localTaskServer;
     @Inject
     private ISubsystem subsystemInterface;
-    @Inject
-    private MiddlewareComponentInterface middlewareComponent;
+ //   @Inject
+ //   private MiddlewareComponentInterface middlewareComponent;
     @Inject
     private SolutionConfigurationInterface solutionConfigurationInterface;
 

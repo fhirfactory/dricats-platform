@@ -21,8 +21,15 @@
  */
 package net.fhirfactory.dricats.ui;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class AdministrationUILauncher {
+    private static final Logger LOG = LoggerFactory.getLogger(AdministrationUILauncher.class);
+
     public static void main(String[] args) {
+        LOG.debug(".main(): [Entry]");
         AdministrationUI.main(args);
+        LOG.debug(".main(): [Exit]");
     }
 }

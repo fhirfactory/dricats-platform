@@ -21,14 +21,14 @@
  */
 package net.fhirfactory.dricats.internals.pubsub.common;
 
-import net.fhirfactory.dricats.internals.common.object.DistributableObject;
-import net.fhirfactory.dricats.internals.common.id.ObjectId;
+import net.fhirfactory.dricats.internals.common.identifiers.ElementReference;
+import net.fhirfactory.dricats.internals.common.object.ManagedObject;
 import net.fhirfactory.dricats.reference.archimate.layers.application.ApplicationFunction;
 
 import java.io.Serial;
 import java.io.Serializable;
 
-public class FilterBase extends DistributableObject implements Serializable {
+public class FilterBase extends ManagedObject implements Serializable {
     //
     // Housekeeping
     //
@@ -40,7 +40,7 @@ public class FilterBase extends DistributableObject implements Serializable {
     //
 
     private ApplicationFunction publisherFunction;
-    private ObjectId publisherInstance;
+    private ElementReference publisherInstance;
 
     //
     // Constructor(s)
@@ -50,7 +50,7 @@ public class FilterBase extends DistributableObject implements Serializable {
         super();
     }
 
-    public FilterBase(ObjectId publisher, ApplicationFunction publisherFunction) {
+    public FilterBase(ElementReference publisher, ApplicationFunction publisherFunction) {
         super();
         this.publisherInstance = publisher;
         this.publisherFunction = publisherFunction;
@@ -66,10 +66,10 @@ public class FilterBase extends DistributableObject implements Serializable {
     public void setPublisherFunction(ApplicationFunction publisherFunction) {
         this.publisherFunction = publisherFunction;
     }
-    public ObjectId getPublisherInstance() {
+    public ElementReference getPublisherInstance() {
         return publisherInstance;
     }
-    public void setPublisherInstance(ObjectId publisherInstance) {
+    public void setPublisherInstance(ElementReference publisherInstance) {
         this.publisherInstance = publisherInstance;
     }
 }

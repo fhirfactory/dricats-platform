@@ -21,7 +21,7 @@
  */
 package net.fhirfactory.dricats.internals.communicate.entities.rooms.factories;
 
-import javax.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.context.ApplicationScoped;
 
 @ApplicationScoped
 public class CommunicateRoomNameFactory {

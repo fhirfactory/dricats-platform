@@ -25,12 +25,13 @@ import jakarta.annotation.PostConstruct;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import net.fhirfactory.dricats.internals.oam.metrics.ApplicationComponentMetricsData;
-import net.fhirfactory.dricats.internals.oam.topology.EgressInterfaceComponentSummary;
-import net.fhirfactory.dricats.internals.oam.topology.IngressInterfaceComponentSummary;
-import net.fhirfactory.dricats.internals.oam.topology.SubsystemSummary;
-import net.fhirfactory.dricats.reference.archimate.common.SimpleElementBase;
-import net.fhirfactory.dricats.ui.model.topology.base.ApplicationComponentSummary;
-import net.fhirfactory.dricats.ui.model.topology.base.ApplicationComponentSummaryList;
+import net.fhirfactory.dricats.internals.topology.implementation.common.TopologyComponent;
+import net.fhirfactory.dricats.internals.topology.implementation.layers.application.Subsystem;
+import net.fhirfactory.dricats.internals.topology.implementation.layers.application.interfaces.EgressApplicationInterface;
+import net.fhirfactory.dricats.internals.topology.implementation.layers.application.interfaces.IngresApplicationInterface;
+import net.fhirfactory.dricats.internals.topology.implementation.layers.application.valuesets.ApplicationComponentSpecialisationEnum;
+import net.fhirfactory.dricats.reference.archimate.common.ElementBase;
+import net.fhirfactory.dricats.reference.archimate.layers.application.ApplicationComponent;
 import net.fhirfactory.dricats.ui.serverside.caches.metrics.UIMetricsCacheService;
 import net.fhirfactory.dricats.ui.serverside.caches.topology.UITopologyCacheService;
 import net.fhirfactory.dricats.ui.uitest.handlers.common.BaseHandler;
@@ -103,32 +104,29 @@ public class TopologyResourceHandler extends BaseHandler {
 
     public String listComponentsAsJSON() {
         LOG.debug(".listComponentsAsJSON(): Entry");
-        List<ApplicationComponentSummary> list = testComponentServices.getComponents().values().stream()
-                .filter(v -> v instanceof ApplicationComponentSummary)
-                .map(v -> (ApplicationComponentSummary) v)
+        List<ApplicationComponent> list = testComponentServices.getAllApplicationComponents().stream()
+                .map(v -> (ApplicationComponent) v)
                 .collect(Collectors.toList());
         LOG.trace(".listComponentsAsJSON(): Found {} components", list.size());
 
-        ApplicationComponentSummaryList resultList = new ApplicationComponentSummaryList();
-        for (ApplicationComponentSummary currentListItem : list) {
-            if(currentListItem instanceof SubsystemSummary) {
-               resultList.getElementList().add(currentListItem);
-            }
-        }
+        List<ApplicationComponent> resultList = list.stream()
+                .filter(c -> c instanceof Subsystem || (c.getSpecialization() != null && c.getSpecialization().equals(ApplicationComponentSpecialisationEnum.SUBSYSTEM.getType())))
+                .collect(Collectors.toList());
+
         LOG.trace(".listComponentsAsJSON(): Converting List to JSON");
         String result = convertToJson(resultList);
-        LOG.debug(".listComponentsAsJSON(): Exit, Returning {} components", list.size());
+        LOG.debug(".listComponentsAsJSON(): Exit, Returning {} components", resultList.size());
         return(result);
     }
 
-    public ApplicationComponentSummary getComponent(String id) {
+    public ApplicationComponent getComponent(String id) {
         LOG.debug(".getComponent(): Entry, id={}", id);
         if (id == null || id.isEmpty()) {
             LOG.warn(".getComponent(), Exit, called with empty id");
             return null;
         }
-        SimpleElementBase base = testComponentServices.getComponents().get(id);
-        ApplicationComponentSummary c = (base instanceof ApplicationComponentSummary) ? (ApplicationComponentSummary) base : null;
+        ElementBase base = testComponentServices.getComponent(id);
+        ApplicationComponent c = (base instanceof ApplicationComponent) ? (ApplicationComponent) base : null;
         if (c == null) {
             LOG.warn(".getComponent(): Component not found for id={}", id);
         }
@@ -137,47 +135,47 @@ public class TopologyResourceHandler extends BaseHandler {
     }
 
     public String getComponentAsJSON(String id){
-        ApplicationComponentSummary component = getComponent(id);
+        ApplicationComponent component = getComponent(id);
         return(convertToJson(component));
     }
 
-    public List<ApplicationComponentSummary> getSubComponents(String id) {
+    public List<ApplicationComponent> getSubComponents(String id) {
         LOG.debug("getSubComponents(id={}) invoked", id);
-        List<ApplicationComponentSummary> subComponents = getTestComponentServices().getSubComponents(id);
+        List<ApplicationComponent> subComponents = getTestComponentServices().getSubComponents(id);
         return subComponents;
     }
 
     public String getSubComponentsAsJSON(String id){
-        List<ApplicationComponentSummary> subs = getSubComponents(id);
+        List<ApplicationComponent> subs = getSubComponents(id);
         return(convertToJson(subs));
     }
 
-    public List<IngressInterfaceComponentSummary> getIngressInterfaces(String id) {
+    public List<IngresApplicationInterface> getIngressInterfaces(String id) {
         LOG.debug("getInterfaces(id={}) invoked", id);
-        List<IngressInterfaceComponentSummary> interfaces = getTestComponentServices().getIngressInterfaces(id);
+        List<IngresApplicationInterface> interfaces = getTestComponentServices().getIngressInterfaces(id);
         return interfaces;
     }
 
     public String getIngressInterfacesAsJSON(String id){
-        List<IngressInterfaceComponentSummary> interfaces = getIngressInterfaces(id);
+        List<IngresApplicationInterface> interfaces = getIngressInterfaces(id);
         return(convertToJson(interfaces));
     }
 
-    public List<EgressInterfaceComponentSummary> getEgressInterfaces(String id) {
+    public List<EgressApplicationInterface> getEgressInterfaces(String id) {
         LOG.debug("getEgressInterfaces(id={}) invoked", id);
-        List<EgressInterfaceComponentSummary> interfaces = getTestComponentServices().getEgressInterfaces(id);
+        List<EgressApplicationInterface> interfaces = getTestComponentServices().getEgressInterfaces(id);
         return interfaces;
     }
 
     public String getEgressInterfacesAsJSON(String id){
-        List<EgressInterfaceComponentSummary> interfaces = getEgressInterfaces(id);
+        List<EgressApplicationInterface> interfaces = getEgressInterfaces(id);
         return(convertToJson(interfaces));
     }
 
 
     public ApplicationComponentMetricsData getLatestMetricsForComponent(String id) {
         LOG.debug(".getLatestMetricsForComponent(): Entry, id={}", id);
-        ApplicationComponentSummary component = getComponent(id);
+        ApplicationComponent component = getComponent(id);
         ApplicationComponentMetricsData latestMetricsForComponent = testMetricsService.getLatestMetricsForComponent(component);
         LOG.debug(".getLatestMetricsForComponent(): Exit, Returning latest metrics for component id={}", id);
         return(latestMetricsForComponent);
@@ -191,7 +189,7 @@ public class TopologyResourceHandler extends BaseHandler {
     public List<ApplicationComponentMetricsData> getMetricsInRange(String start, String end) {
         LOG.debug("getMetricsInRange(start={}, end={}) invoked", start, end);
         // For UI tests, just return the latest metrics for all components
-        List<ApplicationComponentMetricsData> list = testComponentServices.getComponents().values().stream()
+        List<ApplicationComponentMetricsData> list = testComponentServices.getAllApplicationComponents().stream()
                 .map(c -> getLatestMetricsForComponent(keyOf(c)))
                 .collect(Collectors.toList());
         LOG.info("Returning {} metrics entries for range [start={}, end={}]", list.size(), start, end);
@@ -203,8 +201,8 @@ public class TopologyResourceHandler extends BaseHandler {
         return(convertToJson(list));
     }
 
-    private static String keyOf(SimpleElementBase c) {
-        String key = c.resolveKey();
+    private static String keyOf(ElementBase c) {
+        String key = c.resolveElementInstanceKey();
         return(key);
     }
 

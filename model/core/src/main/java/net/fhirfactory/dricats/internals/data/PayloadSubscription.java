@@ -22,7 +22,7 @@
 package net.fhirfactory.dricats.internals.data;
 
 import jakarta.ws.rs.core.MediaType;
-import net.fhirfactory.dricats.internals.common.id.ObjectId;
+import net.fhirfactory.dricats.internals.common.identifiers.ElementReference;
 import net.fhirfactory.dricats.internals.pubsub.topics.TopicSubscription;
 import net.fhirfactory.dricats.internals.topics.Topic;
 import org.slf4j.Logger;
@@ -49,7 +49,7 @@ public class PayloadSubscription implements Serializable {
     private List<TopicSubscription> allowableTopicSubscriptions;
     private List<PayloadSecurityStatus> allowableSecurityStatusSet;
     private List<MediaType> allowableMediaTypes;
-    private List<ObjectId> allowableSources;
+    private List<ElementReference> allowableSources;
 
     //
     // Constructor(s)
@@ -91,11 +91,11 @@ public class PayloadSubscription implements Serializable {
         this.allowableMediaTypes = allowableMediaTypes;
     }
 
-    public List<ObjectId> getAllowableSources() {
+    public List<ElementReference> getAllowableSources() {
         return allowableSources;
     }
 
-    public void setAllowableSources(List<ObjectId> allowableSources) {
+    public void setAllowableSources(List<ElementReference> allowableSources) {
         this.allowableSources = allowableSources;
     }
 

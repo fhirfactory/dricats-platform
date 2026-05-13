@@ -21,7 +21,6 @@
  */
 package net.fhirfactory.dricats.internals.configuration.segments;
 
-import net.fhirfactory.dricats.internals.common.identifiers.datatypes.ElementIdentifierType;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import java.io.Serial;
@@ -46,7 +45,6 @@ public class SolutionConfigurationObject implements Serializable{
     private String solutionName;
     private String solutionGroup;
     private String solutionDescription;
-	private ElementIdentifierType defaultObjectIdentifierType;
     private boolean encryptedAtRestRequired;
     private boolean encryptedAtTransitRequired;
 
@@ -79,14 +77,6 @@ public class SolutionConfigurationObject implements Serializable{
 		this.solutionDescription = solutionDescription;
 	}
 
-	public ElementIdentifierType getDefaultObjectIdentifierType() {
-		return defaultObjectIdentifierType;
-	}
-
-	public void setDefaultObjectIdentifierType(ElementIdentifierType defaultObjectIdentifierType) {
-		this.defaultObjectIdentifierType = defaultObjectIdentifierType;
-	}
-
     public boolean isEncryptedAtRestRequired() {
         return encryptedAtRestRequired;
     }
@@ -110,12 +100,11 @@ public class SolutionConfigurationObject implements Serializable{
     @Override
     public String toString() {
         return new ToStringBuilder(this)
-                .append("solutionName", solutionName)
-                .append("solutionGroup", solutionGroup)
-                .append("solutionDescription", solutionDescription)
-                .append("defaultObjectIdentifierType", defaultObjectIdentifierType)
-                .append("encryptedAtRestRequired", encryptedAtRestRequired)
-                .append("encryptedAtTransitRequired", encryptedAtTransitRequired)
+                .append("solutionName", getSolutionName())
+                .append("solutionGroup", getSolutionGroup())
+                .append("solutionDescription", getSolutionDescription())
+                .append("encryptedAtRestRequired", isEncryptedAtRestRequired())
+                .append("encryptedAtTransitRequired", isEncryptedAtTransitRequired())
                 .toString();
     }
 

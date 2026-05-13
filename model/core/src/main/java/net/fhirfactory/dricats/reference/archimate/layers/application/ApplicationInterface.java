@@ -4,19 +4,14 @@
 package net.fhirfactory.dricats.reference.archimate.layers.application;
 
 import net.fhirfactory.dricats.internals.common.identifiers.ElementReference;
-import net.fhirfactory.dricats.internals.common.naming.FullyDistinguishedName;
-import net.fhirfactory.dricats.internals.common.id.ObjectId;
-import net.fhirfactory.dricats.internals.common.naming.RelativeDistinguishedName;
 import net.fhirfactory.dricats.reference.archimate.common.ElementBase;
 import net.fhirfactory.dricats.reference.archimate.common.valuesets.ElementTypeEnum;
-import org.apache.commons.lang3.SerializationUtils;
 import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.Serial;
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 
@@ -30,7 +25,6 @@ public class ApplicationInterface extends ElementBase {
     // Housekeeping
     //
     @Serial private static final long serialVersionUID = -12345678910103L;
-    private static final Logger LOG = LoggerFactory.getLogger(ApplicationInterface.class);
 
     //
     // Constants
@@ -53,49 +47,27 @@ public class ApplicationInterface extends ElementBase {
         super();
         this.services = new ArrayList<>();
         this.setElementType(ElementTypeEnum.APPLICATION_INTERFACE);
-        getLogger().trace("ApplicationInterface(): constructed");
     }
 
     public ApplicationInterface(String name, String documentation, String specialization) {
-        super();
-        setName(name);
-        setDocumentation(documentation);
-        setSpecialization(specialization);
-        this.services = new ArrayList<>();
-        this.setElementType(ElementTypeEnum.APPLICATION_INTERFACE);
-        getLogger().trace("ApplicationInterface(name, documentation, specialization): constructed");
+        super(null, name,documentation,specialization,new HashMap<>(),ElementTypeEnum.APPLICATION_INTERFACE);
     }
 
     public ApplicationInterface(ElementReference parent, String name, String documentation, String specialization) {
-        super();
-        setOwner(parent);
-        setName(name);
-        RelativeDistinguishedName unqualifiedName = new RelativeDistinguishedName();
-        unqualifiedName.setQualifier(specialization);
-        unqualifiedName.setValue(name);
-        ElementReference reference = SerializationUtils.clone(parent);
-        FullyDistinguishedName newName = reference.getLocalObjectId().getFullyDistinguishedName();
-        newName.appendUnqualifiedName(unqualifiedName);
-        setObjectId(new ObjectId(newName));
-        setDocumentation(documentation);
-        setSpecialization(specialization);
+        super(parent, name, documentation, specialization, new HashMap<>(), ElementTypeEnum.APPLICATION_INTERFACE);
         this.services = new ArrayList<>();
-        this.setElementType(ElementTypeEnum.APPLICATION_INTERFACE);
-        getLogger().trace("ApplicationInterface(parent, name, documentation, specialization): constructed");
+        setOwner(parent);
     }
 
     public ApplicationInterface(ElementReference parent, String name, String documentation, String specialization, URI uri) {
         this(parent, name, documentation,specialization);
         String uriString = uri.toString();
-        getLogger().trace("ApplicationInterface(parent, name, documentation, specialization, uri): constructed");
+        setOwner(parent);
     }
 
     //
     // Bean Methods
     //
-    protected Logger getLogger(){
-        return LOG;
-    }
 
     public ElementReference getOwner() {
         return owner;
@@ -156,14 +128,17 @@ public class ApplicationInterface extends ElementBase {
                 .append("owner", getOwner())
                 .append("services", getServices())
                 .append("supportedDataObjects", getSupportedDataObjects())
+                .append("localObjectId", getElementInstanceId())
+                .append("securityLabels", getSecurityLabels())
+                .append("metadata", getMetadata())
+                .append("shortName", getShortName())
+                .append("longName", getIdentifier())
+                .append("otherIdentifiers", getOtherIdentifiers())
+                .append("securityLabels", getSecurityLabels())
                 .append("elementType", getElementType())
-                .append("name", getName())
                 .append("documentation", getDocumentation())
                 .append("specialization", getSpecialization())
                 .append("extensions", getExtensions())
-                .append("securityLabels", getSecurityLabels())
-                .append("metadata", getMetadata())
-                .append("id", getObjectId())
                 .toString();
     }
 }

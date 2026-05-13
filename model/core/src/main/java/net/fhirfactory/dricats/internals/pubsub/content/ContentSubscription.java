@@ -70,12 +70,14 @@ public class ContentSubscription extends SubscriptionBase implements Serializabl
     public String toString() {
         return new ToStringBuilder(this)
                 .append("contentSubscriptionMask", getContentSubscriptionMask())
-                .append("subscriberFunction", getSubscriberFunction())
-                .append("subscriberInstance", getSubscriberInstance())
-                .append("identifiers", getIdentifiers())
+                .append("localObjectId", getElementInstanceId())
                 .append("securityLabels", getSecurityLabels())
                 .append("metadata", getMetadata())
-                .append("id", getObjectId())
+                .append("shortName", getShortName())
+                .append("longName", getIdentifier())
+                .append("otherIdentifiers", getOtherIdentifiers())
+                .append("subscriberFunction", getSubscriberFunction())
+                .append("subscriberInstance", getSubscriberInstance())
                 .toString();
     }
 }

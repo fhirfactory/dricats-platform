@@ -1,6 +1,8 @@
 package net.fhirfactory.dricats.datagrid.common.local;
 
-import net.fhirfactory.dricats.internals.common.id.ObjectKey;
+import net.fhirfactory.dricats.internals.topology.implementation.layers.application.interfaces.EgressApplicationInterface;
+import net.fhirfactory.dricats.internals.topology.implementation.layers.application.interfaces.IngresApplicationInterface;
+import net.fhirfactory.dricats.reference.archimate.common.ElementBase;
 import net.fhirfactory.dricats.reference.archimate.layers.application.ApplicationComponent;
 
 import java.util.Collection;
@@ -12,16 +14,21 @@ import java.util.function.Predicate;
  * Simple repository contract for an in-memory store of ApplicationComponent resources.
  */
 public interface ILocalTopologyMap {
-    void add(ApplicationComponent component);
-    boolean remove(ApplicationComponent component);
-    boolean removeById(ObjectKey id);
+    void add(ElementBase element);
+    boolean remove(ElementBase element);
+    boolean removeByElementInstanceKey(String key);
+    boolean removeByElementKey(String key);
 
-    Optional<ApplicationComponent> findById(ObjectKey id);
+    Optional<ApplicationComponent> findApplicationByElementInstanceKey(String elementInstanceKey);
+    Optional<IngresApplicationInterface> findIngresInterfaceByElementInstanceKey(String elementInstanceKey);
+    Optional<EgressApplicationInterface> findEgressInterfaceByElementInstance(String elementInstanceKey);
 
     /**
      * Find components whose name equals or contains the provided name fragment (case-insensitive).
      */
-    List<ApplicationComponent> findByName(String nameOrFragment);
+    List<ApplicationComponent> findApplicationComponentByName(String nameOrFragment);
+    List<IngresApplicationInterface> findIngresInterfaceByName(String nameOrFragment);
+    List<EgressApplicationInterface> findEgressInterfaceByName(String nameOrFragment);
 
     /**
      * Generic search using a predicate.
@@ -31,17 +38,18 @@ public interface ILocalTopologyMap {
     /**
      * Get direct children of the given component, as indicated by its subComponents list.
      */
-    List<ApplicationComponent> getChildren(ApplicationComponent component);
-
-    /**
-     * Get direct children for the component identified by id.
-     */
-    List<ApplicationComponent> getChildrenById(ObjectKey id);
+    List<ApplicationComponent> getChildrenApplicationComponents(ApplicationComponent component);
+    List<ApplicationComponent> getChildrenApplicationComponentsByInstanceKey(String applicationComponentInstanceKey);
+    List<ApplicationComponent> getChildrenApplicationComponentsByIdentifierKey(String applicationComoponentIdentifierKey);
+    List<IngresApplicationInterface> getIngresInterfaces(ApplicationComponent component);
+    List<IngresApplicationInterface> getIngresInterfaces(String applicationComponentInstanceKey);
+    List<EgressApplicationInterface> getEgressInterfaces(ApplicationComponent component);
+    List<EgressApplicationInterface> getEgressInterfaces(String applicationComponentInstanceKey);
 
     /**
      * All components currently stored.
      */
-    Collection<ApplicationComponent> getAll();
+    Collection<ApplicationComponent> getAllApplicationComponents();
 
     /**
      * Total number of components stored.

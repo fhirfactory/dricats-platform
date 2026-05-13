@@ -256,7 +256,7 @@ public class DistributedTaskCache {
 
     protected String resolveKey(InternalTask task) {
         // Prefer DistributableObjectId.id (CommonName), then IAdministrativeTask.id (CommonName), else generate and set
-        String key = task.resolveKey();
+        String key = task.resolveElementInstanceKey();
         return key;
     }
 

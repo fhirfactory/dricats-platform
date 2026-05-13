@@ -70,14 +70,14 @@
         <dependency>
             <groupId>org.json</groupId>
             <artifactId>json</artifactId>
-            <!--<version>${version-org.json}</version> -->
+            <version>${version-org.json}</version>
             <scope>compile</scope>
         </dependency>
 
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-core</artifactId>
-            <!--<version>${version-com.fasterxml.jackson.core-jackson-core}</version> -->
+            <version>${version-com.fasterxml.jackson.core-jackson-core}</version>
         </dependency>
 
         <dependency>
@@ -100,6 +100,7 @@
 		<dependency>
 		    <groupId>org.slf4j</groupId>
 		    <artifactId>slf4j-simple</artifactId>
+            <version>${version-org.slf4j}</version>
 		    <scope>test</scope>
 		</dependency>
 

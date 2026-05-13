@@ -79,11 +79,6 @@ public class Payload extends ApplicationDataObject implements Serializable {
     // Utility Methods
     //
 
-    @Override
-    protected Logger getLogger(){
-        return(LOG);
-    }
-
     //
      // Standard Methods
     //

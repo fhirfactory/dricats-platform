@@ -5,6 +5,8 @@ package net.fhirfactory.dricats.reference.archimate.layers.application;
 
 import net.fhirfactory.dricats.internals.common.identifiers.ElementReference;
 import net.fhirfactory.dricats.reference.archimate.common.ElementBase;
+import net.fhirfactory.dricats.reference.archimate.common.valuesets.ElementTypeEnum;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,6 +30,7 @@ public class ApplicationProcess extends ElementBase {
 
     public ApplicationProcess() {
         super();
+        this.setElementType(ElementTypeEnum.APPLICATION_PROCESS);
         this.components = new ArrayList<>();
         this.usedServices = new ArrayList<>();
         this.accessDataObjects = new ArrayList<>();
@@ -60,6 +63,10 @@ public class ApplicationProcess extends ElementBase {
         this.accessDataObjects.add(dataObjectId);
     }
 
+    //
+    // Standard Methods
+    //
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -78,16 +85,21 @@ public class ApplicationProcess extends ElementBase {
 
     @Override
     public String toString() {
-        return getClass().getSimpleName()+"{"+
-                "name='"+getName()+'\''+
-                ", componentsCount="+(components==null?0:components.size())+
-                ", usedServicesCount="+(usedServices==null?0:usedServices.size())+
-                ", accessDataObjectsCount="+(accessDataObjects==null?0:accessDataObjects.size())+
-                ", documentation='"+getDocumentation()+'\''+
-                ", specialization='"+getSpecialization()+'\''+
-                ", extensions="+getExtensions()+
-                ", id="+ getObjectId()+
-                ", metadata="+getMetadata()+
-                '}';
+        return new ToStringBuilder(this)
+                .append("components", getComponents())
+                .append("usedServices", getUsedServices())
+                .append("accessDataObjects", getAccessDataObjects())
+                .append("localObjectId", getElementInstanceId())
+                .append("securityLabels", getSecurityLabels())
+                .append("metadata", getMetadata())
+                .append("shortName", getShortName())
+                .append("longName", getIdentifier())
+                .append("otherIdentifiers", getOtherIdentifiers())
+                .append("securityLabels", getSecurityLabels())
+                .append("elementType", getElementType())
+                .append("documentation", getDocumentation())
+                .append("specialization", getSpecialization())
+                .append("extensions", getExtensions())
+                .toString();
     }
 }

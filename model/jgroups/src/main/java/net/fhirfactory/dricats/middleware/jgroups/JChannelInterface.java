@@ -38,7 +38,6 @@ public class JChannelInterface extends JGroupsAdapter {
 	//
 	@Serial
 	private static final long serialVersionUID = 3403310128066770387L;
-	private static final Logger LOG = LoggerFactory.getLogger(JChannelInterface.class);
 
 	//
 	// Attributes
@@ -98,8 +97,4 @@ public class JChannelInterface extends JGroupsAdapter {
     // Utility Methods
     //
 
-    @Override
-    protected Logger getLogger() {
-    	return(LOG);
-    }
 }

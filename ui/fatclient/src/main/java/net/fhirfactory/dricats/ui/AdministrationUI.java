@@ -50,6 +50,7 @@ public class AdministrationUI extends Application {
 
     @Override
     public void start(Stage stage) {
+        LOG.debug(".start(): [Entry]");
         // Prompt for server URL before showing main window
         TextInputDialog urlDialog = new TextInputDialog("http://localhost:12000");
         urlDialog.setTitle("Connect to Server");
@@ -90,117 +91,42 @@ public class AdministrationUI extends Application {
             stage.setScene(new Scene(tabPane, 1100, 600));
             stage.show();
         }
+        LOG.debug(".start(): [Exit]");
         return;
     }
 
     private void refreshDetails(ApplicationComponent summary) {
-        if (detailsTable == null) return;
-        javafx.collections.ObservableList<KVRow> rows = javafx.collections.FXCollections.observableArrayList();
-        if (summary == null) {
-            rows.add(new KVRow("Info", "No component selected."));
-            detailsTable.setItems(rows);
+        LOG.debug(".refreshDetails(): [Entry]");
+        if (detailsTable == null) {
+            LOG.debug(".refreshDetails(): [Exit] detailsTable is null");
             return;
         }
-        try { rows.add(new KVRow("Name", Objects.toString(summary.getName(), ""))); } catch (Exception ignored) {}
-        try {
-            if (summary.getObjectId() != null && summary.getObjectId().getKeyValue() != null)
-                rows.add(new KVRow("ID", summary.getObjectId().getKeyValue()));
-        } catch (Exception ignored) {}
-        try {
-            if (summary.getObjectId().getName() != null)
-                rows.add(new KVRow("CommonName", Objects.toString(summary.getObjectId().getName().getValue(), "")));
-        } catch (Exception ignored) {}
-        try { rows.add(new KVRow("Element Type", Objects.toString(summary.getElementType(), ""))); } catch (Exception ignored) {}
-        try { rows.add(new KVRow("Specialization", Objects.toString(summary.getSpecialization(), ""))); } catch (Exception ignored) {}
-        try { rows.add(new KVRow("Documentation", Objects.toString(summary.getDocumentation(), ""))); } catch (Exception ignored) {}
-        try {
-            if (summary.getParent() != null)
-                rows.add(new KVRow("Parent", Objects.toString(summary.getParent().getLocalObjectId().getName().getValue(), "")));
-        } catch (Exception ignored) {}
-        try {
-            int count = summary.getSubComponents() == null ? 0 : summary.getSubComponents().size();
-            rows.add(new KVRow("Subcomponents", Integer.toString(count)));
-        } catch (Exception ignored) {}
-        try {
-            if (summary.getComponentStatus() != null) {
-                rows.add(new KVRow("Status", Objects.toString(summary.getComponentStatus().getComponentStatus(), "")));
-                String desc = summary.getComponentStatus().getComponentStatusDescription();
-                if (desc != null && !desc.isBlank()) rows.add(new KVRow("Status Description", desc));
-                if (summary.getComponentStatus().getStartupInstant() != null)
-                    rows.add(new KVRow("Startup", Objects.toString(summary.getComponentStatus().getStartupInstant(), "")));
-                if (summary.getComponentStatus().getLastActivityInstant() != null)
-                    rows.add(new KVRow("Last Activity", Objects.toString(summary.getComponentStatus().getLastActivityInstant(), "")));
-                if (summary.getComponentStatus().getLastHeartbeatInstant() != null)
-                    rows.add(new KVRow("Last Heartbeat", Objects.toString(summary.getComponentStatus().getLastHeartbeatInstant(), "")));
-            }
-        } catch (Exception ignored) {}
-        detailsTable.setItems(rows);
+        detailsTable.setItems(TopologyUIUtilities.getDetailsRows(summary));
+        LOG.debug(".refreshDetails(): [Exit]");
     }
 
     private void refreshUniqueName(ApplicationComponent summary) {
-        if (uniqueNameTree == null) return;
-        TreeItem<String> root = new TreeItem<>("UniqueName");
-        root.setExpanded(true);
-        try {
-            if (summary == null || summary.getObjectId() == null || summary.getObjectId().getFullyDistinguishedName() == null) {
-                root.getChildren().add(new TreeItem<>("No selection"));
-            } else {
-                java.util.Map<Integer, DistinguishedNameEntry> entries =
-                        summary.getObjectId().getFullyDistinguishedName().getUnqualifiedNameEntries();
-                if (entries == null || entries.isEmpty()) {
-                    root.getChildren().add(new TreeItem<>("<empty>"));
-                } else {
-                    java.util.List<Integer> keys = new java.util.ArrayList<>(entries.keySet());
-                    java.util.Collections.sort(keys);
-                    for (Integer k : keys) {
-                        DistinguishedNameEntry e = entries.get(k);
-                        String qual = e == null ? "" : java.util.Objects.toString(e.getQualifier(), "");
-                        String val = e == null ? "" : java.util.Objects.toString(e.getValue(), "");
-                        TreeItem<String> child = new TreeItem<>(qual + " = " + val);
-                        root.getChildren().add(child);
-                    }
-                }
-            }
-        } catch (Exception ignored) {
-            root.getChildren().add(new TreeItem<>("<error reading UniqueName>"));
+        LOG.debug(".refreshUniqueName(): [Entry]");
+        if (uniqueNameTree == null) {
+            LOG.debug(".refreshUniqueName(): [Exit] uniqueNameTree is null");
+            return;
         }
-        uniqueNameTree.setRoot(root);
+        uniqueNameTree.setRoot(TopologyUIUtilities.getUniqueNameTreeRoot(summary));
+        LOG.debug(".refreshUniqueName(): [Exit]");
     }
 
     private void refreshMetrics(ApplicationComponent summary) {
-        if (metricsTable == null) return;
-        javafx.collections.ObservableList<KVRow> rows = javafx.collections.FXCollections.observableArrayList();
-        if (summary == null) {
-            rows.add(new KVRow("Info", "No component selected."));
-            metricsTable.setItems(rows);
+        LOG.debug(".refreshMetrics(): [Entry]");
+        if (metricsTable == null) {
+            LOG.debug(".refreshMetrics(): [Exit] metricsTable is null");
             return;
         }
-        String id = MainRESTClient.resolveKey(summary);
-        ApplicationComponentMetricsData md = client.getLatestMetrics(id);
-        if (md == null) {
-            rows.add(new KVRow("Info", "No metrics available for: " + Objects.toString(summary.getName(), id)));
-            metricsTable.setItems(rows);
-            return;
-        }
-        try { rows.add(new KVRow("Component", Objects.toString(md.getParticipantName(), ""))); } catch (Exception ignored) {}
-        try { if (md.getComponentType() != null) rows.add(new KVRow("Type", Objects.toString(md.getComponentType(), ""))); } catch (Exception ignored) {}
-        try { if (md.getComponentStartupInstant() != null) rows.add(new KVRow("Startup", Objects.toString(md.getComponentStartupInstant(), ""))); } catch (Exception ignored) {}
-        try { if (md.getLastActivityInstant() != null) rows.add(new KVRow("Last Activity", Objects.toString(md.getLastActivityInstant(), ""))); } catch (Exception ignored) {}
-        try { if (md.getComponentStatus() != null) rows.add(new KVRow("Status", Objects.toString(md.getComponentStatus(), ""))); } catch (Exception ignored) {}
-        ComponentMessagingStatistics ms = md.getMessagingStatistics();
-        if (ms != null) {
-            rows.add(new KVRow("Messaging", ""));
-            try { rows.add(new KVRow("Ingress", Objects.toString(ms.getIngresMessageCount(), "0"))); } catch (Exception ignored) {}
-            try { rows.add(new KVRow("Egress Attempts", Objects.toString(ms.getEgressMessageAttemptCount(), "0"))); } catch (Exception ignored) {}
-            try { rows.add(new KVRow("Egress Success", Objects.toString(ms.getEgressMessageSuccessCount(), "0"))); } catch (Exception ignored) {}
-            try { rows.add(new KVRow("Egress Failures", Objects.toString(ms.getEgressMessageFailureCount(), "0"))); } catch (Exception ignored) {}
-            try { rows.add(new KVRow("Internal Sent", Objects.toString(ms.getInternalDistributedMessageCount(), "0"))); } catch (Exception ignored) {}
-            try { rows.add(new KVRow("Internal Received", Objects.toString(ms.getInternalReceivedMessageCount(), "0"))); } catch (Exception ignored) {}
-        }
-        metricsTable.setItems(rows);
+        metricsTable.setItems(TopologyUIUtilities.getMetricsRows(summary, client));
+        LOG.debug(".refreshMetrics(): [Exit]");
     }
 
     private String formatMetrics(ApplicationComponentMetricsData md) {
+        LOG.debug(".formatMetrics(): [Entry] md={}", md);
         StringBuilder sb = new StringBuilder();
         sb.append("Component: ").append(Objects.toString(md.getParticipantName(), ""));
         if (md.getComponentType() != null) sb.append(" (type=").append(md.getComponentType()).append(")");
@@ -221,10 +147,12 @@ public class AdministrationUI extends Application {
             sb.append("  Internal Sent: ").append(ms.getInternalDistributedMessageCount()).append('\n');
             sb.append("  Internal Received: ").append(ms.getInternalReceivedMessageCount()).append('\n');
         }
+        LOG.debug(".formatMetrics(): [Exit]");
         return sb.toString();
     }
 
     private void loadRoots() {
+        LOG.debug(".loadRoots(): [Entry]");
         TreeItem<ApplicationComponent> hiddenRoot = new TreeItem<>();
         treeView.setRoot(hiddenRoot);
         List<ApplicationComponent> roots = null;
@@ -235,67 +163,78 @@ public class AdministrationUI extends Application {
         }
         if (roots == null) {
             LOG.info("[UI] No components returned (null list)");
+            LOG.debug(".loadRoots(): [Exit] roots is null");
             return;
         }
         LOG.info("[UI] Loaded {} components", roots.size());
         hiddenRoot.getChildren().clear();
         for (ApplicationComponent s : roots) {
+            LOG.trace(".loadRoots(): adding component={}", s);
             if (s != null) {
                 hiddenRoot.getChildren().add(createTreeItem(s));
             }
         }
+        LOG.debug(".loadRoots(): [Exit]");
     }
 
     private TreeItem<ApplicationComponent> createTreeItem(ApplicationComponent s) {
+        LOG.debug(".createTreeItem(): [Entry] s={}", s);
         TreeItem<ApplicationComponent> item = new TreeItem<>(s);
         // Add a dummy child to show expandable arrow; real children loaded on demand
         item.getChildren().add(new TreeItem<>());
         item.expandedProperty().addListener((obs, o, n) -> {
             if (n) loadChildrenIfNeeded(item);
         });
+        LOG.debug(".createTreeItem(): [Exit]");
         return item;
     }
 
     private void loadChildrenIfNeeded(TreeItem<ApplicationComponent> parentItem) {
-        if (parentItem == null || parentItem.getValue() == null) return;
+        LOG.debug(".loadChildrenIfNeeded(): [Entry] parentItem={}", parentItem);
+        if (parentItem == null || parentItem.getValue() == null) {
+            LOG.debug(".loadChildrenIfNeeded(): [Exit] parentItem or value is null");
+            return;
+        }
         // If already loaded (no placeholder), skip
-        if (!hasPlaceholder(parentItem)) return;
+        if (!hasPlaceholder(parentItem)) {
+            LOG.debug(".loadChildrenIfNeeded(): [Exit] already loaded");
+            return;
+        }
         parentItem.getChildren().clear();
 
         String id = MainRESTClient.resolveKey(parentItem.getValue());
         List<ApplicationComponent> kids = client.listSubcomponents(id);
         if (kids.isEmpty()) {
+            LOG.debug(".loadChildrenIfNeeded(): [Exit] no children");
             // keep no children
             return;
         }
+        LOG.trace(".loadChildrenIfNeeded(): kids={}", kids);
         for (ApplicationComponent child : kids) {
             parentItem.getChildren().add(createTreeItem(child));
         }
+        LOG.debug(".loadChildrenIfNeeded(): [Exit]");
     }
 
     private boolean hasPlaceholder(TreeItem<ApplicationComponent> item) {
-        return item.getChildren().size() == 1 && item.getChildren().get(0).getValue() == null;
+        LOG.debug(".hasPlaceholder(): [Entry]");
+        boolean has = item.getChildren().size() == 1 && item.getChildren().get(0).getValue() == null;
+        LOG.debug(".hasPlaceholder(): [Exit] has={}", has);
+        return has;
     }
 
     @Override
     public void stop() throws Exception {
+        LOG.debug(".stop(): [Entry]");
         super.stop();
         Platform.exit();
+        LOG.debug(".stop(): [Exit]");
     }
 
-    public static class KVRow {
-        private final javafx.beans.property.SimpleStringProperty key = new javafx.beans.property.SimpleStringProperty();
-        private final javafx.beans.property.SimpleStringProperty value = new javafx.beans.property.SimpleStringProperty();
-        public KVRow(String key, String value) { this.key.set(key); this.value.set(value); }
-        public String getKey() { return key.get(); }
-        public void setKey(String k) { key.set(k); }
-        public javafx.beans.property.StringProperty keyProperty() { return key; }
-        public String getValue() { return value.get(); }
-        public void setValue(String v) { value.set(v); }
-        public javafx.beans.property.StringProperty valueProperty() { return value; }
-    }
 
     public static void main(String[] args) {
+        LOG.debug(".main(): [Entry]");
         launch(args);
+        LOG.debug(".main(): [Exit]");
     }
 }

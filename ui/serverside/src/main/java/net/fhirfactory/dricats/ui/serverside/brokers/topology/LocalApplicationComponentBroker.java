@@ -101,7 +101,7 @@ public class LocalApplicationComponentBroker  {
         } else {
             outcome.setEntry(entry);
             outcome.setStatus(MethodOutcomeEnum.REVIEW_ENTRY_FOUND);
-            outcome.setId(entry.getObjectId().getKeyValue());
+            outcome.setId(entry.getElementInstanceId().getIdValue());
         }
         getLogger().debug(".getResource(): Exit");
         return(outcome);
@@ -164,7 +164,7 @@ public class LocalApplicationComponentBroker  {
         getLogger().trace(".updateDirectoryEntry(): Attempting to retrieve existing Resource");
         String resourceKey = null;
         try {
-            resourceKey = entry.resolveKey();
+            resourceKey = entry.resolveElementInstanceKey();
         } catch (Exception ex){
             getLogger().warn(".updateDirectoryEntry(): Unable to resolve key for entry, exception --> {}", ex.getMessage());
             outcome.setStatus(MethodOutcomeEnum.UPDATE_ENTRY_INVALID);

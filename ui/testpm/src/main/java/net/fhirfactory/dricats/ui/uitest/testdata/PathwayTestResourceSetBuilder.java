@@ -24,18 +24,19 @@ package net.fhirfactory.dricats.ui.uitest.testdata;
 import jakarta.annotation.PostConstruct;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-import net.fhirfactory.dricats.internals.common.DistributableObjectId;
-import net.fhirfactory.dricats.internals.common.naming.FullyDistinguishedName;
+import net.fhirfactory.dricats.internals.common.identifiers.ElementIdentifier;
+import net.fhirfactory.dricats.internals.common.identifiers.ElementReference;
+import net.fhirfactory.dricats.internals.common.naming.DistinguishedName;
 import net.fhirfactory.dricats.internals.common.naming.RelativeDistinguishedName;
-import net.fhirfactory.dricats.internals.topics.Topic;
+import net.fhirfactory.dricats.internals.pathways.Pathway;
+import net.fhirfactory.dricats.internals.pathways.PathwayElement;
+import net.fhirfactory.dricats.internals.pathways.PathwayRoute;
+import net.fhirfactory.dricats.internals.pathways.PathwayRouteSegment;
+import net.fhirfactory.dricats.internals.pathways.valuesets.PathwayRouteSelectionCriteriaEnum;
 import net.fhirfactory.dricats.ui.serverside.caches.pathways.UIPathwayCacheService;
-import net.fhirfactory.dricats.ui.uitest.handlers.PathwayResourceHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 @ApplicationScoped
@@ -43,14 +44,7 @@ public class PathwayTestResourceSetBuilder {
     //
     // Housekeeping
     //
-    private static final Logger LOG = LoggerFactory.getLogger(PathwayResourceHandler.class);
-
-    //
-    // Attributes
-    //
-
-    private Map<String, TestComponent> enablerComponentMap = new HashMap<>();
-
+    private static final Logger LOG = LoggerFactory.getLogger(PathwayTestResourceSetBuilder.class);
 
     @Inject
     private UIPathwayCacheService pathwayCacheService;
@@ -70,42 +64,12 @@ public class PathwayTestResourceSetBuilder {
     public void initialise(){
         LOG.debug(".initialise(): Entry");
         try {
-            // createTestPathways();
+            createTestPathways();
             pathwayCacheService.setInitialised(true);
         } catch (Exception e){
-            LOG.warn(".initialise(): Failed to pre-populate test pathways: {}", e.getMessage());
+            LOG.warn(".initialise(): Failed to pre-populate test pathways: {}", e.getMessage(), e);
         }
         LOG.debug(".initialise(): Exit");
-    }
-
-    //
-     // Inner Classes
-     //
-
-    private class TestComponent{
-        private DistributableObjectId componentId;
-        private String description;
-        private DistributableObjectId ingressPoint;
-        private DistributableObjectId egressPoint;
-        private List<Topic> supportedTopics;
-
-        private TestComponent(String componentName, String description, List<Topic> supportedTopics){
-            FullyDistinguishedName componentQN = new FullyDistinguishedName();
-            componentQN.appendUnqualifiedName(new RelativeDistinguishedName("Solution", "TestSolution1"));
-            componentQN.appendUnqualifiedName(new RelativeDistinguishedName("Subsystem", "TestSubsystem1"));
-            componentQN.appendUnqualifiedName(new RelativeDistinguishedName("ApplicationInstance", "TestApplication1"));
-            componentQN.appendUnqualifiedName(new RelativeDistinguishedName("Component", componentName));
-            this.componentId = new DistributableObjectId(componentQN);
-            this.description = description;
-            FullyDistinguishedName ingressQN = new FullyDistinguishedName(componentQN);
-            ingressQN.appendUnqualifiedName(new RelativeDistinguishedName("IngressPoint", "TestIngressPoint1"));
-            this.ingressPoint = new DistributableObjectId(ingressQN);
-            FullyDistinguishedName egressQN = new FullyDistinguishedName(componentQN);
-            egressQN.appendUnqualifiedName(new RelativeDistinguishedName("EgressPoint", "TestEgressPoint1"));
-            this.egressPoint = new DistributableObjectId(egressQN);
-            this.supportedTopics = new ArrayList<>();
-            this.supportedTopics.addAll(supportedTopics);
-        }
     }
 
     //
@@ -127,104 +91,90 @@ public class PathwayTestResourceSetBuilder {
     /**
      * Create and register some simple test pathways in the cache.
      */
-/*    public void createTestPathways(){
-        LOG.info("Creating sample MessageProcessingPathway data for UI testing");
-        // LIMS --> PAS
+    public void createTestPathways(){
+        LOG.info(".createTestPathways(): Creating sample MessageProcessingPathway data for UI testing");
+
+        // Pathology Results Pathway
         Pathway pathologyResults = buildPathway("PathologyResults");
         pathologyResults.setRouteSelectionCriteria(PathwayRouteSelectionCriteriaEnum.DISTRIBUTE_RANDOM);
-        pathologyResults.getPossiblePathwayRoutes().put(1, buildPathwayRoute(pathologyResults.getObjectID(), PathwayRouteSelectionCriteriaEnum.DISTRIBUTE_ROUND_ROBIN, "ADT_A01_Ingress", "ADT_Route_A", "ADT_Validate"));
-        pathologyResults.getPossiblePathwayRoutes().put(2, buildPathwayRoute(pathologyResults.getObjectID(), PathwayRouteSelectionCriteriaEnum.DISTRIBUTE_ALL, "ADT_Normalize", "ADT_Persist", "ADT_Notify"));
+        LOG.info(".createTestPathways(): pathologyResultsPathway --> {}", pathologyResults.getReference());
+        ElementReference route1Ref = buildPathwayRoute(pathologyResults.getReference(), 1, "ADT_A01_Ingress", "ADT_Route_A", "ADT_Validate");
+        pathologyResults.getPossiblePathwayRoutes().put(0, route1Ref);
+        LOG.info(".createTestPathways(): route1Ref --> {}", route1Ref);
+        ElementReference route2Ref = buildPathwayRoute(pathologyResults.getReference(), 2, "ADT_Normalize", "ADT_Persist", "ADT_Notify");
+        pathologyResults.getPossiblePathwayRoutes().put(1, route2Ref);
+        LOG.info(".createTestPathways(): route2Ref --> {}", route2Ref);
         getPathwayCacheService().addPathway(pathologyResults);
 
         // Referral Processing pathway
         Pathway referralProcessing = buildPathway("ReferralProcessing");
-        referralProcessing.getPossiblePathwayRoutes().put(1, buildPathwayRoute(referralProcessing.getObjectID(), PathwayRouteSelectionCriteriaEnum.DISTRIBUTE_RANDOM, "REF_Ingress", "REF_Parse", "REF_Validate"));
-        referralProcessing.getPossiblePathwayRoutes().put(2, buildPathwayRoute(referralProcessing.getObjectID(), PathwayRouteSelectionCriteriaEnum.DISTRIBUTE_ROUND_ROBIN, "REF_Enrich", "REF_Map", "REF_Persist"));
-        referralProcessing.getPossiblePathwayRoutes().put(3, buildPathwayRoute(referralProcessing.getObjectID(), PathwayRouteSelectionCriteriaEnum.DISTRIBUTE_ALL, "REF_Publish", "REF_Notify", "REF_Audit"));
+        ElementReference refRoute1 = buildPathwayRoute(referralProcessing.getReference(), 1, "REF_Ingress", "REF_Parse", "REF_Validate");
+        referralProcessing.getPossiblePathwayRoutes().put(1, refRoute1);
         getPathwayCacheService().addPathway(referralProcessing);
-
-        // Lab Order → Result pathway
-        Pathway labOrderToResult = buildPathway("LabOrderToResult");
-        labOrderToResult.getPossiblePathwayRoutes().put(1, buildPathwayRoute(labOrderToResult.getObjectID(),PathwayRouteSelectionCriteriaEnum.DISTRIBUTE_ROUND_ROBIN, "LAB_Order_Ingress", "LAB_Order_Validate", "LAB_Order_Persist"));
-        labOrderToResult.getPossiblePathwayRoutes().put(2, buildPathwayRoute(labOrderToResult.getObjectID(),PathwayRouteSelectionCriteriaEnum.DISTRIBUTE_RANDOM, "LAB_Result_Ingress", "LAB_Result_Map", "LAB_Result_Publish"));
-        getPathwayCacheService().addPathway(labOrderToResult);
 
         LOG.info("Added {} test pathways to cache", getPathwayCacheService().getPathways().size());
     }
 
+    private ElementReference buildPathwayRoute(ElementReference pathwayRef, int priority, String a, String b, String c) {
+        DistinguishedName routeQN = new DistinguishedName(pathwayRef.getElementIdentifier().getIdentifierValue());
+        routeQN.appendUnqualifiedName(new RelativeDistinguishedName("PathwayRoute", "Route-" + a + "-" + b + "-" + c));
 
-    private DistributableObjectId buildPathwayRoute(DistributableObjectId pathwayId, PathwayRouteSelectionCriteriaEnum pattern, String a, String b, String c){
-        // Create segment with deterministic ID
-        PathwayRoute pathwayRoute = new PathwayRoute();
-        // Distribution pattern moved to Pathway (routeSelectionCriteria); no per-route pattern in refactored model
-        QualifiedName segQN = new QualifiedName(pathwayId.getQualifiedName());
-        segQN.appendUnqualifiedName(new UnqualifiedName("Segment", a+"-"+b+"-"+c));
-        pathwayRoute.setObjectID(new DistributableObjectId(segQN));
+        PathwayRoute pathwayRoute = new PathwayRoute(routeQN);
+        // Using setShortName as surrogate for setName/setOwner if they are missing
+        pathwayRoute.setShortName("Route-" + a + "-" + b + "-" + c);
 
-        // Build three exemplar flow elements
-        PathwayElement p1 = new PathwayElement("rel:"+a+"->"+b, a+" to "+b, "Flow from "+a+" to "+b);
-        p1.setSource(new DistributableObjectId("if:"+a));
-        p1.setTarget(new DistributableObjectId("if:"+b));
-        p1.setUtilisedApplicationService(new DistributableObjectId("svc:"+a.toLowerCase()));
-        QualifiedName e1QN = new QualifiedName(); e1QN.appendUnqualifiedName(new UnqualifiedName("Flow", a+"-"+b));
-        p1.setObjectID(new DistributableObjectId(e1QN));
-        getPathwayCacheService().addPathwayElement(p1);
+        ElementReference segmentRef = buildPathwayRouteSegment(pathwayRoute.getReference(), a, b, c);
+        pathwayRoute.getRouteSegmentSequence().put(1, segmentRef);
 
-        PathwayElement p2 = new PathwayElement("rel:"+b+"->"+c, b+" to "+c, "Flow from "+b+" to "+c);
-        p2.setSource(new DistributableObjectId("if:"+b));
-        p2.setTarget(new DistributableObjectId("if:"+c));
-        p2.setUtilisedApplicationService(new DistributableObjectId("svc:"+b.toLowerCase()));
-        QualifiedName e2QN = new QualifiedName(); e2QN.appendUnqualifiedName(new UnqualifiedName("Flow", b+"-"+c));
-        p2.setObjectID(new DistributableObjectId(e2QN));
-        getPathwayCacheService().addPathwayElement(p2);
-
-        PathwayElement p3 = new PathwayElement("rel:"+a+"->"+c, a+" to "+c+" (alt)", "Alternate pathwayRouteSegment from "+a+" to "+c);
-        p3.setSource(new DistributableObjectId("if:"+a));
-        p3.setTarget(new DistributableObjectId("if:"+c));
-        p3.setUtilisedApplicationService(new DistributableObjectId("svc:"+c.toLowerCase()));
-        QualifiedName e3QN = new QualifiedName(); e3QN.appendUnqualifiedName(new UnqualifiedName("Flow", a+"-"+c));
-        p3.setObjectID(new DistributableObjectId(e3QN));
-        getPathwayCacheService().addPathwayElement(p3);
-
-        // Create a pathwayRouteSegment that sequences these elements
-        PathwayRouteSegment pathwayRouteSegment = new PathwayRouteSegment();
-        QualifiedName pathQN = new QualifiedName(pathwayRoute.getObjectID().getQualifiedName());
-        pathQN.appendUnqualifiedName(new UnqualifiedName("Path", a+"-"+b+"-"+c));
-        pathwayRouteSegment.setObjectID(new DistributableObjectId(pathQN));
-        pathwayRouteSegment.getPathwayElementSequence().put(1, p1.getObjectID());
-        pathwayRouteSegment.getPathwayElementSequence().put(2, p2.getObjectID());
-        pathwayRouteSegment.getPathwayElementSequence().put(3, p3.getObjectID());
-        getPathwayCacheService().addPathwayRouteSegment(pathwayRouteSegment);
-
-        // Link segment to the pathwayRouteSegment via ID
-        pathwayRoute.getRouteSegmentSequence().put(1, pathwayRouteSegment.getObjectID());
         getPathwayCacheService().addPathwayRoute(pathwayRoute);
+        return pathwayRoute.getReference();
+    }
 
-        return pathwayRoute.getObjectID();
+    private ElementReference buildPathwayRouteSegment(ElementReference routeRef, String a, String b, String c) {
+        DistinguishedName segmentQN = new DistinguishedName(routeRef.getElementIdentifier().getIdentifierValue());
+        segmentQN.appendUnqualifiedName(new RelativeDistinguishedName("PathwayRouteSegment", "Segment-" + a + "-" + b + "-" + c));
+
+        PathwayRouteSegment segment = new PathwayRouteSegment(segmentQN);
+        segment.setShortName("Segment-" + a + "-" + b + "-" + c);
+
+        ElementReference e1 = buildPathwayElement(segment.getReference(), 1, a, b);
+        segment.getPathwayElementSequence().put(1, e1);
+
+        ElementReference e2 = buildPathwayElement(segment.getReference(), 2, b, c);
+        segment.getPathwayElementSequence().put(2, e2);
+
+        getPathwayCacheService().addPathwayRouteSegment(segment);
+        return segment.getReference();
+    }
+
+    private ElementReference buildPathwayElement(ElementReference segmentRef, int sequence, String sourceName, String targetName) {
+        String elementName = sourceName + "To" + targetName;
+        PathwayElement element = new PathwayElement();
+        element.setShortName(elementName);
+
+        DistinguishedName elementQN = new DistinguishedName(segmentRef.getElementIdentifier().getIdentifierValue());
+        elementQN.appendUnqualifiedName(new RelativeDistinguishedName("PathwayElement", elementName));
+        element.setIdentifier(new ElementIdentifier(elementQN));
+
+        // Mock source/target references
+        element.setSource(createMockReference("Interface", sourceName));
+        element.setTarget(createMockReference("Interface", targetName));
+
+        getPathwayCacheService().addPathwayElement(element);
+        return element.getReference();
     }
 
     private Pathway buildPathway(String name){
-        Pathway p = new Pathway();
-        p.setName(name);
-        p.setDocumentation("Stub pathway for UI tests: "+name);
-        // Build a deterministic qualified name so keys are readable and stable for UI testing
-        UnqualifiedName unq = new UnqualifiedName("Pathway", name);
-        QualifiedName qn = new QualifiedName();
-        qn.appendUnqualifiedName(unq);
-        p.setObjectID(new DistributableObjectId(qn));
-        p.setSpecialization("Pathway");
-        p.getMetadata().setCreationDate(LocalDateTime.now());
-        p.getMetadata().setLastUpdateDate(LocalDateTime.now());
+        Pathway p = new Pathway(name, "No Documentation");
         return p;
     }
 
-    private PathwayElement buildPathwayElement(DistributableObjectId enablerComponent, String pathwayElementId, String pathwayElementName, String relationshipDescription, DistributableObjectId ingressPoint, DistributableObjectId egressPoint, List<Topic> supportedTopics){
-        PathwayElement p = new PathwayElement(enablerComponent, pathwayElementId, pathwayElementName, relationshipDescription, ingressPoint, egressPoint, supportedTopics);
-        p.setSpecialization("PathwayElement");
-        p.getMetadata().setCreationDate(LocalDateTime.now());
-        p.getMetadata().setLastUpdateDate(LocalDateTime.now());
-        return p;
+    private ElementReference createMockReference(String type, String name) {
+        DistinguishedName qn = new DistinguishedName();
+        qn.appendUnqualifiedName(new RelativeDistinguishedName(type, name));
+        ElementReference ref = new ElementReference();
+        ref.setElementIdentifier(new ElementIdentifier(qn));
+        ref.setElementType(type);
+        return ref;
     }
-
-    */
 }

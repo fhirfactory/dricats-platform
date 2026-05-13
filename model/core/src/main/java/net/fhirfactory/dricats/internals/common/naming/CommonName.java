@@ -22,13 +22,13 @@
 package net.fhirfactory.dricats.internals.common.naming;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
-import net.fhirfactory.dricats.internals.common.id.ObjectId;
 import net.fhirfactory.dricats.internals.common.naming.common.DotSeparatedName;
-import org.apache.commons.lang3.SerializationUtils;
+import net.fhirfactory.dricats.internals.common.naming.datatypes.DistinguishedNameEntry;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import java.io.Serial;
 import java.io.Serializable;
-import java.util.Objects;
+import java.util.Map;
 
 public class CommonName extends DotSeparatedName implements Serializable {
     //
@@ -54,34 +54,41 @@ public class CommonName extends DotSeparatedName implements Serializable {
         super(ori);
     }
 
-    public CommonName(FullyDistinguishedName qualifiedName) {
-        setValue(qualifiedName.getCommonNameValue());
-    }
-
-    public CommonName(ObjectId objectId) {
-        setValue(SerializationUtils.clone(objectId.getName().getValue()));
+    public CommonName(DistinguishedName qualifiedName) {
+        StringBuilder nameBuilder = new StringBuilder();
+        Map<Integer, DistinguishedNameEntry> unqualifiedNameSet = qualifiedName.getUnqualifiedNameEntries();
+        int setSize = unqualifiedNameSet.size();
+        for (int counter = 0; counter < setSize; counter++) {
+            RelativeDistinguishedName currentUnqualifiedName = unqualifiedNameSet.get(counter);
+            nameBuilder.append(currentUnqualifiedName.getValue());
+            if (counter < (setSize - 1)) {
+                nameBuilder.append(DEFAULT_SEPARATOR);
+            }
+        }
+        setName(nameBuilder.toString());
     }
 
     //
     // Standard Methods
     //
+
     @Override
     public String toString() {
-        return "CommonName{" +
-                "value=" + getValue() +
-                '}';
+        return new ToStringBuilder(this)
+                .append("name", getName())
+                .append("nameMap", getNameMap())
+                .toString();
     }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        CommonName commonName = (CommonName) o;
-        return (commonName.getValue().contentEquals(this.getValue()));
+        return super.equals(o);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getValue());
+        return super.hashCode();
     }
+
+
 }

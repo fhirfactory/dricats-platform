@@ -21,9 +21,11 @@
  */
 package net.fhirfactory.dricats.datagrid.satellite.notificationgrid;
 
-import net.fhirfactory.dricats.internals.common.id.ObjectId;
-import net.fhirfactory.dricats.internals.common.id.ObjectKey;
-import net.fhirfactory.dricats.internals.common.naming.FullyDistinguishedName;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
+import net.fhirfactory.dricats.internals.common.id.ElementInstanceId;
+import net.fhirfactory.dricats.internals.common.identifiers.ElementIdentifier;
+import net.fhirfactory.dricats.internals.common.naming.DistinguishedName;
 import net.fhirfactory.dricats.internals.events.interfaces.ILocalNotificationService;
 import net.fhirfactory.dricats.internals.events.notifications.NotificationObject;
 import net.fhirfactory.dricats.internals.events.notifications.NotificationSet;
@@ -32,8 +34,6 @@ import net.fhirfactory.dricats.internals.topology.interfaces.ISubsystem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
@@ -52,7 +52,7 @@ public class LocalNotificationCache implements ILocalNotificationService {
     // Attributes
     //
 
-    private Map<ObjectKey, Queue<NotificationObject>> incomingQueueCache ;
+    private Map<String, Queue<NotificationObject>> incomingQueueCache ;
     private Queue<NotificationObject> outgoingQueueCache ;
 
     @Inject
@@ -75,7 +75,7 @@ public class LocalNotificationCache implements ILocalNotificationService {
         return LOG;
     }
 
-    protected Map<ObjectKey, Queue<NotificationObject>> getIncomingQueueCache() {
+    protected Map<String, Queue<NotificationObject>> getIncomingQueueCache() {
         return incomingQueueCache;
     }
 
@@ -101,7 +101,8 @@ public class LocalNotificationCache implements ILocalNotificationService {
             getLogger().warn(".queueMessage(): Exit, Message target is null");
             return;
         }
-        ObjectKey objectToken = NotificationObject.getTarget().getLocalObjectId();
+        ElementInstanceId elementInstanceId = NotificationObject.getTarget().getElementInstanceId();
+        String objectToken = elementInstanceId.getIdValue();
         if(!getIncomingQueueCache().containsKey(objectToken)){
             Queue<NotificationObject> incomingMessageQueue = new ConcurrentLinkedQueue<>();
             incomingMessageQueue.add(NotificationObject);
@@ -113,11 +114,15 @@ public class LocalNotificationCache implements ILocalNotificationService {
     }
 
     @Override
-    public NotificationObject peekNextNotification( ObjectKey consumerObjectToken){
-        if(consumerObjectToken == null){
+    public NotificationObject peekNextNotification( ElementIdentifier consumerElementIdentifier){
+        if(consumerElementIdentifier == null){
             getLogger().debug(".peekNextNotification(): Exit, consumerIdToken is null");
             return(null);
         }
+        // TODO - This needs a way to resolve the instance ID from the identifier
+        // For now, assume consumer provides identifier with correct value for key if we use it this way,
+        // but it is inconsistent. Better if it took an ElementInstanceId or the full Reference.
+        String consumerObjectToken = consumerElementIdentifier.getIdentifierValue().getTokenString();
         if(getIncomingQueueCache().containsKey(consumerObjectToken)){
             NotificationObject peek = getIncomingQueueCache().get(consumerObjectToken).peek();
             getLogger().debug(".peekNextNotification(): Exit, returning ->{}", peek);
@@ -128,14 +133,16 @@ public class LocalNotificationCache implements ILocalNotificationService {
     }
 
     @Override
-    public NotificationObject pollNextNotification( ObjectKey consumerObjectToken){
+    public NotificationObject pollNextNotification( ElementIdentifier consumerObjectToken){
         getLogger().debug(".pollNextNotification(): Entry, consumerIdToken -> {}", consumerObjectToken);
         if(consumerObjectToken == null){
             getLogger().debug(".pollNextNotification(): Exit, consumerIdToken is null");
             return(null);
         }
-        if(getIncomingQueueCache().containsKey(consumerObjectToken)){
-            NotificationObject poll = getIncomingQueueCache().get(consumerObjectToken).poll();
+        // TODO - Similar to peekNextNotification
+        String consumerObjectTokenString = consumerObjectToken.getIdentifierValue().getTokenString();
+        if(getIncomingQueueCache().containsKey(consumerObjectTokenString)){
+            NotificationObject poll = getIncomingQueueCache().get(consumerObjectTokenString).poll();
             getLogger().debug(".pollNextNotification(): Exit, returning ->{}", poll);
             return(poll);
         }
@@ -144,18 +151,20 @@ public class LocalNotificationCache implements ILocalNotificationService {
     }
 
     @Override
-    public NotificationSet pollNextNotification(ObjectKey consumer, Integer size) {
+    public NotificationSet pollNextNotification(ElementIdentifier consumer, Integer size) {
         getLogger().debug(".pollNextNotification(): Entry, consumerIdToken -> {}, size -> {}", consumer, size);
         NotificationSet notificationSet = new NotificationSet();
         if(consumer == null){
             getLogger().debug(".pollNextNotification(): Exit, consumer is null");
             return(notificationSet);
         }
-        if(!getIncomingQueueCache().containsKey(consumer)){
+        // TODO - Similar to peekNextNotification
+        String consumerString = consumer.getIdentifierValue().getTokenString();
+        if(!getIncomingQueueCache().containsKey(consumerString)){
             getLogger().debug(".pollNextNotification(): Exit, no messages for consumer, returning empty list");
             return(notificationSet);
         }
-        Queue<NotificationObject> consumerIncomingQueue = getIncomingQueueCache().get(consumer);
+        Queue<NotificationObject> consumerIncomingQueue = getIncomingQueueCache().get(consumerString);
         int listSize = size;
         if(consumerIncomingQueue.size() < listSize){
             listSize = consumerIncomingQueue.size();
@@ -200,13 +209,13 @@ public class LocalNotificationCache implements ILocalNotificationService {
             getLogger().debug(".postNotification(): Exit, nothing to post, return -> {}", messagePostedInstant);
             return(messagePostedInstant);
         }
-        ObjectId messageTarget = message.getTarget().getLocalObjectId();
+        ElementIdentifier messageTarget = message.getTarget().getElementIdentifier();
         if(messageTarget == null){
             getLogger().debug(".postNotification(): Exit, no target, return -> {}", messagePostedInstant);
             return(messagePostedInstant);
         }
-        FullyDistinguishedName targetSubsystemQualifiedName = messageTarget.getFullyDistinguishedName().extractQualifiedNameForQualifier(ApplicationComponentSpecialisationEnum.SUBSYSTEM_APPLICATION_INSTANCE.getType());
-        FullyDistinguishedName localSubsystemQualifiedName = getSubsystem().getSubsystem().getObjectId().getFullyDistinguishedName();
+        DistinguishedName targetSubsystemQualifiedName = messageTarget.getIdentifierValue().extractQualifiedNameForQualifier(ApplicationComponentSpecialisationEnum.SUBSYSTEM_APPLICATION_INSTANCE.getType());
+        DistinguishedName localSubsystemQualifiedName = getSubsystem().getSubsystem().getIdentifier().getIdentifierValue();
         String targetSubsystemName = targetSubsystemQualifiedName.getUnqualifiedName().getValue();
         String localSubsystemName = localSubsystemQualifiedName.getUnqualifiedName().getValue();
         if(targetSubsystemName.contentEquals(localSubsystemName)){

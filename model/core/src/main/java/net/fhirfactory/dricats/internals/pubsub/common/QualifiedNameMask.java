@@ -21,7 +21,7 @@
  */
 package net.fhirfactory.dricats.internals.pubsub.common;
 
-import net.fhirfactory.dricats.internals.common.naming.FullyDistinguishedName;
+import net.fhirfactory.dricats.internals.common.naming.DistinguishedName;
 import net.fhirfactory.dricats.internals.common.naming.datatypes.DistinguishedNameEntry;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.slf4j.Logger;
@@ -45,7 +45,7 @@ public class QualifiedNameMask implements Serializable {
     // Attributes
     //
 
-    private FullyDistinguishedName mask;
+    private DistinguishedName mask;
     private Boolean includeContained;
 
     protected Logger getLogger(){
@@ -60,13 +60,13 @@ public class QualifiedNameMask implements Serializable {
         getLogger().trace(".QualifiedNameMask(): Default constructor invoked.");
     }
 
-    public QualifiedNameMask(FullyDistinguishedName mask) {
+    public QualifiedNameMask(DistinguishedName mask) {
         this.mask = mask;
         this.includeContained = false;
         getLogger().trace(".QualifiedNameMask(QualifiedName): Constructor invoked, mask -> {}", mask);
     }
 
-    public QualifiedNameMask(FullyDistinguishedName mask, Boolean includeContained) {
+    public QualifiedNameMask(DistinguishedName mask, Boolean includeContained) {
         this.mask = mask;
         this.includeContained = includeContained;
         getLogger().trace(".QualifiedNameMask(QualifiedName, Boolean): Constructor invoked, mask -> {}, includeContained -> {}", mask, includeContained);
@@ -75,12 +75,12 @@ public class QualifiedNameMask implements Serializable {
     //
     // Getters and Setters
     //
-    public FullyDistinguishedName getMask() {
+    public DistinguishedName getMask() {
         getLogger().trace(".getMask(): Entry/Exit, returning mask -> {}", mask);
         return mask;
     }
 
-    public void setMask(FullyDistinguishedName mask) {
+    public void setMask(DistinguishedName mask) {
         getLogger().trace(".setMask(): Entry, mask -> {}", mask);
         this.mask = mask;
         getLogger().trace(".setMask(): Exit");
@@ -109,7 +109,7 @@ public class QualifiedNameMask implements Serializable {
      * @param testName the QualifiedName to test
      * @return true if testName matches the mask; false otherwise
      */
-    public boolean filter(FullyDistinguishedName testName) {
+    public boolean filter(DistinguishedName testName) {
         getLogger().trace(".filter(QualifiedName): Entry, delegating to filter(testName, false). testName -> {}", testName);
         boolean result = filter(testName, getIncludeContained());
         getLogger().trace(".filter(QualifiedName): Exit, result -> {}", result);
@@ -126,7 +126,7 @@ public class QualifiedNameMask implements Serializable {
      * @param includeContained whether to allow testName to contain mask as a prefix (by entries)
      * @return true if matches according to the rules
      */
-    public boolean filter(FullyDistinguishedName testName, boolean includeContained) {
+    public boolean filter(DistinguishedName testName, boolean includeContained) {
         getLogger().trace(".filter(QualifiedName, boolean): Entry, mask -> {}, testName -> {}, includeContained -> {}", mask, testName, includeContained);
         if (mask == null || testName == null) {
             getLogger().trace(".filter(QualifiedName, boolean): Either mask or testName is null (mask == null? {}, testName == null? {}). Returning false.", (mask==null), (testName==null));
@@ -152,7 +152,7 @@ public class QualifiedNameMask implements Serializable {
         return false;
     }
 
-    private boolean entriesMatchUpTo(FullyDistinguishedName maskQN, FullyDistinguishedName testQN, int count) {
+    private boolean entriesMatchUpTo(DistinguishedName maskQN, DistinguishedName testQN, int count) {
         getLogger().trace(".entriesMatchUpTo(): Entry, count -> {}, maskQN -> {}, testQN -> {}", count, maskQN, testQN);
         Map<Integer, DistinguishedNameEntry> mEntries = maskQN.getUnqualifiedNameEntries();
         Map<Integer, DistinguishedNameEntry> tEntries = testQN.getUnqualifiedNameEntries();

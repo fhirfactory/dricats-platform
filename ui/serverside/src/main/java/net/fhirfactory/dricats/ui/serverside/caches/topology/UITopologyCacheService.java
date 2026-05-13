@@ -23,6 +23,8 @@ package net.fhirfactory.dricats.ui.serverside.caches.topology;
 
 import jakarta.annotation.PostConstruct;
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
+import net.fhirfactory.dricats.datagrid.common.local.ILocalTopologyMap;
 import net.fhirfactory.dricats.internals.common.identifiers.ElementIdentifier;
 import net.fhirfactory.dricats.internals.common.identifiers.ElementReference;
 import net.fhirfactory.dricats.internals.topology.implementation.layers.application.interfaces.EgressApplicationInterface;
@@ -37,10 +39,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.Optional;
 
 @ApplicationScoped
 public class UITopologyCacheService {
@@ -53,8 +55,9 @@ public class UITopologyCacheService {
     // Attributes
     //
 
-    // private Map<ElementBase.DistributableObjectId.getCommonId().getToken(), ElementBase> components = new ConcurrentHashMap<>();
-    private Map<String, ElementBase> components = new ConcurrentHashMap<>();
+    @Inject
+    private ILocalTopologyMap topologyMap;
+
     private boolean initialized = false;
 
     //
@@ -62,7 +65,6 @@ public class UITopologyCacheService {
     //
 
     public UITopologyCacheService() {
-        components = new ConcurrentHashMap<>();
     }
 
     @PostConstruct
@@ -78,12 +80,8 @@ public class UITopologyCacheService {
     // Bean Methods
     //
 
-    public Map<String, ElementBase> getComponents() {
-        return components;
-    }
-
-    public void setComponents(Map<String, ElementBase> components) {
-        this.components = components;
+    public ILocalTopologyMap getTopologyMap() {
+        return topologyMap;
     }
 
     //
@@ -92,180 +90,106 @@ public class UITopologyCacheService {
 
     public void addComponent(ElementBase component) {
         LOG.debug(".addComponent(): Entry, component={}", component);
-        components.put(component.resolveKey(), component);
+        topologyMap.add(component);
         LOG.debug(".addComponent(): Exit");
+    }
+
+    public void addComponentInstance(ElementBase componentInstance) {
+        LOG.debug(".addComponentInstance(): Entry, componentInstance={}", componentInstance);
+        topologyMap.add(componentInstance);
+        LOG.debug(".addComponentInstance(): Exit");
     }
 
     public boolean hasEntry(String id) {
         LOG.debug(".hasEntry(): Entry, id={}", id);
-        boolean result = components.containsKey(id);
-        LOG.info(".hasEntry(): Exit, Returning {} for id={}", result, id);
+        boolean result = topologyMap.findApplicationByElementInstanceKey(id).isPresent() ||
+                topologyMap.findIngresInterfaceByElementInstanceKey(id).isPresent() ||
+                topologyMap.findEgressInterfaceByElementInstance(id).isPresent();
+        LOG.debug(".hasEntry(): Exit, Returning {} for id={}", result, id);
         return result;
     }
 
     public ElementBase getComponent(String id) {
         LOG.debug(".getComponent(): Entry, id={}", id);
-        ElementBase result = components.get(id);
-        LOG.info(".getComponent(): Exit, Returning {} for id={}", result, id);
-        return result;
+        Optional<ApplicationComponent> ac = topologyMap.findApplicationByElementInstanceKey(id);
+        if (ac.isPresent()) {
+            return ac.get();
+        }
+        Optional<IngresApplicationInterface> ii = topologyMap.findIngresInterfaceByElementInstanceKey(id);
+        if (ii.isPresent()) {
+            return ii.get();
+        }
+        Optional<EgressApplicationInterface> ei = topologyMap.findEgressInterfaceByElementInstance(id);
+        if (ei.isPresent()) {
+            return ei.get();
+        }
+        LOG.debug(".getComponent(): Exit, Returning null for id={}", id);
+        return null;
     }
 
     public List<ElementBase> getComponentWithIdentifier(ElementIdentifier identifier) {
         LOG.debug(".getComponentWithIdentifier(): Entry, identifier={}", identifier);
-        List<ElementBase> result = new ArrayList<>();
-        for(ElementBase component : components.values()){
-            List<ElementIdentifier> identifiers = component.getIdentifiers();
-            if(identifiers == null){
-                continue;
-            }
-            for(ElementIdentifier id : identifiers){
-                if(id.equals(identifier)){
-                    result.add(component);
-                }
-            }
+        if (identifier == null || identifier.getIdentifierValue() == null || identifier.getIdentifierValue().getCommonName() == null || identifier.getIdentifierValue().getCommonName().getName() == null) {
+            return Collections.emptyList();
         }
-        LOG.info(".getComponentWithIdentifier(): Exit, Returning {} for identifier={}", result, identifier);
+        String name = identifier.getIdentifierValue().getCommonName().getName();
+        List<ElementBase> result = new ArrayList<>();
+        result.addAll(topologyMap.findApplicationComponentByName(name));
+        result.addAll(topologyMap.findIngresInterfaceByName(name));
+        result.addAll(topologyMap.findEgressInterfaceByName(name));
+        LOG.debug(".getComponentWithIdentifier(): Exit, result.size()={}", result.size());
         return result;
     }
 
     public List<ApplicationComponent> getSubComponents(String id) {
         LOG.debug(".getSubComponents(): Entry, id={}", id);
-        ElementBase c = components.get(id);
-        if (c == null) {
-            LOG.info(".getSubComponents(): Exit, No subcomponents for id={} (component missing)", id);
-            return Collections.emptyList();
-        }
-        if (c.getElementType() != ElementTypeEnum.APPLICATION_COMPONENT) {
-            LOG.info(".getSubComponents(): Exit, No subcomponents for id={} (component is not a ApplicationComponent)", id);
-            return Collections.emptyList();
-        }
-        if(!(c instanceof ApplicationComponent)){
-            LOG.warn(".getSubComponents(): Exit, No subcomponents for id={} (component is not a ApplicationComponent)", id);
-            return Collections.emptyList();
-        }
-        ApplicationComponent ac = (ApplicationComponent) c;
-        List<ApplicationComponent> result = new ArrayList<>();
-        if (ac.getSubComponents() != null) {
-            for (ElementReference childId : ac.getSubComponents()) {
-                String key = childId.getLocalObjectId().getFullyDistinguishedName().getCommonName().getValue();
-                ElementBase child = components.get(key);
-                boolean isWUPAdapter = child.getSpecialization().contentEquals(ApplicationComponentSpecialisationEnum.SUBSYSTEM_APPLICATION_WUP_INTERFACE_ADAPTER.getType());
-                if(isWUPAdapter){
-                    continue;
-                }
-                if (child instanceof ApplicationComponent) {
-                    result.add((ApplicationComponent) child);
-                } else {
-                    LOG.warn(".getSubComponents(): No child component found for id={}", key);
-                }
-            }
-        }
-        LOG.info(".getSubComponents(): Exit, Returning {} subcomponents for id={}", result.size(), id);
+        List<ApplicationComponent> result = topologyMap.getChildrenApplicationComponentsByInstanceKey(id);
+        LOG.debug(".getSubComponents(): Exit, Returning {} subcomponents for id={}", result.size(), id);
         return result;
     }
 
     public List<IngresApplicationInterface> getIngressInterfaces(String id) {
         LOG.debug(".getIngressInterfaces(): Entry, id={}", id);
-        ElementBase c = components.get(id);
-        if (c == null) {
-            LOG.info(".getIngressInterfaces(): Exit, No interfaces for id={} (component missing)", id);
-            return Collections.emptyList();
-        }
-        if (c.getElementType() != ElementTypeEnum.APPLICATION_COMPONENT) {
-            LOG.info(".getIngressInterfaces(): Exit, No subcomponents for id={} (component is not a ApplicationComponent)", id);
-            return Collections.emptyList();
-        }
-        if(!(c instanceof ApplicationComponent)){
-            LOG.warn(".getIngressInterfaces(): Exit, No subcomponents for id={} (component is not a ApplicationComponent)", id);
-            return Collections.emptyList();
-        }
-        ApplicationComponent ac = (ApplicationComponent) c;
-        List<IngresApplicationInterface> result = new ArrayList<>();
-
-        if (ac.getInterfaces() != null) {
-            for (ElementReference childInterface : ac.getInterfaces()) {
-                String key = childInterface.getLocalObjectId().getFullyDistinguishedName().getCommonName().getValue();
-                ElementBase child = components.get(key);
-                if (child instanceof IngresApplicationInterface) {
-                    result.add((IngresApplicationInterface) child);
-                } else {
-                    LOG.warn(".getIngressInterfaces(): Exit, No child interface found for id={}", key);
-                }
-            }
-
-        }
-        LOG.info(".getIngressInterfaces(): Exit, Returning {} IngressApplicationInterfaces for id={}", result.size(), id);
+        List<IngresApplicationInterface> result = topologyMap.getIngresInterfaces(id);
+        LOG.debug(".getIngressInterfaces(): Exit, Returning {} IngressApplicationInterfaces for id={}", result.size(), id);
         return result;
     }
 
     public List<EgressApplicationInterface> getEgressInterfaces(String id) {
         LOG.debug(".getEgressInterfaces(): Entry, id={}", id);
-        ElementBase c = components.get(id);
-        if (c == null) {
-            LOG.info(".getEgressInterfaces(): Exit, No interfaces for id={} (component missing)", id);
-            return Collections.emptyList();
-        }
-        if (c.getElementType() != ElementTypeEnum.APPLICATION_COMPONENT) {
-            LOG.info(".getEgressInterfaces(): Exit, No subcomponents for id={} (component is not a ApplicationComponent)", id);
-            return Collections.emptyList();
-        }
-        if(!(c instanceof ApplicationComponent)){
-            LOG.warn(".getEgressInterfaces(): Exit, No subcomponents for id={} (component is not a ApplicationComponent)", id);
-            return Collections.emptyList();
-        }
-        ApplicationComponent ac = (ApplicationComponent) c;
-        List<EgressApplicationInterface> result = new ArrayList<>();
-
-        if (ac.getInterfaces() != null) {
-            for (ElementReference childInterface : ac.getInterfaces()) {
-                String key = childInterface.getLocalObjectId().getFullyDistinguishedName().getCommonName().getValue();
-                ElementBase child = components.get(key);
-                if (child instanceof EgressApplicationInterface) {
-                    result.add((EgressApplicationInterface) child);
-                } else {
-                    LOG.warn(".getEgressInterfaces(): Exit, No child interface found for id={}", key);
-                }
-            }
-
-        }
-        LOG.info(".getEgressInterfaces(): Exit, Returning {} EgressApplicationInterface for id={}", result.size(), id);
+        List<EgressApplicationInterface> result = topologyMap.getEgressInterfaces(id);
+        LOG.debug(".getEgressInterfaces(): Exit, Returning {} EgressApplicationInterface for id={}", result.size(), id);
         return result;
     }
 
     public List<WUPAdapterBase> getInterfaceAdapters(String id) {
         LOG.debug(".getInterfaceAdapters(): Entry, id={}", id);
-        ElementBase c = components.get(id);
-        if (c == null) {
-            LOG.info(".getInterfaceAdapters(): Exit, No interfaces for id={} (component missing)", id);
-            return Collections.emptyList();
-        }
-        if (c.getElementType() != ElementTypeEnum.APPLICATION_INTERFACE) {
-            LOG.info(".getInterfaceAdapters(): Exit, No subcomponents for id={} (component is not a ApplicationInterface)", id);
-            return Collections.emptyList();
-        }
-        boolean isEgressInterface = c.getSpecialization().contentEquals(ApplicationComponentSpecialisationEnum.SUBSYSTEM_APPLICATION_WUP_INTERFACE_EGRESS.getType());
-        boolean isIngressInterface = c.getSpecialization().contentEquals(ApplicationComponentSpecialisationEnum.SUBSYSTEM_APPLICATION_WUP_INTERFACE_INGRES.getType());
-        if(!isEgressInterface && !isIngressInterface){
-            LOG.warn(".getInterfaceAdapters(): Exit, No subcomponents for id={} (component is not a ApplicationInterface)", id);
-            return Collections.emptyList();
-        }
-        WUPInterfaceBase wup = (WUPInterfaceBase) c;
+        Optional<IngresApplicationInterface> ii = topologyMap.findIngresInterfaceByElementInstanceKey(id);
         List<WUPAdapterBase> result = new ArrayList<>();
-        if (wup.getAdapters() != null) {
-            for (ElementReference childInterface : wup.getAdapters()) {
-                String key = childInterface.getLocalObjectId().getFullyDistinguishedName().getCommonName().getValue();
-                ElementBase child = components.get(key);
-                boolean isWUPAdapter = child.getSpecialization().contentEquals(ApplicationComponentSpecialisationEnum.SUBSYSTEM_APPLICATION_WUP_INTERFACE_ADAPTER.getType());
-                if (isWUPAdapter) {
-                    result.add((WUPAdapterBase) child);
-                } else {
-                    LOG.warn(".getInterfaceAdapters(): Exit, No child adapters found for id={}", key);
-                }
-            }
-
+        if (ii.isPresent()) {
+            result.addAll(ii.get().getAdapters().stream()
+                    .map(ref -> getComponent(ref.getElementInstanceId().getIdValue()))
+                    .filter(c -> c instanceof WUPAdapterBase)
+                    .map(c -> (WUPAdapterBase) c)
+                    .toList());
         }
-        LOG.info(".getInterfaceAdapters(): Exit, Returning {} Adapters for id={}", result.size(), id);
+        Optional<EgressApplicationInterface> ei = topologyMap.findEgressInterfaceByElementInstance(id);
+        if (ei.isPresent()) {
+            result.addAll(ei.get().getAdapters().stream()
+                    .map(ref -> getComponent(ref.getElementInstanceId().getIdValue()))
+                    .filter(c -> c instanceof WUPAdapterBase)
+                    .map(c -> (WUPAdapterBase) c)
+                    .toList());
+        }
+        LOG.debug(".getInterfaceAdapters(): Exit, Returning {} Adapters for id={}", result.size(), id);
         return result;
+    }
+
+    public Collection<ApplicationComponent> getAllApplicationComponents() {
+        LOG.debug(".getAllApplicationComponents(): Entry");
+        Collection<ApplicationComponent> allComponents = topologyMap.getAllApplicationComponents();
+        LOG.debug(".getAllApplicationComponents(): Exit, returning {} components", allComponents.size());
+        return allComponents;
     }
 
 }

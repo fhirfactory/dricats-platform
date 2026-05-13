@@ -21,7 +21,7 @@
  */
 package net.fhirfactory.dricats.internals.pathways.summaries;
 
-import net.fhirfactory.dricats.internals.common.id.ObjectId;
+import net.fhirfactory.dricats.internals.common.identifiers.ElementReference;
 import net.fhirfactory.dricats.internals.pubsub.messages.MessageSubscription;
 import net.fhirfactory.dricats.reference.archimate.common.ElementBase;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -41,8 +41,8 @@ public class PathwayElementSummary extends ElementBase implements Serializable {
     private static final long serialVersionUID = 1L;
     private static final Logger LOG = LoggerFactory.getLogger(PathwayElementSummary.class);
 
-    private ObjectId sourceApplicationInterface;
-    private ObjectId targetApplicationInterface;
+    private ElementReference sourceApplicationInterface;
+    private ElementReference targetApplicationInterface;
     private List<MessageSubscription> trafficType;
 
     //
@@ -60,19 +60,19 @@ public class PathwayElementSummary extends ElementBase implements Serializable {
      // Bean Methods
     //
 
-    public ObjectId getSourceApplicationInterface() {
+    public ElementReference getSourceApplicationInterface() {
         return sourceApplicationInterface;
     }
 
-    public void setSourceApplicationInterface(ObjectId sourceApplicationInterface) {
+    public void setSourceApplicationInterface(ElementReference sourceApplicationInterface) {
         this.sourceApplicationInterface = sourceApplicationInterface;
     }
 
-    public ObjectId getTargetApplicationInterface() {
+    public ElementReference getTargetApplicationInterface() {
         return targetApplicationInterface;
     }
 
-    public void setTargetApplicationInterface(ObjectId targetApplicationInterface) {
+    public void setTargetApplicationInterface(ElementReference targetApplicationInterface) {
         this.targetApplicationInterface = targetApplicationInterface;
     }
 

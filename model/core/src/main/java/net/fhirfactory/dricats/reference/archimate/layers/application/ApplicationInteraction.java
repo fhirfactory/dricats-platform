@@ -5,6 +5,7 @@ package net.fhirfactory.dricats.reference.archimate.layers.application;
 
 import net.fhirfactory.dricats.internals.common.identifiers.ElementReference;
 import net.fhirfactory.dricats.reference.archimate.common.ElementBase;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -109,17 +110,22 @@ public class ApplicationInteraction extends ElementBase {
 
     @Override
     public String toString() {
-        return getClass().getSimpleName()+"{"+
-                "name='"+getName()+'\''+
-                ", collaborationRef="+(collaboration==null?"null":collaboration)+
-                ", participantsCount="+(participants==null?0:participants.size())+
-                ", usedServicesCount="+(usedServices==null?0:usedServices.size())+
-                ", accessDataObjectsCount="+(accessDataObjects==null?0:accessDataObjects.size())+
-                ", documentation='"+getDocumentation()+'\''+
-                ", specialization='"+getSpecialization()+'\''+
-                ", extensions="+getExtensions()+
-                ", id="+ getObjectId()+
-                ", metadata="+getMetadata()+
-                '}';
+        return new ToStringBuilder(this)
+                .append("collaboration", getCollaboration())
+                .append("participants", getParticipants())
+                .append("usedServices", getUsedServices())
+                .append("accessDataObjects", getAccessDataObjects())
+                .append("localObjectId", getElementInstanceId())
+                .append("securityLabels", getSecurityLabels())
+                .append("metadata", getMetadata())
+                .append("shortName", getShortName())
+                .append("longName", getIdentifier())
+                .append("otherIdentifiers", getOtherIdentifiers())
+                .append("securityLabels", getSecurityLabels())
+                .append("elementType", getElementType())
+                .append("documentation", getDocumentation())
+                .append("specialization", getSpecialization())
+                .append("extensions", getExtensions())
+                .toString();
     }
 }

@@ -136,7 +136,7 @@
         <dependency>
             <groupId>org.json</groupId>
             <artifactId>json</artifactId>
-            <!--<version>${version-org.json}</version> -->
+            <version>${version-org.json}</version>
             <scope>compile</scope>
         </dependency>
 
@@ -172,6 +172,7 @@
 		<dependency>
 		    <groupId>org.slf4j</groupId>
 		    <artifactId>slf4j-simple</artifactId>
+            <version>${version-org.slf4j}</version>
 		    <scope>test</scope>
 		</dependency>
 		

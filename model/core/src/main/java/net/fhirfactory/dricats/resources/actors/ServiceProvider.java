@@ -21,7 +21,7 @@
  */
 package net.fhirfactory.dricats.resources.actors;
 
-import net.fhirfactory.dricats.internals.common.object.DistributableObject;
+import net.fhirfactory.dricats.internals.common.object.ManagedObject;
 
-public class ServiceProvider extends DistributableObject {
+public class ServiceProvider extends ManagedObject {
 }

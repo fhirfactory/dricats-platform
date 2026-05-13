@@ -21,15 +21,13 @@
  */
 package net.fhirfactory.dricats.internals.events.notifications;
 
+import net.fhirfactory.dricats.internals.common.identifiers.ElementIdentifier;
 import net.fhirfactory.dricats.internals.common.identifiers.ElementReference;
-import net.fhirfactory.dricats.internals.common.naming.FullyDistinguishedName;
-import net.fhirfactory.dricats.internals.common.id.ObjectId;
+import net.fhirfactory.dricats.internals.common.naming.DistinguishedName;
 import net.fhirfactory.dricats.internals.common.naming.RelativeDistinguishedName;
 import net.fhirfactory.dricats.internals.events.common.EventBase;
 import org.apache.commons.lang3.SerializationUtils;
 import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.Serial;
 import java.time.LocalDateTime;
@@ -42,11 +40,12 @@ public class NotificationObject extends EventBase {
 
     @Serial
     private static final long serialVersionUID = -12345678900057L;
-    private static final Logger LOG = LoggerFactory.getLogger(NotificationObject.class);
 
     //
     // Attributes
     //
+
+    public static final String ELEMENT_SPECIALIZATION = "Notification";
 
     private NotificationPayload notificationPayload;
 
@@ -56,10 +55,10 @@ public class NotificationObject extends EventBase {
 
     public NotificationObject(){
         super();
-        RelativeDistinguishedName unqualifiedName = new RelativeDistinguishedName("Notification", UUID.randomUUID().toString());
-        FullyDistinguishedName qualifiedName = new FullyDistinguishedName();
+        RelativeDistinguishedName unqualifiedName = new RelativeDistinguishedName(ELEMENT_SPECIALIZATION, UUID.randomUUID().toString());
+        DistinguishedName qualifiedName = new DistinguishedName();
         qualifiedName.appendUnqualifiedName(unqualifiedName);
-        this.setObjectId(new ObjectId(qualifiedName));
+        setShortName(ELEMENT_SPECIALIZATION+"["+unqualifiedName.getUnqualifiedValue()+"]");
         setNotificationPayload(new NotificationPayload());
     }
 
@@ -75,10 +74,16 @@ public class NotificationObject extends EventBase {
         setSource(source);
         setTarget(target);
         setNotificationPayload(payload);
-        RelativeDistinguishedName unqualifiedName = new RelativeDistinguishedName("Notification", UUID.randomUUID().toString());
-        FullyDistinguishedName qualifiedName = new FullyDistinguishedName();
+        RelativeDistinguishedName unqualifiedName = new RelativeDistinguishedName(ELEMENT_SPECIALIZATION, UUID.randomUUID().toString());
+        DistinguishedName qualifiedName = new DistinguishedName();
         qualifiedName.appendUnqualifiedName(unqualifiedName);
-        this.setObjectId(new ObjectId(qualifiedName));
+        String shortName = ELEMENT_SPECIALIZATION+"["+unqualifiedName.getUnqualifiedValue()+"]";
+        setShortName(shortName);
+        ElementIdentifier identifier = new ElementIdentifier(qualifiedName);
+        setIdentifier(identifier);
+        String sourceName = source.getElementIdentifier().getIdentifierValue().toString();
+        String targetName = target.getElementIdentifier().getIdentifierValue().toString();
+        setDocumentation(shortName+": "+sourceName+"-> "+targetName);
     }
 
     //
@@ -97,10 +102,6 @@ public class NotificationObject extends EventBase {
     //
     // Utility Methods
     //
-
-    protected Logger getLogger(){
-        return(LOG);
-    }
 
     @Override
     public String toString() {

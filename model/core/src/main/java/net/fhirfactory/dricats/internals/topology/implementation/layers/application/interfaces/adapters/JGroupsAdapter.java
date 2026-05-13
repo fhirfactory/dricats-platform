@@ -60,14 +60,14 @@ public class JGroupsAdapter extends WUPAdapterBase implements Serializable {
         setExtensionValue(TopologyExtensionTypeValueSet.EXTENSION_ADAPTER_TYPE.getExtensionName(), WUPAdapterTypeEnum.JGROUPS_MESSAGING_ADAPTER.name());
     }
 
-    public JGroupsAdapter(String name, String documentation, String interfaceSpecialisation){
-        super(name,documentation);
+    public JGroupsAdapter(ElementReference parent, String name, String documentation, String interfaceSpecialisation){
+        super(parent, name, documentation,WUPAdapterTypeEnum.JGROUPS_MESSAGING_ADAPTER);
         mapperUtility = new JSONMapperUtility();
         setExtensionValue(TopologyExtensionTypeValueSet.EXTENSION_ADAPTER_TYPE.getExtensionName(), WUPAdapterTypeEnum.JGROUPS_MESSAGING_ADAPTER.name());
     }
 
     public JGroupsAdapter(ElementReference parentId, String name, String documentation, JGroupsInterfaceConfigurationObject configurationObject){
-        super(name,documentation);
+        super(parentId, name,documentation, WUPAdapterTypeEnum.JGROUPS_MESSAGING_ADAPTER);
         mapperUtility = new JSONMapperUtility();
         setExtensionValue(TopologyExtensionTypeValueSet.EXTENSION_ADAPTER_TYPE.getExtensionName(), WUPAdapterTypeEnum.JGROUPS_MESSAGING_ADAPTER.name());
         setParent(parentId);
@@ -91,8 +91,7 @@ public class JGroupsAdapter extends WUPAdapterBase implements Serializable {
                 JGroupsInterfaceConfigurationObject configurationObject = mapperUtility.getJSONMapper().readValue(configurationObjectString, JGroupsInterfaceConfigurationObject.class);
                 return configurationObject;
             } catch (Exception e) {
-                getLogger().error("JGroupsInterface.getConfigurationObject(): Exception caught: {}", e.getMessage());
-                return null;
+                throw new RuntimeException("JGroupsInterface.getConfigurationObject(): Exception caught: {}", e);
             }
         }
         return null;
@@ -105,31 +104,33 @@ public class JGroupsAdapter extends WUPAdapterBase implements Serializable {
                 String configurationObjectString = mapperUtility.getJSONMapper().writeValueAsString(configurationObject);
                 setExtensionValue(TopologyExtensionTypeValueSet.EXTENSION_JGROUPS_CONFIGURATION_OBJECT.getExtensionName(), configurationObjectString);
             } catch (Exception e) {
-                getLogger().error("JGroupsInterface.setConfigurationObject(): Exception caught: {}", e.getMessage());
+                throw new RuntimeException("JGroupsInterface.setConfigurationObject(): Exception caught: {}", e);
             }
         }
     }
 
     //
-    // Utility Methods
+    // Standard Methods
     //
-
 
     @Override
     public String toString() {
         return new ToStringBuilder(this)
                 .append("mapperUtility", getMapperUtility())
-                .append("parent", getParent())
-                .append("metricsData", getMetricsData())
+                .append("localObjectId", getElementInstanceId())
+                .append("securityLabels", getSecurityLabels())
+                .append("metadata", getMetadata())
+                .append("shortName", getShortName())
+                .append("longName", getIdentifier())
+                .append("otherIdentifiers", getOtherIdentifiers())
+                .append("securityLabels", getSecurityLabels())
                 .append("elementType", getElementType())
-                .append("name", getName())
                 .append("documentation", getDocumentation())
                 .append("specialization", getSpecialization())
                 .append("extensions", getExtensions())
-                .append("identifiers", getIdentifiers())
-                .append("securityLabels", getSecurityLabels())
-                .append("metadata", getMetadata())
-                .append("id", getObjectId())
+                .append("componentStatus", getComponentStatus())
+                .append("parent", getParent())
+                .append("metricsData", getMetricsData())
                 .toString();
     }
 }

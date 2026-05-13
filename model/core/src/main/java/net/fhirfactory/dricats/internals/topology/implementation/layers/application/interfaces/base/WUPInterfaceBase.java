@@ -26,6 +26,7 @@ import net.fhirfactory.dricats.internals.common.identifiers.ElementReference;
 import net.fhirfactory.dricats.internals.oam.metrics.ApplicationInterfaceMetricsData;
 import net.fhirfactory.dricats.internals.oam.topology.ApplicationComponentStatus;
 import net.fhirfactory.dricats.internals.topology.implementation.common.valuesets.TopologyExtensionTypeValueSet;
+import net.fhirfactory.dricats.internals.topology.implementation.layers.application.interfaces.valuesets.InterfaceComponentTypeEnum;
 import net.fhirfactory.dricats.internals.topology.implementation.layers.application.valuesets.ApplicationComponentSpecialisationEnum;
 import net.fhirfactory.dricats.reference.archimate.layers.application.ApplicationInterface;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -36,7 +37,9 @@ import java.io.Serial;
 import java.io.Serializable;
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class WUPInterfaceBase extends ApplicationInterface implements Serializable {
     //
@@ -59,6 +62,7 @@ public class WUPInterfaceBase extends ApplicationInterface implements Serializab
     private ApplicationInterfaceMetricsData metricsData;
     private List<ElementReference> adapters;
     private ApplicationComponentStatus componentStatus;
+    private Map<String, String> configurationParameters;
 
 
     //
@@ -71,11 +75,10 @@ public class WUPInterfaceBase extends ApplicationInterface implements Serializab
         setInterfaceContentRole( InterfaceContentRoleEnum.SUBSCRIBER);
         this.adapters = new ArrayList<>();
         this.componentStatus = new ApplicationComponentStatus();
-        setSpecialization(ApplicationComponentSpecialisationEnum.SUBSYSTEM_APPLICATION_WUP_INTERFACE.getType());
         getLogger().trace("ApplicationInterface(): constructed");
     }
 
-    public WUPInterfaceBase(String name, String documentation, ApplicationComponentSpecialisationEnum interfaceSpecialisation) {
+    public WUPInterfaceBase(String name, String documentation, InterfaceComponentTypeEnum interfaceSpecialisation) {
         super(name, documentation, interfaceSpecialisation.getCode());
         setMetricsData(new ApplicationInterfaceMetricsData());
         this.componentStatus = new ApplicationComponentStatus();
@@ -84,16 +87,17 @@ public class WUPInterfaceBase extends ApplicationInterface implements Serializab
         getLogger().trace("ApplicationInterface(name, documentation, interfaceSpecialisation): constructed");
     }
 
-    public WUPInterfaceBase(ElementReference parent, String name, String documentation, ApplicationComponentSpecialisationEnum interfaceSpecialisation) {
+    public WUPInterfaceBase(ElementReference parent, String name, String documentation, InterfaceComponentTypeEnum interfaceSpecialisation, Map<String, String> configParameters) {
         super(parent, name, documentation, interfaceSpecialisation.getCode());
         setMetricsData(new ApplicationInterfaceMetricsData());
         setInterfaceContentRole( InterfaceContentRoleEnum.SUBSCRIBER);
         this.adapters = new ArrayList<>();
         this.componentStatus = new ApplicationComponentStatus();
+        getConfigurationParameters().putAll(configParameters);
         getLogger().trace("ApplicationInterface(parent, name, documentation, interfaceSpecialisation): constructed");
     }
 
-    public WUPInterfaceBase(ElementReference parent, String name, String documentation, ApplicationComponentSpecialisationEnum interfaceSpecialisation, URI uri) {
+    public WUPInterfaceBase(ElementReference parent, String name, String documentation, InterfaceComponentTypeEnum interfaceSpecialisation, URI uri) {
         super(parent, name, documentation, interfaceSpecialisation.getCode(), uri);
         // Ensure the provided URI is actually stored on this interface
         if (uri != null) {
@@ -111,7 +115,7 @@ public class WUPInterfaceBase extends ApplicationInterface implements Serializab
             String name,
             String documentation,
             URI endpointURI,
-            ApplicationComponentSpecialisationEnum interfaceSpecialisation ) {
+            InterfaceComponentTypeEnum interfaceSpecialisation ) {
         super(parent, name, documentation,interfaceSpecialisation.getCode() );
         setURI(endpointURI);
         this.componentStatus = new ApplicationComponentStatus();
@@ -124,6 +128,18 @@ public class WUPInterfaceBase extends ApplicationInterface implements Serializab
     //
     // Bean Methods
     //
+
+
+    public Map<String, String> getConfigurationParameters() {
+        if(this.configurationParameters == null){
+            this.configurationParameters = new HashMap<>();
+        }
+        return configurationParameters;
+    }
+
+    public void setConfigurationParameters(Map<String, String> configurationParameters) {
+        this.configurationParameters = configurationParameters;
+    }
 
     public ApplicationComponentStatus getComponentStatus() {
         return componentStatus;
@@ -207,29 +223,32 @@ public class WUPInterfaceBase extends ApplicationInterface implements Serializab
     }
 
     //
-    // Utility Methods
+    // Standard Methods
     //
 
     @Override
     public String toString() {
         return new ToStringBuilder(this)
                 .append("metricsData", getMetricsData())
-                .append("owner", getOwner())
-                .append("services", getServices())
+                .append("adapters", getAdapters())
+                .append("componentStatus", getComponentStatus())
+                .append("localObjectId", getElementInstanceId())
+                .append("securityLabels", getSecurityLabels())
+                .append("metadata", getMetadata())
+                .append("shortName", getShortName())
+                .append("longName", getIdentifier())
+                .append("otherIdentifiers", getOtherIdentifiers())
+                .append("securityLabels", getSecurityLabels())
                 .append("elementType", getElementType())
-                .append("name", getName())
                 .append("documentation", getDocumentation())
                 .append("specialization", getSpecialization())
                 .append("extensions", getExtensions())
-                .append("securityLabels", getSecurityLabels())
-                .append("metadata", getMetadata())
-                .append("id", getObjectId())
-                .append("interfaceContentRole", getInterfaceContentRole())
-                .append("interfaceConnectivityRole", getInterfaceConnectivityRole())
-                .append("adapters", getAdapters())
-                .append("componentStatus", getComponentStatus())
+                .append("owner", getOwner())
+                .append("services", getServices())
+                .append("supportedDataObjects", getSupportedDataObjects())
                 .toString();
     }
+
 
     //
      // Private Class

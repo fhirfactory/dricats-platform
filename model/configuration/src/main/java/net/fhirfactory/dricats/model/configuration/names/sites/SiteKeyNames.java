@@ -21,7 +21,7 @@
  */
 package net.fhirfactory.dricats.model.configuration.names.sites;
 
-import javax.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.context.ApplicationScoped;
 
 @ApplicationScoped
 public class SiteKeyNames {

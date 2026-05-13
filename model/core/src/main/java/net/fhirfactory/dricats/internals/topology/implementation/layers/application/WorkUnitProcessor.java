@@ -21,25 +21,26 @@
  */
 package net.fhirfactory.dricats.internals.topology.implementation.layers.application;
 
-import java.io.Serial;
-import java.util.ArrayList;
-import java.util.List;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import net.fhirfactory.dricats.internals.common.identifiers.ElementReference;
+import net.fhirfactory.dricats.internals.topology.implementation.common.TopologyComponent;
+import net.fhirfactory.dricats.internals.topology.implementation.layers.application.interfaces.EgressApplicationInterface;
+import net.fhirfactory.dricats.internals.topology.implementation.layers.application.interfaces.IngresApplicationInterface;
+import net.fhirfactory.dricats.internals.topology.implementation.layers.application.interfaces.valuesets.InterfaceComponentTypeEnum;
 import net.fhirfactory.dricats.internals.topology.implementation.layers.application.valuesets.ApplicationComponentSpecialisationEnum;
-import net.fhirfactory.dricats.reference.archimate.layers.application.ApplicationComponent;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-public class WorkUnitProcessor extends ApplicationComponent {
+import java.io.Serial;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
+public class WorkUnitProcessor extends TopologyComponent {
     //
     // Housekeeping
     //
 
     @Serial
     private static final long serialVersionUID = -123456789032191L;
-    private static final Logger LOG = LoggerFactory.getLogger(WorkUnitProcessor.class);
 
 
     //
@@ -51,6 +52,10 @@ public class WorkUnitProcessor extends ApplicationComponent {
         setSpecialization(ApplicationComponentSpecialisationEnum.SUBSYSTEM_APPLICATION_WORK_UNIT_PROCESSOR.getType());
     }
 
+    public WorkUnitProcessor(ElementReference parent, String name, String documentation){
+        super(parent, name, documentation, ApplicationComponentSpecialisationEnum.SUBSYSTEM_APPLICATION_WORK_UNIT_PROCESSOR.getType(), new HashMap<>());
+    }
+
     //
     // "bean" methods
     //
@@ -59,9 +64,9 @@ public class WorkUnitProcessor extends ApplicationComponent {
     public List<ElementReference> getIngresInterfaces(){
         ArrayList<ElementReference> ingresInterfaces = new ArrayList<>();
         for(ElementReference reference : getInterfaces()){
-            String specialisation = reference.getObjectSpecialisation();
-            ApplicationComponentSpecialisationEnum specialisationEnum = ApplicationComponentSpecialisationEnum.fromCode(specialisation);
-            if(specialisationEnum == ApplicationComponentSpecialisationEnum.SUBSYSTEM_APPLICATION_WUP_INTERFACE_INGRES ){
+            String specialisation = reference.getElementSpecialisation();
+            InterfaceComponentTypeEnum specialisationEnum = InterfaceComponentTypeEnum.fromName(specialisation);
+            if(specialisationEnum != null && specialisationEnum.isReceiverInterface() ){
                 ingresInterfaces.add(reference);
             }
         }
@@ -69,12 +74,44 @@ public class WorkUnitProcessor extends ApplicationComponent {
     }
 
     @JsonIgnore
+    public void addIngresInterface(IngresApplicationInterface ingresInterface){
+        getInterfaces().add(ingresInterface.getReference());
+    }
+
+    @JsonIgnore
+    public void removeIngresInterface(IngresApplicationInterface ingresInterface){
+        getInterfaces().remove(ingresInterface.getReference());
+    }
+
+    @JsonIgnore
+    public void clearIngresInterfaces(){
+        for(ElementReference reference : getInterfaces()){
+            String specialisation = reference.getElementSpecialisation();
+            InterfaceComponentTypeEnum specialisationEnum = InterfaceComponentTypeEnum.fromName(specialisation);
+            if(specialisationEnum != null && specialisationEnum.isReceiverInterface() ){
+                getInterfaces().remove(reference);
+            }
+        }
+    }
+
+    @JsonIgnore
     public void setIngresInterfaces(List<ElementReference> ingresInterfaces){
         for(ElementReference reference : ingresInterfaces){
-            String specialisation = reference.getObjectSpecialisation();
-            ApplicationComponentSpecialisationEnum specialisationEnum = ApplicationComponentSpecialisationEnum.fromCode(specialisation);
-            if(specialisationEnum == ApplicationComponentSpecialisationEnum.SUBSYSTEM_APPLICATION_WUP_INTERFACE_INGRES ){
+            String specialisation = reference.getElementSpecialisation();
+            InterfaceComponentTypeEnum specialisationEnum = InterfaceComponentTypeEnum.fromName(specialisation);
+            if(specialisationEnum != null && specialisationEnum.isReceiverInterface()){
                 getInterfaces().add(reference);
+            }
+        }
+    }
+
+    @JsonIgnore
+    public void clearEgressInterfaces(){
+        for(ElementReference reference : getInterfaces()){
+            String specialisation = reference.getElementSpecialisation();
+            InterfaceComponentTypeEnum specialisationEnum = InterfaceComponentTypeEnum.fromName(specialisation);
+            if(specialisationEnum != null && specialisationEnum.isSenderInterface()){
+                getInterfaces().remove(reference);
             }
         }
     }
@@ -83,9 +120,9 @@ public class WorkUnitProcessor extends ApplicationComponent {
     public List<ElementReference> getEgressInterfaces(){
         ArrayList<ElementReference> egressInterfaces = new ArrayList<>();
         for(ElementReference reference : getInterfaces()){
-            String specialisation = reference.getObjectSpecialisation();
-            ApplicationComponentSpecialisationEnum specialisationEnum = ApplicationComponentSpecialisationEnum.fromCode(specialisation);
-            if(specialisationEnum == ApplicationComponentSpecialisationEnum.SUBSYSTEM_APPLICATION_WUP_INTERFACE_EGRESS ){
+            String specialisation = reference.getElementSpecialisation();
+            InterfaceComponentTypeEnum specialisationEnum = InterfaceComponentTypeEnum.fromName(specialisation);
+            if(specialisationEnum != null && specialisationEnum.isSenderInterface()){
                 egressInterfaces.add(reference);
             }
         }
@@ -93,21 +130,42 @@ public class WorkUnitProcessor extends ApplicationComponent {
     }
 
     @JsonIgnore
-    public void setEgresInterfaces(List<ElementReference> egresInterfaces){
+    public void setEgressInterfaces(List<ElementReference> egresInterfaces){
         for(ElementReference reference : egresInterfaces){
-            String specialisation = reference.getObjectSpecialisation();
-            ApplicationComponentSpecialisationEnum specialisationEnum = ApplicationComponentSpecialisationEnum.fromCode(specialisation);
-            if(specialisationEnum == ApplicationComponentSpecialisationEnum.SUBSYSTEM_APPLICATION_WUP_INTERFACE_EGRESS ){
+            String specialisation = reference.getElementSpecialisation();
+            InterfaceComponentTypeEnum specialisationEnum = InterfaceComponentTypeEnum.fromName(specialisation);
+            assert specialisationEnum != null;
+            if(specialisationEnum.isSenderInterface() ){
                 getInterfaces().add(reference);
             }
         }
     }
 
+    @JsonIgnore
+    public void addEgressInterface(EgressApplicationInterface egressInterface){
+        getInterfaces().add(egressInterface.getReference());
+    }
+
+    @JsonIgnore
+    public void removeEgressInterface(EgressApplicationInterface egressInterface){
+        getInterfaces().remove(egressInterface.getReference());
+    }
+
+    @JsonIgnore
+    public List<ElementReference> getGridInterfaces(){
+        ArrayList<ElementReference> gridInterfaces = new ArrayList<>();
+        for(ElementReference reference : getInterfaces()){
+            String specialisation = reference.getElementSpecialisation();
+            InterfaceComponentTypeEnum specialisationEnum = InterfaceComponentTypeEnum.fromName(specialisation);
+            if(specialisationEnum != null && specialisationEnum.isGridInterface()){
+                gridInterfaces.add(reference);
+            }
+        }
+        return(gridInterfaces);
+    }
+
     //
     // Utility Methods
     //
-    @Override
-    protected Logger getLogger(){
-        return(LOG);
-    }
+
 }

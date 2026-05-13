@@ -98,7 +98,7 @@ public class CentralMessageBrokerClient {
             throw new IllegalArgumentException("MessageObject cannot be null");
         }
         byte[] payload = serialize(message);
-        String key = message.resolveKey();
+        String key = message.resolveElementInstanceKey();
         ProducerRecord<String, byte[]> record = new ProducerRecord<>(topicName, key, payload);
         LOG.debug("CentralMessageBrokerClient: Publishing id={} to topic={}", key, topicName);
         producer.send(record, (md, ex) -> {
@@ -167,7 +167,7 @@ public class CentralMessageBrokerClient {
         if (topic == null || topic.getTopicName() == null) {
             return null;
         }
-        return topic.getTopicName().getCommonName().getValue();
+        return topic.getTopicName().getCommonName().getName();
     }
 
     protected String resolveBootstrap() {

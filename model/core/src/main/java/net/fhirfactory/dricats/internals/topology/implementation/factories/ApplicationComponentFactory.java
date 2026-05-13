@@ -21,23 +21,27 @@
  */
 package net.fhirfactory.dricats.internals.topology.implementation.factories;
 
+import jakarta.enterprise.context.ApplicationScoped;
 import net.fhirfactory.dricats.internals.common.identifiers.ElementIdentifier;
 import net.fhirfactory.dricats.internals.common.identifiers.ElementReference;
-import net.fhirfactory.dricats.internals.common.naming.FullyDistinguishedName;
+import net.fhirfactory.dricats.internals.common.naming.DistinguishedName;
 import net.fhirfactory.dricats.internals.common.naming.RelativeDistinguishedName;
-import net.fhirfactory.dricats.internals.topology.implementation.layers.application.Subsystem;
+import net.fhirfactory.dricats.internals.topology.implementation.layers.application.*;
+import net.fhirfactory.dricats.internals.topology.implementation.layers.application.interfaces.EgressApplicationInterface;
+import net.fhirfactory.dricats.internals.topology.implementation.layers.application.interfaces.IngresApplicationInterface;
+import net.fhirfactory.dricats.internals.topology.implementation.layers.application.interfaces.base.WUPInterfaceBase;
+import net.fhirfactory.dricats.internals.topology.implementation.layers.application.interfaces.valuesets.InterfaceComponentTypeEnum;
 import net.fhirfactory.dricats.internals.topology.implementation.layers.application.valuesets.ApplicationComponentSpecialisationEnum;
-import net.fhirfactory.dricats.reference.archimate.common.valuesets.ElementTypeEnum;
 import net.fhirfactory.dricats.reference.archimate.layers.application.ApplicationComponent;
+import net.fhirfactory.dricats.reference.archimate.layers.application.ApplicationInterface;
+import org.apache.commons.lang3.SerializationUtils;
 
-import jakarta.enterprise.context.ApplicationScoped;
-import java.time.LocalDateTime;
+import java.util.HashMap;
+
+import static net.fhirfactory.dricats.reference.archimate.common.ElementBase.DEFAULT_ELEMENT_SPECIALISATION;
 
 @ApplicationScoped
 public class ApplicationComponentFactory {
-
-    
-
 
     public ApplicationComponent createApplicationComponent(
             ElementReference parent,
@@ -46,55 +50,51 @@ public class ApplicationComponentFactory {
             ApplicationComponentSpecialisationEnum componentType)
     {
         ApplicationComponent applicationComponent;
+        boolean createdIdentifier = false;
         switch (componentType) {
+            case SOLUTION:
+                applicationComponent = new Solution(null, name, doc, new HashMap<>());
+                createdIdentifier = true;
+                break;
             case SUBSYSTEM:
-                applicationComponent = new Subsystem() {
-                    @Override
-                    protected ElementIdentifier specifySubsystemIdentifier() {
-
-                    }
-                };
+                applicationComponent = new DefaultSubsystem(parent, name,doc,new HashMap<String,String>());
+                createdIdentifier = true;
                 break;
             case SUBSYSTEM_APPLICATION_CLUSTER:
-                applicationComponent = new ApplicationClusterSummary();
+                applicationComponent = new DefaultSubsystemCluster();
                 break;
             case SUBSYSTEM_APPLICATION_INSTANCE:
-                applicationComponent = new ApplicationInstanceSummary();
-                break;
-            case SUBSYSTEM_APPLICATION_WORK_UNIT_PROCESSOR_GROUP:
-                applicationComponent = new WUPGroupSummary();
+                applicationComponent = new DefaultSubsystemInstance();
                 break;
             case SUBSYSTEM_APPLICATION_WORK_UNIT_PROCESSOR:
-            case SUBSYSTEM_APPLICATION_WUP_INTERFACE_INGRES:
-            case SUBSYSTEM_APPLICATION_WUP_INTERFACE_EGRESS:
-                applicationComponent = new WUPSummary();
+                applicationComponent = new WorkUnitProcessor();
                 break;
             default:
-                applicationComponent = new WUPSummary();
+                applicationComponent = new ApplicationComponent();
+                break;
         }
-        applicationComponent.setElementType(ElementTypeEnum.APPLICATION_COMPONENT);
-        applicationComponent.getMetadata().setCreationDate(LocalDateTime.now());
-        applicationComponent.getMetadata().setLastUpdateDate(LocalDateTime.now());
-        applicationComponent.getComponentStatus().setHeartbeatInstant(LocalDateTime.now());
-        applicationComponent.getComponentStatus().setLastActivityInstant(LocalDateTime.now());
-        applicationComponent.setSpecialization(componentType.getType());
+
         applicationComponent.setParent(parent);
-        applicationComponent.setComponentStatus(new ApplicationComponentStatusSummary());
-        applicationComponent.getComponentStatus().setComponentStatus("OK");
-        applicationComponent.getComponentStatus().setComponentStatusDescription("Component Operating within normal parameters");
-        FullyDistinguishedName qualifiedName;
-        if(parent == null){
-            qualifiedName = new FullyDistinguishedName();
-        } else {
-            qualifiedName = new FullyDistinguishedName(parent.getQualifiedName());
-        }
-        RelativeDistinguishedName unqName = new RelativeDistinguishedName(componentType.getType(), name);
-        qualifiedName.appendUnqualifiedName(unqName);
-        applicationComponent.setName(name);
+        applicationComponent.setShortName(name);
         applicationComponent.setDocumentation(doc);
-        applicationComponent.setObjectID(new DistributableObjectId(qualifiedName));
-        getTestComponentServices().getComponents().put(applicationComponent.resolveKey(), applicationComponent);
+        applicationComponent.setSpecialization(componentType.getType());
+        if(!createdIdentifier){
+            DistinguishedName fdn;
+            String specialization = componentType.getType();
+            if(specialization == null || specialization.isEmpty()) {
+                specialization = DEFAULT_ELEMENT_SPECIALISATION;
+            }
+            RelativeDistinguishedName rdn = new RelativeDistinguishedName(specialization, name);
+            if(parent != null) {
+                fdn = new DistinguishedName(parent.getElementIdentifier().getIdentifierValue());
+            } else {
+                fdn = new DistinguishedName();
+            }
+            fdn.appendUnqualifiedName(rdn);
+            ElementIdentifier elementIdentifier = new ElementIdentifier(fdn);
+            applicationComponent.setIdentifier(elementIdentifier);
+        }
+
         return applicationComponent;
     }
-}
 }

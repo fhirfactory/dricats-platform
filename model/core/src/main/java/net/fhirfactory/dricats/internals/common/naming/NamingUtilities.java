@@ -1,13 +1,13 @@
 package net.fhirfactory.dricats.internals.common.naming;
 
-import net.fhirfactory.dricats.internals.common.id.ObjectKey;
+import net.fhirfactory.dricats.internals.common.id.ElementInstanceId;
 import net.fhirfactory.dricats.internals.common.naming.datatypes.DistinguishedNameEntry;
 
 import java.util.Map;
 
 public class NamingUtilities {
 
-    public static ObjectKey toObjectToken(FullyDistinguishedName fdn){
+    public static ElementInstanceId toObjectToken(DistinguishedName fdn){
         if (fdn.getUnqualifiedNameEntries() == null) {
             throw new IllegalArgumentException("qualifiedName is null");
         }
@@ -23,7 +23,7 @@ public class NamingUtilities {
         }
         builder.append("<effectiveDate.effectiveStartDate></effectiveDate.effectiveStartDate>");
         builder.append("<effectiveDate.effectiveEndDate></effectiveDate.effectiveEndDate>");
-        ObjectKey objectToken = new ObjectKey(builder.toString());
+        ElementInstanceId objectToken = new ElementInstanceId(builder.toString());
         return (objectToken);
     }
 }

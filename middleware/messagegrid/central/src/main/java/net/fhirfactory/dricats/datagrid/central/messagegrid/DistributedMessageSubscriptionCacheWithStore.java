@@ -26,8 +26,6 @@ import jakarta.annotation.PreDestroy;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.Instance;
 import jakarta.inject.Inject;
-import net.fhirfactory.dricats.internals.common.DistributableObjectId;
-import net.fhirfactory.dricats.internals.common.naming.CommonName;
 import net.fhirfactory.dricats.internals.datagrid.IMessageSubscriptionPersistenceService;
 import net.fhirfactory.dricats.internals.pubsub.messages.MessageSubscription;
 import org.infinispan.Cache;
@@ -44,11 +42,9 @@ import org.infinispan.notifications.cachelistener.event.CacheEntryEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -360,33 +356,7 @@ public class DistributedMessageSubscriptionCacheWithStore {
     }
 
     protected String resolveKey(MessageSubscription item) {
-        String key = null;
-        try {
-            DistributableObjectId objectId = item.getObjectID();
-            if (objectId != null && objectId.getQualifiedName() != null && objectId.getQualifiedName().getCommonName() != null && !objectId.getQualifiedName().getCommonName().getValue().isEmpty()) {
-                key = objectId.getQualifiedName().getCommonName().getValue();
-            }
-        } catch (Exception e) {
-            // ignore
-        }
-        if (key == null) {
-            try {
-                CommonName cn = item.getLocalId();
-                if (cn != null && cn.getValue() != null && !cn.getValue().isEmpty()) {
-                    key = cn.getValue();
-                }
-            } catch (Exception e) {
-                // ignore
-            }
-        }
-        if (key == null) {
-            key = UUID.randomUUID().toString();
-            try {
-                item.setLocalId(new CommonName(key));
-            } catch (Exception e) {
-                LOG.debug("resolveKey(MessageSubscription): unable to set generated id on item", e);
-            }
-        }
+        String key = item.resolveElementInstanceKey();
         return key;
     }
 

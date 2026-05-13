@@ -22,7 +22,7 @@
 package net.fhirfactory.dricats.internals.common.naming;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import net.fhirfactory.dricats.internals.common.id.ObjectKey;
+import net.fhirfactory.dricats.internals.common.id.ElementInstanceId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -140,14 +140,14 @@ public class RelativeDistinguishedName implements Serializable {
     }
 
     @JsonIgnore
-    private ObjectKey toToken() {
-        ObjectKey token = new ObjectKey(pseudoXMLAttribute(getQualifier(), getValue()));
+    private ElementInstanceId toToken() {
+        ElementInstanceId token = new ElementInstanceId(pseudoXMLAttribute(getQualifier(), getValue()));
         return token;
     }
 
     @JsonIgnore
-    public ObjectKey getToken() {
-        ObjectKey token = toToken();
+    public ElementInstanceId getToken() {
+        ElementInstanceId token = toToken();
         return (token);
     }
 

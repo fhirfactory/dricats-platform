@@ -4,13 +4,15 @@
 package net.fhirfactory.dricats.reference.archimate.common;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import net.fhirfactory.dricats.internals.common.id.ObjectId;
-import net.fhirfactory.dricats.internals.common.naming.FullyDistinguishedName;
-import net.fhirfactory.dricats.internals.common.naming.RelativeDistinguishedName;
-import net.fhirfactory.dricats.internals.common.object.DistributableObject;
+import net.fhirfactory.dricats.internals.common.identifiers.ElementIdentifier;
 import net.fhirfactory.dricats.internals.common.identifiers.ElementReference;
-import net.fhirfactory.dricats.internals.datatypes.EffectiveDate;
+import net.fhirfactory.dricats.internals.common.naming.DistinguishedName;
+import net.fhirfactory.dricats.internals.common.naming.RelativeDistinguishedName;
+import net.fhirfactory.dricats.internals.common.object.ManagedObject;
+import net.fhirfactory.dricats.internals.security.datatypes.SecurityLabels;
 import net.fhirfactory.dricats.reference.archimate.common.valuesets.ElementTypeEnum;
+import org.apache.commons.lang3.SerializationUtils;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,7 +31,7 @@ import java.util.Objects;
  * - specialization (stereotype)
  * - properties (key/value)
  */
-public abstract class ElementBase extends DistributableObject implements Serializable {
+public abstract class ElementBase extends ManagedObject implements Serializable {
     //
     // Housekeeping
     //
@@ -39,76 +41,110 @@ public abstract class ElementBase extends DistributableObject implements Seriali
     //
     // Attributes
     //
-    private String name;
+
+    public static final String DEFAULT_ELEMENT_SPECIALISATION = "NoSpecialisation";
+
     private String documentation;
     private String specialization;
     private Map<String, String> extensions;
     private ElementTypeEnum elementType;
+    private SecurityLabels securityLabels;
 
     //
     // Constructor(s)
     //
+    /**
+     * Default constructor.
+     * Initializes extensions and security labels.
+     */
     public ElementBase(){
         super();
         this.extensions = new HashMap<>();
-        getLogger().trace("ElementBase(): constructed");
+        this.securityLabels = new SecurityLabels();
     }
 
+    /**
+     * Constructs a new ElementBase with hierarchical context.
+     *
+     * @param parent The parent object reference, used to build the distinguished name.
+     * @param name The short name of the element.
+     * @param documentation Description or documentation for the element.
+     * @param specialization The specialization or stereotype of the element.
+     * @param extensions A map of key/value properties for the element.
+     * @param elementType The specific type of ArchiMate element.
+     */
     public ElementBase(ElementReference parent, String name, String documentation, String specialization, Map<String, String> extensions, ElementTypeEnum elementType) {
         super();
-        this.name = name;
-        this.documentation = documentation;
-        this.specialization = specialization;
-        this.extensions = extensions;
-        this.elementType = elementType;
-        ObjectId id = new ObjectId();
-        FullyDistinguishedName fdn = new FullyDistinguishedName(id);
+        setDocumentation(documentation);
+        setSpecialization(specialization);
+        setExtensions(extensions);
+        setElementType(elementType);
+        DistinguishedName fdn;
+        if(specialization == null || specialization.isEmpty()) {
+            specialization = DEFAULT_ELEMENT_SPECIALISATION;
+        }
         RelativeDistinguishedName rdn = new RelativeDistinguishedName(specialization, name);
+        if(parent != null) {
+            fdn = new DistinguishedName(parent.getElementIdentifier().getIdentifierValue());
+        } else {
+            fdn = new DistinguishedName();
+        }
         fdn.appendUnqualifiedName(rdn);
-        id.setQualifier(fdn.getCommonQualifier());
-        id.setName(fdn.getCommonName());
-        id.setEffectivePeriod(new EffectiveDate());
-        getLogger().trace("ElementBase(name, documentation, specialization, properties, elementType): constructed");
+        ElementIdentifier elementIdentifier = new ElementIdentifier(fdn);
+        setIdentifier(elementIdentifier);
+        setShortName(name);
     }
-    public ElementBase( ObjectId objectId, String documentation, String specialization, ElementTypeEnum elementType, Map<String, String> extensions) {
+
+
+    /**
+     * Constructs a new ElementBase from an object identifier and attributes.
+     *
+     * @param elementIdentifier The object identifier, providing the long and short names.
+     * @param documentation Description or documentation for the element.
+     * @param specialization The specialization or stereotype of the element.
+     * @param elementType The specific type of ArchiMate element.
+     * @param extensions A map of key/value properties for the element.
+     */
+    public ElementBase(ElementIdentifier elementIdentifier, String documentation, String specialization, ElementTypeEnum elementType, Map<String, String> extensions) {
         super();
-        this.name = objectId.getName().getValue();
+        setIdentifier(elementIdentifier);
+        setShortName(elementIdentifier.getIdentifierValue().getUnqualifiedName().getUnqualifiedValue());
         this.documentation = documentation;
         this.specialization = specialization;
         this.extensions = new HashMap<>(extensions);
         this.elementType = elementType;
-        this.setObjectId(objectId);
-        getLogger().trace("ElementBase(name, documentation, specialization, properties, elementType): constructed");
+        this.securityLabels = new SecurityLabels();
     }
 
 
+    /**
+     * Copy constructor.
+     *
+     * @param ori The original ElementBase to copy from.
+     */
     public ElementBase(ElementBase ori) {
         super(ori);
-        this.name = ori.name;
+        setShortName(ori.getShortName());
+        setIdentifier(ori.getIdentifier());
         this.documentation = ori.documentation;
         this.specialization = ori.specialization;
-        this.extensions = ori.extensions;
-        this.elementType = ori.elementType;
-        getLogger().trace("ElementBase(ori): constructed");
-    }
-
-    public ElementBase(String name, String documentation, String specialization, ElementTypeEnum elementType) {
-        super();
-        this.name = name;
-        this.documentation = documentation;
-        this.specialization = specialization;
         this.extensions = new HashMap<>();
-        this.elementType = elementType;
-        getLogger().trace("ElementBase(name, documentation, specialization, elementType): constructed");
+        this.extensions.putAll(ori.extensions);
+        this.elementType = ori.elementType;
+        setSecurityLabels(ori.getSecurityLabels());
     }
 
     //
     // Bean Methods
     //
 
-    @Override
-    protected Logger getLogger(){
-        return LOG;
+
+    public SecurityLabels getSecurityLabels() {
+        return securityLabels;
+    }
+
+    public void setSecurityLabels(SecurityLabels securityLabels) {
+        this.securityLabels = securityLabels;
     }
 
     public ElementTypeEnum getElementType() {
@@ -119,9 +155,6 @@ public abstract class ElementBase extends DistributableObject implements Seriali
         this.elementType = elementType;
     }
 
-    public String getName() { return name; }
-    public void setName(String name) { this.name = name; }
-
     public String getDocumentation() { return documentation; }
     public void setDocumentation(String documentation) { this.documentation = documentation; }
 
@@ -129,7 +162,15 @@ public abstract class ElementBase extends DistributableObject implements Seriali
     public void setSpecialization(String specialization) { this.specialization = specialization; }
 
     public Map<String, String> getExtensions() { return extensions; }
-    public void setExtensions(Map<String, String> extensions) { this.extensions = extensions; }
+    public void setExtensions(Map<String, String> extensions) {
+        if(this.extensions == null) {
+            this.extensions = new HashMap<>();
+        }
+        this.extensions.clear();
+        if(extensions != null && !extensions.isEmpty()) {
+            this.extensions.putAll(extensions);
+        }
+    }
 
     public String getExtensionValue(String key) {
         return extensions.get(key);
@@ -148,8 +189,9 @@ public abstract class ElementBase extends DistributableObject implements Seriali
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         ElementBase that = (ElementBase) o;
-        return Objects.equals(getObjectId(), that.getObjectId()) &&
-                Objects.equals(name, that.name) &&
+        return Objects.equals(getElementInstanceId(), that.getElementInstanceId()) &&
+                Objects.equals(getShortName(), that.getShortName()) &&
+                Objects.equals(getIdentifier(), that.getIdentifier()) &&
                 elementType == that.elementType &&
                 Objects.equals(documentation, that.documentation) &&
                 Objects.equals(specialization, that.specialization) &&
@@ -158,22 +200,23 @@ public abstract class ElementBase extends DistributableObject implements Seriali
 
     @Override
     public int hashCode() {
-        return Objects.hash(getObjectId(), elementType, name, documentation, specialization, extensions);
+        return Objects.hash(getElementInstanceId(), elementType, getShortName(), getIdentifier(), documentation, specialization, extensions);
     }
 
     @Override
     public String toString() {
-        return getClass().getSimpleName()+"{"+
-                "name='"+name+'\''+
-                ", elementType="+elementType+
-                ", documentation='"+documentation+'\''+
-                ", specialization='"+specialization+'\''+
-                ", properties="+ extensions +
-                ", id="+ getObjectId()+
-                ", identifiers="+getIdentifiers()+
-                ", metadata="+getMetadata()+
-                ", securityLabels="+getSecurityLabels()+
-                '}';
+        return new ToStringBuilder(this)
+                .append("documentation", getDocumentation())
+                .append("specialization", getSpecialization())
+                .append("extensions", getExtensions())
+                .append("elementType", getElementType())
+                .append("securityLabels", getSecurityLabels())
+                .append("localObjectId", getElementInstanceId())
+                .append("metadata", getMetadata())
+                .append("shortName", getShortName())
+                .append("longName", getIdentifier())
+                .append("otherIdentifiers", getOtherIdentifiers())
+                .toString();
     }
 
     //
@@ -183,22 +226,24 @@ public abstract class ElementBase extends DistributableObject implements Seriali
     @JsonIgnore
     public ElementReference getReference(){
         ElementReference reference = new ElementReference();
-        reference.setLocalObjectId(getObjectId());
         String specialization = getSpecialization();
         if(specialization == null || specialization.isEmpty()){
             specialization = "unknown";
         }
-        reference.setObjectSpecialisation(specialization);
+        reference.setElementSpecialisation(specialization);
         String elementType = getElementType().toString();
         if(elementType == null || elementType.isEmpty()){
             elementType = "unknown";
         }
-        reference.setObjectType(elementType);
+        reference.setElementType(elementType);
         StringBuilder sb = new StringBuilder();
         sb.append(elementType);
         sb.append("(").append(specialization).append(")");
-        sb.append(":").append(getCommonName());
+        sb.append(":").append(getIdentifier().getIdentifierValue().getCommonName().getName());
         reference.setReferenceDescription(sb.toString());
+        ElementIdentifier elementIdentifier = SerializationUtils.clone(getIdentifier());
+        reference.setElementIdentifier(elementIdentifier);
+        reference.setElementInstanceId(getElementInstanceId());
         return reference;
     }
 
@@ -218,26 +263,17 @@ public abstract class ElementBase extends DistributableObject implements Seriali
             if(o1 != null && o2 == null){
                 return(-1);
             }
-            if(o1.getObjectId() == null && o2.getObjectId() == null){
+            if(o1.getElementInstanceId() == null && o2.getElementInstanceId() == null){
                 return(0);
             }
-            if(o1.getObjectId() == null && !(o2.getObjectId() == null)){
+            if(o1.getElementInstanceId() == null && !(o2.getElementInstanceId() == null)){
                 return(1);
             }
-            if(!(o1.getObjectId() == null) && o2.getObjectId() ==  null){
+            if(!(o1.getElementInstanceId() == null) && o2.getElementInstanceId() ==  null){
                 return(-1);
             }
-            if(o1.getObjectId().getName() == null && o2.getObjectId().getName() == null){
-                return(0);
-            }
-            if(o1.getObjectId().getName() == null && !(o2.getObjectId().getName() == null)){
-                return(1);
-            }
-            if(!(o1.getObjectId().getName() == null) && o2.getObjectId().getName() ==  null){
-                return(-1);
-            }
-            String commonName1 = o1.getObjectId().getName().getValue();
-            String commonName2 = o2.getObjectId().getName().getValue();
+            String commonName1 = o1.getIdentifier().getIdentifierValue().getCommonName().getName();
+            String commonName2 = o2.getIdentifier().getIdentifierValue().getCommonName().getName();
             int comparison = commonName1.compareTo(commonName2);
             return(comparison);
         }
@@ -255,16 +291,16 @@ public abstract class ElementBase extends DistributableObject implements Seriali
             if(o1 != null && o2 == null){
                 return(-1);
             }
-            if(o1.getObjectId() == null && o2.getObjectId() == null){
+            if(o1.getElementInstanceId() == null && o2.getElementInstanceId() == null){
                 return(0);
             }
-            if(o1.getObjectId() == null && !(o2.getObjectId() == null)){
+            if(o1.getElementInstanceId() == null && !(o2.getElementInstanceId() == null)){
                 return(1);
             }
-            if(!(o1.getObjectId()  == null) && o2.getObjectId() ==  null){
+            if(!(o1.getElementInstanceId()  == null) && o2.getElementInstanceId() ==  null){
                 return(-1);
             }
-            int idComparison = o1.getObjectId().compareTo(o2.getObjectId());
+            int idComparison = o1.getElementInstanceId().getIdValue().compareTo(o2.getElementInstanceId().getIdValue());
             return(idComparison);
         }
     };
@@ -285,17 +321,32 @@ public abstract class ElementBase extends DistributableObject implements Seriali
             if (o1 != null && o2 == null) {
                 return (-1);
             }
-            if(o1.getName() == null && o2.getName() == null){
+            if(o1.getIdentifier() == null && o2.getIdentifier() == null){
                 return(0);
             }
-            if(o1.getName() == null && !(o2.getName() == null)){
+            if(o1.getIdentifier() == null && !(o2.getIdentifier() == null)){
                 return(1);
             }
-            if(!(o1.getName() == null) && o2.getName() ==  null){
+            if(!(o1.getIdentifier() == null) && o2.getIdentifier() ==  null){
                 return(-1);
             }
-            String testValue1 = o1.getName();
-            String testValue2 = o2.getName();
+            String testValue3 = o1.getIdentifier().getIdentifierValue().getTokenString();
+            String testValue4 = o2.getIdentifier().getIdentifierValue().getTokenString();
+            int comparison2 = testValue3.compareTo(testValue4);
+            if(comparison2 != 0){
+                return(comparison2);
+            }
+            if(o1.getShortName() == null && o2.getShortName() == null){
+                return(0);
+            }
+            if(o1.getShortName() == null && !(o2.getShortName() == null)){
+                return(1);
+            }
+            if(!(o1.getShortName() == null) && o2.getShortName() ==  null){
+                return(-1);
+            }
+            String testValue1 = o1.getShortName();
+            String testValue2 = o2.getShortName();
             int comparison = testValue1.compareTo(testValue2);
             return(comparison);
         }

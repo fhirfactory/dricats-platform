@@ -2,14 +2,14 @@ package net.fhirfactory.dricats.datagrid.central.metricsgrid;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import net.fhirfactory.dricats.internals.common.id.ObjectKey;
+import net.fhirfactory.dricats.internals.common.id.ElementInstanceId;
 import net.fhirfactory.dricats.internals.oam.metrics.ApplicationComponentMetricsData;
 import net.fhirfactory.dricats.internals.topology.implementation.layers.application.valuesets.ApplicationComponentSpecialisationEnum;
 import net.fhirfactory.dricats.reference.archimate.layers.application.ApplicationComponent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.context.ApplicationScoped;
 import java.sql.*;
 import java.time.Instant;
 import java.time.LocalDateTime;
@@ -257,10 +257,10 @@ public class H2MetricsRepository {
 
     private Long ensureComponentRow(ApplicationComponent component,
                                     ApplicationComponentMetricsData md) {
-        String commonName = component != null ? component.resolveKey() : null;
+        String commonName = component != null ? component.resolveElementInstanceKey() : null;
         String typeStr = (md != null && md.getComponentType() != null) ? md.getComponentType().name() : null;
-        ObjectKey objectKey = component != null ? component.getObjectId() : null;
-        String doiJson = toJsonGeneral(objectKey);
+        ElementInstanceId elementInstanceId = component != null ? component.getElementInstanceId() : null;
+        String doiJson = toJsonGeneral(elementInstanceId);
         if (commonName == null && doiJson == null && typeStr == null) {
             return null; // nothing to store
         }
@@ -301,7 +301,7 @@ public class H2MetricsRepository {
     }
 
     public ApplicationComponentMetricsData fetchLatestForComponent(ApplicationComponent component) {
-        String componentKey = component != null ? component.resolveKey() : null;
+        String componentKey = component != null ? component.resolveElementInstanceKey() : null;
         String sql = "SELECT mr.* FROM metrics_records mr JOIN application_components ac ON mr.component_fk = ac.id WHERE ac.object_id_common_name = ? ORDER BY mr.last_activity DESC NULLS LAST, mr.id DESC LIMIT 1";
         try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, componentKey);

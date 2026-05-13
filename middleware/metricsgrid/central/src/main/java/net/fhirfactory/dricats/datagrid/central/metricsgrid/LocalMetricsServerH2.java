@@ -4,8 +4,8 @@ import net.fhirfactory.dricats.internals.oam.metrics.ApplicationComponentMetrics
 import net.fhirfactory.dricats.internals.oam.metrics.interfaces.ILocalMetricsServerInterface;
 import net.fhirfactory.dricats.reference.archimate.layers.application.ApplicationComponent;
 
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -31,7 +31,7 @@ public class LocalMetricsServerH2 implements ILocalMetricsServerInterface {
     }
 
     public List<ApplicationComponentMetricsData> getMetrics(ApplicationComponent softwareComponent, LocalDateTime metricsStartTime, LocalDateTime metricsEndTime) {
-        String componentKey = softwareComponent != null ? softwareComponent.resolveKey() : null;
+        String componentKey = softwareComponent != null ? softwareComponent.resolveElementInstanceKey() : null;
         return repository.fetchByTimeRangeForComponent(metricsStartTime, metricsEndTime, componentKey);
     }
 

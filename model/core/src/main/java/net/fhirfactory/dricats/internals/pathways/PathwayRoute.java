@@ -21,9 +21,9 @@
  */
 package net.fhirfactory.dricats.internals.pathways;
 
-import net.fhirfactory.dricats.internals.common.object.SimpleDistributableObject;
-import net.fhirfactory.dricats.internals.common.naming.FullyDistinguishedName;
-import net.fhirfactory.dricats.internals.common.id.ObjectId;
+import net.fhirfactory.dricats.internals.common.identifiers.ElementReference;
+import net.fhirfactory.dricats.internals.common.naming.DistinguishedName;
+import net.fhirfactory.dricats.internals.common.object.ManagedObject;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,7 +33,7 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-public class PathwayRoute extends SimpleDistributableObject implements Serializable {
+public class PathwayRoute extends ManagedObject implements Serializable {
     //
     // Housekeeping
     //
@@ -45,7 +45,7 @@ public class PathwayRoute extends SimpleDistributableObject implements Serializa
     // Attributes
     //
      // Map<priority, PathwayRouteSegment id>
-    private Map<Integer, ObjectId> routeSegmentSequence;
+    private Map<Integer, ElementReference> routeSegmentSequence;
 
     //
     // Constructor(s)
@@ -55,19 +55,21 @@ public class PathwayRoute extends SimpleDistributableObject implements Serializa
         routeSegmentSequence = new HashMap<>();
     }
 
-    public PathwayRoute(FullyDistinguishedName qualifiedName){
+    public PathwayRoute(DistinguishedName qualifiedName){
         super(qualifiedName);
         routeSegmentSequence = new HashMap<>();
     }
 
     //
-    public Map<Integer, ObjectId> getRouteSegmentSequence() {
+    public Map<Integer, ElementReference> getRouteSegmentSequence() {
         return routeSegmentSequence;
     }
 
-    public void setRouteSegmentSequence(Map<Integer, ObjectId> routeSegmentSequence) {
+    public void setRouteSegmentSequence(Map<Integer, ElementReference> routeSegmentSequence) {
         this.routeSegmentSequence = routeSegmentSequence;
     }
+
+
 
     //
     // Standard Methods

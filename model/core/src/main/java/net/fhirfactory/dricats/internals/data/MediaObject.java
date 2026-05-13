@@ -21,7 +21,8 @@
  */
 package net.fhirfactory.dricats.internals.data;
 
-import net.fhirfactory.dricats.internals.common.object.DistributableObject;
+import net.fhirfactory.dricats.internals.common.object.ManagedObject;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,7 +30,7 @@ import java.io.Serial;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
-public class MediaObject extends DistributableObject{
+public class MediaObject extends ManagedObject {
     //
     // Housekeeping
     //
@@ -96,27 +97,24 @@ public class MediaObject extends DistributableObject{
     }
 
     //
-    // Utility Methods
+    // Standard Methods
     //
-
-    protected Logger getLogger() {
-        return LOG;
-    }
 
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder("MediaObject{");
-        sb.append("mediaContent=").append(getMediaContent());
-        sb.append(", mediaReference='").append(getMediaReference()).append('\'');
-        sb.append(", mediaSize=").append(getMediaSize());
-        sb.append(", mediaCreationDate=").append(getMediaCreationDate());
-        sb.append(", mediaUpdateDate=").append(getMediaUpdateDate());
-        sb.append(", securityLabels=").append(getSecurityLabels());
-        sb.append(", metadata=").append(getMetadata());
-        sb.append(", identifiers=").append(getIdentifiers());
-        sb.append(", id='").append(getObjectId()).append('\'');
-        sb.append('}');
-        return sb.toString();
+        return new ToStringBuilder(this)
+                .append("mediaContent", getMediaContent())
+                .append("mediaReference", getMediaReference())
+                .append("mediaSize", getMediaSize())
+                .append("mediaCreationDate", getMediaCreationDate())
+                .append("mediaUpdateDate", getMediaUpdateDate())
+                .append("localObjectId", getElementInstanceId())
+                .append("securityLabels", getSecurityLabels())
+                .append("metadata", getMetadata())
+                .append("shortName", getShortName())
+                .append("longName", getIdentifier())
+                .append("otherIdentifiers", getOtherIdentifiers())
+                .toString();
     }
 
     @Override

@@ -22,14 +22,9 @@
 package net.fhirfactory.dricats.internals.topology.implementation.layers.application;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import net.fhirfactory.dricats.internals.common.id.ObjectId;
-import net.fhirfactory.dricats.internals.common.identifiers.ElementIdentifier;
 import net.fhirfactory.dricats.internals.common.identifiers.ElementReference;
-import net.fhirfactory.dricats.internals.common.naming.CommonName;
-import net.fhirfactory.dricats.internals.common.naming.CommonQualifier;
-import net.fhirfactory.dricats.internals.datatypes.EffectiveDate;
+import net.fhirfactory.dricats.internals.topology.implementation.common.TopologyComponent;
 import net.fhirfactory.dricats.internals.topology.implementation.layers.application.valuesets.ApplicationComponentSpecialisationEnum;
-import net.fhirfactory.dricats.reference.archimate.layers.application.ApplicationComponent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,7 +32,7 @@ import java.io.Serial;
 import java.util.List;
 import java.util.Map;
 
-public class Solution extends ApplicationComponent {
+public class Solution extends TopologyComponent {
     //
     // Housekeeping
     //
@@ -60,8 +55,8 @@ public class Solution extends ApplicationComponent {
         setSpecialization(ApplicationComponentSpecialisationEnum.SOLUTION.getType());
     }
 
-    public Solution(ElementReference parent, ObjectId objectId, String documentation, Map<String, String> extensions ){
-        super(parent, objectId, documentation, ApplicationComponentSpecialisationEnum.SOLUTION.toString(), extensions );
+    public Solution(ElementReference parent, String name, String documentation, Map<String, String> extensions ){
+        super(parent, name, documentation, ApplicationComponentSpecialisationEnum.SOLUTION.toString(), extensions );
     }
 
     //

@@ -21,11 +21,11 @@
  */
 package net.fhirfactory.dricats.internals.communicate.entities.session;
 
+import net.fhirfactory.dricats.internals.common.object.ManagedObject;
 import net.fhirfactory.dricats.internals.communicate.entities.rooms.datatypes.CommunicateRoomReference;
 import net.fhirfactory.dricats.internals.communicate.entities.session.datatypes.CommunicateSessionID;
 import net.fhirfactory.dricats.internals.communicate.entities.session.datatypes.CommunicateSessionParticipant;
 import net.fhirfactory.dricats.internals.communicate.entities.session.valuesets.CommunicateSessionTypeEnum;
-import net.fhirfactory.dricats.internals.common.object.DistributableObject;
 
 import java.io.Serial;
 import java.util.ArrayList;
@@ -34,15 +34,14 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class CommunicateSession extends DistributableObject {
+public class CommunicateSession extends ManagedObject {
 	//
 	// Housekeeping
 	//
 	
 	@Serial
     private static final long serialVersionUID = 4273815477591749463L;
-	private static final Logger LOG = LoggerFactory.getLogger(CommunicateSession.class);
-	
+
 	//
 	// Attributes
 	//
@@ -108,11 +107,7 @@ public class CommunicateSession extends DistributableObject {
     // Utility Methods
     //
     
-    @Override
-    protected Logger getLogger() {
-    	return(LOG);
-    }
-    
+
     @Override
     public String toString() {
         return "CommunicateSession{" +

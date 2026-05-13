@@ -85,7 +85,6 @@ public class EventTemporalWindow extends EffectiveDate implements Serializable {
         return new ToStringBuilder(this)
                 .append("effectiveStartDate", getEffectiveStartDate())
                 .append("effectiveEndDate", getEffectiveEndDate())
-                .append("id", getObjectId())
                 .toString();
     }
 }

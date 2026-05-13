@@ -21,11 +21,9 @@
  */
 package net.fhirfactory.dricats.internals.topics;
 
+import net.fhirfactory.dricats.internals.common.naming.DistinguishedName;
 import net.fhirfactory.dricats.internals.common.object.SerialisableObject;
-import net.fhirfactory.dricats.internals.common.naming.FullyDistinguishedName;
-import net.fhirfactory.dricats.internals.common.id.ObjectId;
 import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.slf4j.Logger;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -37,12 +35,11 @@ public class Topic extends SerialisableObject implements Serializable {
     //
     @Serial
     private static final long serialVersionUID = -12345678900003L;
-    private static final Logger LOG = org.slf4j.LoggerFactory.getLogger(Topic.class);
 
     //
     // Attributes
     //
-    private FullyDistinguishedName topicName;
+    private DistinguishedName topicName;
     private String topicDescription;
 
     //
@@ -53,15 +50,15 @@ public class Topic extends SerialisableObject implements Serializable {
         super();
     }
 
-    public Topic(FullyDistinguishedName topicName){
-        setObjectId(new ObjectId(topicName));
-        topicDescription = "No description available";
+    public Topic(DistinguishedName topicName){
+        super();
+        setTopicDescription("No description available");
         setTopicName(topicName);
     }
 
-    public Topic(FullyDistinguishedName topicName, String description){
-        setObjectId(new ObjectId(topicName));
-        topicDescription = description;
+    public Topic(DistinguishedName topicName, String description){
+        super();
+        setTopicDescription(description);
         setTopicName(topicName);
     }
 
@@ -69,11 +66,11 @@ public class Topic extends SerialisableObject implements Serializable {
     // Getters and Setters
     //
 
-    public FullyDistinguishedName getTopicName() {
+    public DistinguishedName getTopicName() {
         return topicName;
     }
 
-    public void setTopicName(FullyDistinguishedName topicName) {
+    public void setTopicName(DistinguishedName topicName) {
         this.topicName = topicName;
     }
 

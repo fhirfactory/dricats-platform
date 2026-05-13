@@ -25,7 +25,6 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import net.fhirfactory.dricats.common.DateUtility;
 import net.fhirfactory.dricats.deployment.contants.DefaultDeploymentConstants;
 import net.fhirfactory.dricats.internals.common.identifiers.ElementReference;
-import net.fhirfactory.dricats.internals.common.id.ObjectId;
 import net.fhirfactory.dricats.reference.archimate.layers.application.ApplicationEvent;
 import org.apache.commons.lang3.SerializationUtils;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -52,7 +51,7 @@ public class EventBase extends ApplicationEvent implements Serializable {
     private LocalDateTime eventSendDate;
     @JsonFormat(pattern = DateUtility.DEFAULT_JSON_FORMAT, timezone = DefaultDeploymentConstants.DEPLOYMENT_TIMEZONE)
     private LocalDateTime eventReceiveDate;
-    private Map<Integer, ObjectId> history;
+    private Map<Integer, ElementReference> history;
 
 
     //
@@ -100,11 +99,11 @@ public class EventBase extends ApplicationEvent implements Serializable {
         this.eventReceiveDate = eventReceiveDate;
     }
 
-    public Map<Integer, ObjectId> getHistory() {
+    public Map<Integer, ElementReference> getHistory() {
         return history;
     }
 
-    public void setHistory(Map<Integer, ObjectId> history) {
+    public void setHistory(Map<Integer, ElementReference> history) {
         this.history = history;
     }
 
@@ -113,7 +112,7 @@ public class EventBase extends ApplicationEvent implements Serializable {
     //
 
 
-
+    //
     // Standard Methods
     //
 
@@ -124,18 +123,21 @@ public class EventBase extends ApplicationEvent implements Serializable {
                 .append("eventSendDate", getEventSendDate())
                 .append("eventReceiveDate", getEventReceiveDate())
                 .append("history", getHistory())
+                .append("localObjectId", getElementInstanceId())
+                .append("securityLabels", getSecurityLabels())
+                .append("metadata", getMetadata())
+                .append("shortName", getShortName())
+                .append("longName", getIdentifier())
+                .append("otherIdentifiers", getOtherIdentifiers())
+                .append("securityLabels", getSecurityLabels())
+                .append("elementType", getElementType())
+                .append("documentation", getDocumentation())
+                .append("specialization", getSpecialization())
+                .append("extensions", getExtensions())
                 .append("triggeringFunctions", getTriggeringFunctions())
                 .append("triggeredFunctions", getTriggeredFunctions())
                 .append("associatedData", getAssociatedData())
                 .append("source", getSource())
-                .append("elementType", getElementType())
-                .append("name", getName())
-                .append("documentation", getDocumentation())
-                .append("specialization", getSpecialization())
-                .append("extensions", getExtensions())
-                .append("securityLabels", getSecurityLabels())
-                .append("metadata", getMetadata())
-                .append("id", getObjectId())
                 .toString();
     }
 }

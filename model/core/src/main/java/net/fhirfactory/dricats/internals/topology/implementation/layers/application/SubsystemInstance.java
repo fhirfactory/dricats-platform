@@ -23,8 +23,8 @@ package net.fhirfactory.dricats.internals.topology.implementation.layers.applica
 
 import java.io.Serial;
 
+import net.fhirfactory.dricats.internals.topology.implementation.common.TopologyComponent;
 import net.fhirfactory.dricats.internals.topology.implementation.layers.application.valuesets.ApplicationComponentSpecialisationEnum;
-import net.fhirfactory.dricats.reference.archimate.layers.application.ApplicationComponent;
 import net.fhirfactory.dricats.internals.topology.implementation.layers.technology.DataCentreNode;
 import net.fhirfactory.dricats.internals.topology.implementation.layers.technology.Platform;
 import org.slf4j.Logger;
@@ -32,7 +32,7 @@ import org.slf4j.LoggerFactory;
 
 import net.fhirfactory.dricats.internals.common.identifiers.ElementIdentifier;
 
-public abstract class SubsystemInstance extends ApplicationComponent {
+public abstract class SubsystemInstance extends TopologyComponent {
     //
     // Housekeeping
     //

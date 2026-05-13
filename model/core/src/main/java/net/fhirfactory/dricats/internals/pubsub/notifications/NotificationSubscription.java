@@ -76,7 +76,7 @@ public class NotificationSubscription extends SubscriptionBase implements Serial
         this.notificationSubscriptionMask = notificationSubscriptionMask;
     }
 
-    @Override
+
     protected Logger getLogger(){
         return LOG;
     }

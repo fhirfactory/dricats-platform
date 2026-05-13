@@ -25,8 +25,6 @@ import net.fhirfactory.dricats.internals.communicate.entities.rooms.datatypes.Co
 import net.fhirfactory.dricats.internals.communicate.entities.user.CommunicateUser;
 import net.fhirfactory.dricats.resources.actors.Group;
 import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.Serial;
 import java.util.Objects;
@@ -39,7 +37,6 @@ public class CommunicateGroup extends Group {
 
     @Serial
     private static final long serialVersionUID = -12345678900045L;
-    private static final Logger LOG = LoggerFactory.getLogger(CommunicateGroup.class);
 
     //
     // Attributes
@@ -83,31 +80,28 @@ public class CommunicateGroup extends Group {
     //
 
     @Override
-    protected Logger getLogger() {
-        return (LOG);
-    }
-
-    @Override
     public String toString() {
         return new ToStringBuilder(this)
                 .append("allRooms", getAllRooms())
                 .append("surrogateCommunicateUser", getSurrogateCommunicateUser())
+                .append("localObjectId", getElementInstanceId())
+                .append("securityLabels", getSecurityLabels())
+                .append("metadata", getMetadata())
+                .append("shortName", getShortName())
+                .append("identifier", getIdentifier())
+                .append("otherIdentifiers", getOtherIdentifiers())
+                .append("securityLabels", getSecurityLabels())
+                .append("elementType", getElementType())
+                .append("documentation", getDocumentation())
+                .append("specialization", getSpecialization())
+                .append("extensions", getExtensions())
+                .append("participants", getParticipants())
                 .append("groupType", getGroupType())
                 .append("managingOrganization", getManagingOrganization())
                 .append("active", isActive())
                 .append("modificationDate", getModificationDate())
                 .append("creationDate", getCreationDate())
                 .append("membership", getMembership())
-                .append("participants", getParticipants())
-                .append("elementType", getElementType())
-                .append("name", getName())
-                .append("documentation", getDocumentation())
-                .append("specialization", getSpecialization())
-                .append("extensions", getExtensions())
-                .append("securityLabels", getSecurityLabels())
-                .append("localId", getObjectId())
-                .append("metadata", getMetadata())
-                .append("id", getObjectId())
                 .toString();
     }
 

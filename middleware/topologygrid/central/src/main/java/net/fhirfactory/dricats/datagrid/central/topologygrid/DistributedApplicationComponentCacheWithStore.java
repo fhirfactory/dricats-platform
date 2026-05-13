@@ -29,7 +29,7 @@ import jakarta.enterprise.inject.Instance;
 import jakarta.inject.Inject;
 import net.fhirfactory.dricats.datagrid.central.topologygrid.spi.IApplicationComponentPersistenceService;
 import net.fhirfactory.dricats.datagrid.common.topologygrid.IApplicationComponentCacheClient;
-import net.fhirfactory.dricats.internals.common.id.ObjectKey;
+import net.fhirfactory.dricats.internals.common.id.ElementInstanceId;
 import net.fhirfactory.dricats.internals.common.identifiers.ElementReference;
 import net.fhirfactory.dricats.internals.topology.implementation.layers.application.valuesets.ApplicationComponentSpecialisationEnum;
 import net.fhirfactory.dricats.reference.archimate.common.valuesets.ElementTypeEnum;
@@ -373,29 +373,29 @@ public class DistributedApplicationComponentCacheWithStore implements IApplicati
 
     @Override
     public String resolveKey(ApplicationComponent item) {
-        String key = item.resolveKey();
+        String key = item.resolveElementInstanceKey();
         return key;
     }
 
     @Override
-    public List<ApplicationComponent> getSubcomponents(ObjectKey parentObjectKey, ApplicationComponentSpecialisationEnum componentType) {
-        getLogger().debug(".getContainedComponents(): Entry, parentObjectKey={}, componentType={}", parentObjectKey, componentType);
-        if (parentObjectKey == null)
+    public List<ApplicationComponent> getSubcomponents(ElementInstanceId parentElementInstanceId, ApplicationComponentSpecialisationEnum componentType) {
+        getLogger().debug(".getContainedComponents(): Entry, parentElementInstanceId={}, componentType={}", parentElementInstanceId, componentType);
+        if (parentElementInstanceId == null)
             return Collections.emptyList();
-        ApplicationComponent parent = get(parentObjectKey.getKeyValue());
+        ApplicationComponent parent = get(parentElementInstanceId.getIdValue());
 
         if (parent == null) {
-            getLogger().info(".getContainedComponents(): Exit, No subcomponents for id={} (component missing)", parentObjectKey);
+            getLogger().info(".getContainedComponents(): Exit, No subcomponents for id={} (component missing)", parentElementInstanceId);
             return Collections.emptyList();
         }
         if (parent.getElementType() != ElementTypeEnum.APPLICATION_COMPONENT) {
-            getLogger().info(".getContainedComponents(): Exit, No subcomponents for id={} (component is not a ApplicationComponent)", parentObjectKey);
+            getLogger().info(".getContainedComponents(): Exit, No subcomponents for id={} (component is not a ApplicationComponent)", parentElementInstanceId);
             return Collections.emptyList();
         }
         List<ApplicationComponent> resultList = new ArrayList<>();
 
         for (ElementReference childReference : parent.getSubComponents()) {
-            String currentKey = childReference.getLocalObjectId().getKeyValue();
+            String currentKey = childReference.getElementInstanceId().getIdValue();
             ApplicationComponent child = get(currentKey);
             if (child != null) {
                 resultList.add(child);
@@ -404,7 +404,7 @@ public class DistributedApplicationComponentCacheWithStore implements IApplicati
             }
         }
 
-        getLogger().info(".getContainedComponents(): Exit, Returning {} subcomponents for parentObjectKey={}", resultList.size(), parentObjectKey);
+        getLogger().info(".getContainedComponents(): Exit, Returning {} subcomponents for parentElementInstanceId={}", resultList.size(), parentElementInstanceId);
         return resultList;
     }
 

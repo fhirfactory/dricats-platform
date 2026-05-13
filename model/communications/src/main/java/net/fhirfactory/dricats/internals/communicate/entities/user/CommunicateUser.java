@@ -25,8 +25,6 @@ import java.io.Serial;
 
 import net.fhirfactory.dricats.resources.actors.User;
 import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import net.fhirfactory.dricats.internals.communicate.entities.user.datatypes.CommunicateSurrogateResourceReference;
 import net.fhirfactory.dricats.internals.communicate.entities.user.valuesets.CommunicateUserTypeEnum;
@@ -38,8 +36,7 @@ public class CommunicateUser extends User {
 	
 	@Serial
     private static final long serialVersionUID = -8603393243724832479L;
-	private static final Logger LOG = LoggerFactory.getLogger(CommunicateUser.class);
-	
+
 	//
 	// Attributes
 	//
@@ -138,15 +135,12 @@ public class CommunicateUser extends User {
     //
     // Utility Methods
     //
-    
-    @Override
-    protected Logger getLogger() {
-    	return(LOG);
-    }
 
     @Override
     public String toString() {
         return new ToStringBuilder(this)
+                .append("logins", getLogins())
+                .append("status", getStatus())
                 .append("representedResource", getRepresentedResource())
                 .append("surrogate", isSurrogate())
                 .append("administrator", isAdministrator())
@@ -155,23 +149,22 @@ public class CommunicateUser extends User {
                 .append("avatarURL", getAvatarURL())
                 .append("communicateUserType", getCommunicateUserType())
                 .append("communicateUserToken", getCommunicateUserToken())
-                .append("logins", getLogins())
-                .append("status", getStatus())
-                .append("logins", getLogins())
-                .append("status", getStatus())
+                .append("localObjectId", getElementInstanceId())
+                .append("securityLabels", getSecurityLabels())
+                .append("metadata", getMetadata())
+                .append("shortName", getShortName())
+                .append("identifier", getIdentifier())
+                .append("otherIdentifiers", getOtherIdentifiers())
+                .append("securityLabels", getSecurityLabels())
+                .append("elementType", getElementType())
+                .append("documentation", getDocumentation())
+                .append("specialization", getSpecialization())
+                .append("extensions", getExtensions())
                 .append("responsibilities", getResponsibilities())
                 .append("actors", getActors())
                 .append("owner", getOwner())
-                .append("elementType", getElementType())
-                .append("name", getName())
-                .append("documentation", getDocumentation())
-                .append("specialization", getSpecialization())
-                .append("properties", getExtensions())
-                .append("identifiers", getIdentifiers())
-                .append("securityLabels", getSecurityLabels())
-                .append("localId", getObjectId())
-                .append("metadata", getMetadata())
-                .append("id", getObjectId())
+                .append("logins", getLogins())
+                .append("status", getStatus())
                 .toString();
     }
 }

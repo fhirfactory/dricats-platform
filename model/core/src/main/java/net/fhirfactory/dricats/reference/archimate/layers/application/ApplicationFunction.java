@@ -3,16 +3,18 @@
  */
 package net.fhirfactory.dricats.reference.archimate.layers.application;
 
+import net.fhirfactory.dricats.internals.common.identifiers.ElementIdentifier;
 import net.fhirfactory.dricats.internals.common.identifiers.ElementReference;
+import net.fhirfactory.dricats.internals.common.naming.DistinguishedName;
+import net.fhirfactory.dricats.internals.common.naming.RelativeDistinguishedName;
 import net.fhirfactory.dricats.reference.archimate.common.ElementBase;
 import net.fhirfactory.dricats.reference.archimate.common.valuesets.ElementTypeEnum;
 import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 
@@ -21,10 +23,9 @@ public class ApplicationFunction extends ElementBase implements Serializable {
     // Housekeeping
     //
     @Serial private static final long serialVersionUID = -12345678910104L;
-    private static final Logger LOG = LoggerFactory.getLogger(ApplicationFunction.class);
 
     //
-     // Attributes
+    // Attributes
     //
 
     private List<ElementReference> applicationServices;
@@ -39,29 +40,33 @@ public class ApplicationFunction extends ElementBase implements Serializable {
         super();
         this.applicationServices = new ArrayList<>();
         this.applicationDataObjects = new ArrayList<>();
-        getLogger().trace("ApplicationFunction(): constructed");
+        this.setElementType(ElementTypeEnum.APPLICATION_FUNCTION);
     }
 
     public ApplicationFunction(String name, String documentation, String specialization) {
-        super();
-        setName(name);
+        this();
+        setShortName(name);
+        RelativeDistinguishedName unqualifiedName = new RelativeDistinguishedName(specialization, name);
+        DistinguishedName newName = new DistinguishedName();
+        newName.appendUnqualifiedName(unqualifiedName);
+        ElementIdentifier identifier = new ElementIdentifier(newName);
+        setIdentifier(identifier);
         setDocumentation(documentation);
+        setElementType(ElementTypeEnum.APPLICATION_FUNCTION);
         setSpecialization(specialization);
     }
 
     public ApplicationFunction(ElementReference parent, String name, String documentation, String specialization) {
-        super(name, documentation, specialization, ElementTypeEnum.APPLICATION_FUNCTION);
+        super(parent, name, documentation, specialization, new HashMap<>(), ElementTypeEnum.APPLICATION_FUNCTION);
         this.owner = parent;
         this.applicationServices = new ArrayList<>();
         this.applicationDataObjects = new ArrayList<>();
-        getLogger().trace("ApplicationFunction(parent, name, documentation, specialization): constructed");
     }
 
 
     //
     // Getters and Setters
     //
-    protected Logger getLogger(){ return LOG; }
 
     public List<ElementReference> getApplicationServices() {
         return applicationServices;

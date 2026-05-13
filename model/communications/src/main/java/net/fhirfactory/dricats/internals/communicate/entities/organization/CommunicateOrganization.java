@@ -24,8 +24,6 @@ package net.fhirfactory.dricats.internals.communicate.entities.organization;
 import net.fhirfactory.dricats.internals.communicate.entities.user.datatypes.CommunicateUserReference;
 import net.fhirfactory.dricats.resources.actors.Organisation;
 import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.Serial;
 import java.util.Objects;
@@ -37,7 +35,6 @@ public class CommunicateOrganization extends Organisation {
 
     @Serial
     private static final long serialVersionUID = -12345678900165L;
-    private static final Logger LOG = LoggerFactory.getLogger(CommunicateOrganization.class);
 
     //
     // Attributes
@@ -71,29 +68,25 @@ public class CommunicateOrganization extends Organisation {
     //
 
     @Override
-    protected Logger getLogger() {
-        return (LOG);
-    }
-
-    @Override
     public String toString() {
         return new ToStringBuilder(this)
                 .append("surrogateCommunicateUser", getSurrogateCommunicateUser())
+                .append("localObjectId", getElementInstanceId())
+                .append("securityLabels", getSecurityLabels())
+                .append("metadata", getMetadata())
+                .append("shortName", getShortName())
+                .append("identifier", getIdentifier())
+                .append("otherIdentifiers", getOtherIdentifiers())
+                .append("securityLabels", getSecurityLabels())
+                .append("elementType", getElementType())
+                .append("documentation", getDocumentation())
+                .append("specialization", getSpecialization())
+                .append("extensions", getExtensions())
                 .append("addresses", getAddresses())
                 .append("category", getCategory())
                 .append("internal", isInternal())
                 .append("roles", getRoles())
                 .append("contactPoints", getContactPoints())
-                .append("elementType", getElementType())
-                .append("name", getName())
-                .append("documentation", getDocumentation())
-                .append("specialization", getSpecialization())
-                .append("properties", getExtensions())
-                .append("identifiers", getIdentifiers())
-                .append("securityLabels", getSecurityLabels())
-                .append("localId", getObjectId())
-                .append("metadata", getMetadata())
-                .append("id", getObjectId())
                 .toString();
     }
 

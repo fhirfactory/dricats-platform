@@ -26,6 +26,10 @@ import jakarta.annotation.PreDestroy;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.Instance;
 import jakarta.inject.Inject;
+import net.fhirfactory.dricats.datagrid.central.messagegrid.spi.IMessagePersistenceStore;
+import net.fhirfactory.dricats.datagrid.central.messagegrid.spi.PendingMessage;
+import net.fhirfactory.dricats.internals.events.messages.MessageObject;
+import net.fhirfactory.dricats.internals.topics.Topic;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
@@ -40,19 +44,14 @@ import org.apache.kafka.common.serialization.StringSerializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import net.fhirfactory.dricats.internals.events.messages.MessageObject;
-import net.fhirfactory.dricats.internals.topics.Topic;
-import net.fhirfactory.dricats.datagrid.central.messagegrid.spi.IMessagePersistenceStore;
-import net.fhirfactory.dricats.datagrid.central.messagegrid.spi.PendingMessage;
-
 import java.io.*;
+import java.sql.*;
 import java.time.Duration;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.function.Consumer;
-import java.sql.*;
 
 /**
  * Minimal Kafka broker/persistence support for MessageObject using Topic-derived topic names.
@@ -182,7 +181,7 @@ CentralMessageBroker {
             throw new IllegalArgumentException("MessageObject cannot be null");
         }
         byte[] payload = serialize(message);
-        String key = (message.getLocalId() != null ? message.getLocalId().getValue() : null);
+        String key = (message.resolveElementInstanceKey() != null ? message.resolveElementInstanceKey() : null);
 
         // Persist before sending (best-effort) so we can retry later if needed
         String pid = null;
@@ -275,7 +274,7 @@ CentralMessageBroker {
             return null;
         }
         // Use the common name textual representation of the QualifiedName
-        return topic.getTopicName().getCommonName().getValue();
+        return topic.getTopicName().getCommonName().getName();
     }
 
     protected String resolveBootstrap() {

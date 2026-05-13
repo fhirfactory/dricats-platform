@@ -38,7 +38,7 @@ class ApplicationInterfaceTest {
         assertTrue(a.getServices().isEmpty());
 
         ApplicationInterface b = new ApplicationInterface("n","d","s");
-        assertEquals("n", b.getName());
+        assertEquals("n", b.getShortName());
         assertEquals("d", b.getDocumentation());
         assertEquals("s", b.getSpecialization());
 

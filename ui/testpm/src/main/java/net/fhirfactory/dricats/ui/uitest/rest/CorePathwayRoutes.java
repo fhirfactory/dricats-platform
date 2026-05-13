@@ -23,7 +23,7 @@ package net.fhirfactory.dricats.ui.uitest.rest;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import jakarta.annotation.PostConstruct;
-import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.context.Dependent;
 import jakarta.inject.Inject;
 import net.fhirfactory.dricats.ui.uitest.handlers.PathwayResourceHandler;
 import net.fhirfactory.dricats.ui.uitest.testdata.PathwayTestResourceSetBuilder;
@@ -32,7 +32,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@ApplicationScoped
+@Dependent
 public class CorePathwayRoutes extends RouteBuilder {
     //
      // Housekeeping

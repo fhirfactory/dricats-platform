@@ -21,7 +21,7 @@
  */
 package net.fhirfactory.dricats.internals.pubsub.topics;
 
-import net.fhirfactory.dricats.internals.common.naming.FullyDistinguishedName;
+import net.fhirfactory.dricats.internals.common.naming.DistinguishedName;
 import net.fhirfactory.dricats.internals.pubsub.common.QualifiedNameMask;
 import net.fhirfactory.dricats.internals.topics.Topic;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -50,11 +50,11 @@ public class TopicSubscription extends QualifiedNameMask implements Serializable
         super();
     }
 
-    public TopicSubscription(FullyDistinguishedName subscriptionMask) {
+    public TopicSubscription(DistinguishedName subscriptionMask) {
         super(subscriptionMask);
     }
 
-    public TopicSubscription(FullyDistinguishedName subscriptionMask, Boolean includeSubtopics) {
+    public TopicSubscription(DistinguishedName subscriptionMask, Boolean includeSubtopics) {
         super(subscriptionMask, includeSubtopics);
     }
 

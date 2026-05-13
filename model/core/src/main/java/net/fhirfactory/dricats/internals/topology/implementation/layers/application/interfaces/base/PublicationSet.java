@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024 Mark A. Hunter
+ * Copyright (c) 2026 Mark A. Hunter
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this applications and associated documentation files (the "Software"), to deal
@@ -82,17 +82,20 @@ public class PublicationSet extends ApplicationFunction implements Serializable 
         return new ToStringBuilder(this)
                 .append("contentFilters", getContentFilters())
                 .append("messageFilters", getMessageFilters())
-                .append("applicationServices", getApplicationServices())
-                .append("applicationDataObjects", getApplicationDataObjects())
-                .append("owner", getOwner())
+                .append("localObjectId", getElementInstanceId())
+                .append("securityLabels", getSecurityLabels())
+                .append("metadata", getMetadata())
+                .append("shortName", getShortName())
+                .append("longName", getIdentifier())
+                .append("otherIdentifiers", getOtherIdentifiers())
+                .append("securityLabels", getSecurityLabels())
                 .append("elementType", getElementType())
-                .append("name", getName())
                 .append("documentation", getDocumentation())
                 .append("specialization", getSpecialization())
                 .append("extensions", getExtensions())
-                .append("securityLabels", getSecurityLabels())
-                .append("metadata", getMetadata())
-                .append("id", getObjectId())
+                .append("applicationServices", getApplicationServices())
+                .append("applicationDataObjects", getApplicationDataObjects())
+                .append("owner", getOwner())
                 .toString();
     }
 }

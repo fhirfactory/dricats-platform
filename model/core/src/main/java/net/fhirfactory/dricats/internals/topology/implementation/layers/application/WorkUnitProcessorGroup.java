@@ -21,21 +21,18 @@
  */
 package net.fhirfactory.dricats.internals.topology.implementation.layers.application;
 
+import net.fhirfactory.dricats.internals.topology.implementation.common.TopologyComponent;
+import net.fhirfactory.dricats.internals.topology.implementation.layers.application.valuesets.ApplicationComponentSpecialisationEnum;
+
 import java.io.Serial;
 
-import net.fhirfactory.dricats.internals.topology.implementation.layers.application.valuesets.ApplicationComponentSpecialisationEnum;
-import net.fhirfactory.dricats.reference.archimate.layers.application.ApplicationComponent;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-public class WorkUnitProcessorGroup extends ApplicationComponent {
+public class WorkUnitProcessorGroup extends TopologyComponent {
     //
     // Housekeeping
     //
 
     @Serial
     private static final long serialVersionUID = -12345678922091L;
-    private static final Logger LOG = LoggerFactory.getLogger(WorkUnitProcessorGroup.class);
 
 
     public WorkUnitProcessorGroup() {
@@ -46,8 +43,4 @@ public class WorkUnitProcessorGroup extends ApplicationComponent {
     //
     // Utility Methods
     //
-    @Override
-    protected Logger getLogger(){
-        return(LOG);
-    }
 }

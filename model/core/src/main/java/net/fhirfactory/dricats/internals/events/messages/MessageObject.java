@@ -21,15 +21,14 @@
  */
 package net.fhirfactory.dricats.internals.events.messages;
 
+import net.fhirfactory.dricats.internals.common.identifiers.ElementIdentifier;
 import net.fhirfactory.dricats.internals.common.identifiers.ElementReference;
-import net.fhirfactory.dricats.internals.common.naming.FullyDistinguishedName;
-import net.fhirfactory.dricats.internals.common.id.ObjectId;
+import net.fhirfactory.dricats.internals.common.naming.DistinguishedName;
 import net.fhirfactory.dricats.internals.common.naming.RelativeDistinguishedName;
 import net.fhirfactory.dricats.internals.events.common.EventBase;
+import net.fhirfactory.dricats.reference.archimate.common.valuesets.ElementTypeEnum;
 import org.apache.commons.lang3.SerializationUtils;
 import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -43,11 +42,12 @@ public class MessageObject extends EventBase implements Serializable {
     //
     @Serial
     private static final long serialVersionUID = -12345678900051L;
-    private static final Logger LOG = LoggerFactory.getLogger(MessageObject.class);
 
     //
     // Attributes
     //
+
+    public static final String ELEMENT_SPECIALIZATION = "Message";
 
     private Integer messageSequenceNumber;
     private MessagePayload messagePayload;
@@ -58,10 +58,14 @@ public class MessageObject extends EventBase implements Serializable {
     
     public MessageObject(){
         super();
-        RelativeDistinguishedName unqualifiedName = new RelativeDistinguishedName("Message", UUID.randomUUID().toString());
-        FullyDistinguishedName qualifiedName = new FullyDistinguishedName();
+        RelativeDistinguishedName unqualifiedName = new RelativeDistinguishedName(ELEMENT_SPECIALIZATION, UUID.randomUUID().toString());
+        DistinguishedName qualifiedName = new DistinguishedName();
         qualifiedName.appendUnqualifiedName(unqualifiedName);
-        this.setObjectId(new ObjectId(qualifiedName));
+        ElementIdentifier identifier = new ElementIdentifier(qualifiedName);
+        setIdentifier(identifier);
+        setShortName(unqualifiedName.getUnqualifiedValue());
+        setSpecialization(ELEMENT_SPECIALIZATION);
+        setElementType(ElementTypeEnum.APPLICATION_DATA_OBJECT);
         setMessagePayload(new MessagePayload());
         setMessageSequenceNumber(-1);
     }
@@ -83,18 +87,26 @@ public class MessageObject extends EventBase implements Serializable {
         setTarget(target);
         setMessagePayload(payload);
         setMessageSequenceNumber(0);
-        RelativeDistinguishedName unqualifiedName = new RelativeDistinguishedName("Message", UUID.randomUUID().toString());
-        FullyDistinguishedName qualifiedName = new FullyDistinguishedName();
+        RelativeDistinguishedName unqualifiedName = new RelativeDistinguishedName(ELEMENT_SPECIALIZATION, UUID.randomUUID().toString());
+        DistinguishedName qualifiedName = new DistinguishedName();
         qualifiedName.appendUnqualifiedName(unqualifiedName);
-        this.setObjectId(new ObjectId(qualifiedName));
+        setShortName(unqualifiedName.getUnqualifiedValue());
+        setSpecialization(ELEMENT_SPECIALIZATION);
+        setElementType(ElementTypeEnum.APPLICATION_DATA_OBJECT);
+        ElementIdentifier identifier = new ElementIdentifier(qualifiedName);
+        setIdentifier(identifier);
     }
 
-    public  MessageObject(String MessageId, ElementReference source, ElementReference target, LocalDateTime sendDate, MessagePayload payload, int sequenceNumber ){
+    public  MessageObject(String messageId, ElementReference source, ElementReference target, LocalDateTime sendDate, MessagePayload payload, int sequenceNumber ){
         this(source, target, sendDate, payload);
-        RelativeDistinguishedName unqualifiedName = new RelativeDistinguishedName("Message", UUID.randomUUID().toString());
-        FullyDistinguishedName qualifiedName = new FullyDistinguishedName();
+        RelativeDistinguishedName unqualifiedName = new RelativeDistinguishedName(ELEMENT_SPECIALIZATION, messageId);
+        DistinguishedName qualifiedName = new DistinguishedName();
         qualifiedName.appendUnqualifiedName(unqualifiedName);
-        this.setObjectId(new ObjectId(qualifiedName));
+        ElementIdentifier identifier = new ElementIdentifier(qualifiedName);
+        setIdentifier(identifier);
+        setSpecialization(ELEMENT_SPECIALIZATION);
+        setElementType(ElementTypeEnum.APPLICATION_DATA_OBJECT);
+        setShortName(messageId);
         setMessageSequenceNumber(sequenceNumber);
     }
 
@@ -125,10 +137,6 @@ public class MessageObject extends EventBase implements Serializable {
     //
     // Utility Methods
     //
-
-    protected Logger getLogger(){
-        return(LOG);
-    }
 
     @Override
     public String toString() {

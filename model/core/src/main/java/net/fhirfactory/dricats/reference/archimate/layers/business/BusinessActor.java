@@ -3,10 +3,10 @@
  */
 package net.fhirfactory.dricats.reference.archimate.layers.business;
 
+import net.fhirfactory.dricats.internals.common.identifiers.ElementReference;
 import net.fhirfactory.dricats.internals.datatypes.Address;
 import net.fhirfactory.dricats.internals.datatypes.CodeableConcept;
 import net.fhirfactory.dricats.internals.datatypes.ContactPoint;
-import net.fhirfactory.dricats.internals.common.id.ObjectId;
 import net.fhirfactory.dricats.reference.archimate.common.ElementBase;
 import net.fhirfactory.dricats.reference.archimate.common.valuesets.ElementTypeEnum;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -29,7 +29,7 @@ public class BusinessActor extends ElementBase {
     // - contactPoints: free-form contact references for the actor
     private CodeableConcept category;
     private boolean internal;
-    private List<ObjectId> roles;
+    private List<ElementReference> roles;
     private List<ContactPoint> contactPoints;
     private List<Address> addresses;
 
@@ -66,14 +66,11 @@ public class BusinessActor extends ElementBase {
     public boolean isInternal() { return internal; }
     public void setInternal(boolean internal) { this.internal = internal; }
 
-    public List<ObjectId> getRoles() { return roles; }
-    public void setRoles(List<ObjectId> roles) { this.roles = roles; }
+    public List<ElementReference> getRoles() { return roles; }
+    public void setRoles(List<ElementReference> roles) { this.roles = roles; }
 
     public List<ContactPoint> getContactPoints() { return contactPoints; }
     public void setContactPoints(List<ContactPoint> contactPoints) { this.contactPoints = contactPoints; }
-
-    @Override
-    protected Logger getLogger(){ return LOG; }
 
     @Override
     public boolean equals(Object o) {

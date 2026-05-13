@@ -1,4 +1,11 @@
-/subsystem=logging/logger=net.fhirfactory.dricats:add(level=DEBUG)
+/subsystem=logging/logger=net.fhirfactory.dricats:add(level=INFO)
 /subsystem=logging/pattern-formatter=pattern-formatter:add(pattern="%d{yyyy-MM-dd HH:mm:ss,SSS} %-5p [%c] (%t) %s%e%n")
-/subsystem=logging/console-handler=CONSOLE:write-attribute(name=level,value=DEBUG)
+/subsystem=logging/console-handler=CONSOLE:write-attribute(name=level,value=INFO)
 /subsystem=weld:write-attribute(name=non-portable-mode,value=true)
+
+# Change default HTTP and Management ports to avoid conflicts
+/socket-binding-group=standard-sockets/socket-binding=http:write-attribute(name=port, value=18080)
+/socket-binding-group=standard-sockets/socket-binding=management-http:write-attribute(name=port, value=19990)
+
+# Add JVM options to resolve Unsafe warnings
+# /system-property=jboss.modules.system.pkgs:write-attribute(name=value, value="org.jboss.logmanager,jdk.internal.misc,sun.misc")

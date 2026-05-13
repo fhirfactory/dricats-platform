@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 
@@ -52,16 +53,8 @@ public class ApplicationService extends ElementBase implements Serializable {
         getLogger().trace("ApplicationService(): constructed");
     }
 
-    public ApplicationService(String name, String documentation, String specialization) {
-        super(name, documentation, specialization, ElementTypeEnum.APPLICATION_SERVICE);
-        this.interfaces = new ArrayList<>();
-        this.realizingApplicationFunctions = new ArrayList<>();
-        this.usedApplicationDataObjects = new ArrayList<>();
-        getLogger().trace("ApplicationService(name, documentation, specialization): constructed");
-    }
-
     public ApplicationService(ElementReference owner, String name, String documentation, String specialization) {
-        super(name, documentation, specialization, ElementTypeEnum.APPLICATION_SERVICE);
+        super(owner, name, documentation, specialization, new HashMap<>(), ElementTypeEnum.APPLICATION_SERVICE);
         this.owner = owner;
         this.interfaces = new ArrayList<>();
         this.realizingApplicationFunctions = new ArrayList<>();

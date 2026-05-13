@@ -3,14 +3,12 @@ package net.fhirfactory.dricats.model.configuration.configurationfile.archetypes
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
-import net.fhirfactory.dricats.internals.common.identifiers.datatypes.ElementIdentifierType;
 import net.fhirfactory.dricats.internals.configuration.segments.*;
 import net.fhirfactory.dricats.internals.configuration.valuesets.ApplicationConcurrencyModeEnum;
 import net.fhirfactory.dricats.internals.configuration.valuesets.ApplicationDeploymentModeEnum;
 import net.fhirfactory.dricats.model.configuration.configurationfile.base.BaseSubsystemConfigurationObject;
 import org.junit.jupiter.api.Test;
 
-import java.net.URI;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -60,12 +58,6 @@ public class BaseSubsystemConfigurationObjectYamlTest {
         solution.setSolutionName("CareFlow");
         solution.setSolutionGroup("ACTHealth");
         solution.setSolutionDescription("CareFlow Integrated Care Platform");
-        ElementIdentifierType idType = new ElementIdentifierType();
-        idType.setCode("MRN");
-        idType.setValue("12345");
-        idType.setDisplay("Medical Record Number");
-        idType.setSystem(new URI("urn:id:mrn"));
-        solution.setDefaultObjectIdentifierType(idType);
         solution.setEncryptedAtRestRequired(true);
         solution.setEncryptedAtTransitRequired(true);
         config.setSolution(solution);
@@ -129,7 +121,6 @@ public class BaseSubsystemConfigurationObjectYamlTest {
         assertEquals(expected.getSolutionGroup(), actual.getSolutionGroup());
         assertEquals(expected.getSolutionDescription(), actual.getSolutionDescription());
         // DistributableObjectIdentifierType has equals
-        assertEquals(expected.getDefaultObjectIdentifierType(), actual.getDefaultObjectIdentifierType());
         assertEquals(expected.isEncryptedAtRestRequired(), actual.isEncryptedAtRestRequired());
         assertEquals(expected.isEncryptedAtTransitRequired(), actual.isEncryptedAtTransitRequired());
     }

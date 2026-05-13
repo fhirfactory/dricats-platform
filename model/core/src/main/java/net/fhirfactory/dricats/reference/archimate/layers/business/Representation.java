@@ -3,8 +3,8 @@
  */
 package net.fhirfactory.dricats.reference.archimate.layers.business;
 
+import net.fhirfactory.dricats.internals.common.identifiers.ElementReference;
 import net.fhirfactory.dricats.internals.datatypes.CodeableConcept;
-import net.fhirfactory.dricats.internals.common.id.ObjectId;
 import net.fhirfactory.dricats.reference.archimate.common.ElementBase;
 import net.fhirfactory.dricats.reference.archimate.common.valuesets.ElementTypeEnum;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -32,7 +32,7 @@ public class Representation extends ElementBase implements Serializable {
     //
 
     private CodeableConcept format;
-    private ObjectId subject;
+    private ElementReference subject;
 
     public Representation(){
         super();
@@ -49,11 +49,13 @@ public class Representation extends ElementBase implements Serializable {
     public CodeableConcept getFormat() { return format; }
     public void setFormat(CodeableConcept format) { this.format = format; }
 
-    public ObjectId getSubject() { return subject; }
-    public void setSubject(ObjectId subject) { this.subject = subject; }
+    public ElementReference getSubject() { return subject; }
+    public void setSubject(ElementReference subject) { this.subject = subject; }
 
-    @Override
-    protected Logger getLogger(){ return LOG; }
+
+    //
+     // Standard Methods
+    //
 
     @Override
     public boolean equals(Object o) {

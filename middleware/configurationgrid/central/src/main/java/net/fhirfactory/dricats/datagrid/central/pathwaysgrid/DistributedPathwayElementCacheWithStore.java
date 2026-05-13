@@ -5,10 +5,10 @@ import jakarta.annotation.PreDestroy;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.Instance;
 import jakarta.inject.Inject;
-import net.fhirfactory.dricats.internals.common.DistributableObjectId;
-import net.fhirfactory.dricats.internals.common.naming.CommonName;
-import net.fhirfactory.dricats.internals.pathways.PathwayElement;
 import net.fhirfactory.dricats.datagrid.central.pathwaysgrid.spi.IPathwayElementPersistenceService;
+import net.fhirfactory.dricats.internals.common.id.ElementInstanceId;
+import net.fhirfactory.dricats.internals.common.identifiers.ElementIdentifier;
+import net.fhirfactory.dricats.internals.pathways.PathwayElement;
 import org.infinispan.Cache;
 import org.infinispan.configuration.cache.CacheMode;
 import org.infinispan.configuration.cache.ConfigurationBuilder;
@@ -26,7 +26,6 @@ import org.slf4j.LoggerFactory;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -295,34 +294,26 @@ public class DistributedPathwayElementCacheWithStore {
     }
 
     protected String resolveKey(PathwayElement item) {
-        String key = null;
         try {
-            DistributableObjectId objectId = item.getObjectID();
-            if (objectId != null && objectId.getQualifiedName() != null && objectId.getQualifiedName().getCommonName() != null && !objectId.getQualifiedName().getCommonName().getValue().isEmpty()) {
-                key = objectId.getQualifiedName().getCommonName().getValue();
+            String key = null;
+            ElementIdentifier objectId = item.getIdentifier();
+            if (objectId != null && objectId.getIdentifierValue().getCommonName() != null && !objectId.getIdentifierValue().getCommonName().getName().isEmpty()) {
+                key = objectId.getIdentifierValue().getCommonName().getName();
+                return(key);
             }
         } catch (Exception e) {
             // ignore
         }
-        if (key == null) {
-            try {
-                CommonName cn = item.getLocalId();
-                if (cn != null && cn.getValue() != null && !cn.getValue().isEmpty()) {
-                    key = cn.getValue();
-                }
-            } catch (Exception e) {
-                // ignore
+        try {
+            if (item.getElementInstanceId() == null) {
+                ElementInstanceId id = new ElementInstanceId();
+                item.setElementInstanceId(id);
             }
+        } catch (Exception e) {
+            // ignore
         }
-        if (key == null) {
-            key = UUID.randomUUID().toString();
-            try {
-                item.setLocalId(new CommonName(key));
-            } catch (Exception e) {
-                LOG.debug("resolveKey(PathwayElement): unable to set generated id on item", e);
-            }
-        }
-        return key;
+        String keyValue = item.getElementInstanceId().getIdValue();
+        return keyValue;
     }
 
     public Optional<Cache<String, PathwayElement>> getCache() {

@@ -34,6 +34,7 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class Group extends BusinessCollaboration implements Serializable {
     //
@@ -115,25 +116,40 @@ public class Group extends BusinessCollaboration implements Serializable {
      // Standard Methods
     //
 
-
     @Override
     public String toString() {
         return new ToStringBuilder(this)
+                .append("membership", getMembership())
                 .append("groupType", getGroupType())
                 .append("managingOrganization", getManagingOrganization())
                 .append("active", isActive())
                 .append("modificationDate", getModificationDate())
                 .append("creationDate", getCreationDate())
-                .append("participants", getParticipants())
+                .append("localObjectId", getElementInstanceId())
+                .append("securityLabels", getSecurityLabels())
+                .append("metadata", getMetadata())
+                .append("shortName", getShortName())
+                .append("longName", getIdentifier())
+                .append("otherIdentifiers", getOtherIdentifiers())
+                .append("securityLabels", getSecurityLabels())
                 .append("elementType", getElementType())
-                .append("name", getName())
                 .append("documentation", getDocumentation())
                 .append("specialization", getSpecialization())
                 .append("extensions", getExtensions())
-                .append("securityLabels", getSecurityLabels())
-                .append("metadata", getMetadata())
-                .append("id", getObjectId())
-                .append("membership", getMembership())
+                .append("participants", getParticipants())
                 .toString();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        Group group = (Group) o;
+        return isActive() == group.isActive() && Objects.equals(getGroupType(), group.getGroupType()) && Objects.equals(getManagingOrganization(), group.getManagingOrganization()) && Objects.equals(getModificationDate(), group.getModificationDate()) && Objects.equals(getCreationDate(), group.getCreationDate());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), getGroupType(), getManagingOrganization(), isActive(), getModificationDate(), getCreationDate());
     }
 }

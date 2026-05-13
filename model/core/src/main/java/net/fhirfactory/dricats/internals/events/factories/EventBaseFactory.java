@@ -21,12 +21,9 @@
  */
 package net.fhirfactory.dricats.internals.events.factories;
 
-import net.fhirfactory.dricats.internals.common.naming.FullyDistinguishedName;
-import net.fhirfactory.dricats.internals.common.id.ObjectId;
+import net.fhirfactory.dricats.internals.common.identifiers.ElementIdentifier;
 import net.fhirfactory.dricats.internals.events.common.EventBase;
 import org.apache.commons.lang3.SerializationUtils;
-
-import java.util.UUID;
 
 public class EventBaseFactory {
 
@@ -34,14 +31,15 @@ public class EventBaseFactory {
         if(eventBase == null){
             return null;
         }
-        if(eventBase.getObjectId() == null){
+        if(eventBase.getElementInstanceId() == null){
             return null;
         }
         EventBase newEventBase = new EventBase(eventBase);
-        FullyDistinguishedName newName = SerializationUtils.clone(eventBase.getObjectId().getFullyDistinguishedName());
-        newName.getUnqualifiedName().setValue(UUID.randomUUID().toString());
-        newEventBase.setObjectId(new ObjectId(newName));
-        newEventBase.getHistory().put(eventBase.getHistory().size()+1, eventBase.getObjectId());
+        ElementIdentifier newName = SerializationUtils.clone(eventBase.getIdentifier());
+        newName.getIdentifierValue().getUnqualifiedName().setValue(newEventBase.getElementInstanceId().getIdValue());
+        newEventBase.setShortName(eventBase.getShortName());
+        newEventBase.setIdentifier(newName);
+        newEventBase.getHistory().put(eventBase.getHistory().size()+1, eventBase.getReference());
         return newEventBase;
     }
 }

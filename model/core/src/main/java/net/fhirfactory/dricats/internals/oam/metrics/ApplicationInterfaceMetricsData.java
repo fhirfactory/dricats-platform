@@ -22,7 +22,7 @@
 package net.fhirfactory.dricats.internals.oam.metrics;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import net.fhirfactory.dricats.internals.common.id.ObjectId;
+import net.fhirfactory.dricats.internals.common.id.ElementInstanceId;
 import net.fhirfactory.dricats.internals.oam.metrics.base.CommonComponentMetricsData;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -68,7 +68,7 @@ public class ApplicationInterfaceMetricsData extends CommonComponentMetricsData{
         this.remoteProcedureCallResponsesMap = new ConcurrentHashMap<>();
     }
 
-    public ApplicationInterfaceMetricsData(ObjectId componentId){
+    public ApplicationInterfaceMetricsData(ElementInstanceId componentId){
         super(componentId);
         this.nodeIngresQueueSize = 0;
         this.egressSendAttemptCount = 0;

@@ -22,15 +22,13 @@
 package net.fhirfactory.dricats.ui.server;
 
 import net.fhirfactory.dricats.internals.topology.implementation.layers.application.WorkUnitProcessor;
-import net.fhirfactory.dricats.datagrid.satellite.configurationgrid.LocalConfigurationServer;
 import org.apache.camel.CamelContext;
-import org.apache.camel.builder.RouteBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.PostConstruct;
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
+import jakarta.annotation.PostConstruct;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 
 @ApplicationScoped
 public class OAMBackEndForFrontEndWUP extends WorkUnitProcessor {
@@ -43,16 +41,10 @@ public class OAMBackEndForFrontEndWUP extends WorkUnitProcessor {
      // Attributes
     //
 
-    private RouteBuilder serverRouteBuilder;
     private boolean initialised;
 
     @Inject
-    private OAMBackEndForFrontEndHandler serverHandler;
-
-    @Inject
     private CamelContext camelContext;
-    @Inject
-    private LocalConfigurationServer localConfigurationServer;
 
     //
      // Constructor(s)
@@ -95,10 +87,6 @@ public class OAMBackEndForFrontEndWUP extends WorkUnitProcessor {
     }
 
     //
-     // Business Methods
+    // Business Methods
     //
-
-    public void buildRoute(){
-
-    }
 }

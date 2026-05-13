@@ -21,11 +21,11 @@
  */
 package net.fhirfactory.dricats.internals.pubsub.common;
 
-import net.fhirfactory.dricats.internals.common.object.DistributableObject;
+import net.fhirfactory.dricats.internals.common.identifiers.ElementIdentifier;
 import net.fhirfactory.dricats.internals.common.identifiers.ElementReference;
-import net.fhirfactory.dricats.internals.common.naming.FullyDistinguishedName;
-import net.fhirfactory.dricats.internals.common.id.ObjectId;
+import net.fhirfactory.dricats.internals.common.naming.DistinguishedName;
 import net.fhirfactory.dricats.internals.common.naming.RelativeDistinguishedName;
+import net.fhirfactory.dricats.internals.common.object.ManagedObject;
 import net.fhirfactory.dricats.reference.archimate.layers.application.ApplicationFunction;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
@@ -33,7 +33,7 @@ import java.io.Serial;
 import java.io.Serializable;
 import java.util.UUID;
 
-public class SubscriptionBase extends DistributableObject implements Serializable {
+public class SubscriptionBase extends ManagedObject implements Serializable {
     //
     // Housekeeping
     //
@@ -58,13 +58,14 @@ public class SubscriptionBase extends DistributableObject implements Serializabl
 
     public SubscriptionBase(ElementReference subscriber, ApplicationFunction subscriberFunction, String subscriptionEventType) {
         super();
-        this.subscriberInstance = subscriber;
-        FullyDistinguishedName qualifiedName = subscriber.getLocalObjectId().getFullyDistinguishedName();
+        setSubscriberInstance(subscriber);
+        DistinguishedName subscriptionName = subscriber.getElementIdentifier().getIdentifierValue();
         RelativeDistinguishedName unqualifiedName = new RelativeDistinguishedName(subscriptionEventType, UUID.randomUUID().toString());
-        qualifiedName.appendUnqualifiedName(unqualifiedName);
-        ObjectId subscriptionId = new ObjectId(qualifiedName);
-        setObjectId(subscriptionId);
-        this.subscriberFunction = subscriberFunction;
+        subscriptionName.appendUnqualifiedName(unqualifiedName);
+        ElementIdentifier subscriptionIdentifier = new ElementIdentifier(subscriptionName);
+        setIdentifier(subscriptionIdentifier);
+        setShortName(subscriptionEventType + "->" + unqualifiedName.getUnqualifiedValue());
+        setSubscriberFunction(subscriberFunction);
     }
 
     //

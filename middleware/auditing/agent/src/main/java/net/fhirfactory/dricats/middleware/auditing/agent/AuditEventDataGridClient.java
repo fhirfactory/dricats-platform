@@ -166,7 +166,7 @@ public class AuditEventDataGridClient {
         String k = null;
         try {
             // SimpleElementBase provides resolveKey() via inheritance chain
-            k = event.resolveKey();
+            k = event.resolveElementInstanceKey();
         } catch (Exception ignore) {
             // ignore
         }

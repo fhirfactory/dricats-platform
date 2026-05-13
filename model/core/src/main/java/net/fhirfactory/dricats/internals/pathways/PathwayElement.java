@@ -23,9 +23,9 @@
 package net.fhirfactory.dricats.internals.pathways;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import net.fhirfactory.dricats.internals.common.identifiers.ElementIdentifier;
 import net.fhirfactory.dricats.internals.common.identifiers.ElementReference;
-import net.fhirfactory.dricats.internals.common.naming.FullyDistinguishedName;
-import net.fhirfactory.dricats.internals.common.id.ObjectId;
+import net.fhirfactory.dricats.internals.common.naming.DistinguishedName;
 import net.fhirfactory.dricats.internals.common.naming.RelativeDistinguishedName;
 import net.fhirfactory.dricats.internals.data.Payload;
 import net.fhirfactory.dricats.internals.events.messages.MessageObject;
@@ -35,8 +35,6 @@ import net.fhirfactory.dricats.internals.topics.Topic;
 import net.fhirfactory.dricats.reference.archimate.relationships.FlowRelationship;
 import net.fhirfactory.dricats.reference.archimate.relationships.valuesets.RelationshipTypeEnum;
 import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -47,13 +45,15 @@ public class PathwayElement extends FlowRelationship implements Serializable {
     //
     // Housekeeping
     //
-    private static final Logger LOG = LoggerFactory.getLogger(PathwayElement.class);
+
     @Serial
     private static final long serialVersionUID = -12345678900001L;
 
     //
     // Attributes
     //
+    public static final String ELEMENT_SPECIALIZATION = "PathwayElement";
+
     private ElementReference utilisedApplicationService;
     private List<MessageFilterMask> ingressMessageFilter;
     private List<MessageFilterMask> egressMessageFilter;
@@ -71,22 +71,23 @@ public class PathwayElement extends FlowRelationship implements Serializable {
         this.egressContentFilter = new ArrayList<>();
         this.ingressMessageFilter = new ArrayList<>();
         this.egressMessageFilter = new ArrayList<>();
+        this.utilisedApplicationService = null;
     }
 
-    public PathwayElement(ElementReference enablerComponent, String pathwayElementId, String pathwayElementName, String relationshipDescription, ElementReference ingressPoint, ElementReference egressPoint, List<Topic> supportedTopics){
-        super();
-        FullyDistinguishedName pathwayElementIdName = new FullyDistinguishedName(enablerComponent.getLocalObjectId().getFullyDistinguishedName());
-        RelativeDistinguishedName pathwayElementUnqaulifiedName = new RelativeDistinguishedName("PathwayElement", pathwayElementId);
+    public PathwayElement(ElementReference enablerComponent, String pathwayElementName, String relationshipDescription, ElementReference ingressPoint, ElementReference egressPoint, List<Topic> supportedTopics){
+        this();
+        DistinguishedName pathwayElementIdName = new DistinguishedName(enablerComponent.getElementIdentifier().getIdentifierValue());
+        RelativeDistinguishedName pathwayElementUnqaulifiedName = new RelativeDistinguishedName(ELEMENT_SPECIALIZATION, pathwayElementName);
         pathwayElementIdName.appendUnqualifiedName(pathwayElementUnqaulifiedName);
-        ObjectId derivedId = new ObjectId(pathwayElementIdName);
-        this.setName(pathwayElementName);
+        ElementIdentifier elementIdentifier = new ElementIdentifier(pathwayElementIdName);
+        setIdentifier(elementIdentifier);
+        setShortName(pathwayElementName);
         this.setDocumentation(relationshipDescription);
         this.setTarget(egressPoint);
         this.setSource(ingressPoint);
         this.setFlowType("Information");
         this.setType(RelationshipTypeEnum.FLOW);
-        this.setSpecialization("PathwayElement");
-        this.supportedTopics = new ArrayList<>();
+        this.setSpecialization(ELEMENT_SPECIALIZATION);
         this.supportedTopics.addAll(supportedTopics);
     }
 
@@ -95,12 +96,18 @@ public class PathwayElement extends FlowRelationship implements Serializable {
     //
 
     public List<MessageFilterMask> getIngressMessageFilter() {
+        if(this.ingressMessageFilter == null){
+            this.ingressMessageFilter = new ArrayList<>();
+        }
         return ingressMessageFilter;
     }
     public void setIngressMessageFilter(List<MessageFilterMask> ingressMessageFilter) {
         this.ingressMessageFilter = ingressMessageFilter;
     }
     public List<MessageFilterMask> getEgressMessageFilter() {
+        if(this.egressMessageFilter == null){
+            this.egressMessageFilter = new ArrayList<>();
+        }
         return egressMessageFilter;
     }
     public void setEgressMessageFilter(List<MessageFilterMask> egressMessageFilter) {
@@ -145,96 +152,71 @@ public class PathwayElement extends FlowRelationship implements Serializable {
 
     @JsonIgnore
     public boolean passesIngressContentFilter(Payload payload){
-        getLogger().debug(".passesIngressContentFilter(): Entry, payload -> {}", payload);
         if(getIngressContentFilter() == null){
-            getLogger().debug(".passesIngressContentFilter(): Exit, ingressContentFilter is null, returning true");
             return(true);
         }
         if(getIngressContentFilter().isEmpty()){
-            getLogger().debug(".passesIngressContentFilter(): Exit, ingressContentFilter is empty, returning true");
             return(true);
         }
         for(ContentFilterMask currentContentFilter : getIngressContentFilter()){
-            getLogger().trace(".passesIngressContentFilter(): Processing ingress content filter {}", currentContentFilter);
             if(currentContentFilter.filter(payload.getDataTopic(), payload.getDataFormat())){
-                getLogger().debug(".passesIngressContentFilter(): Exit, ingress content filter {} matched, returning true", currentContentFilter);
                 return(true);
             }
         }
-        getLogger().debug(".passesIngressContentFilter(): Exit, ingress content filter did not match, returning false");
         return (false);
     }
 
     @JsonIgnore
     public boolean passesEgressContentFilter(Payload payload){
-        getLogger().debug(".passesEgressContentFilter(): Entry, payload -> {}", payload);
         if(getEgressContentFilter() == null){
-            getLogger().debug(".passesEgressContentFilter(): Exit, egressContentFilter is null, returning true");
             return(true);
         }
         if(getEgressContentFilter().isEmpty()){
-            getLogger().debug(".passesEgressContentFilter(): Exit, egressContentFilter is empty, returning true");
             return(true);
         }
         for(ContentFilterMask currentContentFilter : getEgressContentFilter()){
-            getLogger().trace(".passesEgressContentFilter(): Processing egress content filter {}", currentContentFilter);
             if(currentContentFilter.filter(payload.getDataTopic(), payload.getDataFormat())){
-                getLogger().debug(".passesEgressContentFilter(): Exit, egress content filter {} matched, returning true", currentContentFilter);
                 return(true);
             }
         }
-        getLogger().debug(".passesEgressContentFilter(): Exit, egress content filter did not match, returning false");
         return(false);
     }
 
     @JsonIgnore
     public boolean passesIngressMessageFilter(MessageObject message){
-        getLogger().debug(".passesIngressMessageFilter(): Entry, message -> {}", message);
         if(getIngressMessageFilter() == null){
-            getLogger().debug(".passesIngressMessageFilter(): Exit, ingressMessageFilter is null, returning true");
             return(true);
         }
         if(getIngressMessageFilter().isEmpty()){
-            getLogger().debug(".passesIngressMessageFilter(): Exit, ingressMessageFilter is empty, returning true");
             return(true);
         }
         for(MessageFilterMask currentMessageFilter : getIngressMessageFilter()){
-            getLogger().trace(".passesIngressMessageFilter(): Processing ingress message filter {}", currentMessageFilter);
             if(currentMessageFilter.filterMessageObject(message)){
-                getLogger().debug(".passesIngressMessageFilter(): Exit, ingress message filter {} matched, returning true", currentMessageFilter);
                 return(true);
             }
         }
-        getLogger().debug(".passesIngressMessageFilter(): Exit, ingress message filter did not match, returning false");
         return(false);
     }
 
     @JsonIgnore
     public boolean passesEgressMessageFilter(MessageObject message){
-        getLogger().debug(".passesEgressMessageFilter(): Entry, message -> {}", message);
         if(getEgressMessageFilter() == null){
-            getLogger().debug(".passesEgressMessageFilter(): Exit, egressMessageFilter is null, returning true");
             return(true);
         }
         if(getEgressMessageFilter().isEmpty()){
-            getLogger().debug(".passesEgressMessageFilter(): Exit, egressMessageFilter is empty, returning true");
             return(true);
         }
         for(MessageFilterMask currentMessageFilter : getEgressMessageFilter()){
-            getLogger().trace(".passesEgressMessageFilter(): Processing egress message filter {}", currentMessageFilter);
             if(currentMessageFilter.filterMessageObject(message)){
-                getLogger().debug(".passesEgressMessageFilter(): Exit, egress message filter {} matched, returning true", currentMessageFilter);
                 return(true);
             }
         }
-        getLogger().debug(".passesEgressMessageFilter(): Exit, egress message filter did not match, returning false");
         return(false);
     }
 
     //
     // Standard Methods
     //
-
 
     @Override
     public String toString() {
@@ -245,18 +227,19 @@ public class PathwayElement extends FlowRelationship implements Serializable {
                 .append("ingressContentFilter", getIngressContentFilter())
                 .append("egressContentFilter", getEgressContentFilter())
                 .append("supportedTopics", getSupportedTopics())
-                .append("flowType", getFlowType())
+                .append("localObjectId", getElementInstanceId())
+                .append("securityLabels", getSecurityLabels())
+                .append("metadata", getMetadata())
+                .append("shortName", getShortName())
+                .append("longName", getIdentifier())
+                .append("otherIdentifiers", getOtherIdentifiers())
                 .append("type", getType())
                 .append("source", getSource())
                 .append("target", getTarget())
-                .append("name", getName())
                 .append("documentation", getDocumentation())
                 .append("specialization", getSpecialization())
                 .append("properties", getProperties())
-                .append("identifiers", getIdentifiers())
-                .append("securityLabels", getSecurityLabels())
-                .append("id", getObjectId())
-                .append("metadata", getMetadata())
+                .append("flowType", getFlowType())
                 .toString();
     }
 }

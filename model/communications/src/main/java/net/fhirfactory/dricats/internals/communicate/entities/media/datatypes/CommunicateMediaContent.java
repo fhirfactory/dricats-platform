@@ -23,9 +23,9 @@ package net.fhirfactory.dricats.internals.communicate.entities.media.datatypes;
 
 import java.io.Serial;
 
-import net.fhirfactory.dricats.internals.common.object.DistributableObject;
+import net.fhirfactory.dricats.internals.common.object.ManagedObject;
 
-class CommunicateMediaContent extends DistributableObject{
+class CommunicateMediaContent extends ManagedObject {
 	//
 	// Housekeeping
 	//

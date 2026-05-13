@@ -26,10 +26,11 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonValue;
 import org.apache.commons.lang3.SerializationUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import java.io.Serial;
 import java.io.Serializable;
-import java.util.Objects;
+import java.util.*;
 
 public class DotSeparatedName implements Serializable {
     //
@@ -43,24 +44,44 @@ public class DotSeparatedName implements Serializable {
     //
 
     public static String DEFAULT_NAME = "UNNAMED";
+    public static String DEFAULT_SEPARATOR = ".";
 
-    private String value;
+    private Map<Integer, String> nameMap;
+    private String name;
 
     //
     // Constructor(s)
     //
 
     public DotSeparatedName() {
-        value = DEFAULT_NAME;
+        name = DEFAULT_NAME;
+        nameMap = new HashMap<>();
+        nameMap.put(0, DEFAULT_NAME);
     }
 
     @JsonCreator
     public DotSeparatedName(String value) {
-        this.value = SerializationUtils.clone(value);
+        this.name = SerializationUtils.clone(value);
+        stringToMap();
+    }
+
+    public DotSeparatedName(Map<Integer, String> values){
+        nameMap = new HashMap<>();
+        nameMap.putAll(values);
+        mapToString();
+    }
+
+    public DotSeparatedName(String[] stringArray){
+        nameMap = new HashMap<>();
+        for(int i = 0; i < stringArray.length; i++){
+            nameMap.put(i, stringArray[i]);
+        }
+        mapToString();
     }
 
     public DotSeparatedName(DotSeparatedName ori) {
-        this.value = SerializationUtils.clone(ori.getValue());
+        this.name = ori.getName();
+        this.nameMap = ori.getNameMap();
     }
 
 
@@ -68,28 +89,96 @@ public class DotSeparatedName implements Serializable {
     // Accessor(s)
     //
     @JsonValue
-    public String getValue() {
-        return (this.value);
+    public String getName() {
+        return (this.name);
     }
 
-    public void setValue(String tokenContent) {
-        this.value = new String(tokenContent);
+    public void setName(String name) {
+        this.name = name;
+        stringToMap();
+    }
+
+    public Map<Integer, String> getNameMap() {
+        return (this.nameMap);
+    }
+    public void setNameMap(Map<Integer, String> nameMap) {
+        if(this.nameMap == null) {
+            this.nameMap = new HashMap<Integer, String>();
+        }
+        this.nameMap.putAll(nameMap);
+        mapToString();
+    }
+
+    //
+     // Business Methods
+    //
+
+    protected void stringToMap(){
+        if(name.isEmpty()){
+            return;
+        }
+        if(name.equals(DEFAULT_NAME)){
+            if(nameMap == null){
+                nameMap = new HashMap<>();
+            }
+            nameMap.clear();
+            nameMap.put(0, DEFAULT_NAME);
+            return;
+        }
+        if(nameMap == null){
+            nameMap = new HashMap<>();
+        }
+        nameMap.clear();
+        if(name.contains(DEFAULT_SEPARATOR)){
+            String[] split = name.split(DEFAULT_SEPARATOR);
+            for(int i = 0; i < split.length; i++){
+                nameMap.put(i, split[i]);
+            }
+        } else {
+            nameMap.put(0, name);
+        }
+    }
+
+    protected void mapToString(){
+        if(nameMap == null){
+            nameMap = new HashMap<>();
+            nameMap.put(0, DEFAULT_NAME);
+            name = DEFAULT_NAME;
+            return;
+        }
+        if(nameMap.isEmpty()){
+            nameMap.clear();
+            nameMap.put(0, DEFAULT_NAME);
+            name = DEFAULT_NAME;
+            return;
+        }
+        StringBuilder sb = new StringBuilder();
+        for(int i = 0; i < nameMap.size(); i++){
+            sb.append(nameMap.get(i));
+            if(i < nameMap.size() - 1){
+                sb.append(DEFAULT_SEPARATOR);
+            }
+        }
+        name = sb.toString();
     }
 
     @JsonIgnore
     public boolean isUnnamed() {
-        boolean test = StringUtils.isEmpty(this.value) || DEFAULT_NAME.equals(this.value);
+        boolean test = StringUtils.isEmpty(this.name) || DEFAULT_NAME.equals(this.name);
         return (test);
     }
 
     //
     // Standard Methods
     //
+
+
     @Override
     public String toString() {
-        return "CommonName{" +
-                "value=" + value +
-                '}';
+        return new ToStringBuilder(this)
+                .append("nameMap", getNameMap())
+                .append("name", getName())
+                .toString();
     }
 
     @Override
@@ -97,11 +186,11 @@ public class DotSeparatedName implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         DotSeparatedName contextualName = (DotSeparatedName) o;
-        return (contextualName.getValue().contentEquals(this.getValue()));
+        return (contextualName.getName().contentEquals(this.getName()));
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getValue());
+        return Objects.hash(getName());
     }
 }

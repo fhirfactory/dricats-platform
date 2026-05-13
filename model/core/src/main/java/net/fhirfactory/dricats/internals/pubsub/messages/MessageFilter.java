@@ -73,12 +73,14 @@ public class MessageFilter extends FilterBase implements Serializable {
     public String toString() {
         return new ToStringBuilder(this)
                 .append("messageFilterMask", getMessageFilterMask())
-                .append("publisherFunction", getPublisherFunction())
-                .append("publisherInstance", getPublisherInstance())
-                .append("identifiers", getIdentifiers())
+                .append("localObjectId", getElementInstanceId())
                 .append("securityLabels", getSecurityLabels())
                 .append("metadata", getMetadata())
-                .append("id", getObjectId())
+                .append("shortName", getShortName())
+                .append("longName", getIdentifier())
+                .append("otherIdentifiers", getOtherIdentifiers())
+                .append("publisherFunction", getPublisherFunction())
+                .append("publisherInstance", getPublisherInstance())
                 .toString();
     }
 }

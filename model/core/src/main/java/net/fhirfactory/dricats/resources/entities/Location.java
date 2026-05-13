@@ -113,7 +113,6 @@ public class Location extends BusinessActor implements Serializable {
      // Standard Methods
     //
 
-
     @Override
     public String toString() {
         return new ToStringBuilder(this)
@@ -123,20 +122,22 @@ public class Location extends BusinessActor implements Serializable {
                 .append("position", getPosition())
                 .append("address", getAddress())
                 .append("physicalType", getPhysicalType())
+                .append("localObjectId", getElementInstanceId())
+                .append("securityLabels", getSecurityLabels())
+                .append("metadata", getMetadata())
+                .append("shortName", getShortName())
+                .append("longName", getIdentifier())
+                .append("otherIdentifiers", getOtherIdentifiers())
+                .append("securityLabels", getSecurityLabels())
+                .append("elementType", getElementType())
+                .append("documentation", getDocumentation())
+                .append("specialization", getSpecialization())
+                .append("extensions", getExtensions())
                 .append("addresses", getAddresses())
                 .append("category", getCategory())
                 .append("internal", isInternal())
                 .append("roles", getRoles())
                 .append("contactPoints", getContactPoints())
-                .append("elementType", getElementType())
-                .append("name", getName())
-                .append("documentation", getDocumentation())
-                .append("specialization", getSpecialization())
-                .append("properties", getExtensions())
-                .append("identifiers", getIdentifiers())
-                .append("securityLabels", getSecurityLabels())
-                .append("metadata", getMetadata())
-                .append("id", getObjectId())
                 .toString();
     }
 

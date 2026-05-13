@@ -139,8 +139,8 @@ public class PathwayElementCacheClient {
     }
 
     protected String resolveKey(PathwayElement item) {
-        // PathwayElement extends DistributableObject through RelationshipBase/FlowRelationship
-        return item.resolveKey();
+        // PathwayElement extends ManagedObject through RelationshipBase/FlowRelationship
+        return item.resolveElementInstanceKey();
     }
 
     public Optional<Cache<String, PathwayElement>> getCache() {

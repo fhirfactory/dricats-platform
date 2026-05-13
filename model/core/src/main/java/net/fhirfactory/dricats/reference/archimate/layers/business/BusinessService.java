@@ -3,12 +3,10 @@
  */
 package net.fhirfactory.dricats.reference.archimate.layers.business;
 
-import net.fhirfactory.dricats.internals.common.id.ObjectId;
+import net.fhirfactory.dricats.internals.common.identifiers.ElementReference;
 import net.fhirfactory.dricats.reference.archimate.common.ElementBase;
 import net.fhirfactory.dricats.reference.archimate.common.valuesets.ElementTypeEnum;
 import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.Serial;
 import java.util.ArrayList;
@@ -16,8 +14,10 @@ import java.util.List;
 import java.util.Objects;
 
 public class BusinessService extends ElementBase {
+    //
+     // Housekeeping
+    //
     @Serial private static final long serialVersionUID = -12345678920109L;
-    private static final Logger LOG = LoggerFactory.getLogger(BusinessService.class);
 
     // ArchiMate-relevant attributes for BusinessService
     // - external: whether the service is externally visible
@@ -27,9 +27,13 @@ public class BusinessService extends ElementBase {
     // - owner: actor/role that owns the service
     private boolean external;
     private String serviceLevel;
-    private List<ObjectId> interfaces;
-    private List<ObjectId> contracts;
-    private ObjectId owner;
+    private List<ElementReference> interfaces;
+    private List<ElementReference> contracts;
+    private ElementReference owner;
+
+    //
+     // Constructor(s)
+    //
 
     public BusinessService(){
         super();
@@ -38,23 +42,28 @@ public class BusinessService extends ElementBase {
         this.contracts = new ArrayList<>();
     }
 
+    //
+     // Bean Methods
+    //
+
     public boolean isExternal() { return external; }
     public void setExternal(boolean external) { this.external = external; }
 
     public String getServiceLevel() { return serviceLevel; }
     public void setServiceLevel(String serviceLevel) { this.serviceLevel = serviceLevel; }
 
-    public List<ObjectId> getInterfaces() { return interfaces; }
-    public void setInterfaces(List<ObjectId> interfaces) { this.interfaces = interfaces; }
+    public List<ElementReference> getInterfaces() { return interfaces; }
+    public void setInterfaces(List<ElementReference> interfaces) { this.interfaces = interfaces; }
 
-    public List<ObjectId> getContracts() { return contracts; }
-    public void setContracts(List<ObjectId> contracts) { this.contracts = contracts; }
+    public List<ElementReference> getContracts() { return contracts; }
+    public void setContracts(List<ElementReference> contracts) { this.contracts = contracts; }
 
-    public ObjectId getOwner() { return owner; }
-    public void setOwner(ObjectId owner) { this.owner = owner; }
+    public ElementReference getOwner() { return owner; }
+    public void setOwner(ElementReference owner) { this.owner = owner; }
 
-    @Override
-    protected Logger getLogger(){ return LOG; }
+    //
+    // Standard Methods
+    //
 
     @Override
     public boolean equals(Object o) {

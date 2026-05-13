@@ -21,8 +21,13 @@
  */
 package net.fhirfactory.dricats.internals.pathways;
 
-import net.fhirfactory.dricats.internals.common.id.ObjectId;
+import net.fhirfactory.dricats.internals.common.identifiers.ElementIdentifier;
+import net.fhirfactory.dricats.internals.common.identifiers.ElementReference;
+import net.fhirfactory.dricats.internals.common.naming.CommonName;
+import net.fhirfactory.dricats.internals.common.naming.CommonQualifier;
+import net.fhirfactory.dricats.internals.common.naming.DistinguishedName;
 import net.fhirfactory.dricats.internals.pathways.valuesets.PathwayRouteSelectionCriteriaEnum;
+import net.fhirfactory.dricats.reference.archimate.common.valuesets.ElementTypeEnum;
 import net.fhirfactory.dricats.reference.archimate.layers.application.ApplicationProcess;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.slf4j.Logger;
@@ -40,11 +45,12 @@ public class Pathway extends ApplicationProcess {
     private static final long serialVersionUID = -12345678900003L;
     private static final Logger LOG = LoggerFactory.getLogger(Pathway.class);
 
+    public static final String ELEMENT_SPECIALISATION = "Pathway";
     //
-     // Attributes
+    // Attributes
     //
      // Map<Priority, PathwayRoute ID>
-    private Map<Integer, ObjectId> possiblePathwayRoutes;
+    private Map<Integer, ElementReference> possiblePathwayRoutes;
     private PathwayRouteSelectionCriteriaEnum routeSelectionCriteria;
 
     //
@@ -52,20 +58,34 @@ public class Pathway extends ApplicationProcess {
     //
     public Pathway(){
         super();
+        setSpecialization(ELEMENT_SPECIALISATION);
         possiblePathwayRoutes = new HashMap<>();
         routeSelectionCriteria = PathwayRouteSelectionCriteriaEnum.DISTRIBUTE_RANDOM;
 
+    }
+
+    public Pathway(String shortName, String documentation){
+        this();
+        setShortName(shortName);
+        setElementType(ElementTypeEnum.APPLICATION_PROCESS);
+        setDocumentation(documentation);
+        setExtensions(new HashMap<>());
+        CommonQualifier commonQualifier = new CommonQualifier(ELEMENT_SPECIALISATION);
+        CommonName commonName = new CommonName(shortName);
+        DistinguishedName pathwayDN = new DistinguishedName(commonQualifier, commonName);
+        ElementIdentifier pathwayIdentifier = new ElementIdentifier(pathwayDN);
+        setIdentifier(pathwayIdentifier);
     }
 
     //
     // Getters and Setters
     //
 
-    public Map<Integer, ObjectId> getPossiblePathwayRoutes() {
+    public Map<Integer, ElementReference> getPossiblePathwayRoutes() {
         return possiblePathwayRoutes;
     }
 
-    public void setPossiblePathwayRoutes(Map<Integer, ObjectId> possiblePathwayRoutes) {
+    public void setPossiblePathwayRoutes(Map<Integer, ElementReference> possiblePathwayRoutes) {
         this.possiblePathwayRoutes = possiblePathwayRoutes;
     }
 

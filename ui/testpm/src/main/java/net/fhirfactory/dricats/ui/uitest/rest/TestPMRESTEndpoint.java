@@ -23,7 +23,7 @@ package net.fhirfactory.dricats.ui.uitest.rest;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import jakarta.annotation.PostConstruct;
-import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.context.Dependent;
 import jakarta.enterprise.event.Observes;
 import jakarta.enterprise.event.Startup;
 import jakarta.inject.Inject;
@@ -39,7 +39,7 @@ import org.slf4j.LoggerFactory;
  * Camel REST routes that mirror the dricats-middleware-oam-central API, but
  * backed by an in-memory stub service for UI testing.
  */
-@ApplicationScoped
+@Dependent
 public class TestPMRESTEndpoint extends RouteBuilder {
     //
      // Housekeeping
@@ -52,7 +52,7 @@ public class TestPMRESTEndpoint extends RouteBuilder {
     private boolean initialized = false;
 
     @Inject
-    UitestApplication mainApplication;
+    jakarta.enterprise.inject.Instance<UitestApplication> mainApplicationInstance;
 
     @Inject
     CamelContext camelContext;
@@ -68,7 +68,7 @@ public class TestPMRESTEndpoint extends RouteBuilder {
         if(!initialized){
             LOG.info("TestPMRESTEndpoint:initialize(): Initialising");
 
-            LOG.info("TestPMRESTEndpoint:initialize(): mainApplication.getUiTestServerConfiguration() -> {}", mainApplication.getUiTestServerConfiguration());
+            LOG.info("TestPMRESTEndpoint:initialize(): mainApplication.getUiTestServerConfiguration() -> {}", mainApplicationInstance.get().getUiTestServerConfiguration());
             try {
                 camelContext.addRoutes(this);
                 camelContext.addRoutes(coreOAMRoutes);
@@ -109,11 +109,11 @@ public class TestPMRESTEndpoint extends RouteBuilder {
         String host = System.getProperty("camel.rest.host", "localhost");
         int port;
         try {
-            port = Integer.parseInt(System.getProperty("camel.rest.port", "12000"));
+            port = Integer.parseInt(System.getProperty("camel.rest.port", "12101"));
         } catch (NumberFormatException nfe) {
-            port = 12000;
+            port = 12101;
         }
-        LOG.info("Configuring REST: component=netty-http host="+host+" port="+port+ " contextPath=/ apiContextPath=/api-doc");
+        LOG.error("Configuring REST: component=netty-http host="+host+" port="+port+ " contextPath=/ apiContextPath=/api-doc");
 
         restConfiguration()
                 .component("netty-http")
